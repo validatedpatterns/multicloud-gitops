@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: "manuela-{{ .Values.global.deploy.site }}"
+  namespace: openshift-gitops
+  labels:
+    app.kubernetes.io/instance: manuela
+spec:
+  destination:
+    name: in-cluster
+    namespace: openshift-gitops
+  project: default
+  source:
+    repoURL: https://{{ .Values.global.git.provider }}/{{ .Values.global.git.account }}/blueprints.git
+    path: applications/bootstrap
+    targetRevision: {{ .Values.global.git.ops_revision }}
+    helm:
+      releaseName: blueprint-core
+      parameters:
+      - name: global.git.provider
+        value: "{{ .Values.global.git.provider }}"
+      - name: global.git.account
+        value: "{{ .Values.global.git.account }}"
+      - name: global.git.repoURL
+        value: $ARGOCD_APP_SOURCE_REPO_URL
+      - name: global.git.ops_revision
+        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+{{- if eq .Values.gitops.syncPolicy "Automatic" }}
+  syncPolicy:
+    automated: 
+      prune: false
+      selfHeal: false
+{{- end }}

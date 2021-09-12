@@ -1,0 +1,31 @@
+global:
+  git:
+    provider: github.com
+    account: PLAINTEXT
+    ops_revision: main
+
+gitops:
+  syncPolicy: Automatic
+
+subscriptions:
+  installPlanApproval: Automatic
+  useCSV: "False"
+  version:
+    gitops:
+      channel: stable
+      csv: v1.2.0
+      source: redhat-operators
+      syncPolicy: Automatic
+
+secrets:
+  # NEVER COMMIT THESE VALUES TO GIT
+  enabled: false
+  quay:
+    # Quay -> Robot Accounts -> Kubernetes Secret -> View
+    authToken: BASE64STRING
+
+  git:
+    # Go to: https://github.com/settings/tokens
+    # Then: echo -n 'your string value' | base64
+    authToken: BASE64STRING
+    accountToken: BASE64STRING

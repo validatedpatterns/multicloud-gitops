@@ -1,0 +1,7 @@
+apiVersion: v2
+description: A Helm chart to build and deploy MANUela
+keywords:
+- runtimes
+- blueprint
+name: manufacturing-edge-ai-ml
+version: 0.0.1
