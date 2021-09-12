@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: default-app-set
+  namespace: openshift-gitops
+  labels:
+    app.kubernetes.io/instance: manuela
+spec:
+  generators:
+  - list:
+      elements:
+      {{- range .Values.applications }}
+      - name: {{ .name }}
+        namespace: {{ default "openshift-gitops" .namespace }}
+        project: {{ default "default" .project }}
+        path: {{ .path }}
+      {{- end }}
+  template:
+    metadata:
+      name: {{ "'{{name}}'" }}
+    spec:
+      source:
+        repoURL: $ARGOCD_APP_SOURCE_REPO_URL
+        targetRevision: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        path: {{ "'{{path}}'" }}
+      project: {{ "'{{project}}'" }}
+      destination:
+        name: in-cluster
+        namespace: {{ "'{{namespace}}'" }}
+{{- if eq .Values.global.options.syncPolicy "Automatic" }}
+      syncPolicy:
+        automated: 
+          prune: false
+          selfHeal: false
+{{- end }}

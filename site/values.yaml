@@ -1,0 +1,15 @@
+global:
+  options:
+    syncPolicy: Automatic
+
+    useCSV: "False"
+    installPlanApproval: Automatic
+
+projects:
+- datacenter
+
+#applications:
+#- name: acm
+#  namespace: default
+#  project: datacenter
+#  path: applications/acm
