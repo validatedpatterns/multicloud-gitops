@@ -10,12 +10,17 @@ spec:
     namespace: {{ default "openshift-gitops" .namespace }}
   project: {{ .project }}
   source:
-    repoURL: $ARGOCD_APP_SOURCE_REPO_URL
-    targetRevision: $ARGOCD_APP_SOURCE_TARGET_REVISION
+    repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+    targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
     path: {{ .path }}
     helm:
       valueFiles:
       - ../../values-blueprint.yaml
+      parameters:
+        - name: global.repoURL
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        - name: global.targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
 {{- if eq $.Values.global.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: 
