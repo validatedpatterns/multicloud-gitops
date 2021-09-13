@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   labels:
-    name: {{ Release.Name }}
+    name: {{ default "blueprint" $.Release.name }}
     argocd.argoproj.io/managed-by: openshift-gitops
   name: {{ . }}
 spec:

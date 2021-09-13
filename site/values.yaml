@@ -8,6 +8,11 @@ global:
 projects:
 - datacenter
 
+namespaces:
+- blueprint
+#- open-cluster-management
+#- policy
+
 #applications:
 #- name: acm
 #  namespace: default
