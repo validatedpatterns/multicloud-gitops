@@ -14,11 +14,15 @@ spec:
     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
     path: {{ .path }}
     helm:
+      valueFiles:
+      - {{ .Values.global.valuesURL }}
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
         - name: global.targetRevision
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: global.valuesURL
+          value: {{ .Values.global.valuesURL }}
 {{- if eq $.Values.global.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: 
