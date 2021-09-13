@@ -14,8 +14,6 @@ spec:
     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
     path: {{ .path }}
     helm:
-      valueFiles:
-      - ../../values-blueprint.yaml
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -25,7 +23,7 @@ spec:
   syncPolicy:
     automated: 
       prune: false
-      selfHeal: false
+      selfHeal: true
 {{- end }}
 ---
 {{- end }}
