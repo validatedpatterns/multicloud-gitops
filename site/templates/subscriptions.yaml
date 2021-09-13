@@ -9,8 +9,8 @@ spec:
   source: {{ .source }}
   sourceNamespace: openshift-marketplace
   channel: {{ .channel }}
-  installPlanApproval: {{ .Values.global.options.installPlanApproval }}
-  {{- if .Values.global.options.useCSV }}
+  installPlanApproval: {{ $.Values.global.options.installPlanApproval }}
+  {{- if $.Values.global.options.useCSV }}
   startingCSV: {{ .name }}.{{ .csv }}
   {{- end }}  
 ---
