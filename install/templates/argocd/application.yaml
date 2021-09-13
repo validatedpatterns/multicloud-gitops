@@ -13,6 +13,8 @@ spec:
     targetRevision: {{ .Values.main.git.revision }}
     path: applications/bootstrap
     helm:
+      valueFiles:
+      - ../../values-blueprint.yaml
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
