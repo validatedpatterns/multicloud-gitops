@@ -12,6 +12,12 @@ spec:
     repoURL: {{ .Values.main.git.repoURL }}
     targetRevision: {{ .Values.main.git.revision }}
     path: applications/bootstrap
+    helm:
+      parameters:
+        - name: golbal.repoURL
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        - name: golbal.targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: 
