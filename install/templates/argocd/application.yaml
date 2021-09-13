@@ -14,13 +14,13 @@ spec:
     path: applications/bootstrap
     helm:
       parameters:
-        - name: golbal.repoURL
+        - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
-        - name: golbal.targetRevision
+        - name: global.targetRevision
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: 
       prune: false
-      selfHeal: false
+      selfHeal: true
 {{- end }}
