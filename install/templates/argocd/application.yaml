@@ -14,13 +14,6 @@ spec:
     repoURL: {{ .Values.main.git.repoURL }}
     targetRevision: {{ .Values.main.git.revision }}
     path: applications/bootstrap
-    helm:
-      releaseName: {{ .Release.Name }}-core
-      parameters:
-      - name: global.git.repoURL
-        value: $ARGOCD_APP_SOURCE_REPO_URL
-      - name: global.git.ops_revision
-        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: 
