@@ -16,7 +16,7 @@ spec:
     helm:
       valueFiles:
       - ../../values-blueprint.yaml
-{{- if eq $.Values.main.options.syncPolicy "Automatic" }}
+{{- if eq $.Values.global.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: 
       prune: false
