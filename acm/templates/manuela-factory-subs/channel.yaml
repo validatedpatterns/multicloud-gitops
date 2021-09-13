@@ -1,8 +1,0 @@
-apiVersion: apps.open-cluster-management.io/v1
-kind: Channel
-metadata:
-  name: acm-channel-blueprint-industrial-edge
-  namespace: acm-blueprint-industrial-edge-gitops
-spec:
-  pathname: https://{{ .Values.global.git.provider }} /{{ .Values.global.git.account }}/blueprints.git
-  type: Git
