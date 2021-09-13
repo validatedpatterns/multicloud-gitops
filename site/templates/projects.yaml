@@ -1,4 +1,4 @@
-{{- range .Values.projects | uniq }}
+{{- range .Values.projects }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
