@@ -1,0 +1,92 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: argo-factorydatacenter-application-installed
+  namespace: policy
+  annotations:
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: argo-factorydatacenter-application-installed
+        spec:
+          remediationAction: enforce
+          severity: med
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: argoproj.io/v1alpha1
+                kind: Application
+                metadata:
+                  name: factorydatacenter
+                  namespace: openshift-gitops
+                  finalizers:
+                  - argoproj.io/finalizer
+                spec:
+                  project: default
+                  source:
+                    repoURL: "https://{{ .Values.global.git.provider }}/{{ .Values.global.git.username }}/blueprints.git"
+                    targetRevision: "{{ .Values.global.git.ops_revision }}"
+                    path: manufacturing-edge-ai-ml/factory/main
+                    helm:
+                    # All other values come from /.argocd-source.yaml 
+                      parameters:
+                        - name: global.git.provider
+                          value: "{{ .Values.global.git.provider }}"
+                        - name: global.git.account
+                          value: "{{ .Values.global.git.account }}"
+                        - name: global.git.ops_revision
+                          value: "{{ .Values.global.git.ops_revision }}"
+                  destination:
+                    server: https://kubernetes.default.svc
+                    namespace: openshift-gitops
+                  syncPolicy:
+                    automated:
+                      prune: false
+                      selfHeal: true
+                  ignoreDifferences:
+                  - group: apps
+                    kind: Deployment
+                    jsonPointers:
+                    - /spec/replicas
+                  - group: route.openshift.io
+                    kind: Route
+                    jsonPointers:
+                    - /status
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-argo-factorydatacenter
+  namespace: policy
+placementRef:
+  name: all-factory
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: argo-factorydatacenter-application-installed
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: all-factory
+  namespace: policy
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchLabels:
+      manuela: factory
+
