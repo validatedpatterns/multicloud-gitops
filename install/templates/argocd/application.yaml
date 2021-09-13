@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: {{ .Release.Name }}
   namespace: openshift-gitops
-  labels:
-    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   destination:
     name: in-cluster
