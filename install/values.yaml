@@ -1,21 +1,18 @@
-global:
+main:
   git:
-    provider: github.com
-    account: PLAINTEXT
-    ops_revision: main
+    repoURL: git@github.com:dagger-refuse-cool/gitops.git
+    revision: main
 
-gitops:
-  syncPolicy: Automatic
+  options:
+    syncPolicy: Automatic
+    installPlanApproval: Automatic
+    useCSV: "False"
 
-subscriptions:
-  installPlanApproval: Automatic
-  useCSV: "False"
-  version:
-    gitops:
-      channel: stable
-      csv: v1.2.0
-      source: redhat-operators
-      syncPolicy: Automatic
+  gitops:
+    channel: stable
+    csv: v1.2.0
+    source: redhat-operators
+    syncPolicy: Automatic
 
 secrets:
   # NEVER COMMIT THESE VALUES TO GIT

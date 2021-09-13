@@ -6,13 +6,13 @@ metadata:
   labels:
     operators.coreos.com/openshift-gitops-operator.openshift-operators: ""
 spec:
-  channel: {{ .Values.subscriptions.version.gitops.channel }}
-  installPlanApproval: {{ .Values.subscriptions.installPlanApproval }}
+  channel: {{ .Values.main.gitops.channel }}
+  installPlanApproval: {{ .Values.main.options.installPlanApproval }}
   name: openshift-gitops-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-{{- if eq .Values.subscriptions.useCSV "True" }}
-  startingCSV: openshift-gitops-operator.{{ .Values.subscriptions.version.gitops.csv }}
+{{- if eq .Values.main.options.useCSV "True" }}
+  startingCSV: openshift-gitops-operator.{{ .Values.main.gitops.csv }}
 {{- end }}
 
 
