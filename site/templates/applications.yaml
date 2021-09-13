@@ -1,35 +1,26 @@
+{{- range .Values.applications }}
 apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
+kind: Application
 metadata:
-  name: default-app-set
+  name: {{ .name }}
   namespace: openshift-gitops
-  labels:
-    app.kubernetes.io/instance: manuela
 spec:
-  generators:
-  - list:
-      elements:
-      {{- range .Values.applications }}
-      - name: {{ .name }}
-        namespace: {{ default "openshift-gitops" .namespace }}
-        project: {{ default "default" .project }}
-        path: {{ .path }}
-      {{- end }}
-  template:
-    metadata:
-      name: {{ "'{{name}}'" }}
-    spec:
-      source:
-        repoURL: $ARGOCD_APP_SOURCE_REPO_URL
-        targetRevision: $ARGOCD_APP_SOURCE_TARGET_REVISION
-        path: {{ "'{{path}}'" }}
-      project: {{ "'{{project}}'" }}
-      destination:
-        name: in-cluster
-        namespace: {{ "'{{namespace}}'" }}
-{{- if eq .Values.global.options.syncPolicy "Automatic" }}
-      syncPolicy:
-        automated: 
-          prune: false
-          selfHeal: false
+  destination:
+    name: in-cluster
+    namespace: {{ default "openshift-gitops" .namespace }}
+  project: {{ .project }}
+  source:
+    repoURL: $ARGOCD_APP_SOURCE_REPO_URL
+    targetRevision: $ARGOCD_APP_SOURCE_TARGET_REVISION
+    path: {{ .path }}
+    helm:
+      valueFiles:
+      - ../../values-blueprint.yaml
+{{- if eq $.Values.main.options.syncPolicy "Automatic" }}
+  syncPolicy:
+    automated: 
+      prune: false
+      selfHeal: false
+{{- end }}
+---
 {{- end }}
