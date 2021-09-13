@@ -15,7 +15,7 @@ spec:
     path: {{ .path }}
     helm:
       valueFiles:
-      - {{ .Values.global.valuesURL }}
+      - {{ $.Values.global.valuesURL }}
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
