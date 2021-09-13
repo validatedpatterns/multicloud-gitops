@@ -5,3 +5,20 @@ helm:
 
       useCSV: "False"
       installPlanApproval: Automatic
+
+  namespaces:
+  - open-cluster-management
+  - policy
+  
+  applications:
+  - name: acm
+    namespace: default
+    project: datacenter
+    path: applications/acm
+
+  subscriptions:
+  - name: advanced-cluster-management
+    namespace: open-cluster-management
+    source: redhat-operators
+    channel: release-2.3
+    csv: v2.3.1
