@@ -1,0 +1,11 @@
+{{- range .Values.namespaces | uniq }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: {{ Release.Name }}
+    argocd.argoproj.io/managed-by: openshift-gitops
+  name: {{ . }}
+spec:
+---
+{{- end }}

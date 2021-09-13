@@ -17,4 +17,5 @@ spec:
   sourceRepos:
   - '*'
 status: {}
+---
 {{- end }}

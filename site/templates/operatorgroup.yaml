@@ -1,0 +1,10 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ Release.Name }}-operator-group
+  namespace: openshift-gitops
+spec:
+  targetNamespaces:
+{{- range .Values.namespaces | uniq }}
+  - {{ . }}
+{{- end }}
