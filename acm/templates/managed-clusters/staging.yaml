@@ -15,6 +15,8 @@ metadata:
     gitops-mgmt: argocd
     manuela: factory
   name: staging
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   hubAcceptsClient: true
 ---
@@ -23,6 +25,8 @@ kind: KlusterletAddonConfig
 metadata:
   name: staging
   namespace: staging
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   clusterName: staging
   clusterNamespace: staging
@@ -44,6 +48,8 @@ spec:
 apiVersion: internal.open-cluster-management.io/v1beta1
 kind: ManagedClusterInfo
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   labels:
     argocd.argoproj.io/instance: manuela-acm
     cloud: auto-detect

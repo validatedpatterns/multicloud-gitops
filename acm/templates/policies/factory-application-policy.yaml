@@ -4,6 +4,7 @@ metadata:
   name: argo-factorydatacenter-application-installed
   namespace: policy
   annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   remediationAction: enforce
   disabled: false
@@ -69,6 +70,8 @@ kind: PlacementBinding
 metadata:
   name: binding-argo-factorydatacenter
   namespace: policy
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 placementRef:
   name: all-factory
   kind: PlacementRule
@@ -83,6 +86,8 @@ kind: PlacementRule
 metadata:
   name: all-factory
   namespace: policy
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   clusterConditions:
     - status: 'True'

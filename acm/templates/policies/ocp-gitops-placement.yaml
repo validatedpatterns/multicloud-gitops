@@ -4,6 +4,8 @@ kind: PlacementRule
 metadata:
   name: all-openshift
   namespace: policy
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   clusterConditions:
     - status: 'True'
