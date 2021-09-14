@@ -1,4 +1,4 @@
-{{- range .Values.namespaces | uniq }}
+{{- range .Values.datacenter.namespaces }}
 apiVersion: v1
 kind: Namespace
 metadata:
