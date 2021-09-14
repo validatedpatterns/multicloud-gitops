@@ -62,8 +62,6 @@ kind: PlacementRule
 metadata:
   name: openshift-gitops-placement
   namespace: policy
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   clusterConditions:
     - status: 'True'

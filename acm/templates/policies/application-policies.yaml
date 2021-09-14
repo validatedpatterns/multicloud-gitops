@@ -1,3 +1,4 @@
+# TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
 {{- range .Values.site.managedSites }}
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
@@ -91,8 +92,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: {{ .name }}-placement
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   clusterConditions:
     - status: 'True'
