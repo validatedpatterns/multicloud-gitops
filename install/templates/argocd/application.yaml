@@ -1,5 +1,5 @@
-{{- $valuesURL :=  cat .Values.main.git.repoURL "/raw/" .Values.main.git.revision "/values-blueprint.yaml" -}}
-{{- $valuesURLFixed :=  $valuesURL | replace " " "" | replace ".git" "" }}
+{{- $valuesDirectoryURL :=  cat .Values.main.git.repoURL "/raw/" .Values.main.git.revision -}}
+{{- $valuesDirectoryURLFixed :=  $valuesDirectoryURL | replace " " "" | replace ".git" "" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -16,15 +16,18 @@ spec:
     path: applications/bootstrap
     helm:
       valueFiles:
-      - {{ coalesce .Values.main.git.valuesURL $valuesURLFixed }}
+      - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-global.yaml"
+      - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-{{ .Values.main.siteName }}.yaml"
+      - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-{{ .Release.Name }}.yaml"
       #- ../../values-blueprint.yaml
+      # Track the progress of https://github.com/argoproj/argo-cd/pull/6280
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
         - name: global.targetRevision
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
-        - name: global.valuesURL
-          value: {{ coalesce .Values.main.git.valuesURL $valuesURLFixed }}
+        - name: global.valuesDirectoryURL
+          value: {{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: 

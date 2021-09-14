@@ -2,6 +2,7 @@ main:
   git:
     repoURL: git@github.com:dagger-refuse-cool/gitops.git
     revision: main
+    #valuesDirectoryURL: https://github.com/dagger-refuse-cool/edge-gitops/raw/main/
 
   options:
     syncPolicy: Automatic
@@ -10,9 +11,10 @@ main:
 
   gitops:
     channel: stable
-    csv: v1.2.0
     source: redhat-operators
-    syncPolicy: Automatic
+    csv: v1.2.0
+
+  siteName: datacenter
 
 secrets:
   # NEVER COMMIT THESE VALUES TO GIT
