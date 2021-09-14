@@ -23,8 +23,14 @@ spec:
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
         - name: global.valuesURL
           value: {{ $.Values.global.valuesURL }}
+        {{- range .overrides }}
+        - name: {{ .name }}
+          value: {{ .value }}
+        {{- end }}
 {{- if eq $.Values.global.options.syncPolicy "Automatic" }}
   syncPolicy:
+    syncOptions:
+      - Validate=false
     automated: 
       prune: false
       selfHeal: true
