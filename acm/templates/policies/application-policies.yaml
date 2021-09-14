@@ -40,14 +40,17 @@ spec:
                     path: {{ .path }}
                     helm:
                       valueFiles:
-                      - {{ coalesce .valuesURL $.Values.global.valuesURL }}
+                      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
+                      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ $.Values.site.name }}.yaml"
+                      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ $.Release.Name }}.yaml"
+                      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ .name }}.yaml"
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
                       - name: global.targetRevision
                         value: $ARGOCD_APP_SOURCE_TARGET_REVISION
-                      - name: global.valuesURL
-                        value: {{ coalesce .valuesURL $.Values.global.valuesURL }}
+                      - name: global.valuesDirectoryURL
+                        value: {{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}
                      {{- range .helmOverrides }}
                       - name: {{ .name }}
                         value: {{ .value }}

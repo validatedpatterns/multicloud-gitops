@@ -1,0 +1,48 @@
+global:
+  valuesDirectoryURL: https://github.com/dagger-refuse-cool/edge-gitops/raw/main/
+  options:
+    useCSV: True
+    syncPolicy: Automatic
+    installPlanApproval: Automatic
+
+site:
+  name: datacenter
+
+  proposedOptions:
+    manageGitops: True
+    isHubCluster: True
+
+  namespaces:
+  - open-cluster-management
+
+  subscriptions:
+  - name: advanced-cluster-management
+    namespace: open-cluster-management
+    source: redhat-operators
+    channel: release-2.3
+    csv: v2.3.2
+
+  projects:
+  - datacenter
+ 
+  applications:
+  - name: acm
+    namespace: open-cluster-management
+    project: datacenter
+    path: applications/acm
+
+  managedSites:
+  - name: factory
+    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
+    targetRevision: main
+    path: applications/factory
+    helmOverrides:
+    - name: site.isHubCluster
+      value: false
+    clusterSelector:
+      matchExpressions:
+      - key: vendor
+        operator: In
+        values:
+          - OpenShift
+
