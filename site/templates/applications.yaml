@@ -1,4 +1,4 @@
-{{- range .Values.datacenter.applications }}
+{{- range .Values.site.applications }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
