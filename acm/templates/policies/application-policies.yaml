@@ -1,8 +1,8 @@
+{{- range .Values.site.managedSites }}
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: argo-factorydatacenter-application-installed
-  namespace: policy
+  name: {{ .name }}-site-policy
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
@@ -13,7 +13,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: argo-factorydatacenter-application-installed
+          name: {{ .name }}-site-config
         spec:
           remediationAction: enforce
           severity: med
@@ -35,19 +35,23 @@ spec:
                 spec:
                   project: default
                   source:
-                    repoURL: {{ .Values.global.repoURL }}
-                    targetRevision: {{ .Values.global.targetRevision }}
-                    path: applications/factory/main
+                    repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+                    targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
+                    path: {{ .path }}
                     helm:
                       valueFiles:
-                      - {{ .Values.global.valuesURL }}
+                      - {{ coalesce .valuesURL $.Values.global.valuesURL }}
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
                       - name: global.targetRevision
                         value: $ARGOCD_APP_SOURCE_TARGET_REVISION
                       - name: global.valuesURL
-                        value: {{ .Values.global.valuesURL }}
+                        value: {{ coalesce .valuesURL $.Values.global.valuesURL }}
+                     {{- range .helmOverrides }}
+                      - name: {{ .name }}
+                        value: {{ .value }}
+                     {{- end }}
                   destination:
                     server: https://kubernetes.default.svc
                     namespace: openshift-gitops
@@ -68,12 +72,11 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-argo-factorydatacenter
-  namespace: policy
+  name: {{ .name }}-placement-binding
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 placementRef:
-  name: all-factory
+  name: {{ .name }}-placement
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
@@ -84,15 +87,13 @@ subjects:
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: all-factory
-  namespace: policy
+  name: {{ .name }}-placement
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   clusterConditions:
     - status: 'True'
       type: ManagedClusterConditionAvailable
-  clusterSelector:
-    matchLabels:
-      manuela: factory
-
+  clusterSelector: {{ .clusterSelector | toPrettyJson }}
+---
+{{- end }}
