@@ -1,3 +1,5 @@
+{{- $valuesURL :=  cat .Values.main.git.repoURL "/raw/" .Values.main.git.revision "/values-blueprint.yaml" -}}
+{{- $valuesURLFixed :=  $valuesURL | replace " " "" | replace ".git" "" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -14,12 +16,15 @@ spec:
     path: applications/bootstrap
     helm:
       valueFiles:
-      - ../../values-blueprint.yaml
+      - {{ coalesce .Values.main.git.valuesURL $valuesURLFixed }}
+      #- ../../values-blueprint.yaml
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
         - name: global.targetRevision
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: global.valuesURL
+          value: {{ coalesce .Values.main.git.valuesURL $valuesURLFixed }}
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: 
