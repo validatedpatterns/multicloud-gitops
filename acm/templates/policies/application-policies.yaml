@@ -29,7 +29,7 @@ spec:
                 apiVersion: argoproj.io/v1alpha1
                 kind: Application
                 metadata:
-                  name: factorydatacenter
+                  name: {{ $.Values.site.name }}-site
                   namespace: openshift-gitops
                   finalizers:
                   - argoproj.io/finalizer
