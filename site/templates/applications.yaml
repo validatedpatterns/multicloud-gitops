@@ -27,6 +27,11 @@ spec:
         - name: {{ .name }}
           value: {{ .value }}
         {{- end }}
+  ignoreDifferences:
+  - group: internal.open-cluster-management.io
+    kind: ManagedClusterInfo
+    jsonPointers:
+    - /spec/loggingCA
 {{- if eq $.Values.global.options.syncPolicy "Automatic" }}
   syncPolicy:
     syncOptions:
