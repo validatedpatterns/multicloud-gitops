@@ -18,8 +18,6 @@ spec:
       valueFiles:
       - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-global.yaml"
       - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-{{ .Values.main.siteName }}.yaml"
-      - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-{{ .Release.Name }}.yaml"
-      #- ../../values-blueprint.yaml
       # Track the progress of https://github.com/argoproj/argo-cd/pull/6280
       parameters:
         - name: global.repoURL
