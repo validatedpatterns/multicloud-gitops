@@ -1,10 +1,11 @@
+{{- range .Values.site.namespaces }}
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  name: {{ .Release.Name }}-operator-group
-  namespace: openshift-gitops
+  name: {{ . }}-operator-group
+  namespace: {{ . }}
 spec:
   targetNamespaces:
-{{- range .Values.site.namespaces }}
   - {{ . }}
+---
 {{- end }}
