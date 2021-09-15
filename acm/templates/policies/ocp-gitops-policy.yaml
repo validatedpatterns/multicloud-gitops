@@ -7,6 +7,7 @@ metadata:
     policy.open-cluster-management.io/categories: PR.DS Data Security
     policy.open-cluster-management.io/controls: PR.DS-1 Data-at-rest
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
   remediationAction: enforce
   disabled: false
