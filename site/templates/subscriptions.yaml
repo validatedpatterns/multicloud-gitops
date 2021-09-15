@@ -6,9 +6,9 @@ metadata:
   namespace: {{ default "openshift-operators" .namespace }}
 spec:
   name: {{ .name }}
-  source: {{ .source }}
+  source: {{ default "redhat-operators" .source }}
   sourceNamespace: {{ default "openshift-marketplace" .sourceNamespace }}
-  channel: {{ .channel }}
+  channel: {{ default "stable" .channel }}
   installPlanApproval: {{ coalesce .installPlanApproval $.Values.global.options.installPlanApproval }}
   {{- if $.Values.global.options.useCSV }}
   startingCSV: {{ .name }}.{{ .csv }}
