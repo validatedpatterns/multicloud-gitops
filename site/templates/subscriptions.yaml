@@ -3,13 +3,13 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: {{ .name }}
-  namespace: {{ .namespace }}
+  namespace: {{ default "openshift-operators" .namespace }}
 spec:
   name: {{ .name }}
   source: {{ .source }}
-  sourceNamespace: openshift-marketplace
+  sourceNamespace: {{ default "openshift-marketplace" .sourceNamespace }}
   channel: {{ .channel }}
-  installPlanApproval: {{ $.Values.global.options.installPlanApproval }}
+  installPlanApproval: {{ coalesce .installPlanApproval $.Values.global.options.installPlanApproval }}
   {{- if $.Values.global.options.useCSV }}
   startingCSV: {{ .name }}.{{ .csv }}
   {{- end }}  
