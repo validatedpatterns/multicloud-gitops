@@ -35,6 +35,12 @@ site:
     project: datacenter
     path: charts/opendatahub
     kustomize: True
+  - name: pipelines
+    namespace: manuela-ci
+    project: datacenter
+    path: charts/opendatahub
+    plugin:
+      name: helm-with-kustomize
 
 #
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
