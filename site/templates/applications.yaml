@@ -36,11 +36,8 @@ spec:
     - /spec/loggingCA
 {{- if eq $.Values.global.options.syncPolicy "Automatic" }}
   syncPolicy:
-    syncOptions:
-      - Validate=false
-    automated: 
-      prune: false
-      selfHeal: true
+    automated: {}
+    #  selfHeal: true
 {{- end }}
 ---
 {{- end }}

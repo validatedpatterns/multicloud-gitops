@@ -28,7 +28,5 @@ spec:
           value: {{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
-    automated: 
-      prune: false
-      selfHeal: false
+    automated: {}
 {{- end }}
