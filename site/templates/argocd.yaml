@@ -15,9 +15,13 @@ spec:
     -c]\n    args: [\"kustomize version 1>&2 && exit 1\"]\n- name: kustomize-with-helm\n
     \ generate:\n    command: [\"kustomize\"]\n    args: [\"build\", \"--enable-helm\"]\n- name:
     helm-with-kustomize\n  init:\n    command: [\"/bin/sh\", \"-c\"]\n    args: [\"helm
-    dependency build\"]\n  generate:\n    command: [sh, -c]\n    args: [\"helm template
+    dependency build\"]\n  generate:\n    command: [sh, -c]\n    args: [\"helm template .
     --release-name ${ARGOCD_APP_NAME}-v0.2021.8
-    --set global.bpversion=${BLUEPRINT_VERSION} .
+    -f {{ .Values.global.valuesDirectoryURL }}/values-global.yaml
+    -f {{ .Values.global.valuesDirectoryURL }}/values-{{ .Values.site.name }}.yaml
+    --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
+    --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
+    --set global.valuesDirectoryURL={{ .Values.global.valuesDirectoryURL }}
     --post-renderer ./kustomize\"]
     \ \n"
   applicationSet:
