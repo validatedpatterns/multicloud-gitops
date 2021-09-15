@@ -29,7 +29,7 @@ site:
   - name: acm
     namespace: open-cluster-management
     project: datacenter
-    path: applications/acm
+    path: common/acm
 
 #
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate

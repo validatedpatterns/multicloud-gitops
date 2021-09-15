@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: {{ .Values.main.git.repoURL }}
     targetRevision: {{ .Values.main.git.revision }}
-    path: applications/bootstrap
+    path: common/site
     helm:
       valueFiles:
       - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-global.yaml"
