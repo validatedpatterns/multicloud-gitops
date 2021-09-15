@@ -61,7 +61,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: openshift-gitops-placement
-  namespace: policy
 spec:
   clusterConditions:
     - status: 'True'
