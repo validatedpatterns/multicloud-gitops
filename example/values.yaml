@@ -1,0 +1,12 @@
+global:
+  git:
+    provider: github.com
+    account: PLAINTEXT
+    username: PLAINTEXT
+    email: SOMEWHERE@EXAMPLE.COM
+    ops_revision: main
+    dev_revision: main
+
+  quay:
+    provider: quay.io
+    account: PLAINTEXT
