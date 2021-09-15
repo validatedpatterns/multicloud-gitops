@@ -7,7 +7,8 @@ main:
   options:
     syncPolicy: Automatic
     installPlanApproval: Automatic
-    useCSV: "False"
+    useCSV: False
+    bootstrap: True
 
   gitops:
     channel: stable
