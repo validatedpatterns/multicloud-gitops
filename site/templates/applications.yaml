@@ -13,6 +13,7 @@ spec:
     repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
     path: {{ .path }}
+    {{- if not .kustomize }}
     helm:
       valueFiles:
       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
@@ -29,6 +30,7 @@ spec:
         - name: {{ .name }}
           value: {{ .value }}
         {{- end }}
+    {{- end }}
   ignoreDifferences:
   - group: internal.open-cluster-management.io
     kind: ManagedClusterInfo

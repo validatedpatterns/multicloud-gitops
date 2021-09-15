@@ -30,6 +30,11 @@ site:
     namespace: open-cluster-management
     project: datacenter
     path: common/acm
+  - name: odh
+    namespace: open-cluster-management
+    project: datacenter
+    path: charts/opendatahub
+    kustomize: True
 
 #
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
