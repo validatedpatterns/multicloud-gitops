@@ -33,11 +33,9 @@ spec:
           value: {{ .value }}
         {{- end }}
     {{- end }}
-  ignoreDifferences:
-  - group: internal.open-cluster-management.io
-    kind: ManagedClusterInfo
-    jsonPointers:
-    - /spec/loggingCA
+  {{- if .ignoreDifferences }}
+  ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
+  {{- end }}
 {{- if eq $.Values.global.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: {}
