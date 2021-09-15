@@ -36,8 +36,6 @@ spec:
     - /spec/loggingCA
 {{- if eq $.Values.global.options.syncPolicy "Automatic" }}
   syncPolicy:
-    syncOptions:
-    - SkipDryRunOnMissingResource=true
     automated: {}
     #  selfHeal: true
 {{- end }}
