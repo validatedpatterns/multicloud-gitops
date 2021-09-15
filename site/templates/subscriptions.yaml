@@ -11,7 +11,7 @@ spec:
   channel: {{ default "stable" .channel }}
   installPlanApproval: {{ coalesce .installPlanApproval $.Values.global.options.installPlanApproval }}
   {{- if $.Values.global.options.useCSV }}
-  startingCSV: {{ .name }}.{{ .csv }}
+  startingCSV: {{ .csv }}
   {{- end }}  
 ---
 {{- end }}
