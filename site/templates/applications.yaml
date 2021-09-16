@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ $.Release.Name }}-{{ $.Values.site.name }}-{{ .name }}
+  name: {{ .name }}-{{ $.Values.site.name }}-{{ $.Release.Name }}
   namespace: openshift-gitops
 spec:
   destination:
