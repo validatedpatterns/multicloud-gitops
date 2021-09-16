@@ -30,7 +30,7 @@ spec:
                 apiVersion: argoproj.io/v1alpha1
                 kind: Application
                 metadata:
-                  name: {{ $.Values.site.name }}-site
+                  name: {{ .name }}-site
                   namespace: openshift-gitops
                   finalizers:
                   - argoproj.io/finalizer
@@ -43,7 +43,7 @@ spec:
                     helm:
                       valueFiles:
                       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
-                      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ $.Values.site.name }}.yaml"
+                      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ .name }}.yaml"
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
