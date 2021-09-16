@@ -83,7 +83,7 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-  - name: argo-factorydatacenter-application-installed
+  - name: {{ .name }}-site-policy
     kind: Policy
     apiGroup: policy.open-cluster-management.io
 ---
