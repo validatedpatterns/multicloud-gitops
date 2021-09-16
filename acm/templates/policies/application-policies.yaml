@@ -39,7 +39,7 @@ spec:
                   source:
                     repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
                     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
-                    path: {{ .path }}
+                    path: {{ default "common/site" .path }}
                     helm:
                       valueFiles:
                       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
