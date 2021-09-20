@@ -1,7 +1,7 @@
 apiVersion: v2
-description: A Helm chart to create the initial manuela application
+description: A Helm chart to create per-site ArgoCD applications and any required namespaces or subscriptions
 keywords:
 - manuela
-- blueprint
-name: manuela-datacenter
+- pattern
+name: pattern-site
 version: 0.0.1

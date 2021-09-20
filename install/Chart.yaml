@@ -1,7 +1,6 @@
 apiVersion: v2
-description: A Helm chart to build and deploy MANUela
+description: A Helm chart to build and deploy a Cloud Pattern
 keywords:
-- runtimes
-- blueprint
-name: manufacturing-edge-ai-ml
+- pattern
+name: pattern-install
 version: 0.0.1
