@@ -41,6 +41,8 @@ argosecret:
 
 	echo "{ \"apiVersion\": \"v1\", \"kind\": \"Secret\", \"metadata\": { \"name\": \"argocd-env\", \"namespace\": \"$$target_ns\" }, \"data\": { \"ARGOCD_PASSWORD\": \"$$password\", \"ARGOCD_USERNAME\": \"$$user\" }, \"type\": \"Opaque\" }" | oc apply -f-
 
+#  Makefiles in the individual patterns should call these targets explicitly
+#  e.g. from manufacturing-ai-ml-edge: make -f common/Makefile show
 show:
 	helm template install/ --name-template $(NAME) -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP)
 
@@ -49,15 +51,9 @@ init:
 
 deploy:
 	helm install $(NAME) install/ -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP)
-ifeq ($(BOOTSTRAP),1)
-	bash util/argocd-secret.sh
-endif
 
 upgrade:
 	helm upgrade $(NAME) install/ -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP)
-ifeq ($(BOOTSTRAP),1)
-	bash util/argocd-secret.sh
-endif
 
 uninstall:
 	helm uninstall $(NAME) 
