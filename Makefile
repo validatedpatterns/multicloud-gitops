@@ -12,9 +12,15 @@ init:
 
 deploy:
 	helm install $(NAME) install/ -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP)
+ifeq ($(BOOTSTRAP),1)
+	bash util/argocd-secret.sh
+endif
 
 upgrade:
 	helm upgrade $(NAME) install/ -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP)
+ifeq ($(BOOTSTRAP),1)
+	bash util/argocd-secret.sh
+endif
 
 uninstall:
 	helm uninstall $(NAME) 
