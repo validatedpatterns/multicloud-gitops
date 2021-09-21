@@ -1,4 +1,6 @@
 {{- range .Values.site.namespaces }}
+
+{{- if empty $.Values.site.operatorgroupExcludes }}
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -8,4 +10,16 @@ spec:
   targetNamespaces:
   - {{ . }}
 ---
+{{- else if not (has .  $.Values.site.operatorgroupExcludes) }}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ . }}-operator-group
+  namespace: {{ . }}
+spec:
+  targetNamespaces:
+  - {{ . }}
+---
+{{- end }}
+
 {{- end }}
