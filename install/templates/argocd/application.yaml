@@ -24,6 +24,8 @@ spec:
           value: $ARGOCD_APP_SOURCE_REPO_URL
         - name: global.targetRevision
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: global.namespace
+          value: $ARGOCD_APP_NAMESPACE
         - name: global.valuesDirectoryURL
           value: {{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
