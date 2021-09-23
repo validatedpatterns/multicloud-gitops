@@ -10,7 +10,7 @@ spec:
   sourceNamespace: {{ default "openshift-marketplace" .sourceNamespace }}
   channel: {{ default "stable" .channel }}
   installPlanApproval: {{ coalesce .installPlanApproval $.Values.global.options.installPlanApproval }}
-  {{- if coalesce .useCSV .Values.site.subscriptions.useCSV .Values.global.options.useCSV }}
+  {{- if $.Values.global.options.useCSV }}
   startingCSV: {{ .csv }}
   {{- end }}  
 ---
