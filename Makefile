@@ -25,19 +25,20 @@ argosecret:
 			ns=1
 		fi
 
-		if [ oc -n openshift-gitops extract secrets/openshift-gitops-cluster --to=- 1>/dev/null 2>/dev/null ]; then
+		pw=`oc -n openshift-gitops extract secrets/openshift-gitops-cluster --to=- 2>/dev/null`
+		if [ "$$?" == 0 ] && [ -n "$$pw" ];
 			gitops=0
 		else
 			gitops=1
 		fi
 
-		if [ "$$gitops" == 1 -a "$$ns" == 1 ]; then
+		if [ "$$gitops" == 1 ] && [ "$$ns" == 1 ]; then
 			break
 		fi
 	done
 
 	user=$$(echo admin | base64)
-	password=$$(oc -n openshift-gitops extract secrets/openshift-gitops-cluster --to=- 2>/dev/null | base64)
+	password=$$(echo $$pw | base64)
 
 	echo "{ \"apiVersion\": \"v1\", \"kind\": \"Secret\", \"metadata\": { \"name\": \"argocd-env\", \"namespace\": \"$$target_ns\" }, \"data\": { \"ARGOCD_PASSWORD\": \"$$password\", \"ARGOCD_USERNAME\": \"$$user\" }, \"type\": \"Opaque\" }" | oc apply -f-
 
