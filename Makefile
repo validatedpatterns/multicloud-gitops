@@ -35,7 +35,7 @@ argosecret:
 		fi
 
 		if [ "$$gitops" == 1 ] && [ "$$ns" == 1 ]; then
-			echo "Conditions met, creating resource"
+			echo "Conditions met, managing secret in $$target_ns"
 			break
 		else
 			sleep 2
