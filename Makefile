@@ -20,6 +20,7 @@ argosecret:
 	# Check for Namespaces and Secrets to be ready (it takes the cluster a while to deploy them)
 	while [ 1 ]; do
 		if [ oc get namespace $$target_ns >/dev/null 2>/dev/null ]; then
+			echo "Waiting for namespace $$target_ns to be created"
 			ns=0
 		else
 			ns=1
@@ -27,13 +28,17 @@ argosecret:
 
 		pw=`oc -n openshift-gitops extract secrets/openshift-gitops-cluster --to=- 2>/dev/null`
 		if [ "$$?" == 0 ] && [ -n "$$pw" ]; then
-			gitops=0
-		else
 			gitops=1
+		else
+			echo "Waiting for password to be populated"
+			gitops=0
 		fi
 
 		if [ "$$gitops" == 1 ] && [ "$$ns" == 1 ]; then
+			echo "Conditions met, creating resource"
 			break
+		else
+			sleep 2
 		fi
 	done
 
