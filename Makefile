@@ -26,7 +26,7 @@ argosecret:
 		fi
 
 		pw=`oc -n openshift-gitops extract secrets/openshift-gitops-cluster --to=- 2>/dev/null`
-		if [ "$$?" == 0 ] && [ -n "$$pw" ];
+		if [ "$$?" == 0 ] && [ -n "$$pw" ]; then
 			gitops=0
 		else
 			gitops=1
