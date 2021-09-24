@@ -3,7 +3,7 @@ kind: ArgoCD
 metadata:
   finalizers:
   - argoproj.io/finalizer
-  name: openshift-gitops
+  name: {{ .Values.site.name }}-gitops
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
