@@ -61,7 +61,7 @@ spec:
                      {{- end }}
                   destination:
                     server: https://kubernetes.default.svc
-                    namespace: openshift-gitops
+                    namespace: {{ .name }}-gitops
                   syncPolicy:
                     automated:
                       prune: false
