@@ -1,7 +1,7 @@
 BOOTSTRAP=1
 SECRETS=~/values-secret.yaml
 NAME=$(shell basename `pwd`)
-TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL://' -e 's%:%/%' -e 's%git@%https://%')
+TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL://' -e 's%:[a-z].*@%@%' -e 's%:%/%' -e 's%git@%https://%' )
 TARGET_BRANCH=$(shell git branch --show-current)
 
 # This is to eliminate the need to install and worry about a separate shell script somewhere in the directory structure
