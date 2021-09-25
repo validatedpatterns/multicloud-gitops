@@ -29,6 +29,8 @@ spec:
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
         - name: global.namespace
           value: $ARGOCD_APP_NAMESPACE
+        - name: global.pattern
+          value: {{ $.Values.global.pattern }}
         - name: global.valuesDirectoryURL
           value: {{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}
         {{- range .overrides }}
