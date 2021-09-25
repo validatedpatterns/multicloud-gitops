@@ -8,7 +8,7 @@ metadata:
 spec:
   destination:
     name: in-cluster
-    namespace: {{ .Values.main.siteName }}
+    namespace: {{ .Values.main.siteName }}-gitops
   project: default
   source:
     repoURL: {{ .Values.main.git.repoURL }}
