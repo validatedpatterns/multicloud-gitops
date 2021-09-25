@@ -8,7 +8,7 @@ metadata:
 spec:
   destination:
     name: in-cluster
-    namespace: openshift-gitops
+    namespace: {{ .Values.main.siteName }}
   project: default
   source:
     repoURL: {{ .Values.main.git.repoURL }}
