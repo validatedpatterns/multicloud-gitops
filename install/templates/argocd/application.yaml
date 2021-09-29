@@ -8,7 +8,7 @@ metadata:
 spec:
   destination:
     name: in-cluster
-    namespace: openshift-gitops
+    namespace: {{ .Values.main.siteName }}-gitops
   project: default
   source:
     repoURL: {{ .Values.main.git.repoURL }}
@@ -28,6 +28,8 @@ spec:
           value: $ARGOCD_APP_NAMESPACE
         - name: global.valuesDirectoryURL
           value: {{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}
+        - name: global.pattern
+          value: {{ .Release.Name }}
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: {}

@@ -3,8 +3,9 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: {{ . }}
+  namespace: {{ $.Values.site.name }}-gitops
 spec:
-  description: "Blueprint {{ . }}"
+  description: "Pattern {{ . }}"
   destinations:
   - namespace: '*'
     server: '*'

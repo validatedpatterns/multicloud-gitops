@@ -1,13 +1,14 @@
+{{- $namespace := cat $.Values.site.name "gitops" | replace " " "-" }}
 {{- range .Values.site.applications }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ .name }}-{{ $.Release.Name | trunc 40 }}
-  namespace: openshift-gitops
+  namespace: {{ $.Values.site.name }}-gitops
 spec:
   destination:
     name: in-cluster
-    namespace: {{ default "openshift-gitops" .namespace }}
+    namespace: {{ default $namespace .namespace }}
   project: {{ .project }}
   source:
     repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
@@ -28,6 +29,8 @@ spec:
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
         - name: global.namespace
           value: $ARGOCD_APP_NAMESPACE
+        - name: global.pattern
+          value: {{ $.Values.global.pattern }}
         - name: global.valuesDirectoryURL
           value: {{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}
         {{- range .overrides }}

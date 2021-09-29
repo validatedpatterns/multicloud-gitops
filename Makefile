@@ -1,7 +1,7 @@
 BOOTSTRAP=1
 SECRETS=~/values-secret.yaml
 NAME=$(shell basename `pwd`)
-TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL://' -e 's%:%/%' -e 's%git@%https://%')
+TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL://' -e 's%:[a-z].*@%@%' -e 's%:%/%' -e 's%git@%https://%' )
 TARGET_BRANCH=$(shell git branch --show-current)
 
 # This is to eliminate the need to install and worry about a separate shell script somewhere in the directory structure
@@ -50,16 +50,16 @@ argosecret:
 #  Makefiles in the individual patterns should call these targets explicitly
 #  e.g. from manufacturing-ai-ml-edge: make -f common/Makefile show
 show:
-	helm template common/install/ --name-template $(NAME) -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP)
+	helm template common/install/ --name-template $(NAME) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS) 
 
 init:
 	git submodule update --init --recursive
 
 deploy:
-	helm install $(NAME) common/install/ -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP)
+	helm install $(NAME) common/install/ --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS) 
 
 upgrade:
-	helm upgrade $(NAME) common/install/ -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP)
+	helm upgrade $(NAME) common/install/ --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS) 
 
 uninstall:
 	helm uninstall $(NAME) 
