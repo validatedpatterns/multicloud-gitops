@@ -4,7 +4,7 @@ kind: Namespace
 metadata:
   labels:
     name: {{ default "blueprint" $.Release.name }}
-    argocd.argoproj.io/managed-by: {{ $.Values.site.name }}-gitops
+    argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.site.name }}-gitops
   name: {{ . }}
 spec:
 ---

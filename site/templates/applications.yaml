@@ -1,10 +1,10 @@
-{{- $namespace := cat $.Values.site.name "gitops" | replace " " "-" }}
+{{- $namespace := cat $.Values.global.pattern $.Values.site.name "gitops" | replace " " "-" }}
 {{- range .Values.site.applications }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ .name }}-{{ $.Release.Name | trunc 40 }}
-  namespace: {{ $.Values.site.name }}-gitops
+  namespace: {{ $namespace }}
 spec:
   destination:
     name: in-cluster
