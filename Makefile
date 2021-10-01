@@ -48,7 +48,7 @@ argosecret:
 	echo "{ \"apiVersion\": \"v1\", \"kind\": \"Secret\", \"metadata\": { \"name\": \"argocd-env\", \"namespace\": \"$$target_ns\" }, \"data\": { \"ARGOCD_PASSWORD\": \"$$password\", \"ARGOCD_USERNAME\": \"$$user\" }, \"type\": \"Opaque\" }" | oc apply -f-
 
 #  Makefiles in the individual patterns should call these targets explicitly
-#  e.g. from manufacturing-ai-ml-edge: make -f common/Makefile show
+#  e.g. from industrial-edge: make -f common/Makefile show
 show:
 	helm template common/install/ --name-template $(NAME) -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP)
 
