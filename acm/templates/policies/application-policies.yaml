@@ -61,7 +61,7 @@ spec:
                      {{- end }}
                   destination:
                     server: https://kubernetes.default.svc
-                    namespace: {{ .name }}
+                    namespace: {{ $.Values.global.pattern }}-{{ .name }}
                   syncPolicy:
                     automated:
                       prune: false
