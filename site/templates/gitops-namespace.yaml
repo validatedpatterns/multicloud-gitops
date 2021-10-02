@@ -3,5 +3,5 @@ kind: Namespace
 metadata:
   labels:
     name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}
-  name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-gitops
+  name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}
 spec: {}
