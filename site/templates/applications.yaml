@@ -1,4 +1,4 @@
-{{- $namespace := cat $.Values.global.pattern $.Values.site.name "gitops" | replace " " "-" }}
+{{- $namespace := cat $.Values.global.pattern $.Values.site.name | replace " " "-" }}
 {{- range .Values.site.applications }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
