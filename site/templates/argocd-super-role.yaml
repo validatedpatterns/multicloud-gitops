@@ -27,9 +27,11 @@ roleRef:
   name: cluster-admin
 subjects:
   - kind: ServiceAccount
-    name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-argocd-application-controller
+    #name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-gitops-argocd-application-controller
+    name: {{ .Values.site.name }}-gitops-argocd-application-controller
     namespace: {{ $.Values.global.pattern }}-{{ .Values.site.name }}
   # NOTE: THIS MUST BE FIXED FOR MULTITENANT SETUP
   - kind: ServiceAccount
-    name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-argocd-server
+    #name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-gitops-argocd-server
+    name: {{ .Values.site.name }}-gitops-argocd-server
     namespace: {{ $.Values.global.pattern }}-{{ .Values.site.name }}
