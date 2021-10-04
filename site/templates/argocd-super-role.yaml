@@ -20,16 +20,18 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-gitops-cluster-admin-rolebinding
+  name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-cluster-admin-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
   - kind: ServiceAccount
-    name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-gitops-argocd-application-controller
-    namespace: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-gitops
+    # This is the {ArgoCD.name}-argocd-application-controller
+    name: {{ .Values.site.name }}-gitops-argocd-application-controller
+    namespace: {{ $.Values.global.pattern }}-{{ .Values.site.name }}
   # NOTE: THIS MUST BE FIXED FOR MULTITENANT SETUP
   - kind: ServiceAccount
-    name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-gitops-argocd-server
-    namespace: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-gitops
+    # This is the {ArgoCD.name}-argocd-server
+    name: {{ .Values.site.name }}-gitops-argocd-server
+    namespace: {{ $.Values.global.pattern }}-{{ .Values.site.name }}

@@ -61,7 +61,7 @@ spec:
                      {{- end }}
                   destination:
                     server: https://kubernetes.default.svc
-                    namespace: {{ .name }}-gitops
+                    namespace: {{ $.Values.global.pattern }}-{{ .name }}
                   syncPolicy:
                     automated:
                       prune: false

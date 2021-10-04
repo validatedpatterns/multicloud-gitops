@@ -3,8 +3,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   labels:
-    name: {{ default "blueprint" $.Release.name }}
-    argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.site.name }}-gitops
+    name: {{ default "pattern" $.Release.name }}
+    argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.site.name }}
   name: {{ . }}
 spec:
 ---

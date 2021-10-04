@@ -3,7 +3,9 @@ kind: ArgoCD
 metadata:
   finalizers:
   - argoproj.io/finalizer
-  name: {{ $.Values.global.pattern }}-{{ .Values.site.name }}-gitops
+  # Changing the name affects the ClusterRoleBinding, the generated secret,
+  # route URL, and argocd.argoproj.io/managed-by annotations
+  name: {{ .Values.site.name }}-gitops
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
