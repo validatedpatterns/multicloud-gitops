@@ -4,22 +4,14 @@ NAME=$(shell basename `pwd`)
 TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL://' -e 's%:[a-z].*@%@%' -e 's%:%/%' -e 's%git@%https://%' )
 TARGET_BRANCH=$(shell git branch --show-current)
 
-# This is to eliminate the need to install and worry about a separate shell script somewhere in the directory structure
-# There's a lot of GNU Make magic happening here:
-#  .ONESHELL passes the whole task into a single shell instance
-#  $$ is a Makefile idiom to preserve the single $ otherwise make consumes them
-#  tabs are necessary
-#  The patch to oc apply uses JSON because it's not as sensitive to indentation and doesn't need heredoc
-#
 #  Makefiles that use this target must provide:
 #  	PATTERN: The name of the pattern that is using it.  This will be used programmatically for the source namespace
 #  	TARGET_NAMESPACE: target namespace to install the secret into
 #  	COMPONENT: The component of the target namespace.  In industrial edge, factory or datacenter - and for the secret
 #  		it needs to be datacenter because that's where the CI components run.
-#
-#  Note that this makefile *requires* GNU Make 3.82 or higher (for .ONESHELL).  MacOS X comes with GNU Make 3.81.
+#  	SECRET_NAME: The name of the secret to manage
 argosecret:
-	PATTERN="$(PATTERN)" TARGET_NAMESPACE="$(TARGET_NAMESPACE)" COMPONENT="$(COMPONENT)" secret_name='argocd-env' common/secret.sh
+	PATTERN="$(PATTERN)" TARGET_NAMESPACE="$(TARGET_NAMESPACE)" COMPONENT="$(COMPONENT)" SECRET_NAME='argocd-env' common/secret.sh
 
 #  Makefiles in the individual patterns should call these targets explicitly
 #  e.g. from industrial-edge: make -f common/Makefile show
