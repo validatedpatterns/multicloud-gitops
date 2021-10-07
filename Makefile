@@ -11,7 +11,7 @@ TARGET_BRANCH=$(shell git branch --show-current)
 #  		it needs to be datacenter because that's where the CI components run.
 #  	SECRET_NAME: The name of the secret to manage
 argosecret:
-	PATTERN="$(PATTERN)" TARGET_NAMESPACE="$(TARGET_NAMESPACE)" COMPONENT="$(COMPONENT)" SECRET_NAME="$(SECRET_NAME)" common/secret.sh
+	PATTERN="$(PATTERN)" TARGET_NAMESPACE="$(TARGET_NAMESPACE)" COMPONENT="$(COMPONENT)" SECRET_NAME="$(SECRET_NAME)" common/scripts/secret.sh
 
 #  Makefiles in the individual patterns should call these targets explicitly
 #  e.g. from industrial-edge: make -f common/Makefile show
