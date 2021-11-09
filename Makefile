@@ -2,7 +2,8 @@ BOOTSTRAP=1
 SECRETS=~/values-secret.yaml
 NAME=$(shell basename `pwd`)
 TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL://' -e 's%:[a-z].*@%@%' -e 's%:%/%' -e 's%git@%https://%' )
-TARGET_BRANCH=$(shell git branch --show-current)
+# git branch --show-current is also available as of git 2.22, but we will use this for compatibility
+TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 #  Makefiles that use this target must provide:
 #  	PATTERN: The name of the pattern that is using it.  This will be used programmatically for the source namespace
