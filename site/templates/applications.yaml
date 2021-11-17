@@ -13,7 +13,11 @@ spec:
   source:
     repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
+    {{- if .chart }}
+    chart: {{ .chart }}
+    {{- else }}
     path: {{ .path }}
+    {{- end }}
     {{- if .plugin }}
     plugin: {{ .plugin | toPrettyJson }}
     {{- else if not .kustomize }}
