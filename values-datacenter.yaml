@@ -8,20 +8,9 @@ global:
 site:
   name: datacenter
 
-  proposedOptions:
-    manageGitops: True
-    isHubCluster: True
-
   namespaces:
   - open-cluster-management
-  - manuela-ml-workspace
-  - manuela-tst-all
-  - manuela-ci
-  - manuela-data-lake-central-s3-store
-  - manuela-data-lake-central-kafka-cluster
-
-  operatorgroupsExcludes:
-  - manuela-ml-workspace
+  - application-ci
 
   subscriptions:
   - name: advanced-cluster-management
@@ -29,42 +18,11 @@ site:
     channel: release-2.3
     csv: advanced-cluster-management.v2.3.2
 
-  - name: seldon-operator
-    namespace: manuela-ml-workspace
-    source: community-operators
-    csv: seldon-operator.v1.7.0
-
-  - name: opendatahub-operator
-    source: community-operators
-    csv: opendatahub-operator.v1.1.0
-
   - name: openshift-pipelines-operator-rh
     csv: redhat-openshift-pipelines.v1.5.1
 
-  # TODO: Allow namespace to be a list
-  - name: amq-streams
-    namespace: manuela-data-lake-central-kafka-cluster
-    channel: amq-streams-1.7.x
-    csv: amqstreams.v1.7.1
-
-  - name: amq-streams
-    namespace: manuela-tst-all
-    channel: amq-streams-1.7.x
-    csv: amqstreams.v1.7.1
-
-  - name: red-hat-camel-k
-    namespace: manuela-data-lake-central-s3-store
-    channel: 1.4.x
-    csv: red-hat-camel-k-operator.v1.4.0
-
-  - name: red-hat-camel-k
-    namespace: manuela-tst-all
-    channel: 1.4.x
-    csv: red-hat-camel-k-operator.v1.4.0
-
   projects:
   - datacenter
-  - datalake
  
   applications:
   - name: acm
@@ -77,82 +35,24 @@ site:
       jsonPointers:
       - /spec/loggingCA
 
-  - name: odh
-    namespace: default
-    project: datacenter
-    path: charts/datacenter/opendatahub
-    kustomize: True
-
   - name: pipelines
-    namespace: manuela-ci
+    namespace: application-ci
     project: datacenter
     path: charts/datacenter/pipelines
 
-  - name: central-kafka
-    namespace: manuela-data-lake-central-kafka-cluster
-    project: datalake
-    path: charts/datacenter/kafka
-    kustomize: True
-    ignoreDifferences:
-    - group: apps
-      kind: Deployment
-      jsonPointers:
-      - /spec/replicas
-    - group: route.openshift.io
-      kind: Route
-      jsonPointers:
-      - /status
-    - group: image.openshift.io
-      kind: ImageStream
-      jsonPointers:
-      - /spec/tags
-    - group: apps.openshift.io
-      kind: DeploymentConfig
-      jsonPointers:
-      - /spec/template/spec/containers/0/image
-
-  - name: central-s3
-    namespace: manuela-data-lake-central-s3-store
-    project: datalake
-    path: charts/datacenter/central-s3-store
-    kustomize: True
-    ignoreDifferences:
-    - group: apps
-      kind: Deployment
-      jsonPointers:
-      - /spec/replicas
-    - group: route.openshift.io
-      kind: Route
-      jsonPointers:
-      - /status
-    - group: image.openshift.io
-      kind: ImageStream
-      jsonPointers:
-      - /spec/tags
-    - group: apps.openshift.io
-      kind: DeploymentConfig
-      jsonPointers:
-      - /spec/template/spec/containers/0/image
-
-  - name: manuela-test
-    namespace: manuela-tst-all
-    project: datacenter
-    path: charts/datacenter/manuela-tst
-    plugin:
-      name: helm-with-kustomize
 
 #
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
 #  - name: pipelines
-#    namespace: production
+#    namespace: testing
 #    project: datacenter
 #    path: applications/pipeline
 #    repoURL: https://github.com/you/applications.git
-#    targetRevision: stable
+#    targetRevision: main
 #    overrides:
-#    - name: myparam
-#      value: myparam 
+#    - name: test
+#      value: true 
 #  
 #  - name: pipelines
 #    namespace: staging
@@ -174,8 +74,10 @@ site:
 #    targetRevision: main
 
   managedSites:
-  - name: factory
-    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
+  - name: edge
+    # Optional - Point to a different repo
+    # repoURL: https://github.com/dagger-refuse-cool/mySite.git
+    # Must contain values-{sitename}.yaml at the top level
     targetRevision: main
     helmOverrides:
     # Values must be strings!
