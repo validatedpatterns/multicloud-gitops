@@ -40,6 +40,9 @@ spec:
         {{- range .overrides }}
         - name: {{ .name }}
           value: {{ .value }}
+        {{- if .forceString }}
+          forceString: true
+        {{- end }}
         {{- end }}
     {{- end }}
   {{- if .ignoreDifferences }}
