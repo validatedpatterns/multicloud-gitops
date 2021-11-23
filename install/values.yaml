@@ -1,8 +1,8 @@
 main:
   git:
-    repoURL: git@github.com:dagger-refuse-cool/gitops.git
+    repoURL: git@github.com:hybrid-cloud-patterns/gitops.git
     revision: main
-    #valuesDirectoryURL: https://github.com/dagger-refuse-cool/edge-gitops/raw/main/
+    #valuesDirectoryURL: https://github.com/hybrid-cloud-patterns/industrial-edge/raw/main/
 
   options:
     syncPolicy: Automatic
@@ -20,12 +20,12 @@ main:
 secrets:
   # NEVER COMMIT THESE VALUES TO GIT
   enabled: false
-  quay:
-    # Quay -> Robot Accounts -> Kubernetes Secret -> View
-    authToken: BASE64STRING
+  imageregistry:
+    # Quay -> Robot Accounts -> Docker Login
+    account: STRING
+    token:   STRING
 
   git:
     # Go to: https://github.com/settings/tokens
-    # Then: echo -n 'your string value' | base64
-    authToken: BASE64STRING
-    accountToken: BASE64STRING
+    username: STRING
+    token: STRING
