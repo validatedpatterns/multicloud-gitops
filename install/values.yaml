@@ -22,7 +22,7 @@ secrets:
   enabled: false
   imageregistry:
     type: quay
-    # Quay -> Robot Accounts -> Docker Login
+    # Quay -> Robot Accounts -> Robot Login
     account: STRING
     token:   STRING
 
