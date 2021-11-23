@@ -17,16 +17,16 @@ argosecret:
 #  Makefiles in the individual patterns should call these targets explicitly
 #  e.g. from industrial-edge: make -f common/Makefile show
 show:
-	helm template common/install/ --name-template $(NAME) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS)
+	helm template common/install/ --name-template $(NAME) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS) -f values-global.yaml
 
 init:
 	git submodule update --init --recursive
 
 deploy:
-	helm install $(NAME) common/install/ --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS)
+	helm install $(NAME) common/install/ --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS) -f values-global.yaml
 
 upgrade:
-	helm upgrade $(NAME) common/install/ --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS)
+	helm upgrade $(NAME) common/install/ --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS) -f values-global.yaml
 
 uninstall:
 	helm uninstall $(NAME)
