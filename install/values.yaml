@@ -21,6 +21,7 @@ secrets:
   # NEVER COMMIT THESE VALUES TO GIT
   enabled: false
   imageregistry:
+    type: quay
     # Quay -> Robot Accounts -> Docker Login
     account: STRING
     token:   STRING
