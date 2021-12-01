@@ -4,7 +4,9 @@ NAME=$(shell basename `pwd`)
 TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL://' -e 's%:[a-z].*@%@%' -e 's%:%/%' -e 's%git@%https://%' )
 # git branch --show-current is also available as of git 2.22, but we will use this for compatibility
 TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
-HELM_OPTS=--set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f values-global.yaml -f $(SECRETS) 
+
+# --set values always take precedence over the contents of -f 
+HELM_OPTS=-f values-global.yaml -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) 
 
 #  Makefiles that use this target must provide:
 #  	PATTERN: The name of the pattern that is using it.  This will be used programmatically for the source namespace
@@ -21,7 +23,7 @@ show:
 	helm template common/install/ --name-template $(NAME) $(HELM_OPTS)
 
 test:
-	make -s show > .output
+	make -s TARGET_REPO=https://github.com/pattern-clone/common SECRETS=common/examples/values-secret.yaml show > .output
 	diff -u reference-output.yaml  .output
 	rm -f .output
 

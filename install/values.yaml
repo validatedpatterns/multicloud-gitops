@@ -21,6 +21,11 @@ global:
   imageregistry:
     type: quay
 
+  git:
+    hostname: github.com
+    # Account is the user or organization under which the pattern repo lives 
+    account: hybrid-cloud-patterns
+
 secrets:
   # NEVER COMMIT THESE VALUES TO GIT
   enabled: false
@@ -35,4 +40,4 @@ secrets:
     token: STRING
 
   aws:
-    s3Secret: BASE64STRING 
+    s3Secret: BASE64STRING

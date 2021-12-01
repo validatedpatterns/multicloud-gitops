@@ -1,5 +1,4 @@
 global:
-  valuesDirectoryURL: https://github.com/hybrid-cloud-patterns/common/raw/main/
   options:
     useCSV: True
     syncPolicy: Manual
