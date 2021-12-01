@@ -1,6 +1,14 @@
 global:
-  valuesDirectoryURL: https://github.com/dagger-refuse-cool/edge-gitops/raw/main/
+  valuesDirectoryURL: https://github.com/hybrid-cloud-patterns/common/raw/main/
   options:
     useCSV: True
     syncPolicy: Manual
     installPlanApproval: Automatic
+
+  git:
+    hostname: github.com
+    # Account is the user or organization under which the pattern repos lives 
+    account: hybrid-cloud-patterns
+    email: someone@somewhere.com
+    dev_revision: main
+
