@@ -1,11 +1,10 @@
 global:
-  git:
-    provider: github.com
-    account: PLAINTEXT
-    username: PLAINTEXT
-    email: SOMEWHERE@EXAMPLE.COM
-    target: HEAD
+  pattern: none
+  valuesDirectoryURL: none
+  repoURL: none
+  targetRevision: main
 
-  quay:
-    provider: quay.io
-    account: PLAINTEXT
+
+site:
+  managedSites:
+

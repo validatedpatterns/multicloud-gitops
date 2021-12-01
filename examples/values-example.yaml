@@ -1,12 +1,11 @@
 global:
-  valuesDirectoryURL: https://github.com/dagger-refuse-cool/edge-gitops/raw/main/
   options:
     useCSV: False
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
 site:
-  name: datacenter
+  name: example
 
   namespaces:
   - open-cluster-management
@@ -39,39 +38,6 @@ site:
     namespace: application-ci
     project: datacenter
     path: charts/datacenter/pipelines
-
-
-#
-#  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
-#
-#  - name: pipelines
-#    namespace: testing
-#    project: datacenter
-#    path: applications/pipeline
-#    repoURL: https://github.com/you/applications.git
-#    targetRevision: main
-#    overrides:
-#    - name: test
-#      value: true 
-#  
-#  - name: pipelines
-#    namespace: staging
-#    project: datacenter
-#    path: applications/pipeline
-#    repoURL: https://github.com/you/applications.git
-#    targetRevision: main
-#  
-#   Additional applications
-#   Be sure to include additional resources your apps will require
-#   +X machines
-#   +Y RAM
-#   +Z CPU
-#  - name: vendor-app
-#    namespace: default
-#    project: vendor
-#    path: path/to/myapp
-#    repoURL: https://github.com/vendor/applications.git
-#    targetRevision: main
 
   managedSites:
   - name: edge

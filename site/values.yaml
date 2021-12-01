@@ -1,12 +1,13 @@
 global:
-  valuesDirectoryURL: https://github.com/dagger-refuse-cool/edge-gitops/raw/main/
+  pattern: common
+  valuesDirectoryURL: https://github.com/pattern-clone/common/raw/main
   options:
     useCSV: True
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
 site:
-  name: datacenter
+  name: example
 
   proposedOptions:
     manageGitops: True

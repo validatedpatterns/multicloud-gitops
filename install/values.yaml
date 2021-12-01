@@ -1,6 +1,6 @@
 main:
   git:
-    repoURL: git@github.com:hybrid-cloud-patterns/gitops.git
+    repoURL: https://github.com/pattern-clone/mypattern
     revision: main
     #valuesDirectoryURL: https://github.com/hybrid-cloud-patterns/industrial-edge/raw/main/
 
@@ -15,7 +15,7 @@ main:
     source: redhat-operators
     csv: v1.2.0
 
-  siteName: example
+  siteName: default
 
 global:
   imageregistry:

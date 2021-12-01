@@ -11,3 +11,6 @@ global:
     email: someone@somewhere.com
     dev_revision: main
 
+main:
+  siteName: example
+

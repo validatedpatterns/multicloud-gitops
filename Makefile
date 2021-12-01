@@ -7,6 +7,8 @@ TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 # --set values always take precedence over the contents of -f 
 HELM_OPTS=-f values-global.yaml -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) 
+TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set main.options.bootstrap=$(BOOTSTRAP) --set global.valuesDirectoryURL="https://github.com/pattern-clone/mypattern/raw/main" --set global.pattern="mypattern" --set global.namespace="pattern-namespace"
+PATTERN_OPTS=-f common/examples/values-example.yaml 
 
 #  Makefiles that use this target must provide:
 #  	PATTERN: The name of the pattern that is using it.  This will be used programmatically for the source namespace
@@ -22,10 +24,13 @@ argosecret:
 show:
 	helm template common/install/ --name-template $(NAME) $(HELM_OPTS)
 
+CHARTS=install site acm 
+
 test:
-	make -s TARGET_REPO=https://github.com/pattern-clone/common SECRETS=common/examples/values-secret.yaml show > .output
-	diff -u reference-output.yaml  .output
-	rm -f .output
+# Test that all values used by the chart are in values.yaml with the same defaults as the pattern 
+	@for t in $(CHARTS); do common/scripts/test.sh $$t naked ""; if [ $$? != 0 ]; then exit 1; fi; done
+# Test the charts as the pattern would drive them
+	@for t in $(CHARTS); do common/scripts/test.sh $$t normal "$(TEST_OPTS) $(PATTERN_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
 
 init:
 	git submodule update --init --recursive
@@ -39,4 +44,4 @@ upgrade:
 uninstall:
 	helm uninstall $(NAME)
 
-.phony: install
+.phony: install test
