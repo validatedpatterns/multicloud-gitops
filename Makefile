@@ -4,6 +4,7 @@ NAME=$(shell basename `pwd`)
 TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL://' -e 's%:[a-z].*@%@%' -e 's%:%/%' -e 's%git@%https://%' )
 # git branch --show-current is also available as of git 2.22, but we will use this for compatibility
 TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+HELM_OPTS=--set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f values-global.yaml -f $(SECRETS) 
 
 #  Makefiles that use this target must provide:
 #  	PATTERN: The name of the pattern that is using it.  This will be used programmatically for the source namespace
@@ -17,16 +18,21 @@ argosecret:
 #  Makefiles in the individual patterns should call these targets explicitly
 #  e.g. from industrial-edge: make -f common/Makefile show
 show:
-	helm template common/install/ --name-template $(NAME) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS) -f values-global.yaml
+	helm template common/install/ --name-template $(NAME) $(HELM_OPTS)
+
+test:
+	make -s show > .output
+	diff -u reference-output.yaml  .output
+	rm -f .output
 
 init:
 	git submodule update --init --recursive
 
 deploy:
-	helm install $(NAME) common/install/ --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS) -f values-global.yaml
+	helm install $(NAME) common/install/ $(HELM_OPTS)
 
 upgrade:
-	helm upgrade $(NAME) common/install/ --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) -f $(SECRETS) -f values-global.yaml
+	helm upgrade $(NAME) common/install/ $(HELM_OPTS)
 
 uninstall:
 	helm uninstall $(NAME)
