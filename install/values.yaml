@@ -15,7 +15,7 @@ main:
     source: redhat-operators
     csv: v1.2.0
 
-  siteName: datacenter
+  siteName: example
 
 secrets:
   # NEVER COMMIT THESE VALUES TO GIT
