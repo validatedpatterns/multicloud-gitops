@@ -17,11 +17,14 @@ main:
 
   siteName: example
 
+global:
+  imageregistry:
+    type: quay
+
 secrets:
   # NEVER COMMIT THESE VALUES TO GIT
   enabled: false
   imageregistry:
-    type: quay
     # Quay -> Robot Accounts -> Robot Login
     account: STRING
     token:   STRING
@@ -30,3 +33,6 @@ secrets:
     # Go to: https://github.com/settings/tokens
     username: STRING
     token: STRING
+
+  aws:
+    s3Secret: BASE64STRING 
