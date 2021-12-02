@@ -7,7 +7,7 @@ TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 # --set values always take precedence over the contents of -f 
 HELM_OPTS=-f values-global.yaml -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set main.options.bootstrap=$(BOOTSTRAP) 
-TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set main.options.bootstrap=$(BOOTSTRAP) --set global.valuesDirectoryURL="https://github.com/pattern-clone/mypattern/raw/main" --set global.pattern="mypattern" --set global.namespace="pattern-namespace"
+TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set main.options.bootstrap=$(BOOTSTRAP) --set global.valuesDirectoryURL="https://github.com/pattern-clone/mypattern/raw/main" --set global.pattern="mypattern" --set global.namespace="pattern-namespace"
 PATTERN_OPTS=-f common/examples/values-example.yaml 
 
 #  Makefiles that use this target must provide:
