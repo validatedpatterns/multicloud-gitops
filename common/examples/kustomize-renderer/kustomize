@@ -1,0 +1,15 @@
+#!/bin/bash -x
+
+BASE=`dirname $0`
+if [ $BASE = $PWD ]; then 
+    BASE=./
+fi
+
+cat <&0 > "$BASE/helm.patch.yaml"
+
+# Including at least one log to stderr allows us to see the full -x output
+echo $HOME $PWD 1>&2
+ls -al  1>&2
+
+kubectl kustomize "$BASE" && rm "$BASE/helm.patch.yaml" 
+#kubectl kustomize "$BASE" > "$BASE/result.yaml"

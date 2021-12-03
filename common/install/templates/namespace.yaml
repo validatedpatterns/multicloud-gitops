@@ -1,0 +1,10 @@
+{{- if .Values.main.options.bootstrap }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: manuela-ci
+  labels:
+    manuela-role: pipeline
+    app.kubernetes.io/instance: manuela
+{{- end }}
