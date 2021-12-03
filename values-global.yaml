@@ -1,5 +1,6 @@
 global:
-  valuesDirectoryURL: https://github.com/dagger-refuse-cool/edge-gitops/raw/main/
+  pattern: multicloud-gitops
+
   options:
     useCSV: True
     syncPolicy: Manual
