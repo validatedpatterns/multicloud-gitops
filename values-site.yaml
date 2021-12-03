@@ -1,12 +1,11 @@
 global:
-  valuesDirectoryURL: https://github.com/dagger-refuse-cool/edge-gitops/raw/main/
   options:
     useCSV: True
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
 site:
-  name: site
+  name: hub
 
   proposedOptions:
     manageGitops: True
@@ -23,12 +22,12 @@ site:
     csv: v2.3.2
 
   projects:
-  - datacenter
+  - hub
 
   applications:
   - name: acm
     namespace: open-cluster-management
-    project: datacenter
+    project: hub
     path: applications/acm
 
 #
