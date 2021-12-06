@@ -13,7 +13,7 @@ main:
   gitops:
     channel: stable
     source: redhat-operators
-    csv: v1.2.0
+    csv: v1.3.0
 
   siteName: default
 
@@ -23,21 +23,5 @@ global:
 
   git:
     hostname: github.com
-    # Account is the user or organization under which the pattern repo lives 
+    # Account is the user or organization under which the pattern repo lives
     account: hybrid-cloud-patterns
-
-secrets:
-  # NEVER COMMIT THESE VALUES TO GIT
-  enabled: false
-  imageregistry:
-    # Quay -> Robot Accounts -> Robot Login
-    account: STRING
-    token:   STRING
-
-  git:
-    # Go to: https://github.com/settings/tokens
-    username: STRING
-    token: STRING
-
-  aws:
-    s3Secret: BASE64STRING
