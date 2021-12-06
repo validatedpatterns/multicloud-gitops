@@ -13,6 +13,7 @@ site:
 
   namespaces:
   - open-cluster-management
+  - gitops-ci
 
   subscriptions:
   - name: advanced-cluster-management
@@ -20,6 +21,9 @@ site:
     source: redhat-operators
     channel: release-2.3
     csv: v2.3.2
+
+  - name: openshift-pipelines-operator-rh
+    csv: redhat-openshift-pipelines.v1.5.2
 
   projects:
   - hub
