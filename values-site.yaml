@@ -14,6 +14,7 @@ site:
 
   namespaces:
   - open-cluster-management
+  - gitops-ci
 
   subscriptions:
   - name: advanced-cluster-management
@@ -22,13 +23,16 @@ site:
     channel: release-2.3
     csv: v2.3.2
 
+  - name: openshift-pipelines-operator-rh
+    csv: redhat-openshift-pipelines.v1.5.2
+
   projects:
-  - datacenter
+  - hub
 
   applications:
   - name: acm
     namespace: open-cluster-management
-    project: datacenter
+    project: hub
     path: applications/acm
 
 #
