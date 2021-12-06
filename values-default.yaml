@@ -6,7 +6,7 @@ global:
     installPlanApproval: Automatic
 
 site:
-  name: site
+  name: default
 
   proposedOptions:
     manageGitops: True
