@@ -5,53 +5,20 @@ global:
     installPlanApproval: Automatic
 
 site:
-  name: hub
+  name: region-one
 
   proposedOptions:
-    manageGitops: True
-    isHubCluster: True
+    manageGitops: False
+    isHubCluster: False
 
   namespaces:
-  - open-cluster-management
 
   subscriptions:
-  - name: advanced-cluster-management
-    namespace: open-cluster-management
-    source: redhat-operators
-    channel: release-2.3
-    csv: v2.3.2
 
   projects:
-  - hub
 
   applications:
-  - name: acm
-    namespace: open-cluster-management
-    project: hub
-    path: applications/acm
 
-  managedSites:
-  - name: region-one
-    helmOverrides:
-    - name: site.isHubCluster
-      value: false
-    clusterSelector:
-      matchExpressions:
-      - key: vendor
-        operator: In
-        values:
-          - OpenShift
-
-  - name: region-two
-    helmOverrides:
-    - name: site.isHubCluster
-      value: false
-    clusterSelector:
-      matchExpressions:
-      - key: vendor
-        operator: In
-        values:
-          - OpenShift
 #
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
