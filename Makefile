@@ -25,7 +25,6 @@ show:
 	helm template common/install/ --name-template $(NAME) $(HELM_OPTS)
 
 CHARTS=install site acm
-#CHARTS=acm site install
 
 test:
 # Test that all values used by the chart are in values.yaml with the same defaults as the pattern
