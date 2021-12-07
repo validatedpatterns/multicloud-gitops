@@ -29,4 +29,11 @@ if [ $TEST_VARIANT = normal -a $rc = 0 ]; then
     # Alas we can't make it fatal because there *should* be some differences
     diff -u ${TESTDIR}/${name}-naked.expected.yaml ${TESTDIR}/${name}-normal.expected.yaml
 fi
+
+if [ $rc = 0 ]; then
+	echo "PASS on $target $TEST_VARIANT with opts [$CHART_OPTS]"
+else
+	echo "FAIL on $target $TEST_VARIANT with opts [$CHART_OPTS]"
+fi
+
 exit $rc

@@ -177,7 +177,7 @@ spec:
                 spec:
                   project: default
                   source:
-                    repoURL: none
+                    repoURL: https://github.com/pattern-clone/mypattern
                     targetRevision: main
                     path: common/site
                     helm:

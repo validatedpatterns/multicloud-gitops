@@ -105,7 +105,7 @@ spec:
     namespace: open-cluster-management
   project: datacenter
   source:
-    repoURL: 
+    repoURL: https://github.com/pattern-clone/mypattern
     targetRevision: 
     path: common/acm
     helm:
@@ -149,7 +149,7 @@ spec:
     namespace: application-ci
   project: datacenter
   source:
-    repoURL: 
+    repoURL: https://github.com/pattern-clone/mypattern
     targetRevision: 
     path: charts/datacenter/pipelines
     helm:
