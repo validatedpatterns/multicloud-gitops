@@ -1,7 +1,7 @@
 BOOTSTRAP=1
 SECRETS=~/values-secret.yaml
 NAME=$(shell basename `pwd`)
-TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL:[[:space:]]+//' -e 's%:[a-z].*@%@%' -e 's%:%/%' -e 's%git@%https://%' )
+TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL:[[:space:]]*//' -e 's%:[a-z].*@%@%' -e 's%:%/%' -e 's%git@%https://%' )
 # git branch --show-current is also available as of git 2.22, but we will use this for compatibility
 TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
