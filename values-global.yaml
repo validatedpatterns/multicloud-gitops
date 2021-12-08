@@ -1,3 +1,4 @@
+---
 global:
   pattern: multicloud-gitops
 
@@ -6,5 +7,5 @@ global:
     syncPolicy: Manual
     installPlanApproval: Automatic
 
-site:
-  name: hub
+main:
+  siteName: hub

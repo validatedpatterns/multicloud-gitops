@@ -15,11 +15,6 @@ site:
   - open-cluster-management
 
   subscriptions:
-  - name: advanced-cluster-management
-    namespace: open-cluster-management
-    source: redhat-operators
-    channel: release-2.3
-    csv: v2.3.2
 
   projects:
   - hub
