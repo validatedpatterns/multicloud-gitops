@@ -5,3 +5,6 @@ global:
     useCSV: True
     syncPolicy: Manual
     installPlanApproval: Automatic
+
+site:
+  name: hub
