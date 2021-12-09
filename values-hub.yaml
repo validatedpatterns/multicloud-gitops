@@ -4,6 +4,21 @@ global:
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
+# helm upgrade -i -n vault vault hashicorp/vault --set "global.openshift=true" --set "server.dev.enabled=true" --set="injector.enabled=false" --set="server.image.repository=docker.io/hashicorp/vault"
+  # Vault setting
+  openshift: true
+
+# Vault
+server:
+  dev:
+    enabled: true
+  image:
+    repository: docker.io/hashicorp/vault
+
+# Vault
+injector:
+  enabled: false
+
 site:
   name: hub
 
