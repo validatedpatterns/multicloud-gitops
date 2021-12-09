@@ -47,7 +47,7 @@ site:
   - name: vault
     namespace: vault
     project: hub
-    chart: https://github.com/hashicorp/vault-helm
+    path: common/vault
 
   managedSites:
   - name: region-one
