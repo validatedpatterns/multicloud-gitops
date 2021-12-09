@@ -29,6 +29,11 @@ site:
     project: hub
     path: applications/acm
 
+  - name: vault
+    namespace: vault
+    project: hub
+    chart: https://github.com/hashicorp/vault-helm
+
   managedSites:
   - name: region-one
     helmOverrides:
