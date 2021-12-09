@@ -20,9 +20,6 @@ site:
     channel: release-2.3
     csv: advanced-cluster-management.v2.3.2
 
-  - name: openshift-pipelines-operator-rh
-    csv: redhat-openshift-pipelines.v1.5.2
-
   projects:
   - hub
 
