@@ -81,7 +81,7 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-  - name: edge-site-policy
+  - name: edge-clustergroup-policy
     kind: Policy
     apiGroup: policy.open-cluster-management.io
 ---
@@ -143,7 +143,7 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: edge-site-policy
+  name: edge-clustergroup-policy
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/compare-options: IgnoreExtraneous
@@ -155,7 +155,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: edge-site-config
+          name: edge-clustergroup-config
         spec:
           remediationAction: enforce
           severity: med
@@ -179,7 +179,7 @@ spec:
                   source:
                     repoURL: https://github.com/pattern-clone/mypattern
                     targetRevision: main
-                    path: common/site
+                    path: common/clustergroup
                     helm:
                       valueFiles:
                       - "https://github.com/pattern-clone/mypattern/raw/main/values-global.yaml"
@@ -195,7 +195,7 @@ spec:
                         value: mypattern
                       - name: global.valuesDirectoryURL
                         value: https://github.com/pattern-clone/mypattern/raw/main
-                      - name: site.isHubCluster
+                      - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
                     server: https://kubernetes.default.svc

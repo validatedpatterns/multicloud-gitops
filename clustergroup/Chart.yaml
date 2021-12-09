@@ -1,0 +1,7 @@
+apiVersion: v2
+description: A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions
+keywords:
+- manuela
+- pattern
+name: pattern-clustergroup
+version: 0.0.1

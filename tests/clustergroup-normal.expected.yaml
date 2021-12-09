@@ -1,5 +1,5 @@
 ---
-# Source: pattern-site/templates/gitops-namespace.yaml
+# Source: pattern-clustergroup/templates/gitops-namespace.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -7,12 +7,12 @@ metadata:
     name: mypattern-example
   # The name here needs to be consistent with
   # - acm/templates/policies/application-policies.yaml
-  # - site/templates/applications.yaml
+  # - clustergroup/templates/applications.yaml
   # - any references to secrets and route URLs in documentation
   name: mypattern-example
 spec: {}
 ---
-# Source: pattern-site/templates/namespaces.yaml
+# Source: pattern-clustergroup/templates/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -22,7 +22,7 @@ metadata:
   name: open-cluster-management
 spec:
 ---
-# Source: pattern-site/templates/namespaces.yaml
+# Source: pattern-clustergroup/templates/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -32,7 +32,7 @@ metadata:
   name: application-ci
 spec:
 ---
-# Source: pattern-site/templates/argocd-super-role.yaml
+# Source: pattern-clustergroup/templates/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -51,7 +51,7 @@ subjects:
     name: openshift-gitops-argocd-server
     namespace: openshift-gitops
 ---
-# Source: pattern-site/templates/argocd-super-role.yaml
+# Source: pattern-clustergroup/templates/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -72,7 +72,7 @@ subjects:
     name: example-gitops-argocd-server
     namespace: mypattern-example
 ---
-# Source: pattern-site/templates/projects.yaml
+# Source: pattern-clustergroup/templates/projects.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -93,7 +93,7 @@ spec:
   - '*'
 status: {}
 ---
-# Source: pattern-site/templates/applications.yaml
+# Source: pattern-clustergroup/templates/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -137,7 +137,7 @@ spec:
     automated: {}
     #  selfHeal: true
 ---
-# Source: pattern-site/templates/applications.yaml
+# Source: pattern-clustergroup/templates/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -172,7 +172,7 @@ spec:
     automated: {}
     #  selfHeal: true
 ---
-# Source: pattern-site/templates/argocd.yaml
+# Source: pattern-clustergroup/templates/argocd.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
@@ -267,7 +267,7 @@ spec:
     ca: {}
 status:
 ---
-# Source: pattern-site/templates/operatorgroup.yaml
+# Source: pattern-clustergroup/templates/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -277,7 +277,7 @@ spec:
   targetNamespaces:
   - open-cluster-management
 ---
-# Source: pattern-site/templates/operatorgroup.yaml
+# Source: pattern-clustergroup/templates/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -287,7 +287,7 @@ spec:
   targetNamespaces:
   - application-ci
 ---
-# Source: pattern-site/templates/subsciptions.yaml
+# Source: pattern-clustergroup/templates/subsciptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -300,7 +300,7 @@ spec:
   channel: release-2.3
   installPlanApproval: Automatic
 ---
-# Source: pattern-site/templates/subsciptions.yaml
+# Source: pattern-clustergroup/templates/subsciptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -313,7 +313,7 @@ spec:
   channel: stable
   installPlanApproval: Automatic
 ---
-# Source: pattern-site/templates/subscriptions.yaml
+# Source: pattern-clustergroup/templates/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -326,7 +326,7 @@ spec:
   channel: release-2.3
   installPlanApproval: Automatic
 ---
-# Source: pattern-site/templates/subscriptions.yaml
+# Source: pattern-clustergroup/templates/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:

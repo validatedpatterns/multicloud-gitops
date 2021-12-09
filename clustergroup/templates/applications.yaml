@@ -1,5 +1,5 @@
-{{- $namespace := cat $.Values.global.pattern $.Values.site.name | replace " " "-" }}
-{{- range .Values.site.applications }}
+{{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
+{{- range .Values.clusterGroup.applications }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -24,7 +24,7 @@ spec:
     helm:
       valueFiles:
       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
-      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ $.Values.site.name }}.yaml"
+      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ $.Values.clusterGroup.name }}.yaml"
       # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
