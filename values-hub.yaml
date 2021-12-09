@@ -28,6 +28,7 @@ site:
 
   namespaces:
   - open-cluster-management
+  - vault
 
   subscriptions:
   - name: advanced-cluster-management
