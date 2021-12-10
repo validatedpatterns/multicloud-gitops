@@ -1,6 +1,0 @@
-apiVersion: v2
-description: A Helm chart to demonstrate how to use with kustomize
-keywords:
-- pattern
-name: example
-version: 0.0.1
