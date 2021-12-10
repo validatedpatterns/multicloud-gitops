@@ -1,9 +1,9 @@
-{{- range .Values.site.projects }}
+{{- range .Values.clusterGroup.projects }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: {{ . }}
-  namespace: {{ $.Values.global.pattern }}-{{ $.Values.site.name }}
+  namespace: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
 spec:
   description: "Pattern {{ . }}"
   destinations:

@@ -1,4 +1,4 @@
-{{- range .Values.site.subscriptions }}
+{{- range .Values.clusterGroup.subscriptions }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:

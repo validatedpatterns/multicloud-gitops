@@ -15,7 +15,7 @@ main:
     source: redhat-operators
     csv: v1.3.0
 
-  siteName: default
+  clusterGroupName: default
 
 global:
   imageregistry:

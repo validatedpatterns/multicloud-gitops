@@ -5,7 +5,7 @@ metadata:
   - argoproj.io/finalizer
   # Changing the name affects the ClusterRoleBinding, the generated secret,
   # route URL, and argocd.argoproj.io/managed-by annotations
-  name: {{ .Values.site.name }}-gitops
+  name: {{ .Values.clusterGroup.name }}-gitops
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
@@ -19,7 +19,7 @@ spec:
     helm-with-kustomize\n  init:\n    command: [\"/bin/sh\", \"-c\"]\n    args: [\"helm
     dependency build\"]\n  generate:\n    command: [/bin/bash, -c]\n    args: [\"helm template . --name-template ${ARGOCD_APP_NAME:0:52}
     -f {{ .Values.global.valuesDirectoryURL }}/values-global.yaml
-    -f {{ .Values.global.valuesDirectoryURL }}/values-{{ .Values.site.name }}.yaml
+    -f {{ .Values.global.valuesDirectoryURL }}/values-{{ .Values.clusterGroup.name }}.yaml
     --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
     --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
     --set global.namespace=$ARGOCD_APP_NAMESPACE

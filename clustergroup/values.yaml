@@ -6,14 +6,14 @@ global:
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
-site:
+clusterGroup:
   name: example
 
   proposedOptions:
     manageGitops: True
     isHubCluster: True
 
-#  managedSites:
+#  managedClusterGroups:
 #  - name: factory
 #    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
 #    # Location of values-global.yaml, values-{name}.yaml, values-{app}.yaml
@@ -21,7 +21,7 @@ site:
 #    targetRevision: main
 #    path: applications/factory
 #    helmOverrides:
-#    - name: site.isHubCluster
+#    - name: clusterGroup.isHubCluster
 #      value: false
 #    clusterSelector:
 #      matchExpressions:
