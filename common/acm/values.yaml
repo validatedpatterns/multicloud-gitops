@@ -1,0 +1,10 @@
+global:
+  pattern: none
+  valuesDirectoryURL: none
+  repoURL: none
+  targetRevision: main
+
+
+clusterGroup:
+  managedClusterGroups:
+

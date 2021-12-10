@@ -1,0 +1,57 @@
+{{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
+{{- range .Values.clusterGroup.applications }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .name }}
+  namespace: {{ $namespace }}
+spec:
+  destination:
+    name: in-cluster
+    namespace: {{ default $namespace .namespace }}
+  project: {{ .project }}
+  source:
+    repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+    targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
+    {{- if .chart }}
+    chart: {{ .chart }}
+    {{- else }}
+    path: {{ .path }}
+    {{- end }}
+    {{- if .plugin }}
+    plugin: {{ .plugin | toPrettyJson }}
+    {{- else if not .kustomize }}
+    helm:
+      valueFiles:
+      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
+      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ $.Values.clusterGroup.name }}.yaml"
+      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
+      parameters:
+        - name: global.repoURL
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        - name: global.targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: global.namespace
+          value: $ARGOCD_APP_NAMESPACE
+        - name: global.pattern
+          value: {{ $.Values.global.pattern }}
+        - name: global.valuesDirectoryURL
+          value: {{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}
+        {{- range .overrides }}
+        - name: {{ .name }}
+          value: {{ .value }}
+        {{- if .forceString }}
+          forceString: true
+        {{- end }}
+        {{- end }}
+    {{- end }}
+  {{- if .ignoreDifferences }}
+  ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
+  {{- end }}
+{{- if eq $.Values.global.options.syncPolicy "Automatic" }}
+  syncPolicy:
+    automated: {}
+    #  selfHeal: true
+{{- end }}
+---
+{{- end }}

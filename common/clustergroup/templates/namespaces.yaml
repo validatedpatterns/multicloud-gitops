@@ -1,0 +1,11 @@
+{{- range .Values.clusterGroup.namespaces }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: {{ default "pattern" $.Release.name }}
+    argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
+  name: {{ . }}
+spec:
+---
+{{- end }}

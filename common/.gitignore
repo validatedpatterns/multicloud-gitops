@@ -1,0 +1,5 @@
+*~
+*.swp
+*.swo
+values-secret.yaml
+.*-expected.yaml
