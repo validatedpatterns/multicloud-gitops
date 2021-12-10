@@ -1,10 +1,4 @@
-global:
-  options:
-    useCSV: True
-    syncPolicy: Automatic
-    installPlanApproval: Automatic
-
-site:
+clusterGroup:
   name: hub
 
   proposedOptions:
@@ -13,12 +7,13 @@ site:
 
   namespaces:
   - open-cluster-management
+  - vault
 
   subscriptions:
   - name: advanced-cluster-management
     namespace: open-cluster-management
     channel: release-2.3
-    csv: advanced-cluster-management.v2.3.2
+    csv: advanced-cluster-management.v2.3.5
 
   projects:
   - hub
@@ -27,31 +22,28 @@ site:
   - name: acm
     namespace: open-cluster-management
     project: hub
-    path: applications/acm
+    path: common/acm
+    ignoreDifferences:
+      - group: internal.open-cluster-management.io
+        kind: ManagedClusterInfo
+        jsonPointers:
+          - /spec/loggingCA
 
-  managedSites:
+
+  - name: vault
+    namespace: vault
+    project: hub
+    path: common/vault
+
+  managedClusterGroups:
   - name: region-one
     helmOverrides:
-    - name: site.isHubCluster
+    - name: clusterGroup.isHubCluster
       value: false
     clusterSelector:
-      matchExpressions:
-      - key: vendor
-        operator: In
-        values:
-          - OpenShift
+      matchLabels:
+        clusterGroup: region-one
 
-  - name: region-two
-    helmOverrides:
-    - name: site.isHubCluster
-      value: false
-    clusterSelector:
-      matchExpressions:
-      - key: vendor
-        operator: In
-        values:
-          - OpenShift
-#
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
 #  - name: pipelines

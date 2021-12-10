@@ -8,4 +8,4 @@ global:
     installPlanApproval: Automatic
 
 main:
-  siteName: hub
+  clusterGroupName: hub
