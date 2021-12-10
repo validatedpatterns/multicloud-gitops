@@ -1,5 +1,5 @@
 ---
-# Source: pattern-site/templates/gitops-namespace.yaml
+# Source: pattern-clustergroup/templates/gitops-namespace.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -7,12 +7,12 @@ metadata:
     name: common-example
   # The name here needs to be consistent with
   # - acm/templates/policies/application-policies.yaml
-  # - site/templates/applications.yaml
+  # - clustergroup/templates/applications.yaml
   # - any references to secrets and route URLs in documentation
   name: common-example
 spec: {}
 ---
-# Source: pattern-site/templates/argocd-super-role.yaml
+# Source: pattern-clustergroup/templates/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -31,7 +31,7 @@ subjects:
     name: openshift-gitops-argocd-server
     namespace: openshift-gitops
 ---
-# Source: pattern-site/templates/argocd-super-role.yaml
+# Source: pattern-clustergroup/templates/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -52,7 +52,7 @@ subjects:
     name: example-gitops-argocd-server
     namespace: common-example
 ---
-# Source: pattern-site/templates/argocd.yaml
+# Source: pattern-clustergroup/templates/argocd.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:

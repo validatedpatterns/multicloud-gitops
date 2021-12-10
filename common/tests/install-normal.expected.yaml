@@ -21,7 +21,7 @@ spec:
   source:
     repoURL: https://github.com/pattern-clone/mypattern
     targetRevision: main
-    path: common/site
+    path: common/clustergroup
     helm:
       valueFiles:
       - "https://github.com/pattern-clone/mypattern/raw/main/values-global.yaml"

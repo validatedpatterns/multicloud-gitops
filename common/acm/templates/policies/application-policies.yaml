@@ -1,9 +1,9 @@
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
-{{- range .Values.site.managedSites }}
+{{- range .Values.clusterGroup.managedClusterGroups }}
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: {{ .name }}-site-policy
+  name: {{ .name }}-clustergroup-policy
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/compare-options: IgnoreExtraneous
@@ -15,7 +15,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: {{ .name }}-site-config
+          name: {{ .name }}-clustergroup-config
         spec:
           remediationAction: enforce
           severity: med
@@ -39,7 +39,7 @@ spec:
                   source:
                     repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
                     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
-                    path: {{ default "common/site" .path }}
+                    path: {{ default "common/clustergroup" .path }}
                     helm:
                       valueFiles:
                       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
@@ -87,7 +87,7 @@ placementRef:
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-  - name: {{ .name }}-site-policy
+  - name: {{ .name }}-clustergroup-policy
     kind: Policy
     apiGroup: policy.open-cluster-management.io
 ---

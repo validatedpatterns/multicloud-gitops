@@ -4,7 +4,7 @@ global:
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
-site:
+clusterGroup:
   name: example
 
   namespaces:
@@ -39,19 +39,19 @@ site:
     project: datacenter
     path: charts/datacenter/pipelines
 
-  managedSites:
+  managedClusterGroups:
   - name: edge
     # Optional - Point to a different repo
     # repoURL: https://github.com/dagger-refuse-cool/mySite.git
-    # Must contain values-{sitename}.yaml at the top level
+    # Must contain values-{clustergroupname}.yaml at the top level
     targetRevision: main
     helmOverrides:
     # Values must be strings!
-    - name: site.isHubCluster
+    - name: clusterGroup.isHubCluster
       value: "false"
     clusterSelector:
 #      matchLabels:
-#        site: factory
+#        clusterGroup: factory
       matchExpressions:
       - key: vendor
         operator: In

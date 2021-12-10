@@ -83,7 +83,7 @@ spec:
   source:
     repoURL:  https://github.com/beekhof/common.git
     targetRevision: main
-    path: common/site
+    path: common/clustergroup
     helm:
       valueFiles:
       - "https://github.com/beekhof/patterns/raw/main/values-global.yaml"
