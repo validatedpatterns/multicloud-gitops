@@ -7,5 +7,5 @@ global:
     syncPolicy: Manual
     installPlanApproval: Automatic
 
-clusterGroup:
-  name: hub
+main:
+  clusterGroupName: hub
