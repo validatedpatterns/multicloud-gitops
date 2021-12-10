@@ -1,4 +1,4 @@
-{{- range .Values.site.subscriptions }}
+{{- range .Values.clusterGroup.subscriptions }}
 {{- $subs := . }}
 {{- $installPlanValue := .installPlanApproval }}
 

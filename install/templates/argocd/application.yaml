@@ -3,21 +3,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ .Release.Name }}-{{ .Values.main.siteName }}
+  name: {{ .Release.Name }}-{{ .Values.main.clusterGroupName }}
   namespace: openshift-gitops
 spec:
   destination:
     name: in-cluster
-    namespace: {{ .Release.Name }}-{{ .Values.main.siteName }}
+    namespace: {{ .Release.Name }}-{{ .Values.main.clusterGroupName }}
   project: default
   source:
     repoURL: {{ .Values.main.git.repoURL }}
     targetRevision: {{ .Values.main.git.revision }}
-    path: common/site
+    path: common/clustergroup
     helm:
       valueFiles:
       - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-global.yaml"
-      - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-{{ .Values.main.siteName }}.yaml"
+      - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-{{ .Values.main.clusterGroupName }}.yaml"
       # Track the progress of https://github.com/argoproj/argo-cd/pull/6280
       parameters:
         - name: global.repoURL
