@@ -31,29 +31,15 @@ clusterGroup:
     project: hub
     path: common/vault
 
-  managedSites:
+  managedClusterGroups:
   - name: region-one
     helmOverrides:
     - name: clusterGroup.isHubCluster
       value: false
     clusterSelector:
-      matchExpressions:
-      - key: vendor
-        operator: In
-        values:
-          - OpenShift
+      matchLabels:
+        clusterGroup: region-one
 
-  - name: region-two
-    helmOverrides:
-    - name: clusterGroup.isHubCluster
-      value: false
-    clusterSelector:
-      matchExpressions:
-      - key: vendor
-        operator: In
-        values:
-          - OpenShift
-#
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
 #  - name: pipelines
