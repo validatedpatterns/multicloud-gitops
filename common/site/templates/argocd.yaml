@@ -45,6 +45,7 @@ spec:
         cpu: 500m
         memory: 2Gi
   dex:
+    openShiftOAuth: true
     resources:
       limits:
         cpu: 500m

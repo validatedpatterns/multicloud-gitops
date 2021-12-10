@@ -3,8 +3,8 @@ kind: ConfigMap
 metadata:
   name: environment
 data:
-  IMAGE_PROVIDER: {{ .Values.global.quay.provider }}
-  IMAGE_ACCOUNT: {{ .Values.global.quay.account }}
+  IMAGE_PROVIDER: {{ .Values.global.imageregistry.hostname }}
+  IMAGE_ACCOUNT: {{ .Values.global.imageregistry.account }}
   GIT_EMAIL: {{ .Values.global.git.email }}
   GIT_DEV_REPO_URL: https://{{ .Values.global.git.hostname }}/{{ .Values.global.git.account }}/manuela-dev.git
   GIT_DEV_REPO_REVISION: {{ .Values.global.git.dev_revision }}
