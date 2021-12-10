@@ -1,0 +1,22 @@
+{{- range .Values.clusterGroup.projects }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ . }}
+  namespace: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
+spec:
+  description: "Pattern {{ . }}"
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+status: {}
+---
+{{- end }}
