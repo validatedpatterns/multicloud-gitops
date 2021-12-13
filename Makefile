@@ -7,3 +7,4 @@ default: show
 	make -f common/Makefile $*
 
 install: deploy
+	echo "Installed"
