@@ -1,10 +1,10 @@
 global:
   options:
-    useCSV: True
+    useCSV: False
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
-site:
+clusterGroup:
   name: region-one
 
   proposedOptions:
