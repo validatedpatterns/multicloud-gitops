@@ -16,10 +16,10 @@ clusterGroup:
     - ansible-automation-platform
 
   subscriptions:
-    - name: ansible-automation-platform
+    - name: ansible-automation-platform-operator
       namespace: ansible-automation-platform
       channel: stable-2.1
-      csv: ansible-automation-platform.v2.1
+      csv: aap-operator.v2.1.0-0.1639138915
 
 
   projects:
