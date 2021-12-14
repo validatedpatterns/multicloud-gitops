@@ -26,6 +26,9 @@ clusterGroup:
     - ansible-automation-platform
 
   applications:
+    - name: ansible
+      project: ansible-automation-platform
+      path: region/aap
 
 #
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
