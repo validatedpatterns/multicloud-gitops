@@ -1,10 +1,10 @@
 global:
   options:
-    useCSV: True
+    useCSV: False
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
-site:
+clusterGroup:
   name: region-one
 
   proposedOptions:
@@ -12,10 +12,18 @@ site:
     isHubCluster: False
 
   namespaces:
+    - multicloud-gitops-region-one
+    - ansible-automation-platform
 
   subscriptions:
+    - name: ansible-automation-platform
+      namespace: ansible-automation-platform
+      channel: stable-2.1
+      csv: ansible-automation-platform.v2.1
+
 
   projects:
+    - ansible-automation-platform
 
   applications:
 
