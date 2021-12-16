@@ -44,4 +44,7 @@ upgrade:
 uninstall:
 	helm uninstall $(NAME)
 
+vault-init:
+	common/scripts/vault-utils.sh vault_init common/pattern-vault.init
+
 .phony: install test
