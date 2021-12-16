@@ -3,4 +3,4 @@
 *.swo
 values-secret.yaml
 .*-expected.yaml
-.vault.init
+pattern-vault.init
