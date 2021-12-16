@@ -6,7 +6,7 @@ global:
 # Enable dev server mode in vault as a default
 server:
   dev:
-    enabled: true
+    enabled: false
 
   # Values from values.openshift.yaml in common/vault to work better with openshift
   image:
