@@ -8,6 +8,21 @@ server:
   dev:
     enabled: true
 
+  # Values from values.openshift.yaml in common/vault to work better with openshift
+  image:
+    repository: "registry.connect.redhat.com/hashicorp/vault"
+    tag: "1.9.0-ubi"
+
+# Values from values.openshift.yaml in common/vault to work better with openshift
+injector:
+  image:
+    repository: "registry.connect.redhat.com/hashicorp/vault-k8s"
+    tag: "0.14.1-ubi"
+
+  agentImage:
+    repository: "registry.connect.redhat.com/hashicorp/vault"
+    tag: "1.9.0-ubi"
+
 clusterGroup:
   name: hub
 
