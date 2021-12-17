@@ -37,6 +37,14 @@ get_vault_ready()
 
 vault_unseal()
 {
+	# Argument is expected to be the text output of the vault operator init command which includes Unseal Keys
+	# (5 by default) and a root token.
+	if [ -n "$1" ]; then
+		file=$1
+	else
+		file=common/vault.init
+	fi
+
 	for unseal in `cat $1 | grep "Unseal Key" | awk '{ print $4 }'`
 	do
 		oc -n vault exec vault-0 -- vault operator unseal $unseal
@@ -45,12 +53,15 @@ vault_unseal()
 
 vault_init()
 {
+	# Argument is expected to be the text output of the vault operator init command which includes Unseal Keys
+	# (5 by default) and a root token.
 	if [ -n "$1" ]; then
 		file=$1
 	else
 		file=common/vault.init
 	fi
 
+	# The vault is ready to be initialized when it is "Running" but not "ready".  Unsealing it makes it ready
 	rdy_check=`get_vault_ready`
 	until [ "$rdy_check" = "0/1 Running" ]
 	do
