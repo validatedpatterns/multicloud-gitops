@@ -3,7 +3,8 @@ global:
   # See https://github.com/hashicorp/vault-helm/issues/343 for more infos
   openshift: true
 
-# Enable dev server mode in vault as a default
+# This value can be changed to "true" to deploy the server in dev mode.  However, when this is done, the vault
+# server will not store any data and this should NEVER be done in production.
 server:
   dev:
     enabled: false
