@@ -12,6 +12,10 @@ spec:
   name: openshift-gitops-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
+  config:
+    env:
+      - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
+        value: {{ .Release.Name }}-{{ .Values.main.clusterGroupName }},openshift-gitops
 {{- if .Values.main.options.useCSV }}
   startingCSV: openshift-gitops-operator.{{ .Values.main.gitops.csv }}
 {{- end }}
