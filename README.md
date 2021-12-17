@@ -109,9 +109,53 @@ service](https://console.redhat.com/openshift/create).
    # admin.password
    WNklRCD8EFg2zK034
    ```
+# Dealing with the Vault
 
+This pattern uses the HashiCorp vault operator and helm chart as a mechanism for storing and retrieving secrets.  The
+vault runs in regular mode, which requires some special handling, in the case of bootstrap and if the cluster is ever
+completely shut down.
 
-1. Check all applications are synchronised
+It is worth noting that in this pattern we deploy only a single instance of the vault per cluster - ordinarily there
+would be multiple copies of the vault running, to support high availability.
+
+For more info consult the [HashiCorp Vault Documentation](https://learn.hashicorp.com/tutorials/vault/kubernetes-raft-deployment-guide?in=vault/kubernetes#initialize-and-unseal-vault) which covers these and other issues in detail.
+
+## Bootstrap: init and unseal
+```
+make vault-init
+```
+
+Note: the vault server does offer a "dev" mode which allows usage of the vault but disables storage of secrets and is
+not suitable for use in any kind of production environment.
+
+When the pattern is first installed on the cluster, the vault must be initialized.  The initialization process will
+generate a series of unseal keys which must be sent to the vault server to allow access to it. The pattern provides some scripting and utilities to initialize and unseal the new vault, which is necessary in order to use it.  The necessary
+commands are bundled into the Makefile, which calls an included shell script, `common/scripts/vault-utils.sh`.
+
+Because there is not really a situation where you would want to initialize and unseal a vault separately, the
+`vault-init` target does both operations together.  The provided script differentiates the actions, if you wish to run
+them separately.
+
+So `make vault-init` will run both the `vault operator init` and `vault operator unseal` operations on the new vault.
+This only needs to be done when initially creating the vault - subsequently, the vault only needs to be unsealed to use it.
+
+The `make vault-init` process will also create a file in the git repository common directory called `pattern-vault.init`
+which will contain the output of the `vault operator init` command - this includes 5 Unseal Keys and a Root Token. It is
+handy to keep that file for future reference (the Unseal Keys are required to re-open the vault if it goes down), but
+the filename is included in the .gitignore file for the repo so it is intentionally difficult (and not recommended) to
+commit it to git.
+
+## Cluster Power-Off: unseal
+
+```
+make vault-unseal
+```
+
+If, operationally, all nodes serving the vault go offline, the vault needs to be unsealed again to use use it.  (This
+would happen, for example, if the cluster running the pattern is entirely powered down.)  Unsealing a vault is designed
+to be a manual process.  Assuming the vault was initialized according the directions above, the Unseal Keys
+will be recorded in the file `common/pattern-vault.init`.  These keys are required to unseal the vault for use again,
+which can be done by running `make vault-unseal` in the project root directory.
 
 # Pattern Layout and Structure
 
