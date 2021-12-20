@@ -14,6 +14,7 @@ clusterGroup:
   namespaces:
     - multicloud-gitops-region-one
     - ansible-automation-platform
+    - vault-external-secrets
 
   subscriptions:
     - name: ansible-automation-platform-operator
@@ -24,11 +25,16 @@ clusterGroup:
 
   projects:
     - ansible-automation-platform
+    - vault-external-secrets
 
   applications:
     - name: ansible
       project: ansible-automation-platform
       path: region/aap
+
+    - name: vault-external-secrets
+      project: vault-external-secrets
+      path: common/external-secrets
 
 #
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
