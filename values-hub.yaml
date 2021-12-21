@@ -64,7 +64,7 @@ clusterGroup:
     overrides:
     - name: global.openshift
       value: "true"
-      forceString: true
+#      forceString: true
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: server.image.tag
