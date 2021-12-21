@@ -58,12 +58,15 @@ clusterGroup:
   - name: vault
     namespace: vault
     project: hub
-    path: common/vault
+    chart: vault
+    repoURL: https://helm.releases.hashicorp.com
     overrides:
     - name: server.dev.enabled
-      value: False
+      value: "false"
+      forceString: "True"
     - name: global.openshift
-      value: True
+      value: "true"
+      forceString: "True"
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: server.image.tag
