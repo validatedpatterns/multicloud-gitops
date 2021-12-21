@@ -59,6 +59,7 @@ clusterGroup:
     namespace: vault
     project: hub
     path: common/vault
+    forceString: true
     overrides:
     - name: server.dev.enabled
       value: "false"
