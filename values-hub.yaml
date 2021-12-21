@@ -62,9 +62,9 @@ clusterGroup:
     repoURL: https://helm.releases.hashicorp.com
     targetRevision: v0.18.0
     overrides:
-#    - name: global.openshift
-#      value: "true"
-#      forceString: true
+    - name: global.openshift
+      value: "true"
+      forceString: true
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: server.image.tag
