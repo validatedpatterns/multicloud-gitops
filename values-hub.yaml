@@ -5,24 +5,24 @@ global:
 
 # This value can be changed to "true" to deploy the server in dev mode.  However, when this is done, the vault
 # server will not store any data and this should NEVER be done in production.
-server:
-  dev:
-    enabled: false
-
-  # Values from values.openshift.yaml in common/vault to work better with openshift
-  image:
-    repository: "registry.connect.redhat.com/hashicorp/vault"
-    tag: "1.9.0-ubi"
-
-# Values from values.openshift.yaml in common/vault to work better with openshift
-injector:
-  image:
-    repository: "registry.connect.redhat.com/hashicorp/vault-k8s"
-    tag: "0.14.1-ubi"
-
-  agentImage:
-    repository: "registry.connect.redhat.com/hashicorp/vault"
-    tag: "1.9.0-ubi"
+#server:
+#  dev:
+#    enabled: false
+#
+#  # Values from values.openshift.yaml in common/vault to work better with openshift
+#  image:
+#    repository: "registry.connect.redhat.com/hashicorp/vault"
+#    tag: "1.9.0-ubi"
+#
+## Values from values.openshift.yaml in common/vault to work better with openshift
+#injector:
+#  image:
+#    repository: "registry.connect.redhat.com/hashicorp/vault-k8s"
+#    tag: "0.14.1-ubi"
+#
+#  agentImage:
+#    repository: "registry.connect.redhat.com/hashicorp/vault"
+#    tag: "1.9.0-ubi"
 
 clusterGroup:
   name: hub
@@ -55,11 +55,27 @@ clusterGroup:
         jsonPointers:
           - /spec/loggingCA
 
-
   - name: vault
     namespace: vault
     project: hub
     path: common/vault
+    overrides:
+      - name: server.dev.enabled
+        value: false
+      - name: global.openshift
+        value: true
+      - name: server.image.repository
+        value: "registry.connect.redhat.com/hashicorp/vault"
+      - name: server.image.tag
+        value: "1.9.0-ubi"
+      - name: injector.image.repository
+        value: "registry.connect.redhat.com/hashicorp/vault-k8s"
+      - name: injector.image.tag
+        value: "0.14.1-ubi"
+      - name: injector.agentImage.repository
+        value: "registry.connect.redhat.com/hashicorp/vault"
+      - name: injector.agentImage.tag
+        value: "1.9.0-ubi"
 
   managedClusterGroups:
   - name: region-one
