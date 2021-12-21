@@ -63,8 +63,7 @@ clusterGroup:
     targetRevision: v0.18.0
     overrides:
     - name: global.openshift
-      value: "true"
-#      forceString: true
+      value: \"true\"
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: server.image.tag
