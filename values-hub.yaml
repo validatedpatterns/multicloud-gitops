@@ -1,7 +1,7 @@
-#global:
+global:
   # Needed by vault to avoid trying to set some security contexts which do not apply on openshift
   # See https://github.com/hashicorp/vault-helm/issues/343 for more infos
-#  openshift: true
+  openshift: true
 
 # This value can be changed to "true" to deploy the server in dev mode.  However, when this is done, the vault
 # server will not store any data and this should NEVER be done in production.
@@ -61,9 +61,9 @@ clusterGroup:
     chart: vault
     repoURL: https://helm.releases.hashicorp.com
     overrides:
-    - name: global.openshift
-      value: "true"
-      forceString: true
+#    - name: global.openshift
+#      value: "true"
+#      forceString: true
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: server.image.tag
