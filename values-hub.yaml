@@ -42,7 +42,7 @@ clusterGroup:
     targetRevision: v0.18.0
     overrides:
     - name: global.openshift
-      value: "true"
+      value: 'true'
       forceString: true
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
