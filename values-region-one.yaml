@@ -22,7 +22,6 @@ clusterGroup:
       channel: stable-2.1
       csv: aap-operator.v2.1.0-0.1639138915
 
-
   projects:
     - ansible-automation-platform
     - external-secrets
@@ -32,12 +31,12 @@ clusterGroup:
       project: ansible-automation-platform
       path: region/aap
 
-    - name: external-secrets
-      namespace: external-secrets
-      project: external-secrets
-      chart: external-secrets
-      repoURL: https://charts.external-secrets.io
-      targetRevision: v0.3.10
+#    - name: external-secrets
+#      namespace: external-secrets
+#      project: external-secrets
+#      chart: external-secrets
+#      repoURL: https://charts.external-secrets.io
+#      targetRevision: v0.3.10
 
 #
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
