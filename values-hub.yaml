@@ -63,7 +63,7 @@ clusterGroup:
     targetRevision: v0.18.0
     overrides:
     - name: global.openshift
-      value: !!str "true"
+      value: !!str true
 #      this worked, astoundingly (at least without error - didn't check results)
 #      value: \"true\"
     - name: server.image.repository
