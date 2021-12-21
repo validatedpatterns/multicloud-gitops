@@ -62,8 +62,9 @@ clusterGroup:
     repoURL: https://helm.releases.hashicorp.com
     targetRevision: v0.18.0
     overrides:
-    - name: global.openshift
-      value: \"true\"
+#    Quiet the madness for now - override in "global" space, will work to find a way to pass it here
+#    - name: global.openshift
+#      value: \"true\"
 #      this worked, astoundingly (at least without error - didn't check results)
 #      value: \"true\"
     - name: server.image.repository
