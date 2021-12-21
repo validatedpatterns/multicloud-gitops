@@ -50,32 +50,32 @@ clusterGroup:
     project: hub
     path: common/acm
     ignoreDifferences:
-      - group: internal.open-cluster-management.io
-        kind: ManagedClusterInfo
-        jsonPointers:
-          - /spec/loggingCA
+    - group: internal.open-cluster-management.io
+      kind: ManagedClusterInfo
+      jsonPointers:
+        - /spec/loggingCA
 
   - name: vault
     namespace: vault
     project: hub
     path: common/vault
     overrides:
-      - name: server.dev.enabled
-        value: false
-      - name: global.openshift
-        value: true
-      - name: server.image.repository
-        value: "registry.connect.redhat.com/hashicorp/vault"
-      - name: server.image.tag
-        value: "1.9.0-ubi"
-      - name: injector.image.repository
-        value: "registry.connect.redhat.com/hashicorp/vault-k8s"
-      - name: injector.image.tag
-        value: "0.14.1-ubi"
-      - name: injector.agentImage.repository
-        value: "registry.connect.redhat.com/hashicorp/vault"
-      - name: injector.agentImage.tag
-        value: "1.9.0-ubi"
+    - name: server.dev.enabled
+      value: false
+    - name: global.openshift
+      value: true
+    - name: server.image.repository
+      value: "registry.connect.redhat.com/hashicorp/vault"
+    - name: server.image.tag
+      value: "1.9.0-ubi"
+    - name: injector.image.repository
+      value: "registry.connect.redhat.com/hashicorp/vault-k8s"
+    - name: injector.image.tag
+      value: "0.14.1-ubi"
+    - name: injector.agentImage.repository
+      value: "registry.connect.redhat.com/hashicorp/vault"
+    - name: injector.agentImage.tag
+      value: "1.9.0-ubi"
 
   managedClusterGroups:
   - name: region-one
