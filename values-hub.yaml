@@ -1,8 +1,3 @@
-#global:
-  # Needed by vault to avoid trying to set some security contexts which do not apply on openshift
-  # See https://github.com/hashicorp/vault-helm/issues/343 for more infos
-#  openshift: true
-
 clusterGroup:
   name: hub
 
@@ -42,6 +37,7 @@ clusterGroup:
     targetRevision: v0.18.0
     overrides:
     - name: global.openshift
+# This bizarre construct is to allow true to present itself to ArgoCD as a string, and to the chart as a boolean
       value: '"true"'
       forceString: true
     - name: server.image.repository
