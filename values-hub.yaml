@@ -61,10 +61,10 @@ clusterGroup:
     path: common/vault
     overrides:
     - name: server.dev.enabled
-      value: 0
+      value: no
       forceString: "True"
     - name: global.openshift
-      value: 1
+      value: yes
       forceString: "True"
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
