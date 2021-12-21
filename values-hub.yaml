@@ -1,29 +1,3 @@
-global:
-  # Needed by vault to avoid trying to set some security contexts which do not apply on openshift
-  # See https://github.com/hashicorp/vault-helm/issues/343 for more infos
-  openshift: true
-
-# This value can be changed to "true" to deploy the server in dev mode.  However, when this is done, the vault
-# server will not store any data and this should NEVER be done in production.
-#server:
-#  dev:
-#    enabled: false
-#
-#  # Values from values.openshift.yaml in common/vault to work better with openshift
-#  image:
-#    repository: "registry.connect.redhat.com/hashicorp/vault"
-#    tag: "1.9.0-ubi"
-#
-## Values from values.openshift.yaml in common/vault to work better with openshift
-#injector:
-#  image:
-#    repository: "registry.connect.redhat.com/hashicorp/vault-k8s"
-#    tag: "0.14.1-ubi"
-#
-#  agentImage:
-#    repository: "registry.connect.redhat.com/hashicorp/vault"
-#    tag: "1.9.0-ubi"
-
 clusterGroup:
   name: hub
 
@@ -62,11 +36,9 @@ clusterGroup:
     repoURL: https://helm.releases.hashicorp.com
     targetRevision: v0.18.0
     overrides:
-#    Quiet the madness for now - override in "global" space, will work to find a way to pass it here
-#    - name: global.openshift
-#      value: \"true\"
-#      this worked, astoundingly (at least without error - didn't check results)
-#      value: \"true\"
+    - name: global.openshift
+# This bizarre construct is to allow true to present itself to ArgoCD as a string, and to the chart as a boolean
+      value: '"true"'
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: server.image.tag
