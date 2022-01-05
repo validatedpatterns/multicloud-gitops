@@ -55,6 +55,8 @@ spec:
                         value: {{ $.Values.global.pattern }}
                       - name: global.valuesDirectoryURL
                         value: {{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}
+                      - name: global.hubClusterDomain
+                        value: {{ .Values.global.hubClusterDomain }}
                      {{- range .helmOverrides }}
                       - name: {{ .name }}
                         value: {{ .value | quote }}
