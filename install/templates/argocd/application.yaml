@@ -30,6 +30,8 @@ spec:
           value: {{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}
         - name: global.pattern
           value: {{ .Release.Name }}
+        - name: global.hubClusterDomain
+          value: {{ .Values.global.hubClusterDomain }}
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: {}
