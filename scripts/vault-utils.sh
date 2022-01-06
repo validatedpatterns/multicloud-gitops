@@ -78,4 +78,18 @@ vault_init()
 	vault_unseal $file
 }
 
+vault_get_root_token()
+{
+	# Argument is expected to be the text output of the vault operator init command which includes Unseal Keys
+	# (5 by default) and a root token.
+	if [ -n "$1" ]; then
+		file=$1
+	else
+		file=common/vault.init
+	fi
+
+	token=`grep "Initial Root Token" $file | awk '{ print $4 }'`
+	echo -n $token
+}
+
 $@
