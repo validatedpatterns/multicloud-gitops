@@ -4,3 +4,4 @@
 values-secret.yaml
 .*-expected.yaml
 pattern-vault.init
+vault.init
