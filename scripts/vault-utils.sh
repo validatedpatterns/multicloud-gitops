@@ -112,7 +112,14 @@ oc_get_domain()
 
 oc_get_pki_domain()
 {
-	basedomain=`oc_get_domain | cut -d. -f3-`
+	echo -n `oc_get_domain | cut -d. -f3-`
+}
+
+oc_get_pki_role()
+{
+	pkidomain=`oc_get_pki_domain`
+	certrole=`echo $pkidomain | sed 's|\.|_|g'`
+	echo -n $certrole
 }
 
 vault_pki_init()
@@ -121,14 +128,14 @@ vault_pki_init()
 	token=`vault_get_root_token $file`
 	shift
 
-	pkidomain=`oc_get_pki_domain`
-	certrole=`sed -e 's|\.|_|g' $pkidomain`
+	pkidomain=`oc_get_pki_role`
+	pkirole=`oc_get_pki_role`
 
 	vault_token_exec $file "vault secrets enable pki"
 	vault_token_exec $file "vault secrets tune --max-lease=8760h pki"
 	vault_token_exec $file "vault write pki/root/generate/internal common_name=$pkidomain ttl=8760h"
 	vault_token_exec $file 'vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"'
-	vault_token_exec $file "vault write pki/roles/$certrole allowed_domains=$pkidomain allow_subdomains=true max_ttl=8760h"
+	vault_token_exec $file "vault write pki/roles/$pkirole allowed_domains=$pkidomain allow_subdomains=true max_ttl=8760h"
 }
 
 $@
