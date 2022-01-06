@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 # Assumptions - vault in the demo will be running in non-HA mode so there will only be a vault-0
 # vault will be running in the "vault" namespace
@@ -78,6 +78,7 @@ vault_init()
 	vault_unseal $file
 }
 
+# Retrieves the root token specified in the file $1
 vault_get_root_token()
 {
 	# Argument is expected to be the text output of the vault operator init command which includes Unseal Keys
@@ -92,6 +93,8 @@ vault_get_root_token()
 	echo -n $token
 }
 
+# Exec a vault command wrapped with the vault root token specified in the file
+# $1
 vault_token_exec()
 {
 	file="$1"
@@ -100,6 +103,26 @@ vault_token_exec()
 	cmd="$@"
 
 	oc -n vault exec vault-0 -- bash -c "VAULT_TOKEN=$token $cmd"
+}
+
+oc_get_domain()
+{
+	oc get ingresses.config/cluster -o jsonpath={.spec.domain}
+}
+
+vault_pki_init()
+{
+	file="$1"
+	token=`vault_get_root_token $file`
+	shift
+
+	domain=`oc_get_domain`
+
+	vault_token_exec $file "vault secrets enable pki"
+	vault_token_exec $file "vault secrets tune --max-lease=8760h pki"
+	vault_token_exec $file "vault write pki/root/generate/internal common_name=$domain ttl=8760h"
+	vault_token_exec $file 'vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"'
+	vault_token_exec $file "vault write pki/roles/certificate allowed_domains=$domain allow_subdomains=true max_ttl=8760h"
 }
 
 $@
