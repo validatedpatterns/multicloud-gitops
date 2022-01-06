@@ -78,4 +78,64 @@ vault_init()
 	vault_unseal $file
 }
 
+# Retrieves the root token specified in the file $1
+vault_get_root_token()
+{
+	# Argument is expected to be the text output of the vault operator init command which includes Unseal Keys
+	# (5 by default) and a root token.
+	if [ -n "$1" ]; then
+		file=$1
+	else
+		file=common/vault.init
+	fi
+
+	token=`grep "Initial Root Token" $file | awk '{ print $4 }'`
+	echo -n $token
+}
+
+# Exec a vault command wrapped with the vault root token specified in the file
+# $1
+vault_token_exec()
+{
+	file="$1"
+	token=`vault_get_root_token $file`
+	shift
+	cmd="$@"
+
+	oc -n vault exec vault-0 -- bash -c "VAULT_TOKEN=$token $cmd"
+}
+
+oc_get_domain()
+{
+	oc get ingresses.config/cluster -o jsonpath={.spec.domain}
+}
+
+oc_get_pki_domain()
+{
+	echo -n `oc_get_domain | cut -d. -f3-`
+}
+
+oc_get_pki_role()
+{
+	pkidomain=`oc_get_pki_domain`
+	certrole=`echo $pkidomain | sed 's|\.|_|g'`
+	echo -n $certrole
+}
+
+vault_pki_init()
+{
+	file="$1"
+	token=`vault_get_root_token $file`
+	shift
+
+	pkidomain=`oc_get_pki_role`
+	pkirole=`oc_get_pki_role`
+
+	vault_token_exec $file "vault secrets enable pki"
+	vault_token_exec $file "vault secrets tune --max-lease=8760h pki"
+	vault_token_exec $file "vault write pki/root/generate/internal common_name=$pkidomain ttl=8760h"
+	vault_token_exec $file 'vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"'
+	vault_token_exec $file "vault write pki/roles/$pkirole allowed_domains=$pkidomain allow_subdomains=true max_ttl=8760h"
+}
+
 $@
