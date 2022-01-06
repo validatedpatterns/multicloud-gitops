@@ -45,10 +45,12 @@ vault_unseal()
 		file=common/vault.init
 	fi
 
-	for unseal in `cat $1 | grep "Unseal Key" | awk '{ print $4 }'`
+	for unseal in `cat $file | grep "Unseal Key" | awk '{ print $4 }'`
 	do
 		oc -n vault exec vault-0 -- vault operator unseal $unseal
 	done
+
+	vault_login $file
 }
 
 vault_init()
@@ -75,7 +77,13 @@ vault_init()
 	done
 
 	oc -n vault exec vault-0 -- vault operator init | tee $file
+
 	vault_unseal $file
+	vault_login $file
+
+	vault_pki_init $file
+	vault_k8s_init $file
+	vault_secrets_init $file
 }
 
 # Retrieves the root token specified in the file $1
@@ -102,7 +110,27 @@ vault_token_exec()
 	shift
 	cmd="$@"
 
-	oc -n vault exec vault-0 -- bash -c "VAULT_TOKEN=$token $cmd"
+	vault_exec $file "VAULT_TOKEN=$token $cmd"
+}
+
+vault_exec()
+{
+	file="$1"
+	token=`vault_get_root_token $file`
+	shift
+	cmd="$@"
+
+	oc -n vault exec vault-0 -- bash -c "$cmd"
+}
+
+vault_login()
+{
+	file="$1"
+	token=`vault_get_root_token $file`
+	shift
+	cmd="$@"
+
+	vault_exec $file "vault login $token"
 }
 
 oc_get_domain()
@@ -125,17 +153,44 @@ oc_get_pki_role()
 vault_pki_init()
 {
 	file="$1"
-	token=`vault_get_root_token $file`
-	shift
 
-	pkidomain=`oc_get_pki_role`
+	pkidomain=`oc_get_pki_domain`
 	pkirole=`oc_get_pki_role`
 
-	vault_token_exec $file "vault secrets enable pki"
-	vault_token_exec $file "vault secrets tune --max-lease=8760h pki"
-	vault_token_exec $file "vault write pki/root/generate/internal common_name=$pkidomain ttl=8760h"
-	vault_token_exec $file 'vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"'
-	vault_token_exec $file "vault write pki/roles/$pkirole allowed_domains=$pkidomain allow_subdomains=true max_ttl=8760h"
+	vault_exec $file "vault secrets enable pki"
+	vault_exec $file "vault secrets tune --max-lease=8760h pki"
+	vault_exec $file "vault write pki/root/generate/internal common_name=$pkidomain ttl=8760h"
+	vault_exec $file 'vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"'
+	vault_exec $file "vault write pki/roles/$pkirole allowed_domains=$pkidomain allow_subdomains=true max_ttl=8760h"
+}
+
+vault_kubernetes_init()
+{
+	file="$1"
+
+	vault_token=$(oc sa get-token -n vault vault)
+	k8s_host='kubernetes_host=https://$KUBERNETES_PORT_443_TCP_ADDR:443'
+
+	vault_exec $file "vault auth enable kubernetes"
+	vault_exec $file "vault write auth/kubernetes/config token_reviewer_jwt=$vault_token $k8s_host kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt issuer=https://kubernetes.default.svc"
+}
+
+vault_secrets_init()
+{
+	file="$1"
+
+	vault_exec $file "vault secrets enable -path=secret kv-v2"
+}
+
+vault_create_secret()
+{
+	file="$1"
+	shift
+	secret_path="$1"
+	shift
+	secret="$@"
+
+	vault_exec $file "vault kv put $secret_path $secret"
 }
 
 $@
