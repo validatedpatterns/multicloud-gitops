@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # Assumptions - vault in the demo will be running in non-HA mode so there will only be a vault-0
 # vault will be running in the "vault" namespace
@@ -90,6 +90,16 @@ vault_get_root_token()
 
 	token=`grep "Initial Root Token" $file | awk '{ print $4 }'`
 	echo -n $token
+}
+
+vault_token_exec()
+{
+	file="$1"
+	token=`vault_get_root_token $file`
+	shift
+	cmd="$@"
+
+	oc -n vault exec vault-0 -- bash -c "VAULT_TOKEN=$token $cmd"
 }
 
 $@
