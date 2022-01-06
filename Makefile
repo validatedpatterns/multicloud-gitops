@@ -47,7 +47,6 @@ uninstall:
 
 vault-init:
 	common/scripts/vault-utils.sh vault_init common/pattern-vault.init
-	common/scripts/vault-utils.sh vault_pki_init common/pattern-vault.init
 
 vault-unseal:
 	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
