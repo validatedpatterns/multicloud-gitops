@@ -82,7 +82,7 @@ vault_init()
 	vault_login $file
 
 	vault_pki_init $file
-	vault_k8s_init $file
+	vault_kubernetes_init $file
 	vault_secrets_init $file
 }
 
