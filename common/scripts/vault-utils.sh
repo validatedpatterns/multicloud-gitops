@@ -84,6 +84,7 @@ vault_init()
 	vault_pki_init $file
 	vault_kubernetes_init $file
 	vault_secrets_init $file
+	vault_policy_init $file
 }
 
 # Retrieves the root token specified in the file $1
@@ -173,6 +174,18 @@ vault_kubernetes_init()
 
 	vault_exec $file "vault auth enable kubernetes"
 	vault_exec $file "vault write auth/kubernetes/config token_reviewer_jwt=$vault_token $k8s_host kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt issuer=https://kubernetes.default.svc"
+}
+
+vault_policy_init()
+{
+	file="$1"
+
+	vault_exec $file 'vault policy write hub-policy - << EOF
+path "secret/*"
+  { capabilities = ["read"]
+}
+EOF
+'
 }
 
 vault_secrets_init()
