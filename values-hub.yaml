@@ -39,8 +39,8 @@ clusterGroup:
     - name: global.openshift
 # This bizarre construct is to allow true to present itself to ArgoCD as a string, and to the chart as a boolean
       value: '"true"'
-    - name: global.tlsDisable
-      value: '"false"'
+    #- name: global.tlsDisable
+    #  value: '"false"'
     - name: deploy.route.tls.enabled
       value: '"true"'
     - name: route.enabled
