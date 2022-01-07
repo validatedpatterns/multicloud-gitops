@@ -47,6 +47,8 @@ clusterGroup:
       value: '"true"'
     - name: ui.enabled
       value: '"true"'
+    - name: ui.serviceType
+      value: LoadBalancer
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: server.image.tag
