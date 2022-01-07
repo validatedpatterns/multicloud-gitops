@@ -39,12 +39,12 @@ clusterGroup:
     - name: global.openshift
 # This bizarre construct is to allow true to present itself to ArgoCD as a string, and to the chart as a boolean
       value: '"true"'
-    - name: deploy.route.tls.enabled
-      value: '"true"'
-    - name: route.enabled
-      value: '"true"'
-    - name: server.route.enabled
-      value: '"true"'
+#    - name: deploy.route.tls.enabled
+#      value: '"true"'
+#    - name: route.enabled
+#      value: '"true"'
+#    - name: server.route.enabled
+#      value: '"true"'
     - name: ui.enabled
       value: '"true"'
     - name: ui.serviceType
@@ -61,6 +61,11 @@ clusterGroup:
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: injector.agentImage.tag
       value: "1.9.0-ubi"
+
+  - name: vault-route
+    namespace: vault
+    project: hub
+    path: common/vault-route
 
   managedClusterGroups:
   - name: region-one
