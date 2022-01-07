@@ -43,6 +43,8 @@ clusterGroup:
       value: '"true"'
     - name: route.enabled
       value: '"true"'
+    - name: server.route.enabled
+      value: '"true"'
     - name: ui.enabled
       value: '"true"'
     - name: server.image.repository
