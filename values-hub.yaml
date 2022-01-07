@@ -40,7 +40,7 @@ clusterGroup:
 # This bizarre construct is to allow true to present itself to ArgoCD as a string, and to the chart as a boolean
       value: '"true"'
     - name: deploy.route.tls.enabled
-      value: "true"
+      value: '"true"'
       forceString: true
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
