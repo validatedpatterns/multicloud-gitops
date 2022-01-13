@@ -159,7 +159,7 @@ vault_pki_init()
 	pkirole=`oc_get_pki_role`
 
 	vault_exec $file "vault secrets enable pki"
-	vault_exec $file "vault secrets tune --max-lease=8760h pki"
+	vault_exec $file "vault secrets tune --max-lease-ttl=8760h pki"
 	vault_exec $file "vault write pki/root/generate/internal common_name=$pkidomain ttl=8760h"
 	vault_exec $file 'vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"'
 	vault_exec $file "vault write pki/roles/$pkirole allowed_domains=$pkidomain allow_subdomains=true max_ttl=8760h"
