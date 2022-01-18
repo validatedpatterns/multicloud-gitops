@@ -1,17 +1,40 @@
 {{- range .Values.clusterGroup.subscriptions }}
+{{- $subs := . }}
+{{- $installPlanValue := .installPlanApproval }}
+
+{{- if $subs.namespaces }}
+{{- range .namespaces }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: {{ .name }}
-  namespace: {{ default "openshift-operators" .namespace }}
+  name: {{ $subs.name }}
+  namespace: {{ default "openshift-operators" . }}
 spec:
-  name: {{ .name }}
-  source: {{ default "redhat-operators" .source }}
-  sourceNamespace: {{ default "openshift-marketplace" .sourceNamespace }}
-  channel: {{ default "stable" .channel }}
-  installPlanApproval: {{ coalesce .installPlanApproval $.Values.global.options.installPlanApproval }}
+  name: {{ $subs.name }}
+  source: {{ default "redhat-operators" $subs.source }}
+  sourceNamespace: {{ default "openshift-marketplace" $subs.sourceNamespace }}
+  channel: {{ default "stable" $subs.channel }}
+  installPlanApproval: {{ coalesce $installPlanValue $.Values.global.options.installPlanApproval }}
   {{- if $.Values.global.options.useCSV }}
-  startingCSV: {{ .csv }}
-  {{- end }}  
+  startingCSV: {{ $subs.csv }}
+  {{- end }}
 ---
+{{- end }}
+{{- else }}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: {{ $subs.name }}
+  namespace: {{ default "openshift-operators" $subs.namespace }}
+spec:
+  name: {{ $subs.name }}
+  source: {{ default "redhat-operators" $subs.source }}
+  sourceNamespace: {{ default "openshift-marketplace" $subs.sourceNamespace }}
+  channel: {{ default "stable" $subs.channel }}
+  installPlanApproval: {{ coalesce  $installPlanValue $.Values.global.options.installPlanApproval }}
+  {{- if $.Values.global.options.useCSV }}
+  startingCSV: {{ $subs.csv }}
+  {{- end }}
+---
+{{- end }}
 {{- end }}
