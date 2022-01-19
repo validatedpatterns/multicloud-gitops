@@ -38,6 +38,8 @@ spec:
           value: https://github.com/pattern-clone/mypattern/raw/main
         - name: global.pattern
           value: install
+        - name: global.hubClusterDomain
+          value: hub.example.com
   syncPolicy:
     automated: {}
 ---
@@ -55,3 +57,7 @@ spec:
   name: openshift-gitops-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
+  config:
+    env:
+      - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
+        value: install-example,openshift-gitops

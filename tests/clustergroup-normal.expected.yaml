@@ -124,6 +124,10 @@ spec:
           value: mypattern
         - name: global.valuesDirectoryURL
           value: https://github.com/pattern-clone/mypattern/raw/main
+        - name: global.hubClusterDomain
+          value: hub.example.com
+        - name: global.localClusterDomain
+          value: region.example.com
   ignoreDifferences: [
   {
     "group": "internal.open-cluster-management.io",
@@ -220,6 +224,7 @@ spec:
         cpu: 500m
         memory: 2Gi
   dex:
+    openShiftOAuth: true
     resources:
       limits:
         cpu: 500m
@@ -286,45 +291,6 @@ metadata:
 spec:
   targetNamespaces:
   - application-ci
----
-# Source: pattern-clustergroup/templates/subsciptions.yaml
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: advanced-cluster-management
-  namespace: open-cluster-management
-spec:
-  name: advanced-cluster-management
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
-  channel: release-2.3
-  installPlanApproval: Automatic
----
-# Source: pattern-clustergroup/templates/subsciptions.yaml
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: openshift-pipelines-operator-rh
-  namespace: openshift-operators
-spec:
-  name: openshift-pipelines-operator-rh
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
-  channel: stable
-  installPlanApproval: Automatic
----
-# Source: pattern-clustergroup/templates/subscriptions.yaml
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: advanced-cluster-management
-  namespace: open-cluster-management
-spec:
-  name: advanced-cluster-management
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
-  channel: release-2.3
-  installPlanApproval: Automatic
 ---
 # Source: pattern-clustergroup/templates/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
