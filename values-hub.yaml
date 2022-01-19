@@ -37,16 +37,11 @@ clusterGroup:
     targetRevision: v0.18.0
     overrides:
     - name: global.openshift
-# This bizarre construct is to allow true to present itself to ArgoCD as a string, and to the chart as a boolean
-      value: '"true"'
-#    - name: deploy.route.tls.enabled
-#      value: '"true"'
-#    - name: route.enabled
-#      value: '"true"'
-#    - name: server.route.enabled
-#      value: '"true"'
+      value: true
+      forceString: true
     - name: ui.enabled
-      value: '"true"'
+      value: true
+      forceString: true
     - name: ui.serviceType
       value: LoadBalancer
     - name: server.image.repository
@@ -61,6 +56,8 @@ clusterGroup:
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: injector.agentImage.tag
       value: "1.9.0-ubi"
+    - name: server.route.host
+      value: vault.apps.mhjacks-mcgo-h1.blueprints.rhecoeng.com
 
   - name: vault-route
     namespace: vault
