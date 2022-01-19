@@ -34,7 +34,7 @@ spec:
         terminationMessagePolicy: File
         livenessProbe:
           httpGet:
-            path: /home
+            path: /index.html
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 15
