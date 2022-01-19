@@ -20,6 +20,7 @@ clusterGroup:
 
   projects:
     - external-secrets
+    - config-demo
 
   applications:
   - name: config-demo
