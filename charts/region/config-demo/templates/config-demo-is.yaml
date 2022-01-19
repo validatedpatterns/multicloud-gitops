@@ -6,10 +6,7 @@ spec:
   lookupPolicy:
     local: true
   tags:
-  - name: apache
-    from:
-      kind: DockerImage
-      name: registry.access.redhat.com/ubi8/httpd-24
+  - name: registry.access.redhat.com/ubi8/httpd-24
     importPolicy: {}
     referencePolicy:
       type: Local
