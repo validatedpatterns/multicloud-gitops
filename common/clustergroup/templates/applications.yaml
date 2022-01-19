@@ -41,7 +41,7 @@ spec:
           value: {{ $.Values.global.hubClusterDomain }}
         {{- range .overrides }}
         - name: {{ .name }}
-          value: {{ .value }}
+          value: {{ .value | quote }}
         {{- if .forceString }}
           forceString: true
         {{- end }}
