@@ -1,0 +1,6 @@
+apiVersion: v2
+description: A Helm chart to build and deploy a use of remote configuration enabled by ACM and Vault
+keywords:
+- pattern
+name: config-demo
+version: 0.0.1

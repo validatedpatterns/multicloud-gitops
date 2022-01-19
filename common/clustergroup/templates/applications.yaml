@@ -39,6 +39,8 @@ spec:
           value: {{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}
         - name: global.hubClusterDomain
           value: {{ $.Values.global.hubClusterDomain }}
+        - name: global.localClusterDomain
+          value: {{ $.Values.global.localClusterDomain }}
         {{- range .overrides }}
         - name: {{ .name }}
           value: {{ .value | quote }}

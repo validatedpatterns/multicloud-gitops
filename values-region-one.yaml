@@ -13,23 +13,20 @@ clusterGroup:
 
   namespaces:
     - multicloud-gitops-region-one
-    - ansible-automation-platform
     - external-secrets
+    - config-demo
 
   subscriptions:
-    - name: ansible-automation-platform-operator
-      namespace: ansible-automation-platform
-      channel: stable-2.1
-      csv: aap-operator.v2.1.0-0.1639138915
 
   projects:
-    - ansible-automation-platform
     - external-secrets
+    - config-demo
 
   applications:
-    - name: ansible
-      project: ansible-automation-platform
-      path: region/aap
+  - name: config-demo
+    namespace: config-demo
+    project: config-demo
+    path: charts/region/config-demo
 
 #    - name: external-secrets
 #      namespace: external-secrets
