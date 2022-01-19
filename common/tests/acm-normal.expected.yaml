@@ -135,6 +135,10 @@ spec:
                         value: mypattern
                       - name: global.valuesDirectoryURL
                         value: https://github.com/pattern-clone/mypattern/raw/main
+                      - name: global.hubClusterDomain
+                        value: hub.example.com
+                      - name: global.localClusterDomain
+                        value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain  }}'
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
