@@ -14,6 +14,7 @@ clusterGroup:
   namespaces:
     - multicloud-gitops-region-one
     - external-secrets
+    - config-demo
 
   subscriptions:
 
@@ -21,6 +22,10 @@ clusterGroup:
     - external-secrets
 
   applications:
+  - name: config-demo
+    namespace: config-demo
+    project: config-demo
+    path: charts/region/config-demo
 
 #    - name: external-secrets
 #      namespace: external-secrets
