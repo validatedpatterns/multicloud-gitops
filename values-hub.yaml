@@ -38,10 +38,8 @@ clusterGroup:
     overrides:
     - name: global.openshift
       value: "true"
-      forceString: true
     - name: ui.enabled
       value: "true"
-      forceString: true
     - name: ui.serviceType
       value: LoadBalancer
     - name: server.image.repository
