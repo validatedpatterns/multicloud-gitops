@@ -39,7 +39,14 @@ spec:
                   source:
                     repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
                     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
-                    path: {{ default "common/clustergroup" .path }}
+                    {{- if .chart }}
+                    chart: {{ .chart }}
+                    {{- else }}
+                    path: {{ .path }}
+                    {{- end }}
+                    {{- if .plugin }}
+                    plugin: {{ .plugin | toPrettyJson }}
+                    {{- else if not .kustomize }}
                     helm:
                       valueFiles:
                       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
