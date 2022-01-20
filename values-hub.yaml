@@ -37,11 +37,9 @@ clusterGroup:
     targetRevision: v0.18.0
     overrides:
     - name: global.openshift
-      value: true
-      forceString: true
+      value: "true"
     - name: ui.enabled
-      value: true
-      forceString: true
+      value: "true"
     - name: ui.serviceType
       value: LoadBalancer
     - name: server.image.repository
@@ -56,8 +54,6 @@ clusterGroup:
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: injector.agentImage.tag
       value: "1.9.0-ubi"
-    - name: server.route.host
-      value: vault.apps.mhjacks-mcgo-h1.blueprints.rhecoeng.com
 
   - name: vault-route
     namespace: vault
