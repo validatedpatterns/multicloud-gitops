@@ -34,7 +34,7 @@ clusterGroup:
     project: hub
     chart: vault
     repoURL: https://helm.releases.hashicorp.com
-    targetRevision: v0.18.0
+    targetRevision: v0.19.0
     overrides:
     - name: global.openshift
       value: "true"
@@ -42,23 +42,24 @@ clusterGroup:
       value: "true"
     - name: ui.serviceType
       value: LoadBalancer
+    - name: server.route.enabled
+      value: "true"
+    - name: server.route.host
+      value: null
+    - name: server.route.tls.termination
+      value: edge
     - name: server.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: server.image.tag
-      value: "1.9.0-ubi"
+      value: "1.9.2-ubi"
     - name: injector.image.repository
       value: "registry.connect.redhat.com/hashicorp/vault-k8s"
     - name: injector.image.tag
-      value: "0.14.1-ubi"
+      value: "0.14.2-ubi"
     - name: injector.agentImage.repository
       value: "registry.connect.redhat.com/hashicorp/vault"
     - name: injector.agentImage.tag
-      value: "1.9.0-ubi"
-
-  - name: vault-route
-    namespace: vault
-    project: hub
-    path: common/vault-route
+      value: "1.9.2-ubi"
 
   managedClusterGroups:
   - name: region-one
