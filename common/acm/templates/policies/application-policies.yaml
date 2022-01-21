@@ -58,7 +58,11 @@ spec:
                       - name: global.hubClusterDomain
                         value: {{ $.Values.global.hubClusterDomain }}
                       - name: global.localClusterDomain
-                        value: '{{`{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain  }}`}}'
+                      {{- if $.Values.clusterGroup.isHubCluster }}
+                        value: {{ $.Values.global.hubClusterDomain }}
+                      {{- else }}
+                        value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
+                      {{- end }}
                      {{- range .helmOverrides }}
                       - name: {{ .name }}
                         value: {{ .value | quote }}

@@ -1,9 +1,6 @@
 clusterGroup:
   name: hub
-
-  proposedOptions:
-    manageGitops: True
-    isHubCluster: True
+  isHubCluster: true
 
   namespaces:
   - open-cluster-management

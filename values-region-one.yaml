@@ -6,10 +6,7 @@ global:
 
 clusterGroup:
   name: region-one
-
-  proposedOptions:
-    manageGitops: False
-    isHubCluster: False
+  isHubCluster: false
 
   namespaces:
     - multicloud-gitops-region-one
