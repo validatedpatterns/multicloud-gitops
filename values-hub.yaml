@@ -1,6 +1,6 @@
 clusterGroup:
   name: hub
-  isHubCluster: true
+  isHubCluster: True
 
   namespaces:
   - open-cluster-management
