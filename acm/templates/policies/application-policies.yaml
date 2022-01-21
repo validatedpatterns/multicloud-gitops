@@ -39,14 +39,7 @@ spec:
                   source:
                     repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
                     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
-                    {{- if .chart }}
-                    chart: {{ .chart }}
-                    {{- else }}
-                    path: {{ .path }}
-                    {{- end }}
-                    {{- if .plugin }}
-                    plugin: {{ .plugin | toPrettyJson }}
-                    {{- else if not .kustomize }}
+                    path: {{ default "common/clustergroup" .path }}
                     helm:
                       valueFiles:
                       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
@@ -65,7 +58,11 @@ spec:
                       - name: global.hubClusterDomain
                         value: {{ $.Values.global.hubClusterDomain }}
                       - name: global.localClusterDomain
-                        value: '{{`{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain  }}`}}'
+                      {{- if $.Values.clusterGroup.isHubCluster }}
+                        value: {{ $.Values.global.hubClusterDomain }}
+                      {{- else }}
+                        value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
+                      {{- end }}
                      {{- range .helmOverrides }}
                       - name: {{ .name }}
                         value: {{ .value | quote }}
