@@ -79,17 +79,6 @@ spec:
                     kind: Route
                     jsonPointers:
                     - /status
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: v1
-                kind: ConfigMap
-                metadata:
-                  name: {{ $.Values.global.pattern }}-{{ .name }}-cm
-                  namespace: default
-                data:
-                  isHubCluster: {{ $.Values.clusterGroup.isHubCluster }}
-                  globalHubClusterDomain: {{ $.Values.global.hubClusterDomain }}
-                  globalLocalClusterDomainLookup: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
