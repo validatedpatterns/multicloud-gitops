@@ -1,0 +1,23 @@
+---
+# Values passed to the subchart dependency. Note that we *have* to use envVarsFromConfigMap
+# for the following reasons:
+# 1. We cannot override env.VAULT_ADDR because values.yaml does not get rendered
+#    (so we get {{ .Values.global.hubClusterDomain }} and not the rendered value)
+# 2. Using envFrom won't work because the helm chart has VAULT_ADDR set to a default and it
+#    will win when a container has both envFrom and env variables set
+# With this method we get the correct value.
+kubernetes-external-secrets:
+  envVarsFromConfigMap:
+    VAULT_ADDR:
+      configMapKeyRef: kubernetes-external-secrets-vault-cm
+      key: VAULT_ADDR
+    NODE_EXTRA_CA_CERTS:
+      configMapKeyRef: kubernetes-external-secrets-vault-cm
+      key: NODE_EXTRA_CA_CERTS
+
+# Note: Until there is a secret called vault-ca in the k8s-external-secrets NS the pod
+# will not be healthy
+  filesFromSecret:
+    certificate-authority:
+      secret: vault-ca
+      mountPath: /usr/local/share/ca-certificates

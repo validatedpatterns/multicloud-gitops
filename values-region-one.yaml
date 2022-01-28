@@ -10,13 +10,13 @@ clusterGroup:
 
   namespaces:
     - multicloud-gitops-region-one
-    - external-secrets
+    - k8s-external-secrets
     - config-demo
 
   subscriptions:
 
   projects:
-    - external-secrets
+    - k8s-external-secrets
     - config-demo
 
   applications:
@@ -25,12 +25,10 @@ clusterGroup:
     project: config-demo
     path: charts/region/config-demo
 
-#    - name: external-secrets
-#      namespace: external-secrets
-#      project: external-secrets
-#      chart: external-secrets
-#      repoURL: https://charts.external-secrets.io
-#      targetRevision: v0.3.10
+  - name: k8s-external-secrets
+    namespace: k8s-external-secrets
+    project: k8s-external-secrets
+    path: charts/region/k8s-external-secrets
 
 #
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
