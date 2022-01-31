@@ -121,7 +121,7 @@ vault_exec()
 	shift
 	cmd="$@"
 
-	oc -n vault exec -i vault-0 -- bash -c "$cmd"
+	oc -n vault exec -i vault-0 -- sh -c "$cmd"
 }
 
 vault_login()
