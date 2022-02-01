@@ -25,6 +25,7 @@ spec:
     --set global.namespace=$ARGOCD_APP_NAMESPACE
     --set global.pattern={{ .Values.global.pattern }}
     --set global.hubClusterDomain={{ .Values.global.hubClusterDomain }}
+    --set global.localClusterDomain={{ coalesce .Values.global.localClusterDomain .Values.global.hubClusterDomain }}
     --set global.valuesDirectoryURL={{ .Values.global.valuesDirectoryURL }}
     --post-renderer ./kustomize\"]
     \ \n"
