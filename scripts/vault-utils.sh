@@ -32,7 +32,7 @@ get_vault_ready()
 		done
 	fi
 
-	echo $rdy_output
+	printf "%s" "$rdy_output"
 }
 
 vault_unseal()
@@ -99,7 +99,7 @@ vault_get_root_token()
 	fi
 
 	token=`grep "Initial Root Token" $file | awk '{ print $4 }'`
-	echo -n $token
+	printf "%s" "$token"
 }
 
 # Exec a vault command wrapped with the vault root token specified in the file
@@ -141,14 +141,14 @@ oc_get_domain()
 
 oc_get_pki_domain()
 {
-	echo -n `oc_get_domain | cut -d. -f3-`
+	printf "%s" `oc_get_domain | cut -d. -f3-`
 }
 
 oc_get_pki_role()
 {
 	pkidomain=`oc_get_pki_domain`
-	certrole=`echo $pkidomain | sed 's|\.|_|g'`
-	echo -n $certrole
+	certrole=`printf "%s" "$pkidomain" | sed 's|\.|_|g'`
+	printf "%s" "$certrole"
 }
 
 vault_pki_init()
