@@ -40,11 +40,7 @@ spec:
         - name: global.hubClusterDomain
           value: {{ $.Values.global.hubClusterDomain }}
         - name: global.localClusterDomain
-        {{- if $.Values.clusterGroup.isHubCluster }}
-          value: {{ $.Values.global.hubClusterDomain }}
-        {{- else }}
-          value: {{ $.Values.global.localClusterDomain }}
-        {{- end }}
+          value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
         {{- range .overrides }}
         - name: {{ .name }}
           value: {{ .value | quote }}

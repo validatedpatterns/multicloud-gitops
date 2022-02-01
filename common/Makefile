@@ -33,13 +33,16 @@ test:
 # Test the charts as the pattern would drive them
 	@for t in $(CHARTS); do common/scripts/test.sh $$t normal "$(TEST_OPTS) $(PATTERN_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
 
+validate-origin:
+	git ls-remote $(TARGET_REPO)
+
 init:
 	git submodule update --init --recursive
 
-deploy:
+deploy: validate-origin
 	helm install $(NAME) common/install/ $(HELM_OPTS)
 
-upgrade:
+upgrade: validate-origin
 	helm upgrade $(NAME) common/install/ $(HELM_OPTS)
 
 uninstall:
