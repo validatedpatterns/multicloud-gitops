@@ -10,8 +10,8 @@ clusterGroup:
   subscriptions:
   - name: advanced-cluster-management
     namespace: open-cluster-management
-    channel: release-2.3
-    csv: advanced-cluster-management.v2.3.5
+    channel: release-2.4
+    csv: advanced-cluster-management.v2.4.1
 
   projects:
   - hub
