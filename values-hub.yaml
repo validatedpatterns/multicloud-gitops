@@ -22,6 +22,9 @@ clusterGroup:
     namespace: open-cluster-management
     project: hub
     path: common/acm
+    overrides:
+    - name: pushHubCA
+      value: True
     ignoreDifferences:
     - group: internal.open-cluster-management.io
       kind: ManagedClusterInfo
