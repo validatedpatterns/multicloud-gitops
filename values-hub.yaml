@@ -35,10 +35,11 @@ clusterGroup:
     repoURL: https://helm.releases.hashicorp.com
     targetRevision: v0.19.0
     ignoreDifferences:
-    - kind: MutatingWebhookConfiguration
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
       name: vault-agent-injector-cfg
       jsonPointers:
-        - /webhooks/clientConfig/caBundle
+        - /webhooks/0/clientConfig/caBundle
     overrides:
     - name: global.openshift
       value: "true"
