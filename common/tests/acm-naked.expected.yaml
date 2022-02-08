@@ -2,6 +2,13 @@
 # Source: acm/templates/policies/application-policies.yaml
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
 ---
+# Source: acm/templates/policies/hub-certificate-authority.yaml
+# We only push the hub CA to the regional clusters when the user explicitely tells us so
+# This template fetches "ca.crt" from the "kube-root-ca.crt" configMap from the hub
+# (this configmap is present in all namespaces) and puts it in the vault-ca secret inside
+# the k8s-external-secrets namespace so the external-secrets pod knows how to trust
+# the https://vault-vault.apps.hub-domain... endpoint
+---
 # Source: acm/templates/multiclusterhub.yaml
 apiVersion: operator.open-cluster-management.io/v1
 kind: MultiClusterHub
@@ -89,3 +96,7 @@ spec:
                   name: openshift-gitops-operator
                   source: redhat-operators
                   sourceNamespace: openshift-marketplace
+                  config:
+                    env:
+                      - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
+                        value: "*"
