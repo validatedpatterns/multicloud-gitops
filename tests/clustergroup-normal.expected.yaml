@@ -208,6 +208,7 @@ spec:
     --set global.namespace=$ARGOCD_APP_NAMESPACE
     --set global.pattern=mypattern
     --set global.hubClusterDomain=hub.example.com
+    --set global.localClusterDomain=region.example.com
     --set global.valuesDirectoryURL=https://github.com/pattern-clone/mypattern/raw/main
     --post-renderer ./kustomize\"]
     \ \n"
