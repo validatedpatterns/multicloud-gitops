@@ -15,8 +15,8 @@ if [ "$1" = "-h" ]; then
 fi
 
 if [ -f '/etc/redhat-release' ]; then
-  rpm -qa | grep git-subtree 2>&1
-  if [ ! $? = 0 ]; then
+  subtreecheck=$(rpm -qa | grep git-subtree 2>&1)
+  if [ ! $subtreecheck = 0 ]; then
     echo "you need to install git-subtree"
     echo "would you like to install it now?"
     select ANS in yes no
