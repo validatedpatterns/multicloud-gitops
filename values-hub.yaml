@@ -37,16 +37,10 @@ clusterGroup:
     chart: vault
     repoURL: https://helm.releases.hashicorp.com
     targetRevision: v0.19.0
-    ignoreDifferences:
-    - group: admissionregistration.k8s.io
-      kind: MutatingWebhookConfiguration
-      name: vault-agent-injector-cfg
-      jsonPointers:
-        - /webhooks/0/clientConfig/caBundle
     overrides:
     - name: global.openshift
       value: "true"
-    - name: global.injector.enabled
+    - name: injector.enabled
       value: "false"
     - name: ui.enabled
       value: "true"
