@@ -7,5 +7,3 @@ global:
 
 clusterGroup:
   managedClusterGroups:
-
-pushHubCA: false
