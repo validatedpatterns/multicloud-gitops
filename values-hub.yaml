@@ -5,7 +5,7 @@ clusterGroup:
   namespaces:
   - open-cluster-management
   - vault
-  - k8s-external-secrets
+  - golang-external-secrets
   - config-demo
 
   subscriptions:
@@ -17,7 +17,7 @@ clusterGroup:
   projects:
   - hub
   - config-demo
-  - k8s-external-secrets
+  - golang-external-secrets
 
   applications:
   - name: acm
@@ -56,10 +56,10 @@ clusterGroup:
     - name: server.image.tag
       value: "1.9.2-ubi"
 
-  - name: k8s-external-secrets
-    namespace: k8s-external-secrets
-    project: k8s-external-secrets
-    path: charts/hub/k8s-external-secrets
+  - name: golang-external-secrets
+    namespace: golang-external-secrets
+    project: golang-external-secrets
+    path: charts/hub/golang-external-secrets
 
   - name: config-demo
     namespace: config-demo
