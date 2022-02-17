@@ -1,0 +1,3 @@
+---
+mountPath: "hub"
+mountRole: "hub-role"
