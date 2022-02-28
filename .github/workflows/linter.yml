@@ -48,9 +48,9 @@ jobs:
       #     VALIDATE_ALL_CODEBASE: false
       #     DEFAULT_BRANCH: main
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      ################################
-      # Run make test                #
-      ################################
       - name: Run make test
         run: |
           make test
+      - name: Run make helmlint
+        run: |
+          make helmlint

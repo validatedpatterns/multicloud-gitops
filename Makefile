@@ -35,6 +35,9 @@ test:
 # Test the charts as the pattern would drive them
 	@for t in $(CHARTS); do common/scripts/test.sh $$t normal "$(TEST_OPTS) $(PATTERN_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
 
+helmlint:
+	@for t in $(CHARTS); do helm lint $$t; if [ $$? != 0 ]; then exit 1; fi; done
+
 validate-origin:
 	git ls-remote $(TARGET_REPO)
 
