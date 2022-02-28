@@ -189,6 +189,7 @@ metadata:
   # Changing the name affects the ClusterRoleBinding, the generated secret,
   # route URL, and argocd.argoproj.io/managed-by annotations
   name: example-gitops
+  namespace: mypattern-example
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
