@@ -27,13 +27,16 @@ argosecret:
 show:
 	helm template common/install/ --name-template $(NAME) $(HELM_OPTS)
 
-CHARTS=install clustergroup acm
+CHARTS=install clustergroup acm golang-external-secrets
 
 test:
 # Test that all values used by the chart are in values.yaml with the same defaults as the pattern
 	@for t in $(CHARTS); do common/scripts/test.sh $$t naked ""; if [ $$? != 0 ]; then exit 1; fi; done
 # Test the charts as the pattern would drive them
 	@for t in $(CHARTS); do common/scripts/test.sh $$t normal "$(TEST_OPTS) $(PATTERN_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
+
+helmlint:
+	@for t in $(CHARTS); do helm lint $(TEST_OPTS) $(PATTERN_OPTS) $$t; if [ $$? != 0 ]; then exit 1; fi; done
 
 validate-origin:
 	git ls-remote $(TARGET_REPO)
