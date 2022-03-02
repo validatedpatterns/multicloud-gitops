@@ -17,5 +17,8 @@ data:
             Hub Cluster domain is '{{ .Values.global.hubClusterDomain }}' <br>
             Pod is running on Local Cluster Domain '{{ .Values.global.localClusterDomain }}' <br>
             </h1>
+            <h2>
+            The secret is <a href="/secret/secret">secret</a>
+            </h2>
           </body>
       </html>
