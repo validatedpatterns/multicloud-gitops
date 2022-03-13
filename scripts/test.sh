@@ -12,6 +12,11 @@ OUTPUT=${TESTDIR}/.${name}-${TEST_VARIANT}.expected.yaml
 
 echo "Testing $1 chart (${TEST_VARIANT})" >&2
 helm template $target --name-template $name ${CHART_OPTS} > ${OUTPUT}
+rc=$?
+if [ $rc -ne 0 ]; then
+    echo "FAIL on helm template $target --name-template $name ${CHART_OPTS}"
+    exit 1
+fi
 #cp ${OUTPUT} ${REFERENCE}
 if [ ! -e ${REFERENCE} ]; then
     touch ${REFERENCE}

@@ -27,8 +27,7 @@ argosecret:
 show:
 	helm template common/install/ --name-template $(NAME) $(HELM_OPTS)
 
-CHARTS=install clustergroup acm golang-external-secrets
-
+CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | sed -e 's/.\///')
 test:
 # Test that all values used by the chart are in values.yaml with the same defaults as the pattern
 	@for t in $(CHARTS); do common/scripts/test.sh $$t naked ""; if [ $$? != 0 ]; then exit 1; fi; done
