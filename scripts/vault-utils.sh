@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
@@ -22,10 +22,12 @@ if [ -z ${TASK} ]; then
 	exit 1
 fi
 
-if [ ! -f "${PLAYBOOKPATH}/vault/${TASK}.yaml" ]; then
-	echo "${PLAYBOOKPATH}/vault/${TASK}.yaml does not exist, exiting"
-	exit 1
-fi
+case "${TASK}" in
+  "vault_init")
+    TAGS="vault_init,vault_unseal,vault_secrets_init"
+    ;;
+  *)
+    TAGS="${TASK}"
+esac
 
-ansible-playbook -e output_file="${OUTFILE}" "${PLAYBOOKPATH}/vault/${TASK}.yaml"
-exit $?
+ansible-playbook -t "${TAGS}" -e output_file="${OUTFILE}" "${PLAYBOOKPATH}/vault/vault.yaml"

@@ -3,7 +3,6 @@
   fail:
     msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
   failed_when: kubeconfig is not defined or kubeconfig | length == 0
-  when: not debug | bool
 
 # FIXME: this should be done a lot more elegantly
 - name: Get cluster domain

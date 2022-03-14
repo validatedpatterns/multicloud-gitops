@@ -1,2 +1,28 @@
 ---
-# tasks file for vault_utils
+- name: Delete vault
+  include_tasks:
+    file: vault_delete.yaml
+    apply:
+      tags: [never, vault_delete]
+  tags: [never, vault_delete]
+
+- name: Run vault init tasks
+  include_tasks:
+    file: vault_init.yaml
+    apply:
+      tags: [never, vault_init]
+  tags: [never, vault_init]
+
+- name: Unseal vault
+  include_tasks:
+    file: vault_unseal.yaml
+    apply:
+      tags: [never, vault_unseal]
+  tags: [never, vault_unseal]
+
+- name: Vault secrets init
+  include_tasks:
+    file: vault_secrets_init.yaml
+    apply:
+      tags: [never, vault_secrets_init]
+  tags: [never, vault_secrets_init]
