@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
+ANSIBLEPATH="$(dirname ${SCRIPTPATH})/ansible"
+PLAYBOOKPATH="${ANSIBLEPATH}/playbooks"
+export ANSIBLE_CONFIG="${ANSIBLEPATH}/ansible.cfg"
 
-export ANSIBLE_CONFIG="${SCRIPTPATH}/ansible.cfg"
-
-ansible-playbook "$SCRIPTPATH/ansible_push_vault_secrets.yaml"
+ansible-playbook "$PLAYBOOKPATH/vault/push_secrets.yaml"
