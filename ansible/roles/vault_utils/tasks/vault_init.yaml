@@ -1,0 +1,50 @@
+---
+- name: Check that KUBECONFIG is correctly set
+  fail:
+    msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
+  failed_when: kubeconfig is not defined or kubeconfig | length == 0
+  when: not debug | bool
+
+- name: Check for existence of "{{ output_file }}"
+  ansible.builtin.stat:
+    path: "{{ output_file }}"
+  register: result
+
+- name: Fail if "{{ output_file }} exists"
+  fail:
+    msg: "{{ output_file }} already exists, not overwriting. Please move it away before proceeding"
+  failed_when: result.stat.exists
+
+- name: Check for vault namespace
+  kubernetes.core.k8s_info:
+    kind: Namespace
+    name: "{{ vault_ns }}"
+  register: vault_ns_rc
+  failed_when: vault_ns_rc.resources | length == 0
+  when: not debug | bool
+
+- name: Check if the vault pod is present
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: "{{ vault_ns }}"
+    name: "{{ vault_pod }}"
+  register: vault_pod_rc
+  failed_when: vault_pod_rc.resources | length == 0
+  when: not debug | bool
+
+- name: Init vault operator
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: |
+      vault operator init -format=json
+  register: vault_init_json
+
+- name: debug
+  debug:
+    msg: "{{ vault_init_json }}"
+
+- name: Save vault operator output
+  ansible.builtin.copy:
+    dest: "{{ output_file }}"
+    content: "{{ vault_init_json.stdout | to_nice_json }}"

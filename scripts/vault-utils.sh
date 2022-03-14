@@ -1,4 +1,36 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -e
+
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+COMMONPATH=$(dirname "$SCRIPTPATH")
+ANSIBLEPATH="$(dirname ${SCRIPTPATH})/ansible"
+PLAYBOOKPATH="${ANSIBLEPATH}/playbooks"
+export ANSIBLE_CONFIG="${ANSIBLEPATH}/ansible.cfg"
+
+# Parse arguments
+if [ $# -lt 1 ]; then
+  echo "Specify at least the command ($#): $*"
+  exit 1
+fi
+
+TASK="${1}"
+OUTFILE=${2:-"$COMMONPATH"/vault.init}
+
+if [ -z ${TASK} ]; then
+	echo "Task is unset"
+	exit 1
+fi
+
+if [ ! -f "${PLAYBOOKPATH}/vault/${TASK}.yaml" ]; then
+	echo "${PLAYBOOKPATH}/vault/${TASK}.yaml does not exist, exiting"
+	exit 1
+fi
+
+ansible-playbook -e output_file="${OUTFILE}" "$PLAYBOOKPATH/vault/${TASK}.yaml"
+exit $?
+
+
 
 # Assumptions - vault in the demo will be running in non-HA mode so there will only be a vault-0
 # vault will be running in the "vault" namespace

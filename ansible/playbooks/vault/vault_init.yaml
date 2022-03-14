@@ -1,10 +1,12 @@
 ---
-- name: Secret injection of validated-patterns
+- name: Vault init
   hosts: localhost
   connection: local
   gather_facts: no
   tasks:
-  - name: Run push secrets task
+  - name: Vault init
     include_role:
       name: vault_utils
-      tasks_from: push_secrets
+      tasks_from: vault_init
+
+

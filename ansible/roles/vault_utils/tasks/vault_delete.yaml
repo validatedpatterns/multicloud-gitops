@@ -1,0 +1,13 @@
+---
+- name: Check that KUBECONFIG is correctly set
+  fail:
+    msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
+  failed_when: kubeconfig is not defined or kubeconfig | length == 0
+  when: not debug | bool
+
+# FIXME
+- name: Delete pods
+  shell: |
+	  oc -n vault delete pod vault-0 &
+	  oc -n vault delete pvc data-vault-0 &
+    sleep 10

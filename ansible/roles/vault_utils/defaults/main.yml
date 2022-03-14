@@ -6,3 +6,4 @@ vault_ns: "vault"
 vault_pod: "vault-0"
 vault_path: "secret/hub"
 debug: False
+output_file: "common/vault.init"
