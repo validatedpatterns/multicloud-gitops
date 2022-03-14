@@ -1,0 +1,39 @@
+---
+- name: Check that KUBECONFIG is correctly set
+  fail:
+    msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
+  failed_when: kubeconfig is not defined or kubeconfig | length == 0
+  when: not debug | bool
+
+- name: Check for existence of "{{ output_file }}"
+  ansible.builtin.stat:
+    path: "{{ output_file }}"
+  register: result
+
+- name: Fail if "{{ output_file }}" does not exists
+  fail:
+    msg: "{{ output_file }} does not exist. Stopping here"
+  failed_when: not result.stat.exists
+
+# We reparse the json vault init file in case unseal was called without operator init before
+- name: Parse "{{ output_file }}"
+  set_fact:
+    vault_init_json: "{{ lookup('file', output_file) | from_json }}"
+
+- name: Set root token and unseal_keys
+  set_fact:
+    root_token: "{{ vault_init_json['root_token'] }}"
+    unseal_keys: "{{ vault_init_json['unseal_keys_hex'] }}"
+
+- name: Unseal vault
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault operator unseal "{{ item }}"
+  loop: "{{ unseal_keys }}"
+
+- name: Login into vault
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault login "{{ root_token }}"

@@ -5,9 +5,7 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 COMMONPATH=$(dirname "$SCRIPTPATH")
 ANSIBLEPATH="$(dirname ${SCRIPTPATH})/ansible"
-ROLEPATH="${ANSIBLEPATH}/roles/vault_utils"
-TMPDIR=${TMPDIR:-/tmp}
-TMPFILE=$(mktemp "${TMPDIR}/vault-utils.XXXXXXX.yaml")
+PLAYBOOKPATH="${ANSIBLEPATH}/playbooks"
 export ANSIBLE_CONFIG="${ANSIBLEPATH}/ansible.cfg"
 
 # Parse arguments
@@ -24,25 +22,12 @@ if [ -z ${TASK} ]; then
 	exit 1
 fi
 
-if [ ! -f "${ROLEPATH}/tasks/${TASK}.yaml" ]; then
-	echo "${ROLEPATH}/tasks/${TASK}.yaml does not exist, exiting"
+if [ ! -f "${PLAYBOOKPATH}/vault/${TASK}.yaml" ]; then
+	echo "${PLAYBOOKPATH}/vault/${TASK}.yaml does not exist, exiting"
 	exit 1
 fi
 
-cat > "${TMPFILE}" <<EOF
----
-- name: $TASK
-  hosts: localhost
-  connection: local
-  gather_facts: no
-  tasks:
-  - name: Run $TASK task
-    include_role:
-      name: vault_utils
-      tasks_from: $TASK
-EOF
-
-ansible-playbook -e output_file="${OUTFILE}" "${TMPFILE}"
+ansible-playbook -e output_file="${OUTFILE}" "${PLAYBOOKPATH}/vault/${TASK}.yaml"
 exit $?
 
 

@@ -36,15 +36,15 @@
   kubernetes.core.k8s_exec:
     namespace: "{{ vault_ns }}"
     pod: "{{ vault_pod }}"
-    command: |
-      vault operator init -format=json
-  register: vault_init_json
+    command: vault operator init -format=json
+  register: vault_init_json_out
 
-- name: debug
-  debug:
-    msg: "{{ vault_init_json }}"
+- name: Set output json fact
+  set_fact:
+    vault_init_json: "{{ vault_init_json_out.stdout | from_json }}"
 
 - name: Save vault operator output
   ansible.builtin.copy:
+    follow: true
     dest: "{{ output_file }}"
-    content: "{{ vault_init_json.stdout | to_nice_json }}"
+    content: "{{ vault_init_json | to_nice_json }}"
