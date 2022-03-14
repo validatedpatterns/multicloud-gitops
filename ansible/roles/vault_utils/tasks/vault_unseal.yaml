@@ -31,6 +31,9 @@
     pod: "{{ vault_pod }}"
     command: vault operator unseal "{{ item }}"
   loop: "{{ unseal_keys }}"
+  loop_control:
+    extended: true
+    label: "Unsealing with key {{ ansible_loop.index }}"
 
 - name: Login into vault
   kubernetes.core.k8s_exec:
