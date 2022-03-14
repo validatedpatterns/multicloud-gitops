@@ -7,5 +7,6 @@ vault_pod: "vault-0"
 vault_hub: "hub"
 vault_hub_kubernetes_host: 'https://$KUBERNETES_PORT_443_TCP_ADDR:443'
 vault_path: "secret/hub"
+vault_hub_ttl: "15m"
 debug: False
 output_file: "common/vault.init"
