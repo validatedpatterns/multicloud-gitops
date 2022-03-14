@@ -1,0 +1,10 @@
+---
+- name: Vault PKI init
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: Run vault pki init tasks
+    include_role:
+      name: vault_utils
+      tasks_from: vault_pki_init

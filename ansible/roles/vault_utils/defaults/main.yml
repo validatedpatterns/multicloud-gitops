@@ -8,5 +8,6 @@ vault_hub: "hub"
 vault_hub_kubernetes_host: 'https://$KUBERNETES_PORT_443_TCP_ADDR:443'
 vault_path: "secret/hub"
 vault_hub_ttl: "15m"
+vault_pki_max_lease_ttl: "8760h"
 debug: False
 output_file: "common/vault.init"

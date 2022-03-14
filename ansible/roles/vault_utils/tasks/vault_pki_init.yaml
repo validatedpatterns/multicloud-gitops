@@ -1,0 +1,47 @@
+---
+- name: Check that KUBECONFIG is correctly set
+  fail:
+    msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
+  failed_when: kubeconfig is not defined or kubeconfig | length == 0
+  when: not debug | bool
+
+# FIXME: this should be done a lot more elegantly
+- name: Get cluster domain
+  shell: |
+    oc get ingresses.config/cluster -o jsonpath='{.spec.domain}' | cut -d. -f3-
+  register: ingress_domain_out
+
+- name: Set ingress domain
+  set_fact:
+    ingress_domain: "{{ ingress_domain_out.stdout }}"
+    cert_role: "{{ ingress_domain_out.stdout | replace('.', '_') }}"
+
+- name: Enable vault pki backend
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault secrets enable pki
+
+- name: Set vault pki max-lease-ttl
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault secrets tune --max-lease-ttl="{{ vault_pki_max_lease_ttl }}" pki
+
+- name: Set vault pki generate/internal CN
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault write pki/root/generate/internal common_name="{{ ingress_domain }}" ttl="{{ vault_pki_max_lease_ttl }}"
+
+- name: Set vault pki CRL
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"
+
+- name: Set vault pki roles
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault write pki/roles/"{{ cert_role }}" allowed_domains="{{ ingress_domain }}" allow_subdomains=true max_ttl="{{ vault_pki_max_lease_ttl }}"
