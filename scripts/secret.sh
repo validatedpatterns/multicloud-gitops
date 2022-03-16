@@ -17,32 +17,51 @@ src_ns="${PATTERN}-${COMPONENT}"
 ns=0
 gitops=0
 
+# Function log
+# Arguments:
+#   $1 are for the options for echo
+#   $2 is for the message
+#   \033[0K\r - Trailing escape sequence to leave output on the same line
+function log {
+	if [ -z "$2" ]; then
+		echo -e "\033[0K\r\033[1;36m$1\033[0m"
+	else
+		echo -e $1 "\033[0K\r\033[1;36m$2"
+	fi
+}
+
 # Check for Namespaces and Secrets to be ready (it takes the cluster a few minutes to deploy them)
+spin='-\|/'
+i=0
 while [ 1 ] ; do
-	echo -n "Checking for namespace $TARGET_NAMESPACE to exist..."
+	i=$(( (i+1) %4 ))
+	log -n "Checking for namespace $TARGET_NAMESPACE to exist: ${spin:$i:1}"
 	if [ oc get namespace $TARGET_NAMESPACE >/dev/null 2>/dev/null ]; then
-		echo "not yet"
 		ns=0
 		sleep 2
 		continue
 	else
-		echo "OK"
+		log "Checking for namespace $TARGET_NAMESPACE to exist: OK"
 		ns=1
+		break
 	fi
+done
 
-	echo -n "Checking for $passwd_resource to be populated in $src_ns..."
+i=0
+while [ 1 ] ; do
+	i=$(( (i+1) %4 ))
+	log -n "Checking for $passwd_resource to be populated in $src_ns: ${spin:$i:1}"
 	pw=`oc -n $src_ns extract $passwd_resource --to=- 2>/dev/null`
 	if [ "$?" = 0 ] && [ -n "$pw" ]; then
-		echo "OK"
+		log "Checking for $passwd_resource to be populated in $src_ns: OK"
 		gitops=1
 	else
-		echo "not yet"
 		gitops=0
 		sleep 2
 		continue
 	fi
 
-	echo "Conditions met, managing secret $SECRET_NAME in $TARGET_NAMESPACE"
+	log "Conditions met, managing secret $SECRET_NAME in $TARGET_NAMESPACE"
 	break
 done
 
