@@ -1,1 +1,7 @@
 ---
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore
+
+configdemosecret:
+  key: secret/data/hub/config-demo
