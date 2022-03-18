@@ -6,6 +6,7 @@ global:
     email: SOMEWHERE@EXAMPLE.COM
     dev_revision: main
 
-  quay:
+  imageregistry:
     provider: quay.io
     account: PLAINTEXT
+
