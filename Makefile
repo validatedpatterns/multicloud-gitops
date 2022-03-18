@@ -59,4 +59,7 @@ vault-init:
 vault-unseal:
 	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
 
+load-secrets:
+	common/scripts/ansible-push-vault-secrets.sh
+
 .phony: install test
