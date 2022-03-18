@@ -40,9 +40,6 @@ helmlint:
 validate-origin:
 	git ls-remote $(TARGET_REPO)
 
-init:
-	git submodule update --init --recursive
-
 deploy: validate-origin
 	helm install $(NAME) common/install/ $(HELM_OPTS)
 
