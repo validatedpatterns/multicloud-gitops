@@ -18,6 +18,9 @@
   kubernetes.core.k8s_info:
     kind: Namespace
     name: "{{ vault_ns }}"
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 900
   register: vault_ns_rc
   failed_when: vault_ns_rc.resources | length == 0
 
@@ -26,6 +29,9 @@
     kind: Pod
     namespace: "{{ vault_ns }}"
     name: "{{ vault_pod }}"
+    wait: yes
+    wait_sleep: 10
+    wait_timeout: 900
   register: vault_pod_rc
   failed_when: vault_pod_rc.resources | length == 0
 
