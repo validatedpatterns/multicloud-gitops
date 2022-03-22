@@ -5,3 +5,10 @@ secretStore:
 
 configdemosecret:
   key: secret/data/hub/config-demo
+
+global:
+  hubClusterDomain: hub.example.com
+  localClusterDomain: region-one.example.com
+
+clusterGroup:
+  isHubCluster: true
