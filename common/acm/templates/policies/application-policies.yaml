@@ -25,7 +25,7 @@ spec:
             include:
               - default
           object-templates:
-            - complianceType: musthave
+            - complianceType: mustonlyhave
               objectDefinition:
                 apiVersion: argoproj.io/v1alpha1
                 kind: Application
