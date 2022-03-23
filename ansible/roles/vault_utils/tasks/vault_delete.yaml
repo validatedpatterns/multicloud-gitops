@@ -27,4 +27,4 @@
 
 - name: Print out result from deletion
   ansible.builtin.debug:
-    msg: "{{ delete_pod.stdout }} - {{ delete_pvc.stdout }}"
+    msg: "{{ delete_pod }} - {{ delete_pvc }}"
