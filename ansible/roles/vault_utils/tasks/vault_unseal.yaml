@@ -4,20 +4,33 @@
     msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
   failed_when: kubeconfig is not defined or kubeconfig | length == 0
 
-- name: Check for existence of "{{ output_file }}"
+# If the output_file is relative we need to make it absolute and we choose
+# the current path which normally is the main pattern folder. Reason for this
+# is that the copy task needs an absolute path because we're not guaranteed
+- name: Set absolute path for output_file
+  set_fact:
+    output_file_abs: "{{ lookup('env', 'PWD') }}/{{ output_file }}"
+  when: "not output_file.startswith('/')"
+
+- name: Set output_file to new veriable
+  set_fact:
+    output_file_abs: "{{ output_file }}"
+  when: "output_file.startswith('/')"
+
+- name: Check for existence of "{{ output_file_abs }}"
   ansible.builtin.stat:
-    path: "{{ output_file }}"
+    path: "{{ output_file_abs }}"
   register: result
 
-- name: Fail if "{{ output_file }}" does not exists
+- name: Fail if "{{ output_file_abs }}" does not exists
   ansible.builtin.fail:
-    msg: "{{ output_file }} does not exist. Stopping here"
+    msg: "{{ output_file_abs }} does not exist. Stopping here"
   failed_when: not result.stat.exists
 
 # We reparse the json vault init file in case unseal was called without operator init before
-- name: Parse "{{ output_file }}"
+- name: Parse "{{ output_file_abs }}"
   ansible.builtin.set_fact:
-    vault_init_json: "{{ lookup('file', output_file) | from_json }}"
+    vault_init_json: "{{ lookup('file', output_file_abs) | from_json }}"
 
 - name: Set root token and unseal_keys
   ansible.builtin.set_fact:

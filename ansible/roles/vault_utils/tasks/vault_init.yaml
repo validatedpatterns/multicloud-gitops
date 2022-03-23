@@ -4,14 +4,27 @@
     msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
   failed_when: kubeconfig is not defined or kubeconfig | length == 0
 
-- name: Check for existence of "{{ output_file }}"
+# If the output_file is relative we need to make it absolute and we choose
+# the current path which normally is the main pattern folder. Reason for this
+# is that the copy task needs an absolute path because we're not guaranteed
+- name: Set absolute path for output_file
+  set_fact:
+    output_file_abs: "{{ lookup('env', 'PWD') }}/{{ output_file }}"
+  when: "not output_file.startswith('/')"
+
+- name: Set output_file to new veriable
+  set_fact:
+    output_file_abs: "{{ output_file }}"
+  when: "output_file.startswith('/')"
+
+- name: Check for existence of "{{ output_file_abs }}"
   ansible.builtin.stat:
-    path: "{{ output_file }}"
+    path: "{{ output_file_abs }}"
   register: result
 
-- name: Fail if "{{ output_file }} exists"
+- name: Fail if "{{ output_file_abs }} exists"
   ansible.builtin.fail:
-    msg: "{{ output_file }} already exists, not overwriting. Please move it away before proceeding"
+    msg: "{{ output_file_abs }} already exists, not overwriting. Please move it away before proceeding"
   failed_when: result.stat.exists
 
 - name: Check for vault namespace
@@ -29,26 +42,55 @@
     namespace: "{{ vault_ns }}"
     name: "{{ vault_pod }}"
   register: vault_pod_rc
-  until: vault_ns_rc.resources | length > 0
+  until: vault_pod_rc.resources | length > 0
   retries: 20
   delay: 45
 
+# This needs retrying because during startup we can just get
+# Failed to execute on pod vault-0 due to : (0)\nReason: Handshake status 500 Internal Server Error
+# In the above case there is no 'rc' in vault_status. So first we wait for 'rc' to show up and ignore
+# any errors, and then we bail out if rc is 2 as it means the vault is already initialized
+- name: Check for the vault status
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault status -format=json
+  register: vault_status_json
+  until: "'rc' in vault_status_json"
+  retries: 5
+  delay: 10
+  failed_when: false
+
+- name: Set vault status output json fact
+  ansible.builtin.set_fact:
+    vault_status: "{{ vault_status_json.stdout | from_json }}"
+  when: vault_status_json.stdout_lines | length > 0
+
+- name: Fail when the vault status is sealed
+  fail:
+    msg: "The vault is already configured. Please unseal it with 'make vault-unseal'. Msg: {{ vault_status }}"
+  when: vault_status['initialized'] | bool == true
+
+# We need to retry here because the vault service might be starting
+# and can return a 500 internal server until its state is fully ready
 - name: Init vault operator
   kubernetes.core.k8s_exec:
     namespace: "{{ vault_ns }}"
     pod: "{{ vault_pod }}"
     command: vault operator init -format=json
   register: vault_init_json_out
+  until: vault_init_json_out is not failed
   retries: 10
-  delay: 30
+  delay: 15
 
-- name: Set output json fact
+- name: Set vault init output json fact
   ansible.builtin.set_fact:
     vault_init_json: "{{ vault_init_json_out.stdout | from_json }}"
 
+# Prefer the output_file_abs var if it is defined
 - name: Save vault operator output
   ansible.builtin.copy:
     follow: true
-    dest: "{{ output_file }}"
+    dest: "{{ output_file_abs }}"
     content: "{{ vault_init_json | to_nice_json }}"
     mode: '0600'
