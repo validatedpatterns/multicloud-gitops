@@ -69,7 +69,7 @@
 - name: Fail when the vault status is sealed
   ansible.builtin.fail:
     msg: "The vault is already configured. Please unseal it with 'make vault-unseal'. Msg: {{ vault_status }}"
-  when: vault_status['initialized'] | bool == true
+  when: vault_status['initialized'] | bool
 
 # We need to retry here because the vault service might be starting
 # and can return a 500 internal server until its state is fully ready
