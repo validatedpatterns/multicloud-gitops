@@ -7,7 +7,7 @@
 # FIXME: this should be done a lot more elegantly
 - name: Get cluster domain
   ansible.builtin.shell: |
-    set -e -opipefail
+    set -o pipefail
     oc get ingresses.config/cluster -o jsonpath='{.spec.domain}' | cut -d. -f3-
   register: ingress_domain_out
   changed_when: false
