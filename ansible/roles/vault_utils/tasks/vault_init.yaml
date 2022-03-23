@@ -1,6 +1,6 @@
 ---
 - name: Check that KUBECONFIG is correctly set
-  fail:
+  ansible.builtin.fail:
     msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
   failed_when: kubeconfig is not defined or kubeconfig | length == 0
 
@@ -10,7 +10,7 @@
   register: result
 
 - name: Fail if "{{ output_file }} exists"
-  fail:
+  ansible.builtin.fail:
     msg: "{{ output_file }} already exists, not overwriting. Please move it away before proceeding"
   failed_when: result.stat.exists
 
@@ -41,7 +41,7 @@
   register: vault_init_json_out
 
 - name: Set output json fact
-  set_fact:
+  ansible.builtin.set_fact:
     vault_init_json: "{{ vault_init_json_out.stdout | from_json }}"
 
 - name: Save vault operator output
@@ -49,3 +49,4 @@
     follow: true
     dest: "{{ output_file }}"
     content: "{{ vault_init_json | to_nice_json }}"
+    mode: '0600'

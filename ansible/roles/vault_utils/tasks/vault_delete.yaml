@@ -11,6 +11,7 @@
   register: delete_pod
   async: 7200
   poll: 0
+  changed_when: true
 
 - name: Delete vault pvc
   ansible.builtin.shell: |
@@ -18,7 +19,12 @@
   register: delete_pvc
   async: 7200
   poll: 0
+  changed_when: true
 
 - name: Wait for tasks
-  wait_for:
+  ansible.builtin.wait_for:
     timeout: 10
+
+- name: Print out result from deletion
+  ansible.builtin.debug:
+    msg: "{{ delete_pod.stdout }} - {{ delete_pvc.stdout }}"
