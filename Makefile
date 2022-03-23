@@ -50,6 +50,7 @@ upgrade: validate-origin ## runs helm upgrade
 uninstall: ## runs helm uninstall
 	helm uninstall $(NAME)
 
+<<<<<<< HEAD
 vault-init: ## inits, unseals and configured the vault
 	common/scripts/vault-utils.sh vault_init common/pattern-vault.init
 	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
