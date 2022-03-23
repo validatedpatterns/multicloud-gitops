@@ -22,12 +22,4 @@ if [ -z ${TASK} ]; then
 	exit 1
 fi
 
-case "${TASK}" in
-  "vault_init")
-    TAGS="vault_init,vault_unseal,vault_secrets_init"
-    ;;
-  *)
-    TAGS="${TASK}"
-esac
-
-ansible-playbook -t "${TAGS}" -e output_file="${OUTFILE}" "${PLAYBOOKPATH}/vault/vault.yaml"
+ansible-playbook -t "${TASK}" -e output_file="${OUTFILE}" "${PLAYBOOKPATH}/vault/vault.yaml"
