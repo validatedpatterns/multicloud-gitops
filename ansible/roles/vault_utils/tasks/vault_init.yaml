@@ -8,12 +8,12 @@
 # the current path which normally is the main pattern folder. Reason for this
 # is that the copy task needs an absolute path because we're not guaranteed
 - name: Set absolute path for output_file
-  set_fact:
+  ansible.builtin.set_fact:
     output_file_abs: "{{ lookup('env', 'PWD') }}/{{ output_file }}"
   when: "not output_file.startswith('/')"
 
 - name: Set output_file to new veriable
-  set_fact:
+  ansible.builtin.set_fact:
     output_file_abs: "{{ output_file }}"
   when: "output_file.startswith('/')"
 
@@ -67,7 +67,7 @@
   when: vault_status_json.stdout_lines | length > 0
 
 - name: Fail when the vault status is sealed
-  fail:
+  ansible.builtin.fail:
     msg: "The vault is already configured. Please unseal it with 'make vault-unseal'. Msg: {{ vault_status }}"
   when: vault_status['initialized'] | bool == true
 
