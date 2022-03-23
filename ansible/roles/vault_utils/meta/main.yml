@@ -29,16 +29,16 @@ galaxy_info:
   platforms:
     - name: Fedora
       versions:
-      - all
+        - all
     - name: Ubuntu
       versions:
-      - all
+        - all
     - name: Debian
       versions:
-      - all
+        - all
     - name: EL
       versions:
-      - 8
+        - 8
   #
   # - name: SomePlatform
   #   versions:
