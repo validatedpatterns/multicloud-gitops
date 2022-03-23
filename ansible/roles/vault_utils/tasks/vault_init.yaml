@@ -39,6 +39,8 @@
     pod: "{{ vault_pod }}"
     command: vault operator init -format=json
   register: vault_init_json_out
+  retries: 10
+  delay: 30
 
 - name: Set output json fact
   ansible.builtin.set_fact:
