@@ -4,8 +4,9 @@
   connection: local
   gather_facts: no
   vars:
-    values_secret: "{{ lookup('env', 'HOME') }}/values-secret.yaml"
     kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
+    kubeconfig_backup: "{{ lookup('env', 'HOME') }}/.kube/config"
+    values_secret: "{{ lookup('env', 'HOME') }}/values-secret.yaml"
     vault_ns: "vault"
     vault_pod: "vault-0"
     vault_path: "secret/hub"
@@ -18,11 +19,20 @@
     register: result
     failed_when: not result.stat.exists
 
-  - name: Check that KUBECONFIG is correctly set
-    fail:
-      msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
-    failed_when: kubeconfig is not defined or kubeconfig | length == 0
-    when: not debug | bool
+  - name: Check if KUBECONFIG is correctly set
+    debug:
+      msg: "KUBECONFIG is not set, falling back to ~/.kube/config"
+    when: kubeconfig is not defined or kubeconfig | length == 0
+
+  - name: Check if ~/.kube/config exists
+    ansible.builtin.stat:
+      path: "{{ kubeconfig_backup }}"
+    register: kubeconfig_result
+
+  - name: Fail if both KUBECONFIG and ~/.kube/config do not exist
+    ansible.builtin.fail:
+      msg: "{{ kubeconfig_backup }} not found and KUBECONFIG unset. Bailing out."
+    failed_when: not kubeconfig_result.stat.exists
 
   - name: Parse "{{ values_secret }}"
     ansible.builtin.set_fact:
