@@ -42,6 +42,9 @@ test: ## run helm tests
 helmlint: ## run helm lint
 	@for t in $(CHARTS); do helm lint $(TEST_OPTS) $(PATTERN_OPTS) $$t; if [ $$? != 0 ]; then exit 1; fi; done
 
+kubeval: ## run helm kubeval
+	@for t in $(CHARTS); do helm kubeval --ignore-missing-schemas $$t; if [ $$? != 0 ]; then exit 1; fi; done
+
 validate-origin: ## verify the git origin is available
 	git ls-remote $(TARGET_REPO)
 
