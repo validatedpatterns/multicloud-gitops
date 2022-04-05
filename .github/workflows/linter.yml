@@ -51,16 +51,18 @@ jobs:
       - name: Run make common-test
         run: |
           make common-test
+
       - name: Run make test
         run: |
           make test
+
       - name: Run make helmlint
         run: |
           make helmlint
-      - name: Run make helm kubeval
+
+      - name: Run make helm kubeconform
         run: |
-          curl -L -O https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
-          tar xf kubeval-linux-amd64.tar.gz
-          sudo mv -v kubeval /usr/local/bin
-          helm plugin install https://github.com/instrumenta/helm-kubeval
-          make kubeval
+          curl -L -O https://github.com/yannh/kubeconform/releases/download/v0.4.13/kubeconform-linux-amd64.tar.gz
+          tar xf kubeconform-linux-amd64.tar.gz
+          sudo mv -v kubeconform /usr/local/bin
+          make kubeconform
