@@ -8,10 +8,7 @@ global:
 
 clusterGroup:
   name: example
-
-  proposedOptions:
-    manageGitops: True
-    isHubCluster: True
+  isHubCluster: true
 
 #  managedClusterGroups:
 #  - name: factory
