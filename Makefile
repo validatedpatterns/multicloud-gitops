@@ -29,6 +29,6 @@ helmlint:
 	@for t in "$(wildcard charts/all/*)" "$(wildcard charts/hub/*)"; do helm lint $$t; if [ $$? != 0 ]; then exit 1; fi; done
 
 .PHONY: kubeval
-kubeval:
-	make -f common/Makefile CHARTS="$(wildcard charts/all/*)" kubeval
-	make -f common/Makefile CHARTS="$(wildcard charts/hub/*)" kubeval
+kubeconform:
+	make -f common/Makefile CHARTS="$(wildcard charts/all/*)" kubeconform
+	make -f common/Makefile CHARTS="$(wildcard charts/hub/*)" kubeconform
