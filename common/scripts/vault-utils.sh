@@ -63,8 +63,8 @@ vault_init()
 	fi
 
 	if [ -f "$file" ] && grep -q -e '^Unseal' "$file"; then
-		echo "$file already exists and contains seal secrets. If this is what you really wanted, move that file away first or call vault_delete"
-		exit 1
+		echo "$file already exists and contains seal secrets. We're moving it away to ${file}.bak"
+		mv -vf "${file}" "${file}.bak"
 	fi
 
 	# The vault is ready to be initialized when it is "Running" but not "ready".  Unsealing it makes it ready
@@ -191,7 +191,7 @@ vault_policy_init()
 	vault_exec $file "vault write auth/hub/config token_reviewer_jwt=$sa_token kubernetes_host=$k8s_host kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt issuer=https://kubernetes.default.svc"
 	vault_exec $file 'vault policy write hub-secret - << EOF
 path "secret/data/hub/*"
-  { capabilities = ["create", "read", "update", "delete", "list"]
+  { capabilities = ["read"]
 }
 EOF
 '
