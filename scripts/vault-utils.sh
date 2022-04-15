@@ -191,7 +191,7 @@ vault_policy_init()
 	vault_exec $file "vault write auth/hub/config token_reviewer_jwt=$sa_token kubernetes_host=$k8s_host kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt issuer=https://kubernetes.default.svc"
 	vault_exec $file 'vault policy write hub-secret - << EOF
 path "secret/data/hub/*"
-  { capabilities = ["create", "read", "update", "delete", "list"]
+  { capabilities = ["read"]
 }
 EOF
 '
