@@ -32,7 +32,7 @@
   - name: Fail if both KUBECONFIG and ~/.kube/config do not exist
     ansible.builtin.fail:
       msg: "{{ kubeconfig_backup }} not found and KUBECONFIG unset. Bailing out."
-    failed_when: not kubeconfig_result.stat.exists
+    failed_when: not kubeconfig_result.stat.exists and (kubeconfig is not defined or kubeconfig | length == 0)
 
   - name: Parse "{{ values_secret }}"
     ansible.builtin.set_fact:
