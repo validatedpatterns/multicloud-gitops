@@ -63,8 +63,8 @@ vault_init()
 	fi
 
 	if [ -f "$file" ] && grep -q -e '^Unseal' "$file"; then
-		echo "$file already exists and contains seal secrets. If this is what you really wanted, move that file away first or call vault_delete"
-		exit 1
+		echo "$file already exists and contains seal secrets. We're moving it away to ${file}.bak"
+		mv -vf "${file}" "${file}.bak"
 	fi
 
 	# The vault is ready to be initialized when it is "Running" but not "ready".  Unsealing it makes it ready
