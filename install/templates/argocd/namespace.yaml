@@ -1,8 +1,6 @@
 # Pre-create so we can create our argo app for keeping subscriptions in sync
 # Do it here so that we don't try to sync it in the future
-{{- if .Values.main.options.bootstrap }}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: openshift-gitops
-{{- end }}
