@@ -1,5 +1,3 @@
-BOOTSTRAP=1
-
 .PHONY: default
 default: help
 
