@@ -8,7 +8,6 @@ main:
     syncPolicy: Automatic
     installPlanApproval: Automatic
     useCSV: False
-    bootstrap: True
 
   gitops:
     channel: stable
