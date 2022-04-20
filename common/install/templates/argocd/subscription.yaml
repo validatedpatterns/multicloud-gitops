@@ -1,4 +1,3 @@
-{{- if .Values.main.options.bootstrap }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -18,5 +17,4 @@ spec:
         value: {{ .Release.Name }}-{{ .Values.main.clusterGroupName }},openshift-gitops
 {{- if .Values.main.options.useCSV }}
   startingCSV: openshift-gitops-operator.{{ .Values.main.gitops.csv }}
-{{- end }}
 {{- end }}
