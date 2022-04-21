@@ -71,6 +71,10 @@ subjects:
     # This is the {ArgoCD.name}-argocd-server
     name: example-gitops-argocd-server
     namespace: mypattern-example
+  # NOTE: This is needed starting with gitops-1.5.0 (see issue common#76)
+  - kind: ServiceAccount
+    name: example-gitops-argocd-dex-server
+    namespace: mypattern-example
 ---
 # Source: pattern-clustergroup/templates/projects.yaml
 apiVersion: argoproj.io/v1alpha1
