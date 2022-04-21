@@ -35,3 +35,7 @@ subjects:
     # This is the {ArgoCD.name}-argocd-server
     name: {{ .Values.clusterGroup.name }}-gitops-argocd-server
     namespace: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}
+  # NOTE: This is needed starting with gitops-1.5.0 (see issue common#76)
+  - kind: ServiceAccount
+    name: {{ .Values.clusterGroup.name }}-gitops-argocd-dex-server
+    namespace: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}
