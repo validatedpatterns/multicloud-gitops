@@ -123,7 +123,7 @@
 
   - name: Debug
     debug:
-      msg: "vault kv put {{ vault_path }}/{{ item.key }} -> {{ item.value.keys() | zip(item.value.values()) | map('join', '=') | list | join(' ')}}"
+      msg: "vault kv put '{{ vault_path }}/{{ item.key }}' -> '{{ item.value.keys() | zip(item.value.values()) | map('join', '=') | list | join(' ')}}'"
     loop:
       "{{ secrets | dict2items }}"
     loop_control:
@@ -135,7 +135,7 @@
       namespace: "{{ vault_ns }}"
       pod: "{{ vault_pod }}"
       command: |
-        sh -c "vault kv put {{ vault_path }}/{{ item.key }} {{ item.value.keys() | zip(item.value.values()) | map('join', '=') | list | join(' ')}}"
+        sh -c "vault kv put '{{ vault_path }}/{{ item.key }}' '{{ item.value.keys() | zip(item.value.values()) | map('join', '=') | list | join(' ')}}'"
     loop:
       "{{ secrets | dict2items }}"
     loop_control:
