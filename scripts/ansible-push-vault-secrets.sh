@@ -121,13 +121,41 @@
       - not debug | bool
       - vault_status.rc | int > 0
 
-  - name: Debug
-    debug:
-      msg: "vault kv put '{{ vault_path }}/{{ item.key }}' -> '{{ item.value.keys() | zip(item.value.values()) | map('join', '=') | list | join(' ')}}'"
+# The values-secret.yaml file is in the fairly loose form of:
+# secrets:
+#   group1:
+#     key1: value1
+#     key2: value2
+#   group2:
+#     key1: valueA
+#     key4: valueC
+# The above will generate:
+# vault kv put 'secret/hub/group1' key1='value1' key2='value2'
+# vault kv put 'secret/hub/group2' key1='valueA' key4='valueC'
+# Below we loop on the top level keys (group1, group2) and for each
+# sub-top-level key (key1, key2) we create a single 'key1=value1 key2=value2' string
+#
+# Special note is to be given to the regex_replace which is run against each value aka password:
+# A. The need for it is to quote the passwords
+# B. Since it needs to cater to multiline strings (certs) and ansible offers no way
+#    to specify re.DOTALL and re.MULTILINE we need to use (?ms) at the beginning
+#    See https://docs.python.org/3/library/re.html and (?aiLmsux) section
+#    and https://github.com/ansible/ansible/blob/devel/lib/ansible/plugins/filter/core.py#L124
+# C. The \\A and \\Z match the beginning and end of a string (in case of multiline strings
+#    do not want to match every line)
+  - name: Set vault commands fact
+    ansible.builtin.set_fact:
+      vault_cmds: "{{ vault_cmds | default({}) | combine({ item.key: vault_cmd}) }}"
+    vars:
+      vault_cmd: "vault kv put '{{ vault_path }}/{{ item.key }}' {{ item.value.keys() | zip(item.value.values() | map('regex_replace', '(?ms)\\A(.*)\\Z', \"'\\1'\")) | map('join', '=') | list | join(' ') }}"
     loop:
       "{{ secrets | dict2items }}"
     loop_control:
       label: "{{ item.key }}"
+
+  - name: Debug vault commands
+    ansible.builtin.debug:
+      msg: "{{ vault_cmds }}"
     when: debug | bool
 
   - name: Add the actual secrets to the vault
@@ -135,9 +163,9 @@
       namespace: "{{ vault_ns }}"
       pod: "{{ vault_pod }}"
       command: |
-        sh -c "vault kv put '{{ vault_path }}/{{ item.key }}' '{{ item.value.keys() | zip(item.value.values()) | map('join', '=') | list | join(' ')}}'"
+        sh -c "{{ item.value }}"
     loop:
-      "{{ secrets | dict2items }}"
+      "{{ vault_cmds | dict2items }}"
     loop_control:
       label: "{{ item.key }}"
     when: not debug | bool
