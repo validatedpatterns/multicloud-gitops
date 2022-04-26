@@ -9,7 +9,6 @@ clusterGroup:
   isHubCluster: false
 
   namespaces:
-    - multicloud-gitops-region-one
     - config-demo
 
   subscriptions:
