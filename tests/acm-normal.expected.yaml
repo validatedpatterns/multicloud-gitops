@@ -100,8 +100,6 @@ spec:
           remediationAction: enforce
           severity: med
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
@@ -182,8 +180,6 @@ spec:
           remediationAction: enforce
           severity: med
           namespaceSelector:
-            exclude:
-              - kube-*
             include:
               - default
           object-templates:
