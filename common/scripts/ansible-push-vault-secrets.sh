@@ -13,6 +13,9 @@
     debug: False
 
   tasks:
+  - name: Check if the kubernetes python module is usable from ansible
+    ansible.builtin.shell: "{{ ansible_python_interpreter }} -c 'import kubernetes'"
+
   - name: Check for existence of "{{ values_secret }}"
     ansible.builtin.stat:
       path: "{{ values_secret }}"
