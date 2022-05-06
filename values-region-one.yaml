@@ -17,54 +17,60 @@ clusterGroup:
     - config-demo
 
   applications:
-  - name: config-demo
-    namespace: config-demo
-    project: config-demo
-    path: charts/all/config-demo
+    config-demo:
+      name: config-demo
+      namespace: config-demo
+      project: config-demo
+      path: charts/all/config-demo
 
-#
+
+
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
-#  - name: pipelines
-#    namespace: production
-#    project: datacenter
-#    path: applications/pipeline
-#    repoURL: https://github.com/you/applications.git
-#    targetRevision: stable
-#    overrides:
-#    - name: myparam
-#      value: myparam
+#    pipelines:
+#      name: pipelines
+#      namespace: production
+#      project: datacenter
+#      path: applications/pipeline
+#      repoURL: https://github.com/you/applications.git
+#      targetRevision: stable
+#      overrides:
+#      - name: myparam
+#        value: myparam
 #
-#  - name: pipelines
-#    namespace: staging
-#    project: datacenter
-#    path: applications/pipeline
-#    repoURL: https://github.com/you/applications.git
-#    targetRevision: main
+#    pipelines_staging:
+#    - name: pipelines
+#      namespace: staging
+#      project: datacenter
+#      path: applications/pipeline
+#      repoURL: https://github.com/you/applications.git
+#      targetRevision: main
 #
 #   Additional applications
 #   Be sure to include additional resources your apps will require
 #   +X machines
 #   +Y RAM
 #   +Z CPU
-#  - name: vendor-app
-#    namespace: default
-#    project: vendor
-#    path: path/to/myapp
-#    repoURL: https://github.com/vendor/applications.git
-#    targetRevision: main
+#    vendor-app:
+#      name: vendor-app
+#      namespace: default
+#      project: vendor
+#      path: path/to/myapp
+#      repoURL: https://github.com/vendor/applications.git
+#      targetRevision: main
 
 #  managedSites:
-#  - name: factory
-#    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
-#    targetRevision: main
-#    path: applications/factory
-#    helmOverrides:
-#    - name: site.isHubCluster
-#      value: false
-#    clusterSelector:
-#      matchExpressions:
-#      - key: vendor
-#        operator: In
-#        values:
-#          - OpenShift
+#    factory:
+#      name: factory
+#      # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
+#      targetRevision: main
+#      path: applications/factory
+#      helmOverrides:
+#      - name: site.isHubCluster
+#        value: false
+#      clusterSelector:
+#        matchExpressions:
+#        - key: vendor
+#          operator: In
+#          values:
+#            - OpenShift

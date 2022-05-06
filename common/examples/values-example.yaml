@@ -12,32 +12,41 @@ clusterGroup:
   - application-ci
 
   subscriptions:
-  - name: advanced-cluster-management
-    namespace: open-cluster-management
-    channel: release-2.3
-    csv: advanced-cluster-management.v2.3.2
+    acm:
+      name: advanced-cluster-management
+      namespace: open-cluster-management
+      channel: release-2.4
+      csv: advanced-cluster-management.v2.4.1
+      
+    odh:
+      name: opendatahub-operator
+      source: community-operators
+      csv: opendatahub-operator.v1.1.0
+      disabled: true
 
-  - name: openshift-pipelines-operator-rh
-    csv: redhat-openshift-pipelines.v1.5.1
+    pipelines:
+      name: openshift-pipelines-operator-rh
+      csv: redhat-openshift-pipelines.v1.5.2
 
   projects:
   - datacenter
  
   applications:
-  - name: acm
-    namespace: open-cluster-management
-    project: datacenter
-    path: common/acm
-    ignoreDifferences:
-    - group: internal.open-cluster-management.io
-      kind: ManagedClusterInfo
-      jsonPointers:
-      - /spec/loggingCA
-
-  - name: pipelines
-    namespace: application-ci
-    project: datacenter
-    path: charts/datacenter/pipelines
+    acm:
+      name: acm
+      namespace: open-cluster-management
+      project: datacenter
+      path: common/acm
+      ignoreDifferences:
+      - group: internal.open-cluster-management.io
+        kind: ManagedClusterInfo
+        jsonPointers:
+        - /spec/loggingCA
+    pipe:
+      name: pipelines
+      namespace: application-ci
+      project: datacenter
+      path: charts/datacenter/pipelines
 
   managedClusterGroups:
   - name: edge
