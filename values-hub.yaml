@@ -9,10 +9,11 @@ clusterGroup:
   - config-demo
 
   subscriptions:
-  - name: advanced-cluster-management
-    namespace: open-cluster-management
-    channel: release-2.4
-    csv: advanced-cluster-management.v2.4.1
+    acm:
+      name: advanced-cluster-management
+      namespace: open-cluster-management
+      channel: release-2.4
+      csv: advanced-cluster-management.v2.4.1
 
   projects:
   - hub
@@ -20,103 +21,112 @@ clusterGroup:
   - golang-external-secrets
 
   applications:
-  - name: acm
-    namespace: open-cluster-management
-    project: hub
-    path: common/acm
-    ignoreDifferences:
-    - group: internal.open-cluster-management.io
-      kind: ManagedClusterInfo
-      jsonPointers:
-        - /spec/loggingCA
+    acm:
+      name: acm
+      namespace: open-cluster-management
+      project: hub
+      path: common/acm
+      ignoreDifferences:
+      - group: internal.open-cluster-management.io
+        kind: ManagedClusterInfo
+        jsonPointers:
+          - /spec/loggingCA
 
-  - name: vault
-    namespace: vault
-    project: hub
-    chart: vault
-    repoURL: https://helm.releases.hashicorp.com
-    targetRevision: v0.19.0
-    overrides:
-    - name: global.openshift
-      value: "true"
-    - name: injector.enabled
-      value: "false"
-    - name: ui.enabled
-      value: "true"
-    - name: ui.serviceType
-      value: LoadBalancer
-    - name: server.route.enabled
-      value: "true"
-    - name: server.route.host
-      value: null
-    - name: server.route.tls.termination
-      value: edge
-    - name: server.image.repository
-      value: "registry.connect.redhat.com/hashicorp/vault"
-    - name: server.image.tag
-      value: "1.9.2-ubi"
+    vault:
+      name: vault
+      namespace: vault
+      project: hub
+      chart: vault
+      repoURL: https://helm.releases.hashicorp.com
+      targetRevision: v0.19.0
+      overrides:
+      - name: global.openshift
+        value: "true"
+      - name: injector.enabled
+        value: "false"
+      - name: ui.enabled
+        value: "true"
+      - name: ui.serviceType
+        value: LoadBalancer
+      - name: server.route.enabled
+        value: "true"
+      - name: server.route.host
+        value: null
+      - name: server.route.tls.termination
+        value: edge
+      - name: server.image.repository
+        value: "registry.connect.redhat.com/hashicorp/vault"
+      - name: server.image.tag
+        value: "1.9.2-ubi"
 
-  - name: golang-external-secrets
-    namespace: golang-external-secrets
-    project: golang-external-secrets
-    path: charts/hub/golang-external-secrets
+    golang-external-secrets:
+      name: golang-external-secrets
+      namespace: golang-external-secrets
+      project: golang-external-secrets
+      path: charts/hub/golang-external-secrets
 
-  - name: config-demo
-    namespace: config-demo
-    project: config-demo
-    path: charts/all/config-demo
+    config-demo:
+      name: config-demo
+      namespace: config-demo
+      project: config-demo
+      path: charts/all/config-demo
 
   managedClusterGroups:
-  - name: region-one
-    helmOverrides:
-    - name: clusterGroup.isHubCluster
-      value: false
-    clusterSelector:
-      matchLabels:
-        clusterGroup: region-one
+    region-one:
+      name: region-one
+      helmOverrides:
+      - name: clusterGroup.isHubCluster
+        value: false
+      clusterSelector:
+        matchLabels:
+          clusterGroup: region-one
 
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
-#  - name: pipelines
-#    namespace: production
-#    project: datacenter
-#    path: applications/pipeline
-#    repoURL: https://github.com/you/applications.git
-#    targetRevision: stable
-#    overrides:
-#    - name: myparam
-#      value: myparam
+#    pipelines:
+#      name: pipelines
+#      namespace: production
+#      project: datacenter
+#      path: applications/pipeline
+#      repoURL: https://github.com/you/applications.git
+#      targetRevision: stable
+#      overrides:
+#      - name: myparam
+#        value: myparam
 #
-#  - name: pipelines
-#    namespace: staging
-#    project: datacenter
-#    path: applications/pipeline
-#    repoURL: https://github.com/you/applications.git
-#    targetRevision: main
+#    pipelines_staging:
+#    - name: pipelines
+#      namespace: staging
+#      project: datacenter
+#      path: applications/pipeline
+#      repoURL: https://github.com/you/applications.git
+#      targetRevision: main
 #
 #   Additional applications
 #   Be sure to include additional resources your apps will require
 #   +X machines
 #   +Y RAM
 #   +Z CPU
-#  - name: vendor-app
-#    namespace: default
-#    project: vendor
-#    path: path/to/myapp
-#    repoURL: https://github.com/vendor/applications.git
-#    targetRevision: main
+#    vendor-app:
+#      name: vendor-app
+#      namespace: default
+#      project: vendor
+#      path: path/to/myapp
+#      repoURL: https://github.com/vendor/applications.git
+#      targetRevision: main
 
 #  managedSites:
-#  - name: factory
-#    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
-#    targetRevision: main
-#    path: applications/factory
-#    helmOverrides:
-#    - name: site.isHubCluster
-#      value: false
-#    clusterSelector:
-#      matchExpressions:
-#      - key: vendor
-#        operator: In
-#        values:
-#          - OpenShift
+#    factory:
+#      name: factory
+#      # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
+#      targetRevision: main
+#      path: applications/factory
+#      helmOverrides:
+#      - name: site.isHubCluster
+#        value: false
+#      clusterSelector:
+#        matchExpressions:
+#        - key: vendor
+#          operator: In
+#          values:
+#            - OpenShift
