@@ -76,6 +76,9 @@ subjects:
     name: example-gitops-argocd-dex-server
     namespace: mypattern-example
 ---
+# Source: pattern-clustergroup/templates/subscriptions.yaml
+---
+---
 # Source: pattern-clustergroup/templates/projects.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
@@ -327,7 +330,7 @@ spec:
   name: advanced-cluster-management
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  channel: release-2.3
+  channel: release-2.4
   installPlanApproval: Automatic
 ---
 # Source: pattern-clustergroup/templates/subscriptions.yaml
