@@ -38,7 +38,7 @@ clusterGroup:
       project: hub
       chart: vault
       repoURL: https://helm.releases.hashicorp.com
-      targetRevision: v0.19.0
+      targetRevision: v0.20.0
       overrides:
       - name: global.openshift
         value: "true"
@@ -57,7 +57,7 @@ clusterGroup:
       - name: server.image.repository
         value: "registry.connect.redhat.com/hashicorp/vault"
       - name: server.image.tag
-        value: "1.9.2-ubi"
+        value: "1.10.3-ubi"
 
     golang-external-secrets:
       name: golang-external-secrets
