@@ -1,6 +1,0 @@
----
-mountPath: "hub"
-mountRole: "hub-role"
-
-global:
-  hubClusterDomain: hub.example.com
