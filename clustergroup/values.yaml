@@ -6,9 +6,28 @@ global:
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
+# Note that sometimes changing helm values might require a hard refresh (https://github.com/helm/helm/issues/3486)
 clusterGroup:
   name: example
   isHubCluster: true
+
+  imperative:
+    jobs: []
+    image: quay.io/hybridcloudpatterns/utility-container:latest
+    namespace: "imperative"
+    valuesConfigMap: "helm-values-configmap"
+    cronJobName: "imperative-cronjob"
+    jobName: "imperative-job"
+    imagePullPolicy: Always
+    activeDeadlineSeconds: 3600
+    schedule: "*/10 * * * *"
+    verbosity: ""
+    serviceAccountCreate: true
+    serviceAccountName: imperative-sa
+    clusterRoleName: imperative-cluster-role
+    clusterRoleYaml: ""
+    roleName: imperative-role
+    roleYaml: ""
 
 #  managedClusterGroups:
 #  - name: factory

@@ -1,0 +1,12 @@
+{{/* Only define this if there are any imperativejobs defined */}}
+{{- if gt (len $.Values.clusterGroup.imperative.jobs) 0 -}}
+{{- $valuesyaml := toYaml $.Values -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}
+  namespace: {{ $.Values.clusterGroup.imperative.namespace}}
+data:
+  values.yaml: |
+{{ tpl $valuesyaml . | indent 4 }}
+{{ end }}
