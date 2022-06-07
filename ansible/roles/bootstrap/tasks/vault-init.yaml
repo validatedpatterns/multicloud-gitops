@@ -1,0 +1,19 @@
+---
+# tasks file for vault-init
+# TODO: We need to take all the calls in vault-utils.sh and use Ansible
+- name: "[vault-init] Checking if [ {{ vault_init_file }} ] exists"
+  stat:
+    path: "{{ vault_init_file }}"
+  register: file_data
+
+- name: "[vault-init] Removing [ {{ vault_init_file }} ] file"
+  file:
+    path: "{{ vault_init_file }}"
+    state: absent
+  when: file_data.stat.exists
+
+- name: "[vault-init] Initializing Vault"
+  command: "{{ pattern_repo_dir }}/common/scripts/vault-utils.sh vault_init {{ vault_init_file }}"
+  register: vault_init_status
+  failed_when: vault_init_status.rc|int == 1
+  when: not debug | bool

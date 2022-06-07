@@ -1,0 +1,40 @@
+---
+# tasks file for install-charts
+#####  helm install $(NAME)-secrets charts/secrets/pipeline-setup $(HELM_OPTS)
+- name: " [install-charts] Creating temporary file with Validated Pattern values"
+  copy:
+    dest: "/tmp/helmopts.yaml"
+    content: |
+      main:
+        git:
+          revision: "{{ target_branch }}"
+          repoURL: "{{ target_repo }}"
+        options:
+          bootstrap: "{{ bootstrap }}"
+      global:
+        hubClusterDomain: "{{ hubcluster_apps_domain }}"
+
+- name: " [install-charts] Installing Validated Pattern Framework helm chart"
+  kubernetes.core.helm:
+    name: "{{ pattern }}"
+    chart_ref: "{{ pattern_repo_dir }}/common/install"
+    release_namespace: default
+    wait: yes
+    replace: yes
+    force: yes
+    values_files:
+      - "{{ secrets_file }}"
+      - "{{ globals_file }}"
+      - "/tmp/helmopts.yaml"
+  
+- name:  " [install-charts] Verify complete"
+  debug:
+    msg: "ok"
+
+- name: Remove file
+  file:
+    path: "/tmp/helmopts.yaml"
+    state: absent
+
+#echo "Bootstrap seed now running" && break;
+
