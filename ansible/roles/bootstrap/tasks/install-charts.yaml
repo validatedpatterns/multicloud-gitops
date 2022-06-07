@@ -16,7 +16,7 @@
 
 - name: " [install-charts] Installing Validated Pattern Framework helm chart"
   kubernetes.core.helm:
-    name: {{ pattern }}
+    name: "{{ pattern }}"
     chart_ref: "{{ pattern_repo_dir }}/common/install"
     release_namespace: default
     wait: yes

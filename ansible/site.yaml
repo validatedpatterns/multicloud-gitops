@@ -1,4 +1,4 @@
-- name: {{ pattern }} bootstrap 
+- name: MultiCloud-GitOps bootstrap 
   hosts: localhost
   connection: local
   roles:
