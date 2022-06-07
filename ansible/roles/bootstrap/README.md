@@ -29,13 +29,11 @@ playbook: ansible/site.yaml
 
   play #1 (localhost): MultiCloud-GitOps bootstrap	TAGS: []
     tasks:
-      bootstrap-industrial-edge : {{ role_name }}: Getting pattern information	TAGS: []
-      bootstrap-industrial-edge : {{ role_name }}: debug	TAGS: []
-      bootstrap-industrial-edge : {{ role_name }}: Deploying Helm Charts	TAGS: []
-      bootstrap-industrial-edge : {{ role_name }}: Initialize Vault	TAGS: []
-      bootstrap-industrial-edge : {{ role_name }}: Load Secrets to Vault	TAGS: []
-      bootstrap-industrial-edge : {{ role_name }}: Retrieve ArgoCD Secrets	TAGS: []
-      bootstrap-industrial-edge : {{ role_name }}: Verify Tekton pipelines and tasks	TAGS: []
+      bootstrap : {{ role_name }}: Getting pattern information	TAGS: []
+      bootstrap : {{ role_name }}: debug	TAGS: []
+      bootstrap : {{ role_name }}: Deploying Helm Charts	TAGS: []
+      bootstrap : {{ role_name }}: Initialize Vault	TAGS: []
+      bootstrap : {{ role_name }}: Load Secrets to Vault	TAGS: []
 ```
 
 ### Task: Getting pattern information
