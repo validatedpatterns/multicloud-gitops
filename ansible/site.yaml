@@ -1,0 +1,6 @@
+- name: Industrial Edge bootstrap 
+  hosts: localhost
+  connection: local
+  roles:
+    - bootstrap-industrial-edge
+
