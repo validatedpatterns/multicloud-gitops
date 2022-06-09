@@ -19,7 +19,7 @@ spec:
           name: openshift-gitops-config
         spec:
           remediationAction: enforce
-          severity: med
+          severity: medium
           namespaceSelector:
             include:
               - default
