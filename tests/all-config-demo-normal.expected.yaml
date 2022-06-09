@@ -214,7 +214,7 @@ spec:
                   namespace: config-demo
                 apiVersion: v1
                 data:
-                  secret: '{{hub (lookup "v1" "Secret" "config-demo" "config-demo-secret").data.secret hub}}'
+                  secret: '{{hub fromSecret "config-demo" "config-demo-secret" "secret" hub}}'
 ---
 # Source: config-demo/templates/config-demo-route.yaml
 apiVersion: route.openshift.io/v1
