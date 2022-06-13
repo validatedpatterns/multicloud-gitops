@@ -95,6 +95,9 @@
       name: "{{ vault_ns }}"
     register: vault_ns_rc
     failed_when: vault_ns_rc.resources | length == 0
+    until: vault_ns_rc is success
+    retries: 30
+    delay: 5
     when: not debug | bool
 
   - name: Check if the vault pod is present
