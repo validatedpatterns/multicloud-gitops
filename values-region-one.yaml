@@ -24,6 +24,12 @@ clusterGroup:
       path: charts/all/config-demo
 
 
+  imperative:
+    # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
+    jobs:
+    - name: get-hub
+      playbook: ansible/playbooks/on-regional-get-hub-ca.yml
+      timeout: 123
 
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
