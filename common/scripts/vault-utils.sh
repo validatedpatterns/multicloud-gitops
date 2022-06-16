@@ -62,17 +62,17 @@ vault_init()
 		file=common/vault.init
 	fi
 
-	if [ -f "$file" ] && grep -q -e '^Unseal' "$file"; then
-		echo "$file already exists and contains seal secrets. We're moving it away to ${file}.bak"
-		mv -vf "${file}" "${file}.bak"
-	fi
-
 	# The vault is ready to be initialized when it is "Running" but not "ready".  Unsealing it makes it ready
 	rdy_check=`get_vault_ready`
 
 	if [ "$rdy_check" = "1/1 Running" ]; then
 		echo "Vault is already ready, exiting"
 		exit 0
+	fi
+
+	if [ -f "$file" ] && grep -q -e '^Unseal' "$file"; then
+		echo "$file already exists and contains seal secrets. We're moving it away to ${file}.bak"
+		mv -vf "${file}" "${file}.bak"
 	fi
 
 	until [ "$rdy_check" = "0/1 Running" ]
