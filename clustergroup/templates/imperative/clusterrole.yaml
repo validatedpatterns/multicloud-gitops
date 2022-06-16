@@ -1,0 +1,21 @@
+{{/* Only define this if there are any imperativejobs defined */}}
+{{- if gt (len $.Values.clusterGroup.imperative.jobs) 0 -}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ $.Values.clusterGroup.imperative.clusterRoleName }}
+rules:
+{{- if $.Values.clusterGroup.imperative.clusterRoleYaml -}}
+  {{ toYaml $.Values.clusterGroup.imperative.clusterRoleYaml | nindent 2 }}
+{{- else }}
+  - apiGroups:
+    - '*'
+    resources:
+    - '*'
+    verbs:
+    - get
+    - list
+    - watch
+{{- end }}
+{{- end }}
