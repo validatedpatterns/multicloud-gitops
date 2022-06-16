@@ -12,8 +12,8 @@ clusterGroup:
     acm:
       name: advanced-cluster-management
       namespace: open-cluster-management
-      channel: release-2.4
-      csv: advanced-cluster-management.v2.4.1
+      channel: release-2.5
+      csv: advanced-cluster-management.v2.5.0
 
   projects:
   - hub
