@@ -13,16 +13,22 @@ clusterGroup:
 
   imperative:
     jobs: []
-    image: quay.io/hybridcloudpatterns/utility-container:latest
+    # This image contains ansible + kubernetes.core by default and is used to run the jobs
+    image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
     namespace: "imperative"
+    # configmap name in the namespace that will contain all helm values
     valuesConfigMap: "helm-values-configmap"
     cronJobName: "imperative-cronjob"
     jobName: "imperative-job"
     imagePullPolicy: Always
+    # This is the maximum timeout of all the jobs (1h)
     activeDeadlineSeconds: 3600
+    # By default we run this every 10minutes
     schedule: "*/10 * * * *"
+    # Increase ansible verbosity with '-v' or '-vv..'
     verbosity: ""
     serviceAccountCreate: true
+    # service account to be used to run the cron pods
     serviceAccountName: imperative-sa
     clusterRoleName: imperative-cluster-role
     clusterRoleYaml: ""
