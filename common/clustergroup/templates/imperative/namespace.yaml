@@ -1,0 +1,10 @@
+{{/* Only define this if there are any imperativejobs defined */}}
+{{- if gt (len $.Values.clusterGroup.imperative.jobs) 0 -}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: {{ $.Values.clusterGroup.imperative.namespace }}
+    argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
+  name: {{ $.Values.clusterGroup.imperative.namespace }}
+{{ end }}

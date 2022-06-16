@@ -12,6 +12,15 @@ metadata:
   name: mypattern-example
 spec: {}
 ---
+# Source: pattern-clustergroup/templates/imperative/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: imperative
+    argocd.argoproj.io/managed-by: mypattern-example
+  name: imperative
+---
 # Source: pattern-clustergroup/templates/namespaces.yaml
 apiVersion: v1
 kind: Namespace
@@ -31,6 +40,136 @@ metadata:
     argocd.argoproj.io/managed-by: mypattern-example
   name: application-ci
 spec:
+---
+# Source: pattern-clustergroup/templates/imperative/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: imperative-sa
+  namespace: imperative
+---
+# Source: pattern-clustergroup/templates/imperative/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: helm-values-configmap
+  namespace: imperative
+data:
+  values.yaml: |
+    clusterGroup:
+      applications:
+        acm:
+          ignoreDifferences:
+          - group: internal.open-cluster-management.io
+            jsonPointers:
+            - /spec/loggingCA
+            kind: ManagedClusterInfo
+          name: acm
+          namespace: open-cluster-management
+          path: common/acm
+          project: datacenter
+        pipe:
+          name: pipelines
+          namespace: application-ci
+          path: charts/datacenter/pipelines
+          project: datacenter
+      imperative:
+        activeDeadlineSeconds: 3600
+        clusterRoleName: imperative-cluster-role
+        clusterRoleYaml: ""
+        cronJobName: imperative-cronjob
+        image: quay.io/hybridcloudpatterns/utility-container:latest
+        imagePullPolicy: Always
+        jobName: imperative-job
+        jobs:
+        - name: test
+          playbook: ansible/test.yml
+        namespace: imperative
+        roleName: imperative-role
+        roleYaml: ""
+        schedule: '*/10 * * * *'
+        serviceAccountCreate: true
+        serviceAccountName: imperative-sa
+        valuesConfigMap: helm-values-configmap
+        verbosity: ""
+      isHubCluster: true
+      managedClusterGroups:
+      - clusterSelector:
+          matchExpressions:
+          - key: vendor
+            operator: In
+            values:
+            - OpenShift
+        helmOverrides:
+        - name: clusterGroup.isHubCluster
+          value: "false"
+        name: edge
+        targetRevision: main
+      name: example
+      namespaces:
+      - open-cluster-management
+      - application-ci
+      projects:
+      - datacenter
+      subscriptions:
+        acm:
+          channel: release-2.4
+          csv: advanced-cluster-management.v2.4.1
+          name: advanced-cluster-management
+          namespace: open-cluster-management
+        odh:
+          csv: opendatahub-operator.v1.1.0
+          disabled: true
+          name: opendatahub-operator
+          source: community-operators
+        pipelines:
+          csv: redhat-openshift-pipelines.v1.5.2
+          name: openshift-pipelines-operator-rh
+    global:
+      git:
+        account: hybrid-cloud-patterns
+        dev_revision: main
+        email: someone@somewhere.com
+        hostname: github.com
+      hubClusterDomain: hub.example.com
+      localClusterDomain: region.example.com
+      namespace: pattern-namespace
+      options:
+        installPlanApproval: Automatic
+        syncPolicy: Automatic
+        useCSV: false
+      pattern: mypattern
+      repoURL: https://github.com/pattern-clone/mypattern
+      valuesDirectoryURL: https://github.com/pattern-clone/mypattern/raw/main
+    main:
+      clusterGroupName: example
+      git:
+        repoURL: https://github.com/pattern-clone/mypattern
+        revision: main
+    secrets:
+      aws:
+        s3Secret: test-secret
+      git:
+        token: test-git-token
+        username: test-user
+      imageregistry:
+        account: test-account
+        token: test-quay-token
+---
+# Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: imperative-cluster-role
+rules:
+  - apiGroups:
+    - '*'
+    resources:
+    - '*'
+    verbs:
+    - get
+    - list
+    - watch
 ---
 # Source: pattern-clustergroup/templates/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
@@ -75,6 +214,129 @@ subjects:
   - kind: ServiceAccount
     name: example-gitops-argocd-dex-server
     namespace: mypattern-example
+---
+# Source: pattern-clustergroup/templates/imperative/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: imperative-cluster-admin-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: imperative-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: imperative-sa
+    namespace: imperative
+---
+# Source: pattern-clustergroup/templates/imperative/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: imperative-role
+  namespace: imperative
+rules:
+  - apiGroups:
+    - '*'
+    resources:
+    - '*'
+    verbs:
+    - '*'
+---
+# Source: pattern-clustergroup/templates/imperative/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: imperative-admin-rolebinding
+  namespace: imperative
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: imperative-role
+subjects:
+  - kind: ServiceAccount
+    name: imperative-sa
+    namespace: imperative
+---
+# Source: pattern-clustergroup/templates/imperative/job.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: imperative-cronjob
+  namespace: imperative
+spec:
+  schedule: "*/10 * * * *"
+  # if previous Job is still running, skip execution of a new Job
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          name: imperative-job
+        spec:
+          serviceAccountName: imperative-sa
+          initContainers:
+            # git init happens in /git/repo so that we can set the folder to 0770 permissions
+            # reason for that is ansible refuses to create temporary folders in there
+            - name: git-init
+              image: quay.io/hybridcloudpatterns/utility-container:latest
+              imagePullPolicy: Always
+              env:
+                - name: HOME
+                  value: /git/home
+              command:
+              - 'sh'
+              - '-c'
+              - "mkdir /git/{repo,home};git clone --single-branch --branch  --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
+              volumeMounts:
+              - name: git
+                mountPath: "/git"
+            - name: test
+              image: quay.io/hybridcloudpatterns/utility-container:latest
+              imagePullPolicy: Always
+              env:
+                - name: HOME
+                  value: /git/home
+              workingDir: /git/repo
+              # We have a default timeout of 600s for each playbook. Can be overridden
+              # on a per-job basis
+              command:
+                - timeout
+                - "600"
+                - ansible-playbook
+                - -e
+                - "@/values/values.yaml"
+                - ansible/test.yml
+              volumeMounts:
+              - name: git
+                mountPath: "/git"
+              - name: values-volume
+                mountPath: /values/values.yaml
+                subPath: values.yaml
+          containers:
+          - name: imperative-job-done
+            image: quay.io/hybridcloudpatterns/utility-container:latest
+            imagePullPolicy: Always
+            command:
+            - 'sh'
+            - '-c'
+            - echo
+            - test
+            - '\n'
+            volumeMounts:
+            - name: git
+              mountPath: "/git"
+            - name: values-volume
+              mountPath: /values/values.yaml
+              subPath: values.yaml
+          volumes:
+          - name: git
+            emptyDir: {}
+          - name: values-volume
+            configMap:
+              name: helm-values-configmap
+          restartPolicy: Never
 ---
 # Source: pattern-clustergroup/templates/subscriptions.yaml
 ---
