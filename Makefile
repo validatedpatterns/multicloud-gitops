@@ -1,4 +1,3 @@
-SECRETS=~/values-secret.yaml
 NAME=$(shell basename `pwd`)
 # This is to ensure that whether we start with a git@ or https:// URL, we end up with an https:// URL
 # This is because we expect to use tokens for repo authentication as opposed to SSH keys
@@ -9,7 +8,7 @@ TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 HUBCLUSTER_APPS_DOMAIN=$(shell oc get ingresses.config/cluster -o jsonpath={.spec.domain})
 
 # --set values always take precedence over the contents of -f
-HELM_OPTS=-f values-global.yaml -f $(SECRETS) --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN)
+HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN)
 TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.valuesDirectoryURL="https://github.com/pattern-clone/mypattern/raw/main" --set global.pattern="mypattern" --set global.namespace="pattern-namespace" --set global.hubClusterDomain=hub.example.com --set global.localClusterDomain=region.example.com --set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml"
 PATTERN_OPTS=-f common/examples/values-example.yaml
 
