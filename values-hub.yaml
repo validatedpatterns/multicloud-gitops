@@ -18,7 +18,6 @@ clusterGroup:
   projects:
   - hub
   - config-demo
-  - golang-external-secrets
 
   applications:
     acm:
@@ -62,7 +61,7 @@ clusterGroup:
     golang-external-secrets:
       name: golang-external-secrets
       namespace: golang-external-secrets
-      project: golang-external-secrets
+      project: hub
       path: common/golang-external-secrets
 
     config-demo:
