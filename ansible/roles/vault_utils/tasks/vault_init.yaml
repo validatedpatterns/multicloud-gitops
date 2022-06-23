@@ -38,6 +38,7 @@
   ansible.builtin.copy:
     src: "{{ output_file_abs }}"
     dest: "{{ output_file_abs }}.bak"
+    mode: '0600'
   failed_when: result.stat.exists
 
 # This needs retrying because during startup we can just get
