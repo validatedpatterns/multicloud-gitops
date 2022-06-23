@@ -7,6 +7,8 @@ vault_ns: "vault"
 vault_pod: "vault-0"
 vault_hub: "hub"
 vault_hub_kubernetes_host: 'https://$KUBERNETES_PORT_443_TCP_ADDR:443'
+# Needs extra escaping due to how it gets injected via shell in the vault
+vault_hub_capabilities: "[\\\"read\\\"]"
 vault_path: "secret/hub"
 vault_hub_ttl: "15m"
 vault_pki_max_lease_ttl: "8760h"
