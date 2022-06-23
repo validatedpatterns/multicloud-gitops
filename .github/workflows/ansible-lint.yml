@@ -15,4 +15,4 @@ jobs:
         uses: ansible/ansible-lint-action@v6.2.1
         # Let's point it to the path
         with:
-          args: "ansible/"
+          path: "ansible/"
