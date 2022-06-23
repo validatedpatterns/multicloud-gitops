@@ -2,6 +2,7 @@
 # defaults file for vault_utils
 values_secret: "{{ lookup('env', 'HOME') }}/values-secret.yaml"
 kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
+kubeconfig_backup: "{{ lookup('env', 'HOME') }}/.kube/config"
 vault_ns: "vault"
 vault_pod: "vault-0"
 vault_hub: "hub"
