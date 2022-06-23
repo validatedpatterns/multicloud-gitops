@@ -70,7 +70,7 @@ super-linter: ## Runs super linter locally
 					-v $(PWD):/tmp/lint:rw,z docker.io/github/super-linter:slim-v4
 
 ansible-lint: ## run ansible lint on ansible/ folder
-	ansible-lint ansible/
+	podman run -it -v $(PWD):/workspace:rw,z --workdir /workspace --entrypoint "/usr/local/bin/ansible-lint" quay.io/ansible/creator-ee:latest  "-vvv" "ansible/"
 
 .phony: install test
 
