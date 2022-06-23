@@ -15,12 +15,6 @@
     path: "{{ output_file_abs }}"
   register: result
 
-- name: Rename "{{ output_file_abs }} if it exists"
-  ansible.builtin.copy:
-    src: "{{ output_file_abs }}"
-    dest: "{{ output_file_abs }}.bak"
-  failed_when: result.stat.exists
-
 - name: Check for vault namespace
   kubernetes.core.k8s_info:
     kind: Namespace
@@ -39,6 +33,12 @@
   until: vault_pod_rc.resources | length > 0
   retries: 20
   delay: 45
+
+- name: Rename "{{ output_file_abs }} if it exists"
+  ansible.builtin.copy:
+    src: "{{ output_file_abs }}"
+    dest: "{{ output_file_abs }}.bak"
+  failed_when: result.stat.exists
 
 # This needs retrying because during startup we can just get
 # Failed to execute on pod vault-0 due to : (0)\nReason: Handshake status 500 Internal Server Error
