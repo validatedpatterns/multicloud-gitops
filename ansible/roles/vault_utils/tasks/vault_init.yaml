@@ -5,7 +5,7 @@
 # If the vault is already initialized we skip all the tasks below
 - name: Is the vault initialized?
   ansible.builtin.set_fact:
-    vault_initialized: vault_status['initialized'] | bool
+    vault_initialized: "{{ vault_status['initialized'] | bool }}"
 
 # Note that the 'realpath' filter explicitely only resolves on the ansible/local box
 # which is fine in our case
