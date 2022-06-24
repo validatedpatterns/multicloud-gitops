@@ -30,8 +30,8 @@
     command: vault status -format=json
   register: vault_status_json
   until: "'rc' in vault_status_json"
-  retries: 15
-  delay: 10
+  retries: 20
+  delay: 45
   failed_when: "'stdout_lines' not in vault_status_json"
 
 - name: Set vault status output json fact
