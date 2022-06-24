@@ -59,7 +59,7 @@ vault-unseal: ## unseals the vault
 	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
 
 load-secrets: ## loads the secrets into the vault
-	common/scripts/ansible-push-vault-secrets.sh
+	common/scripts/vault-utils.sh push_secrets common/pattern-vault.init
 
 super-linter: ## Runs super linter locally
 	podman run -e RUN_LOCAL=true -e USE_FIND_ALGORITHM=true	\
