@@ -39,7 +39,7 @@
     src: "{{ output_file_abs }}"
     dest: "{{ output_file_abs }}.bak"
     mode: '0600'
-  failed_when: result.stat.exists
+  when: result.stat.exists
 
 # This needs retrying because during startup we can just get
 # Failed to execute on pod vault-0 due to : (0)\nReason: Handshake status 500 Internal Server Error
