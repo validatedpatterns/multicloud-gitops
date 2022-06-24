@@ -38,5 +38,3 @@
   ansible.builtin.set_fact:
     vault_status: "{{ vault_status_json.stdout | from_json }}"
   when: vault_status_json.stdout_lines | length > 0
-
-
