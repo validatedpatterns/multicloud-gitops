@@ -49,9 +49,9 @@
     command: vault status -format=json
   register: vault_status_json
   until: "'rc' in vault_status_json"
-  retries: 5
+  retries: 15
   delay: 10
-  failed_when: false
+  failed_when: "'stdout_lines' not in vault_status_json"
 
 - name: Set vault status output json fact
   ansible.builtin.set_fact:
