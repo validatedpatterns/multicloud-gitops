@@ -56,7 +56,7 @@ vault-init: ## inits, unseals and configured the vault
 	common/scripts/vault-utils.sh vault_secrets_init common/pattern-vault.init
 
 vault-unseal: ## unseals the vault
-	common/scripts/vault-utils.sh vault_init common/pattern-vault.init
+	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
 
 load-secrets: ## loads the secrets into the vault
 	common/scripts/ansible-push-vault-secrets.sh
