@@ -4,18 +4,11 @@
     msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
   failed_when: kubeconfig is not defined or kubeconfig | length == 0
 
-# If the output_file is relative we need to make it absolute and we choose
-# the current path which normally is the main pattern folder. Reason for this
-# is that the copy task needs an absolute path because we're not guaranteed
+# Note that the 'realpath' filter explicitely only resolves on the ansible/local box
+# which is fine in our case
 - name: Set absolute path for output_file
   ansible.builtin.set_fact:
-    output_file_abs: "{{ lookup('env', 'PWD') }}/{{ output_file }}"
-  when: "not output_file.startswith('/')"
-
-- name: Set output_file to new veriable
-  ansible.builtin.set_fact:
-    output_file_abs: "{{ output_file }}"
-  when: "output_file.startswith('/')"
+    output_file_abs: "{{ output_file | realpath }}"
 
 - name: Check for existence of "{{ output_file_abs }}"
   ansible.builtin.stat:
