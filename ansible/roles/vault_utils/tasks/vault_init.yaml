@@ -1,17 +1,6 @@
 ---
 - include_tasks: pre_check.yaml
 
-# Note that the 'realpath' filter explicitely only resolves on the ansible/local box
-# which is fine in our case
-- name: Set absolute path for output_file
-  ansible.builtin.set_fact:
-    output_file_abs: "{{ output_file | realpath }}"
-
-- name: Check for existence of "{{ output_file_abs }}"
-  ansible.builtin.stat:
-    path: "{{ output_file_abs }}"
-  register: result
-
 - name: Check for vault namespace
   kubernetes.core.k8s_info:
     kind: Namespace
@@ -30,13 +19,6 @@
   until: vault_pod_rc.resources | length > 0
   retries: 20
   delay: 45
-
-- name: Rename "{{ output_file_abs }} if it exists"
-  ansible.builtin.copy:
-    src: "{{ output_file_abs }}"
-    dest: "{{ output_file_abs }}.bak"
-    mode: '0600'
-  when: result.stat.exists
 
 # This needs retrying because during startup we can just get
 # Failed to execute on pod vault-0 due to : (0)\nReason: Handshake status 500 Internal Server Error
@@ -58,10 +40,37 @@
     vault_status: "{{ vault_status_json.stdout | from_json }}"
   when: vault_status_json.stdout_lines | length > 0
 
-- name: Fail when the vault status is sealed
-  ansible.builtin.fail:
-    msg: "The vault is already configured. Please unseal it with 'make vault-unseal'. Msg: {{ vault_status }}"
-  when: vault_status['initialized'] | bool
+# If the vault is already initialized we skip all the tasks below
+- name: Is the vault initialized?
+  ansible.builtin.set_fact:
+    vault_initialized: vault_status['initialized'] | bool
+
+# Note that the 'realpath' filter explicitely only resolves on the ansible/local box
+# which is fine in our case
+- name: Set absolute path for output_file
+  ansible.builtin.set_fact:
+    output_file_abs: "{{ output_file | realpath }}"
+  when:
+    - not vault_initialized
+    - file_unseal
+
+- name: Check for existence of "{{ output_file_abs }}"
+  ansible.builtin.stat:
+    path: "{{ output_file_abs }}"
+  register: result
+  when:
+    - not vault_initialized
+    - file_unseal
+
+- name: Rename "{{ output_file_abs }} if it exists"
+  ansible.builtin.copy:
+    src: "{{ output_file_abs }}"
+    dest: "{{ output_file_abs }}.bak"
+    mode: '0600'
+  when:
+    - not vault_initialized
+    - file_unseal
+    - result.stat.exists
 
 # We need to retry here because the vault service might be starting
 # and can return a 500 internal server until its state is fully ready
@@ -74,15 +83,41 @@
   until: vault_init_json_out is not failed
   retries: 10
   delay: 15
+  when: not vault_initialized
 
 - name: Set vault init output json fact
   ansible.builtin.set_fact:
     vault_init_json: "{{ vault_init_json_out.stdout | from_json }}"
+  when: not vault_initialized
 
-# Prefer the output_file_abs var if it is defined
-- name: Save vault operator output
+# We store the the operator unseal keys and root token to a file when
+# the vault was not already initialized *and* when unseal_from_cluster
+# is set to false
+- name: Save vault operator output (local file)
   ansible.builtin.copy:
     follow: true
     dest: "{{ output_file_abs }}"
     content: "{{ vault_init_json | to_nice_json }}"
     mode: '0600'
+  when:
+    - not vault_initialized
+    - file_unseal
+
+# We store the the operator unseal keys and root token to a secret inside
+# the cluster when the vault was not already initialized *and* when
+# unseal_from_cluster is set to true
+- name: Save vault operator output (into a secret inside the cluster)
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: "{{ unseal_secret }}"
+        namespace: "{{ unseal_namespace }}"
+      data:
+        vault_init_json: "{{ vault_init_json | to_nice_json | b64encode }}"
+  when:
+    - not vault_initialized
+    - not file_unseal
