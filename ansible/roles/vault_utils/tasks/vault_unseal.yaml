@@ -1,8 +1,5 @@
 ---
-- name: Check that KUBECONFIG is correctly set
-  ansible.builtin.fail:
-    msg: "KUBECONFIG is not set. Please set it so we can inject the secrets into the cluster's vault"
-  failed_when: kubeconfig is not defined or kubeconfig | length == 0
+- include_tasks: pre_check.yaml
 
 # Note that the 'realpath' filter explicitely only resolves on the ansible/local box
 # which is fine in our case
