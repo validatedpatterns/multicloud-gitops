@@ -79,7 +79,7 @@
         name: "{{ unseal_secret }}"
         namespace: "{{ unseal_namespace }}"
       data:
-        vault_init_json: "{{ vault_init_json | to_nice_json | b64encode }}"
+        vault_data_json: "{{ vault_init_json | to_nice_json | b64encode }}"
   when:
     - not vault_initialized
     - not file_unseal
