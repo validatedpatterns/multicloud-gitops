@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -eu
 
-SCRIPT=$(readlink -f "$0")
+get_abs_filename() {
+  # $1 : relative filename
+  echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+}
+
+SCRIPT=$(get_abs_filename "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 COMMONPATH=$(dirname "$SCRIPTPATH")
 ANSIBLEPATH="$(dirname ${SCRIPTPATH})/ansible"
@@ -15,7 +20,7 @@ if [ $# -lt 1 ]; then
 fi
 
 TASK="${1}"
-OUTFILE=${2:-"$COMMONPATH"/vault.init}
+OUTFILE=${2:-"$COMMONPATH"/pattern-vault.init}
 
 if [ -z ${TASK} ]; then
 	echo "Task is unset"
