@@ -19,7 +19,7 @@
         resources: "{{ managed_clusters['resources'] }}"
 
     - name: Do nothing when no managed clusters are found
-      meta: end_play
+      ansible.builtin.meta: end_play
       when: resources | length == 0 or managed_clusters.failed or not managed_clusters.api_found
 
     - name: Loop over returned managed cluster resources
@@ -40,4 +40,3 @@
       loop: "{{ resources }}"
       loop_control:
         label: "{{ item.metadata.name }}"
-

@@ -16,7 +16,7 @@
       register: hub_cluster
 
     - name: Do nothing when no managed clusters are found
-      meta: end_play
+      ansible.builtin.meta: end_play
       when: hub_cluster.resources | length == 0 or hub_cluster.failed or not hub_cluster.api_found
 
     - name: Set resource fact
@@ -24,7 +24,7 @@
         resource: "{{ hub_cluster['resources'][0] }}"
 
     - name: Do nothing when no kubeconfig is not present yet
-      meta: end_play
+      ansible.builtin.meta: end_play
       when:
         - "'data' not in resource"
         - "'kubeconfig' not in resource.data"
@@ -44,7 +44,7 @@
         hub_cluster_kubeconfig: "{{ resource.data.kubeconfig | b64decode | from_yaml }}"
 
     - name: Set CA fact
-      set_fact:
+      ansible.builtin.set_fact:
         # The .get() call is needed because the key has dashes in it
         hub_cluster_ca: "{{ hub_cluster_kubeconfig.clusters[0].cluster.get('certificate-authority-data') }}"
 

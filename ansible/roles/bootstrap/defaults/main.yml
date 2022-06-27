@@ -22,4 +22,4 @@ vault_pod: "vault-0"
 vault_path: "secret/hub"
 
 # To DEBUG or not to DEBUG
-debug: False
+debug: false
