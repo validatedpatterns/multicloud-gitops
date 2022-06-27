@@ -1,19 +1,16 @@
 # Ansible Role: bootstrap
-=========
 
 This is the bootstrap role to deploy the MultiCloud-GitOps pattern.  This role contains all the imperative tasks that are needed to deploy the MultiCloud-GitOps validated pattern onto an OpenShift cluster.
-The main purpose of this role is for RHPDS to deploy this pattern by calling our ansible/site.yaml playbook which in turn calls our bootstrap role.  In the same vein a user can execute the following from the command line to deploy
+The main purpose of this role is for RHPDS to deploy this pattern by calling our ansible/site.yaml playbook which in turn calls our bootstrap role.  In the same vein a user can execute the following from the command-line to deploy
 the validated pattern:
 
 $ ansible-playbook ansible/site.yaml
 
-
 ## Requirements
-------------
 
 * Pre-deployed Openshift or Kubernetes Cluster
 * Must be Cluster Admin to successfully execute this role.
-* There are a few tools that you will need to run this role which are listed below.  
+* There are a few tools that you will need to run this role which are listed below.
 
 | Tool | Description | Download link |
 | ----------- | ----------- | ----------- |
@@ -22,29 +19,31 @@ $ ansible-playbook ansible/site.yaml
 | Python 3 | Python2 is deprecated from 1st January 2020. Please switch to Python3. | RHEL: <br> **yum -y install rh-python36** |
 
 ## Bootstrap Role tasks that will be executed
+
 The bootstrap-industrial-edge role will execute on your localhost.  The high level tasks that are executed are listed below.
 
 ```sh
 playbook: ansible/site.yaml
 
-  play #1 (localhost): MultiCloud-GitOps bootstrap	TAGS: []
+  play #1 (localhost): MultiCloud-GitOps bootstrap  TAGS: []
     tasks:
-      bootstrap : {{ role_name }}: Getting pattern information	TAGS: []
-      bootstrap : {{ role_name }}: debug	TAGS: []
-      bootstrap : {{ role_name }}: Deploying Helm Charts	TAGS: []
-      bootstrap : {{ role_name }}: Initialize Vault	TAGS: []
-      bootstrap : {{ role_name }}: Load Secrets to Vault	TAGS: []
+      bootstrap : {{ role_name }}: Getting pattern information  TAGS: []
+      bootstrap : {{ role_name }}: debug  TAGS: []
+      bootstrap : {{ role_name }}: Deploying Helm Charts  TAGS: []
+      bootstrap : {{ role_name }}: Initialize Vault  TAGS: []
+      bootstrap : {{ role_name }}: Load Secrets to Vault  TAGS: []
 ```
 
 ### Task: Getting pattern information
 
 This task gathers the validated pattern information.  This information will be used by the validated pattern framework and passed to ArgoCD to support the validated pattern deployment.  The task sets up the following facts for other tasks to use:
-    * secrets_file                                                         
-    * globals_file                                                              
-    * bootstrap
-    * target_branch
-    * target_repo
-    * hubcluster_apps_domain
+
+* secrets_file
+* globals_file
+* bootstrap
+* target_branch
+* target_repo
+* hubcluster_apps_domain
 
 ### Task: Deploying Helm Charts
 
@@ -52,8 +51,7 @@ Our validated pattern framework makes use of Helm Charts to deploy supporting co
 
 | Chart | Description | Location |
 | ----- | ----- | ----- |
-| multicloud-gitops | A Helm chart to build and deploy the validated pattern | multicloud-gitops/common/install | 
-
+| multicloud-gitops | A Helm chart to build and deploy the validated pattern | multicloud-gitops/common/install |
 
 ### Task: Initialize Vault
 
@@ -63,10 +61,9 @@ This task initializes the Vault environment.
 
 ### Task: Load Secrets to Vault
 
-The MultiCloud-GitOps validated pattern application makes use of secrets that are stored in the Vault environment.  This task is an imperative task that loads the secrets defined in the values-secret.yaml file which are specific to the Validated Pattern application workloads. 
+The MultiCloud-GitOps validated pattern application makes use of secrets that are stored in the Vault environment.  This task is an imperative task that loads the secrets defined in the values-secret.yaml file which are specific to the Validated Pattern application workloads.
 
 ## Role Variables
-------------
 
 Most of the variables will be dynamically set for you in this role. Variables that we will be looking for are:
 
@@ -80,20 +77,18 @@ Most of the variables will be dynamically set for you in this role. Variables th
 | values_global: | Location of the values-global.yaml file | "{{ pattern_repo_dir }}/values-secret.yaml" |
 | kubeconfig: | Environment variable for KUBECONFIG | "{{ lookup('env', 'KUBECONFIG') }}"|
 | vault_init_file: | Init Vault file which will contain Vault tokens etc | "{{ pattern_repo_dir }}/common/pattern-vault.init"|
-| vault_ns: | Namespace for Vault | "vault"|                                     
-| vault_pod: | Name of the initial Vault pod | "vault-0"|           
+| vault_ns: | Namespace for Vault | "vault"|
+| vault_pod: | Name of the initial Vault pod | "vault-0"|
 | vault_path: | Path to the Vault secrets for the Hub | "secret/hub"|
 | debug: | Whether or not to display debug info | False |
 
-> NOTE: The role is designed to use the current *git* branch that you are working on. It is also designed to derive the variables values using your environment. 
+> NOTE: The role is designed to use the current *git* branch that you are working on. It is also designed to derive the variables values using your environment.
 
 ## Dependencies
-------------
 
 None
 
 ## Site.yaml Playbook
-------------
 
 The initial playbook can be found under ansible/site.yaml and will execute the bootstrap role.
 
@@ -110,7 +105,7 @@ To start the execution of the role execute the following:
 ```sh
 $ pwd
 /home/claudiol/work/blueprints-space/multicloud-gitops
-$ ansible-playbook ansible/site.yaml 
+$ ansible-playbook ansible/site.yaml
 ```
 
 License
@@ -120,6 +115,7 @@ BSD
 
 Author Information
 ------------------
+
 Lester Claudio (claudiol@redhat.com) <br>
 Jonathan Rickard (jrickard@redhat.com)<br>
 Michele Baldessari (mbaldess@redhat.com)<br>
