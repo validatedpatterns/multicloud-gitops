@@ -59,4 +59,13 @@ vault-unseal: ## unseals the vault
 load-secrets: ## loads the secrets into the vault
 	common/scripts/ansible-push-vault-secrets.sh
 
+super-linter: ## Runs super linter locally
+	podman run -e RUN_LOCAL=true -e USE_FIND_ALGORITHM=true	\
+					-e VALIDATE_BASH=false \
+					-e VALIDATE_JSCPD=false \
+					-e VALIDATE_KUBERNETES_KUBEVAL=false \
+					-e VALIDATE_YAML=false \
+					-v $(PWD):/tmp/lint:rw,z docker.io/github/super-linter:slim-v4
+
 .phony: install test
+
