@@ -32,7 +32,7 @@ test: ## run helm tests
 helmlint: ## run helm lint
 	@for t in $(CHARTS); do helm lint $(TEST_OPTS) $(PATTERN_OPTS) $$t; if [ $$? != 0 ]; then exit 1; fi; done
 
-API_URL ?= https://raw.githubusercontent.com/hybrid-cloud-patterns/ocp-schemas/main/openshift/4.9/
+API_URL ?= https://raw.githubusercontent.com/hybrid-cloud-patterns/ocp-schemas/main/openshift/4.10/
 KUBECONFORM_SKIP ?= -skip 'CustomResourceDefinition'
 # We need to skip 'CustomResourceDefinition' as openapi2jsonschema seems to be unable to generate them ATM
 kubeconform: ## run helm kubeconform
