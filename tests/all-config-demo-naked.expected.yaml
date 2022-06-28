@@ -186,7 +186,7 @@ spec:
 # except the HUB (see placementrule on the bottom)
 ---
 # Source: config-demo/templates/config-demo-external-secret.yaml
-apiVersion: "external-secrets.io/v1alpha1"
+apiVersion: "external-secrets.io/v1beta1"
 kind: ExternalSecret
 metadata:
   name: config-demo-secret
@@ -201,7 +201,8 @@ spec:
     template:
       type: Opaque
   dataFrom:
-    - key: secret/data/hub/config-demo
+  - extract:
+      key: secret/data/hub/config-demo
 ---
 # Source: config-demo/templates/config-demo-is.yaml
 apiVersion: image.openshift.io/v1
