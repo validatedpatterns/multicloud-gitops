@@ -13,14 +13,16 @@ Role Variables
 
 Defaults as to where the values-secret.yaml file is and the two ways to connect to a kubernetes cluster
 (KUBERCONFIG and ~/.kube/config respectively):
-```
+
+```yaml
 values_secret: "{{ lookup('env', 'HOME') }}/values-secret.yaml"
 kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
 kubeconfig_backup: "{{ lookup('env', 'HOME') }}/.kube/config"
 ```
 
 Default values for vault configuration:
-```
+
+```yaml
 vault_ns: "vault"
 vault_pod: "vault-0"
 vault_hub: "hub"
@@ -38,7 +40,8 @@ external_secrets_sa: golang-external-secrets
 Use the local file system (output_file variable) to store the vault's unseal keys.
 If set to false they will be stored inside a secret defined by `unseal_secret`
 in the `unseal_namespace` namespace:
-```
+
+```yaml
 file_unseal: true
 # token inside a secret in the cluster.
 # *Note* that this is fundamentally unsafe
@@ -50,12 +53,13 @@ unseal_namespace: "imperative"
 Dependencies
 ------------
 
-This relies on https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_module.html
-
+This relies on [kubernetes.core](https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_module.html)
 
 Internals
 ---------
+
 Here is the rough high-level algorithm used to unseal the vault:
+
 1. Check vault status. If vault is not initialized go to 2. If initialized go to 3.
 2. Initialize vault and store unseal keys + login token either on a local file
    or inside a secret in k8s (file_unseal var controls this)
@@ -71,4 +75,5 @@ Apache
 
 Author Information
 ------------------
+
 Michele Baldessari <michele@redhat.com>
