@@ -35,6 +35,7 @@ spec:
               - name: git
                 mountPath: "/git"
     {{- range $.Values.clusterGroup.imperative.jobs }}
+      {{- if ne (.disabled | default "false" | toString | lower ) "true" }}
             - name: {{ .name }}
               image: {{ .image | default $.Values.clusterGroup.imperative.image }}
               imagePullPolicy: {{ $.Values.clusterGroup.imperative.imagePullPolicy }}
@@ -60,6 +61,7 @@ spec:
               - name: values-volume
                 mountPath: /values/values.yaml
                 subPath: values.yaml
+      {{- end }}
     {{- end }}
           containers:
           - name: {{ $.Values.clusterGroup.imperative.jobName }}-done
