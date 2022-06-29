@@ -49,8 +49,8 @@ spec:
                 - timeout
                 - {{ .timeout | default "600" | quote }}
                 - ansible-playbook
-                {{- if $.Values.clusterGroup.imperative.verbosity }}
-                - {{ $.Values.clusterGroup.imperative.verbosity }}
+                {{- if .verbosity }}
+                - {{ .verbosity }}
                 {{- end }}
                 - -e
                 - "@/values/values.yaml"
