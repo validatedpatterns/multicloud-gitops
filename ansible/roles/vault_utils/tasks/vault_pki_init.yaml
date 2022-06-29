@@ -1,15 +1,20 @@
+# NOTE: This task is currently not used
 ---
 - include_tasks: pre_check.yaml
 
-# FIXME: this should be done a lot more elegantly
-- name: Get cluster domain
-  ansible.builtin.shell: |
-    set -o pipefail
-    oc get ingresses.config/cluster -o jsonpath='{.spec.domain}' | cut -d. -f3-
-  register: ingress_domain_out
-  changed_when: false
+- name: Fetch Ingress object
+  kubernetes.core.k8s_info:
+    kind: Ingress
+    api_version: config.openshift.io/v1
+  register: ingress_domain_raw
 
+# We split the domain and skip the first two parts
+# apps.bandini-dc.blueprints.rhecoeng.com -> blueprints.rhecoeng.com
 - name: Set ingress domain
+  ansible.builtin.set_fact:
+    ingress_domain_out: "{{ ingress_raw.resources[0].spec.domain.split('.')[2:] | join('.') }}"
+
+- name: Set ingress domain cleaned up
   ansible.builtin.set_fact:
     ingress_domain: "{{ ingress_domain_out.stdout }}"
     cert_role: "{{ ingress_domain_out.stdout | replace('.', '_') }}"
