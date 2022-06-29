@@ -58,6 +58,10 @@ spec:
                 {{- end }}
                 - -e
                 - "@/values/values.yaml"
+                {{- range .extravars }}
+                - -e
+                - {{ . | quote }}
+                {{- end }}
                 - {{ .playbook }}
               volumeMounts:
               - name: git
