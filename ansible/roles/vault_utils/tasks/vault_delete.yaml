@@ -1,27 +1,20 @@
 ---
 - include_tasks: pre_check.yaml
 
-# FIXME to use proper k8 ansible collection
+# Note: We do not wait on purpose here as the pod will be recreated
+# anyways and that would race. We are fine with having it gone once
 - name: Delete vault pod
-  ansible.builtin.shell: |
-    oc -n vault delete pod vault-0
-  register: delete_pod
-  async: 7200
-  poll: 0
-  changed_when: true
+  kubernetes.core.k8s:
+    state: absent
+    api_version: v1
+    kind: Pod
+    namespace: "{{ vault_ns }}"
+    name: "{{ vault_pod }}"
 
 - name: Delete vault pvc
-  ansible.builtin.shell: |
-    oc -n vault delete pvc data-vault-0
-  register: delete_pvc
-  async: 7200
-  poll: 0
-  changed_when: true
-
-- name: Wait for tasks
-  ansible.builtin.wait_for:
-    timeout: 10
-
-- name: Print out result from deletion
-  ansible.builtin.debug:
-    msg: "{{ delete_pod }} - {{ delete_pvc }}"
+  kubernetes.core.k8s:
+    state: absent
+    api_version: v1
+    kind: PersistentVolumeClaim
+    namespace: "{{ vault_ns }}"
+    name: "{{ vault_pvc }}"

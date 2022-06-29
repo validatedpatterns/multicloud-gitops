@@ -6,6 +6,7 @@ kubeconfig_backup: "{{ lookup('env', 'HOME') }}/.kube/config"
 vault_ns: "vault"
 vault_pod: "vault-0"
 vault_hub: "hub"
+vault_pvc: "data-vault-0"
 vault_hub_kubernetes_host: https://$KUBERNETES_PORT_443_TCP_ADDR:443
 # Needs extra escaping due to how it gets injected via shell in the vault
 vault_hub_capabilities: '[\\\"read\\\"]'
