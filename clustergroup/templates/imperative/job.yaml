@@ -52,6 +52,10 @@ spec:
                 {{- if .verbosity }}
                 - {{ .verbosity }}
                 {{- end }}
+                {{- if .tags }}
+                - -t
+                - {{ .tags }}
+                {{- end }}
                 - -e
                 - "@/values/values.yaml"
                 - {{ .playbook }}
