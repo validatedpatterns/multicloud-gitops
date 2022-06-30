@@ -52,12 +52,14 @@ uninstall: ## runs helm uninstall
 
 vault-init: ## inits, unseals and configured the vault
 	common/scripts/vault-utils.sh vault_init common/pattern-vault.init
+	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
+	common/scripts/vault-utils.sh vault_secrets_init common/pattern-vault.init
 
 vault-unseal: ## unseals the vault
 	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
 
 load-secrets: ## loads the secrets into the vault
-	common/scripts/ansible-push-vault-secrets.sh
+	common/scripts/vault-utils.sh push_secrets common/pattern-vault.init
 
 super-linter: ## Runs super linter locally
 	podman run -e RUN_LOCAL=true -e USE_FIND_ALGORITHM=true	\
@@ -66,6 +68,9 @@ super-linter: ## Runs super linter locally
 					-e VALIDATE_KUBERNETES_KUBEVAL=false \
 					-e VALIDATE_YAML=false \
 					-v $(PWD):/tmp/lint:rw,z docker.io/github/super-linter:slim-v4
+
+ansible-lint: ## run ansible lint on ansible/ folder
+	podman run -it -v $(PWD):/workspace:rw,z --workdir /workspace --entrypoint "/usr/local/bin/ansible-lint" quay.io/ansible/creator-ee:latest  "-vvv" "ansible/"
 
 .phony: install test
 

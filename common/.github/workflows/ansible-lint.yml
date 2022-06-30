@@ -1,0 +1,18 @@
+name: Ansible Lint # feel free to pick your own name
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Important: This sets up your GITHUB_WORKSPACE environment variable
+      - uses: actions/checkout@v2
+
+      - name: Lint Ansible Playbook
+        # Using the latest as of today (2022-06-23) v6.2.1
+        uses: ansible/ansible-lint-action@v6.2.1
+        # Let's point it to the path
+        with:
+          path: "ansible/"

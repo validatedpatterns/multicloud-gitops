@@ -1,0 +1,20 @@
+---
+- include_tasks: pre_check.yaml
+
+# Note: We do not wait on purpose here as the pod will be recreated
+# anyways and that would race. We are fine with having it gone once
+- name: Delete vault pod
+  kubernetes.core.k8s:
+    state: absent
+    api_version: v1
+    kind: Pod
+    namespace: "{{ vault_ns }}"
+    name: "{{ vault_pod }}"
+
+- name: Delete vault pvc
+  kubernetes.core.k8s:
+    state: absent
+    api_version: v1
+    kind: PersistentVolumeClaim
+    namespace: "{{ vault_ns }}"
+    name: "{{ vault_pvc }}"
