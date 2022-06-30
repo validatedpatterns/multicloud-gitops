@@ -39,7 +39,10 @@ kubeconform: ## run helm kubeconform
 	@for t in $(CHARTS); do helm template $(TEST_OPTS) $(PATTERN_OPTS) $$t | kubeconform -strict $(KUBECONFORM_SKIP) -verbose -schema-location $(API_URL); if [ $$? != 0 ]; then exit 1; fi; done
 
 validate-origin: ## verify the git origin is available
-	git ls-remote $(TARGET_REPO)
+	@echo Checking repo $(TARGET_REPO) - branch $(TARGET_BRANCH)
+	@git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null && \
+		echo "$(TARGET_REPO) - $(TARGET_BRANCH) exists" || \
+		(echo "$(TARGET_BRANCH) not found in $(TARGET_REPO)"; exit 1)
 
 deploy: validate-origin ## deploys the pattern
 	helm install $(NAME) common/install/ $(HELM_OPTS)
