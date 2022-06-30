@@ -1,0 +1,25 @@
+---
+# defaults file for vault_utils
+values_secret: "{{ lookup('env', 'HOME') }}/values-secret.yaml"
+kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
+kubeconfig_backup: "{{ lookup('env', 'HOME') }}/.kube/config"
+vault_ns: "vault"
+vault_pod: "vault-0"
+vault_hub: "hub"
+vault_pvc: "data-vault-0"
+vault_hub_kubernetes_host: https://$KUBERNETES_PORT_443_TCP_ADDR:443
+# Needs extra escaping due to how it gets injected via shell in the vault
+vault_hub_capabilities: '[\\\"read\\\"]'
+vault_base_path: "secret"
+vault_path: "{{ vault_base_path }}/{{ vault_hub }}"
+vault_hub_ttl: "15m"
+vault_pki_max_lease_ttl: "8760h"
+output_file: "common/pattern-vault.init"
+external_secrets_ns: golang-external-secrets
+external_secrets_sa: golang-external-secrets
+# Setting this to false makes the role store the vault unseal keys and root login
+# token inside a secret in the cluster.
+# *Note* that this is fundamentally unsafe
+file_unseal: true
+unseal_secret: "vaultkeys"
+unseal_namespace: "imperative"

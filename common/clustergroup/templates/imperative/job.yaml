@@ -35,6 +35,7 @@ spec:
               - name: git
                 mountPath: "/git"
     {{- range $.Values.clusterGroup.imperative.jobs }}
+      {{- if ne (.disabled | default "false" | toString | lower ) "true" }}
             - name: {{ .name }}
               image: {{ .image | default $.Values.clusterGroup.imperative.image }}
               imagePullPolicy: {{ $.Values.clusterGroup.imperative.imagePullPolicy }}
@@ -48,11 +49,19 @@ spec:
                 - timeout
                 - {{ .timeout | default "600" | quote }}
                 - ansible-playbook
-                {{- if $.Values.clusterGroup.imperative.verbosity }}
-                - {{ $.Values.clusterGroup.imperative.verbosity }}
+                {{- if .verbosity }}
+                - {{ .verbosity }}
+                {{- end }}
+                {{- if .tags }}
+                - -t
+                - {{ .tags }}
                 {{- end }}
                 - -e
                 - "@/values/values.yaml"
+                {{- range .extravars }}
+                - -e
+                - {{ . | quote }}
+                {{- end }}
                 - {{ .playbook }}
               volumeMounts:
               - name: git
@@ -60,6 +69,7 @@ spec:
               - name: values-volume
                 mountPath: /values/values.yaml
                 subPath: values.yaml
+      {{- end }}
     {{- end }}
           containers:
           - name: {{ $.Values.clusterGroup.imperative.jobName }}-done

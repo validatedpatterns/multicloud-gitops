@@ -1,0 +1,50 @@
+# NOTE: This task is currently not used
+---
+- include_tasks: pre_check.yaml
+
+- name: Fetch Ingress object
+  kubernetes.core.k8s_info:
+    kind: Ingress
+    api_version: config.openshift.io/v1
+  register: ingress_domain_raw
+
+# We split the domain and skip the first two parts
+# apps.bandini-dc.blueprints.rhecoeng.com -> blueprints.rhecoeng.com
+- name: Set ingress domain
+  ansible.builtin.set_fact:
+    ingress_domain_out: "{{ ingress_raw.resources[0].spec.domain.split('.')[2:] | join('.') }}"
+
+- name: Set ingress domain cleaned up
+  ansible.builtin.set_fact:
+    ingress_domain: "{{ ingress_domain_out.stdout }}"
+    cert_role: "{{ ingress_domain_out.stdout | replace('.', '_') }}"
+
+- name: Enable vault pki backend
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault secrets enable pki
+
+- name: Set vault pki max-lease-ttl
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault secrets tune --max-lease-ttl="{{ vault_pki_max_lease_ttl }}" pki
+
+- name: Set vault pki generate/internal CN
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault write pki/root/generate/internal common_name="{{ ingress_domain }}" ttl="{{ vault_pki_max_lease_ttl }}"
+
+- name: Set vault pki CRL
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"
+
+- name: Set vault pki roles
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault write pki/roles/"{{ cert_role }}" allowed_domains="{{ ingress_domain }}" allow_subdomains=true max_ttl="{{ vault_pki_max_lease_ttl }}"

@@ -1,0 +1,85 @@
+---
+- include_tasks: pre_check.yaml
+- include_tasks: vault_status.yaml
+
+# If the vault is already initialized we skip all the tasks below
+- name: Is the vault initialized?
+  ansible.builtin.set_fact:
+    vault_initialized: "{{ vault_status['initialized'] | bool }}"
+
+# Note that the 'realpath' filter explicitely only resolves on the ansible/local box
+# which is fine in our case
+- name: Set absolute path for output_file
+  ansible.builtin.set_fact:
+    output_file_abs: "{{ output_file | realpath }}"
+  when:
+    - not vault_initialized
+    - file_unseal
+
+- name: Check for existence of "{{ output_file_abs }}"
+  ansible.builtin.stat:
+    path: "{{ output_file_abs }}"
+  register: result
+  when:
+    - not vault_initialized
+    - file_unseal
+
+- name: Rename "{{ output_file_abs }} if it exists"
+  ansible.builtin.copy:
+    src: "{{ output_file_abs }}"
+    dest: "{{ output_file_abs }}.bak"
+    mode: '0600'
+  when:
+    - not vault_initialized
+    - file_unseal
+    - result.stat.exists
+
+# We need to retry here because the vault service might be starting
+# and can return a 500 internal server until its state is fully ready
+- name: Init vault operator
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault operator init -format=json
+  register: vault_init_json_out
+  until: vault_init_json_out is not failed
+  retries: 10
+  delay: 15
+  when: not vault_initialized
+
+- name: Set vault init output json fact
+  ansible.builtin.set_fact:
+    vault_init_json: "{{ vault_init_json_out.stdout | from_json }}"
+  when: not vault_initialized
+
+# We store the the operator unseal keys and root token to a file when
+# the vault was not already initialized *and* when unseal_from_cluster
+# is set to false
+- name: Save vault operator output (local file)
+  ansible.builtin.copy:
+    follow: true
+    dest: "{{ output_file_abs }}"
+    content: "{{ vault_init_json | to_nice_json }}"
+    mode: '0600'
+  when:
+    - not vault_initialized
+    - file_unseal
+
+# We store the the operator unseal keys and root token to a secret inside
+# the cluster when the vault was not already initialized *and* when
+# unseal_from_cluster is set to true
+- name: Save vault operator output (into a secret inside the cluster)
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: "{{ unseal_secret }}"
+        namespace: "{{ unseal_namespace }}"
+      data:
+        vault_data_json: "{{ vault_init_json | to_nice_json | b64encode }}"
+  when:
+    - not vault_initialized
+    - not file_unseal

@@ -1,0 +1,86 @@
+---
+- include_tasks: pre_check.yaml
+- include_tasks: vault_status.yaml
+
+# If the vault is already unsealed we skip all the tasks below
+- name: Is the vault sealed?
+  ansible.builtin.set_fact:
+    vault_sealed: "{{ vault_status['sealed'] | bool }}"
+
+# Note that the 'realpath' filter explicitely only resolves on the ansible/local box
+# which is fine in our case
+- name: Set absolute path for output_file
+  ansible.builtin.set_fact:
+    output_file_abs: "{{ output_file | realpath }}"
+  when:
+    - vault_sealed
+    - file_unseal
+
+- name: Check for existence of "{{ output_file_abs }}"
+  ansible.builtin.stat:
+    path: "{{ output_file_abs }}"
+  register: result
+  when:
+    - vault_sealed
+    - file_unseal
+
+- name: Fail if "{{ output_file_abs }}" does not exists
+  ansible.builtin.fail:
+    msg: "{{ output_file_abs }} does not exist. Stopping here"
+  failed_when: not result.stat.exists
+  when:
+    - vault_sealed
+    - file_unseal
+
+# We reparse the json vault init file in case unseal was called without operator init before
+# and if file_unseal is true
+- name: Parse "{{ output_file_abs }}"
+  ansible.builtin.set_fact:
+    vault_init_json: "{{ lookup('file', output_file_abs) | from_json }}"
+  when:
+    - vault_sealed
+    - file_unseal
+
+# We reparse the json vault init secret in case unseal was called without operator init before
+# and if file_unseal is false
+- name: Parse "{{ output_file_abs }}"
+  kubernetes.core.k8s_info:
+    kind: Secret
+    namespace: "{{ unseal_namespace }}"
+    name: "{{ unseal_secret }}"
+    api_version: v1
+  register: vault_init_data
+  when:
+    - vault_sealed
+    - not file_unseal
+
+- name: Set vault init json
+  ansible.builtin.set_fact:
+    vault_init_json: "{{ vault_init_data.resources[0].data.vault_data_json | b64decode | from_json }}"
+  when:
+    - vault_sealed
+    - not file_unseal
+
+- name: Set root token and unseal_keys
+  ansible.builtin.set_fact:
+    root_token: "{{ vault_init_json['root_token'] }}"
+    unseal_keys: "{{ vault_init_json['unseal_keys_hex'] }}"
+  when: vault_sealed
+
+- name: Unseal vault
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault operator unseal "{{ item }}"
+  loop: "{{ unseal_keys }}"
+  loop_control:
+    extended: true
+    label: "Unsealing with key {{ ansible_loop.index }}"
+  when: vault_sealed
+
+- name: Login into vault
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault login "{{ root_token }}"
+  when: vault_sealed
