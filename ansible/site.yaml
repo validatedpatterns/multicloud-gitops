@@ -1,6 +1,5 @@
-- name: MultiCloud-GitOps bootstrap 
+- name: MultiCloud-GitOps bootstrap
   hosts: localhost
   connection: local
   roles:
     - bootstrap
-

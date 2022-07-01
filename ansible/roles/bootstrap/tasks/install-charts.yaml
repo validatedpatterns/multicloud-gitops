@@ -2,7 +2,8 @@
 # tasks file for install-charts
 #####  helm install $(NAME)-secrets charts/secrets/pipeline-setup $(HELM_OPTS)
 - name: " [install-charts] Creating temporary file with Validated Pattern values"
-  copy:
+  ansible.builtin.copy:
+    mode: "0640"
     dest: "/tmp/helmopts.yaml"
     content: |
       main:
@@ -19,22 +20,21 @@
     name: "{{ pattern }}"
     chart_ref: "{{ pattern_repo_dir }}/common/install"
     release_namespace: default
-    wait: yes
-    replace: yes
-    force: yes
+    wait: true
+    replace: true
+    force: true
     values_files:
       - "{{ secrets_file }}"
       - "{{ globals_file }}"
       - "/tmp/helmopts.yaml"
-  
-- name:  " [install-charts] Verify complete"
-  debug:
+
+- name: " [install-charts] Verify complete"
+  ansible.builtin.debug:
     msg: "ok"
 
 - name: Remove file
-  file:
+  ansible.builtin.file:
     path: "/tmp/helmopts.yaml"
     state: absent
 
-#echo "Bootstrap seed now running" && break;
-
+# echo "Bootstrap seed now running" && break;
