@@ -90,6 +90,7 @@ data:
         schedule: '*/10 * * * *'
         serviceAccountCreate: true
         serviceAccountName: imperative-sa
+        unsealVaultInsideClusterSchedule: '*/9 * * * *'
         valuesConfigMap: helm-values-configmap
         verbosity: ""
       isHubCluster: true
@@ -125,6 +126,7 @@ data:
         pipelines:
           csv: redhat-openshift-pipelines.v1.5.2
           name: openshift-pipelines-operator-rh
+      unsealVaultInsideCluster: false
     global:
       git:
         account: hybrid-cloud-patterns
