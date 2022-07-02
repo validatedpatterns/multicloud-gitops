@@ -37,9 +37,9 @@
 
 - name: "[pattern-info] Setting Helm options"
   ansible.builtin.set_fact:
-    helm_opts: "-f values-global.yaml -f {{ secrets_file }} --set main.git.repoURL={{ target_repo }} --set main.git.revision={{ target_branch }} --set global.hubClusterDomain={{ hubcluster_apps_domain }}"
+    helm_opts: "-f values-global.yaml --set main.git.repoURL={{ target_repo }} --set main.git.revision={{ target_branch }} --set global.hubClusterDomain={{ hubcluster_apps_domain }}"
 
 - name: "[pattern-info] Output of target_repo"
   ansible.builtin.debug:
-    msg: "Facts retrieved: \n  TARGET_REPO: {{ target_repo }} \n  TARGET_BRANCH: {{ target_branch }} \n  DOMAIN: {{ hubcluster_apps_domain }} \n  HELM_OPTS: {{ helm_opts }}"
+    msg: "Facts retrieved: \n  TARGET_REPO: {{ target_repo }} \n  TARGET_BRANCH: {{ target_branch }} \n  DOMAIN: {{ hubcluster_apps_domain }} \n  HELM_OPTS: {{ helm_opts }} \n  SECRETS_FILE: {{ secrets_file }}"
   when: debug | bool
