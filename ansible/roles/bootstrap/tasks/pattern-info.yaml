@@ -11,13 +11,14 @@
   ansible.builtin.set_fact:
     secrets_file: "{{ lookup('env', 'HOME') }}/values-secret.yaml"
     globals_file: "{{ pattern_repo_dir }}/values-global.yaml"
-    bootstrap: 1
     target_branch: "{{ lookup('pipe', 'git rev-parse  --abbrev-ref HEAD') }}"
 
 # TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL:[[:space:]]*//' -e 's%^git@%%' -e 's%^https://%%' -e 's%:%/%' -e 's%^%https://%')
 - name: "[git_info] Setting TARGET_REPO fact"
   ansible.builtin.set_fact:
-    target_repo: "{{ response['config_values']['remote.origin.url'] | regex_replace('.*URL:[[:space:]]*', '') | regex_replace('^git@', '') | regex_replace('^https://','') | regex_replace(':','/') | regex_replace('^','https://') }}"
+    target_repo: "{{ response['config_values']['remote.origin.url'] |
+      regex_replace('.*URL:[[:space:]]*', '') | regex_replace('^git@', '') |
+      regex_replace('^https://','') | regex_replace(':','/') | regex_replace('^','https://') }}"
 
 # oc get ingresses.config/cluster -o jsonpath={.spec.domain}
 - name: "[pattern-info] Retrieving Cluster Domain"
@@ -38,9 +39,16 @@
 
 - name: "[pattern-info] Setting Helm options"
   ansible.builtin.set_fact:
-    helm_opts: "-f values-global.yaml -f {{ secrets_file }} --set main.git.repoURL={{ target_repo }} --set main.git.revision={{ target_branch }} --set main.options.bootstrap={{ bootstrap }} --set global.hubClusterDomain={{ hubcluster_apps_domain }}"
+    helm_opts: "-f values-global.yaml --set main.git.repoURL={{ target_repo }}
+      --set main.git.revision={{ target_branch }} --set global.hubClusterDomain={{ hubcluster_apps_domain }}"
 
 - name: "[pattern-info] Output of target_repo"
   ansible.builtin.debug:
-    msg: "Facts retrieved: \n  TARGET_REPO: {{ target_repo }} \n  TARGET_BRANCH: {{ target_branch }} \n  DOMAIN: {{ hubcluster_apps_domain }} \n  HELM_OPTS: {{ helm_opts }}"
+    msg: |
+      Facts retrieved:
+        TARGET_REPO: {{ target_repo }}
+        TARGET_BRANCH: {{ target_branch }}
+        DOMAIN: {{ hubcluster_apps_domain }}
+        HELM_OPTS: {{ helm_opts }}
+        SECRETS_FILE: {{ secrets_file }}
   when: debug | bool

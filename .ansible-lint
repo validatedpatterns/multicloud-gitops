@@ -1,0 +1,18 @@
+# Vim filetype=yaml
+---
+offline: false
+#requirements: ansible/execution_environment/requirements.yml
+
+exclude_paths:
+  - .cache/
+  - .github/
+  - charts/
+  - common/
+  - tests/
+
+# warn_list:
+#   - yaml
+#   - schema
+#   - experimental
+#   - risky-file-permissions
+#   - var-spacing

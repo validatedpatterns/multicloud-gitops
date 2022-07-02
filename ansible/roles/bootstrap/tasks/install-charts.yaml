@@ -10,8 +10,6 @@
         git:
           revision: "{{ target_branch }}"
           repoURL: "{{ target_repo }}"
-        options:
-          bootstrap: "{{ bootstrap }}"
       global:
         hubClusterDomain: "{{ hubcluster_apps_domain }}"
 
@@ -24,7 +22,6 @@
     replace: true
     force: true
     values_files:
-      - "{{ secrets_file }}"
       - "{{ globals_file }}"
       - "/tmp/helmopts.yaml"
 
