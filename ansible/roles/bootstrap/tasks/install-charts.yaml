@@ -22,7 +22,6 @@
     replace: true
     force: true
     values_files:
-      - "{{ secrets_file }}"
       - "{{ globals_file }}"
       - "/tmp/helmopts.yaml"
 
