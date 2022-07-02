@@ -10,8 +10,6 @@
         git:
           revision: "{{ target_branch }}"
           repoURL: "{{ target_repo }}"
-        options:
-          bootstrap: "{{ bootstrap }}"
       global:
         hubClusterDomain: "{{ hubcluster_apps_domain }}"
 
