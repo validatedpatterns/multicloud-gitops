@@ -15,8 +15,12 @@
 - name: "{{ role_name }}: Deploying Helm Charts"
   include_tasks: install-charts.yaml
 
-- name: "{{ role_name }}: Initialize Vault"
-  include_tasks: vault-init.yaml
-
-- name: "{{ role_name }}: Load Secrets to Vault"
-  include_tasks: ansible-push-vault-secrets.yaml
+- name: "{{ role_name }}: Initialize Vault and load secrets to vault"
+  ansible.builtin.include_role:
+    name: vault_utils
+    apply:
+      tags:
+        - vault_init
+        - vault_unseal
+        - vault_secrets_init
+        - push_secrets
