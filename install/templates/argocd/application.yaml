@@ -15,6 +15,7 @@ spec:
     targetRevision: {{ .Values.main.git.revision }}
     path: common/clustergroup
     helm:
+      ignoreMissingValueFiles: true
       valueFiles:
       - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-global.yaml"
       - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-{{ .Values.main.clusterGroupName }}.yaml"
