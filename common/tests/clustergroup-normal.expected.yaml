@@ -378,6 +378,7 @@ spec:
     targetRevision: 
     path: common/acm
     helm:
+      ignoreMissingValueFiles: true
       valueFiles:
       - "https://github.com/pattern-clone/mypattern/raw/main/values-global.yaml"
       - "https://github.com/pattern-clone/mypattern/raw/main/values-example.yaml"
@@ -426,6 +427,7 @@ spec:
     targetRevision: 
     path: charts/datacenter/pipelines
     helm:
+      ignoreMissingValueFiles: true
       valueFiles:
       - "https://github.com/pattern-clone/mypattern/raw/main/values-global.yaml"
       - "https://github.com/pattern-clone/mypattern/raw/main/values-example.yaml"

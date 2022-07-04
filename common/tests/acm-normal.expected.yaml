@@ -119,6 +119,7 @@ spec:
                     targetRevision: main
                     path: common/clustergroup
                     helm:
+                      ignoreMissingValueFiles: true
                       valueFiles:
                       - "https://github.com/pattern-clone/mypattern/raw/main/values-global.yaml"
                       - "https://github.com/pattern-clone/mypattern/raw/main/values-edge.yaml"
