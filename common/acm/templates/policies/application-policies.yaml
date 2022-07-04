@@ -39,6 +39,7 @@ spec:
                     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
                     path: {{ default "common/clustergroup" .path }}
                     helm:
+                      ignoreMissingValueFiles: true
                       valueFiles:
                       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
                       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ .name }}.yaml"

@@ -22,6 +22,7 @@ spec:
     plugin: {{ .plugin | toPrettyJson }}
     {{- else if not .kustomize }}
     helm:
+      ignoreMissingValueFiles: true
       valueFiles:
       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
       - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ $.Values.clusterGroup.name }}.yaml"
