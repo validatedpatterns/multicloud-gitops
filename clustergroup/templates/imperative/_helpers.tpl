@@ -15,6 +15,19 @@
     mountPath: "/git"
 {{- end }}
 
+{{/* Final done container */}}
+{{- define "imperative.containers.done" }}
+- name: done
+  image: {{ $.Values.clusterGroup.imperative.image }}
+  imagePullPolicy: {{ $.Values.clusterGroup.imperative.imagePullPolicy }}
+  command:
+  - 'sh'
+  - '-c'
+  - echo
+  - 'done'
+  - '\n'
+{{- end }}
+
 {{/* volume-mounts for all containers */}}
 {{- define "imperative.volumemounts" }}
 - name: git
