@@ -21,7 +21,7 @@ spec:
           initContainers:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there
-            {{- include  "imperative.initcontainers.gitinit" . | indent 12 -}}
+            {{- include  "imperative.initcontainers.gitinit" . | indent 12 }}
             - name: unseal-playbook
               image: {{ $.Values.clusterGroup.imperative.image }}
               imagePullPolicy: {{ $.Values.clusterGroup.imperative.imagePullPolicy }}
@@ -46,19 +46,9 @@ spec:
                 - 'vault_init,vault_unseal,vault_secrets_init'
                 - "common/ansible/playbooks/vault/vault.yaml"
               volumeMounts:
-                {{- include "imperative.volumemounts" . | indent 16 -}}
+                {{- include "imperative.volumemounts" . | indent 16 }}
           containers:
-          - name: unsealvault-job-done
-            image: {{ $.Values.clusterGroup.imperative.image }}
-            imagePullPolicy: {{ $.Values.clusterGroup.imperative.imagePullPolicy }}
-            command:
-            - 'sh'
-            - '-c'
-            - echo
-            - 'Unseal job'
-            - '\n'
-            volumeMounts:
-                {{- include "imperative.volumemounts" . | indent 14 -}}
+          {{- include "imperative.containers.done" . | indent 12 }}
           volumes:
           - name: git
             emptyDir: {}
