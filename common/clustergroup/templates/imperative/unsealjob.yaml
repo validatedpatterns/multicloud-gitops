@@ -1,13 +1,13 @@
-{{/* Only define this if there are any imperativejobs defined */}}
-{{- if gt (len $.Values.clusterGroup.imperative.jobs) 0 -}}
+{{/* Only define this if the values.insecureUnsealVaultInsideCluster is set to tre and we're on the cluster */}}
+{{- if and $.Values.clusterGroup.insecureUnsealVaultInsideCluster $.Values.clusterGroup.isHubCluster }}
 ---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ $.Values.clusterGroup.imperative.cronJobName }}
+  name: unsealvault-cronjob
   namespace: {{ $.Values.clusterGroup.imperative.namespace}}
 spec:
-  schedule: {{ $.Values.clusterGroup.imperative.schedule | quote }}
+  schedule: {{ $.Values.clusterGroup.imperative.insecureUnsealVaultInsideClusterSchedule | quote }}
   # if previous Job is still running, skip execution of a new Job
   concurrencyPolicy: Forbid
   jobTemplate:
@@ -15,17 +15,15 @@ spec:
       activeDeadlineSeconds: {{ $.Values.clusterGroup.imperative.activeDeadlineSeconds }}
       template:
         metadata:
-          name: {{ $.Values.clusterGroup.imperative.jobName }}
+          name: unsealvault-job
         spec:
           serviceAccountName: {{ $.Values.clusterGroup.imperative.serviceAccountName }}
           initContainers:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there
             {{- include  "imperative.initcontainers.gitinit" . | indent 12 }}
-    {{- range $.Values.clusterGroup.imperative.jobs }}
-      {{- if ne (.disabled | default "false" | toString | lower ) "true" }}
-            - name: {{ .name }}
-              image: {{ .image | default $.Values.clusterGroup.imperative.image }}
+            - name: unseal-playbook
+              image: {{ $.Values.clusterGroup.imperative.image }}
               imagePullPolicy: {{ $.Values.clusterGroup.imperative.imagePullPolicy }}
               env:
                 - name: HOME
@@ -37,24 +35,18 @@ spec:
                 - timeout
                 - {{ .timeout | default "600" | quote }}
                 - ansible-playbook
-                {{- if .verbosity }}
-                - {{ .verbosity }}
-                {{- end }}
-                {{- if .tags }}
-                - -t
-                - {{ .tags }}
+                {{- if $.Values.clusterGroup.imperative.verbosity }}
+                - {{ $.Values.clusterGroup.imperative.verbosity }}
                 {{- end }}
                 - -e
                 - "@/values/values.yaml"
-                {{- range .extravars }}
                 - -e
-                - {{ . | quote }}
-                {{- end }}
-                - {{ .playbook }}
+                - '{"file_unseal": false}'
+                - -t
+                - 'vault_init,vault_unseal,vault_secrets_init'
+                - "common/ansible/playbooks/vault/vault.yaml"
               volumeMounts:
                 {{- include "imperative.volumemounts" . | indent 16 }}
-      {{- end }}
-    {{- end }}
           containers:
           {{- include "imperative.containers.done" . | indent 12 }}
           volumes:
