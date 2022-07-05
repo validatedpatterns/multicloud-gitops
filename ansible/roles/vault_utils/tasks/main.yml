@@ -1,35 +1,20 @@
 ---
 - name: Delete vault
-  include_tasks:
-    file: vault_delete.yaml
-    apply:
-      tags: [never, vault_delete]
-  tags: [never, vault_delete]
+  import_tasks: vault_delete.yaml
+  tags: vault_delete
 
 - name: Run vault init tasks
-  include_tasks:
-    file: vault_init.yaml
-    apply:
-      tags: [never, vault_init]
-  tags: [never, vault_init]
+  import_tasks: vault_init.yaml
+  tags: vault_init
 
 - name: Unseal vault
-  include_tasks:
-    file: vault_unseal.yaml
-    apply:
-      tags: [never, vault_unseal]
-  tags: [never, vault_unseal]
+  import_tasks: vault_unseal.yaml
+  tags: vault_unseal
 
 - name: Vault secrets init
-  include_tasks:
-    file: vault_secrets_init.yaml
-    apply:
-      tags: [never, vault_secrets_init]
-  tags: [never, vault_secrets_init]
+  import_tasks: vault_secrets_init.yaml
+  tags: vault_secrets_init
 
 - name: Load secrets
-  include_tasks:
-    file: push_secrets.yaml
-    apply:
-      tags: [never, push_secrets]
-  tags: [never, push_secrets]
+  import_tasks: push_secrets.yaml
+  tags: push_secrets
