@@ -1,5 +1,5 @@
-{{/* Only define this if the values.unsealVaultInsideCluster is set to tre and we're on the cluster */}}
-{{- if and $.Values.clusterGroup.unsealVaultInsideCluster $.Values.clusterGroup.isHubCluster }}
+{{/* Only define this if the values.insecureUnsealVaultInsideCluster is set to tre and we're on the cluster */}}
+{{- if and $.Values.clusterGroup.insecureUnsealVaultInsideCluster $.Values.clusterGroup.isHubCluster }}
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -7,7 +7,7 @@ metadata:
   name: unsealvault-cronjob
   namespace: {{ $.Values.clusterGroup.imperative.namespace}}
 spec:
-  schedule: {{ $.Values.clusterGroup.imperative.unsealVaultInsideClusterSchedule | quote }}
+  schedule: {{ $.Values.clusterGroup.imperative.insecureUnsealVaultInsideClusterSchedule | quote }}
   # if previous Job is still running, skip execution of a new Job
   concurrencyPolicy: Forbid
   jobTemplate:

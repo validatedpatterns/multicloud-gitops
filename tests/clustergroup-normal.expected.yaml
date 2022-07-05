@@ -80,6 +80,7 @@ data:
         cronJobName: imperative-cronjob
         image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
         imagePullPolicy: Always
+        insecureUnsealVaultInsideClusterSchedule: '*/9 * * * *'
         jobName: imperative-job
         jobs:
         - name: test
@@ -90,9 +91,9 @@ data:
         schedule: '*/10 * * * *'
         serviceAccountCreate: true
         serviceAccountName: imperative-sa
-        unsealVaultInsideClusterSchedule: '*/9 * * * *'
         valuesConfigMap: helm-values-configmap
         verbosity: ""
+      insecureUnsealVaultInsideCluster: true
       isHubCluster: true
       managedClusterGroups:
       - clusterSelector:
@@ -126,7 +127,6 @@ data:
         pipelines:
           csv: redhat-openshift-pipelines.v1.5.2
           name: openshift-pipelines-operator-rh
-      unsealVaultInsideCluster: true
     global:
       git:
         account: hybrid-cloud-patterns

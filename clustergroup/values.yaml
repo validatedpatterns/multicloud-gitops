@@ -12,7 +12,7 @@ clusterGroup:
   isHubCluster: true
   # Note: setting this to true stores the vault unseal keys inside a cluster secret and
   # is fundamentally insecure
-  unsealVaultInsideCluster: false
+  insecureUnsealVaultInsideCluster: false
 
   imperative:
     jobs: []
@@ -31,7 +31,7 @@ clusterGroup:
     # Schedule used to trigger the vault unsealing (if explicitely enabled)
     # Set to run every 9 minutes in order for load-secrets to succeed within
     # a reasonable amount of time (it waits up to 15 mins)
-    unsealVaultInsideClusterSchedule: "*/9 * * * *"
+    insecureUnsealVaultInsideClusterSchedule: "*/9 * * * *"
     # Increase ansible verbosity with '-v' or '-vv..'
     verbosity: ""
     serviceAccountCreate: true
@@ -71,7 +71,7 @@ clusterGroup:
 #
 #  projects:
 #  - datacenter
-# 
+#
 #  applications:
 #  - name: acm
 #    namespace: default
