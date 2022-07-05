@@ -19,7 +19,9 @@
     chart_ref: "{{ pattern_repo_dir }}/common/install"
     release_namespace: default
     wait: true
-    replace: true
+    # Replace: false calls 'helm upgrade -i' by default. I.e. it
+    # does an install when the helm name does not exist an upgrade otherwise
+    replace: false
     force: true
     values_files:
       - "{{ globals_file }}"
