@@ -111,7 +111,7 @@ spec:
                   name: mypattern-edge
                   namespace: openshift-gitops
                   finalizers:
-                  - argoproj.io/finalizer
+                  - resources-finalizer.argocd.argoproj.io/foreground
                 spec:
                   project: default
                   source:

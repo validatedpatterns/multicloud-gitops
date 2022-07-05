@@ -368,6 +368,8 @@ kind: Application
 metadata:
   name: acm
   namespace: mypattern-example
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
 spec:
   destination:
     name: in-cluster
@@ -417,6 +419,8 @@ kind: Application
 metadata:
   name: pipelines
   namespace: mypattern-example
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
 spec:
   destination:
     name: in-cluster
