@@ -1,66 +1,27 @@
 ---
-# Source: pattern-install/templates/argocd/namespace.yaml
-# Pre-create so we can create our argo app for keeping subscriptions in sync
-# Do it here so that we don't try to sync it in the future
-apiVersion: v1
-kind: Namespace
+# Source: pattern-install/templates/pattern.yaml
+apiVersion: gitops.hybrid-cloud-patterns.io/v1alpha1
+kind: Pattern
 metadata:
-  name: openshift-gitops
----
-# Source: pattern-install/templates/argocd/application.yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: install-example
-  namespace: openshift-gitops
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io/foreground
+  name: install
+  namespace: openshift-operators
 spec:
-  destination:
-    name: in-cluster
-    namespace: install-example
-  project: default
-  source:
-    repoURL: https://github.com/pattern-clone/mypattern
+  clusterGroupName: example
+  gitSpec:
+    targetRepo: https://github.com/pattern-clone/mypattern
     targetRevision: main
-    path: common/clustergroup
-    helm:
-      ignoreMissingValueFiles: true
-      valueFiles:
-      - "https://github.com/pattern-clone/mypattern/raw/main/values-global.yaml"
-      - "https://github.com/pattern-clone/mypattern/raw/main/values-example.yaml"
-      # Track the progress of https://github.com/argoproj/argo-cd/pull/6280
-      parameters:
-        - name: global.repoURL
-          value: $ARGOCD_APP_SOURCE_REPO_URL
-        - name: global.targetRevision
-          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
-        - name: global.namespace
-          value: $ARGOCD_APP_NAMESPACE
-        - name: global.valuesDirectoryURL
-          value: https://github.com/pattern-clone/mypattern/raw/main
-        - name: global.pattern
-          value: install
-        - name: global.hubClusterDomain
-          value: hub.example.com
-  syncPolicy:
-    automated: {}
 ---
-# Source: pattern-install/templates/argocd/subscription.yaml
+# Source: pattern-install/templates/subscription.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: openshift-gitops-operator
+  name: patterns-operator
   namespace: openshift-operators
   labels:
-    operators.coreos.com/openshift-gitops-operator.openshift-operators: ""
+    operators.coreos.com/patterns-operator.openshift-operators: ""
 spec:
-  channel: stable
+  channel: fast
   installPlanApproval: Automatic
-  name: openshift-gitops-operator
-  source: redhat-operators
+  name: patterns-operator
+  source: community-operators
   sourceNamespace: openshift-marketplace
-  config:
-    env:
-      - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
-        value: install-example,openshift-gitops
