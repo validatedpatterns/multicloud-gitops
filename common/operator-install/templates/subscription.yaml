@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: patterns-operator
+  namespace: openshift-operators
+  labels:
+    operators.coreos.com/patterns-operator.openshift-operators: ""
+spec:
+  channel: fast
+  installPlanApproval: Automatic
+  name: patterns-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace

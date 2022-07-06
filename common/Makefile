@@ -47,8 +47,14 @@ validate-origin: ## verify the git origin is available
 deploy: validate-origin ## deploys the pattern
 	helm install $(NAME) common/install/ $(HELM_OPTS)
 
-upgrade: validate-origin ## runs helm upgrade
+upgrade: validate-origin
 	helm upgrade $(NAME) common/install/ $(HELM_OPTS)
+
+operator-deploy: validate-origin ## runs helm install
+	helm install $(NAME) common/operator-install/ $(HELM_OPTS)
+
+operator-upgrade: validate-origin ## runs helm upgrade
+	helm upgrade $(NAME) common/operator-install/ $(HELM_OPTS)
 
 uninstall: ## runs helm uninstall
 	helm uninstall $(NAME)

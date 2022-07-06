@@ -1,0 +1,6 @@
+main:
+  git:
+    repoURL: https://github.com/pattern-clone/mypattern
+    revision: main
+
+  clusterGroupName: default
