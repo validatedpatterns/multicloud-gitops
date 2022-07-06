@@ -15,22 +15,32 @@ spec:
   # Not the greatest way to pass git/quay info to sub-applications, but it will do until
   # we can support helmChart with kustomize
   # The other option is to pass them in as environment variables eg. BLUEPRINT_VERSION
-  configManagementPlugins: "- name: kustomize-version\n  generate:\n    command: [sh,
-    -c]\n    args: [\"kustomize version 1>&2 && exit 1\"]\n- name: kustomize-with-helm\n
-    \ generate:\n    command: [\"kustomize\"]\n    args: [\"build\", \"--enable-helm\"]\n- name:
-    helm-with-kustomize\n  init:\n    command: [\"/bin/sh\", \"-c\"]\n    args: [\"helm
-    dependency build\"]\n  generate:\n    command: [/bin/bash, -c]\n    args: [\"helm template . --name-template ${ARGOCD_APP_NAME:0:52}
-    -f {{ .Values.global.valuesDirectoryURL }}/values-global.yaml
-    -f {{ .Values.global.valuesDirectoryURL }}/values-{{ .Values.clusterGroup.name }}.yaml
-    --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
-    --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
-    --set global.namespace=$ARGOCD_APP_NAMESPACE
-    --set global.pattern={{ .Values.global.pattern }}
-    --set global.hubClusterDomain={{ .Values.global.hubClusterDomain }}
-    --set global.localClusterDomain={{ coalesce .Values.global.localClusterDomain .Values.global.hubClusterDomain }}
-    --set global.valuesDirectoryURL={{ .Values.global.valuesDirectoryURL }}
-    --post-renderer ./kustomize\"]
-    \ \n"
+  configManagementPlugins: |
+    - name: kustomize-version
+      generate:
+        command: ["sh", "-c"]
+        args: ["kustomize version 1>&2 && exit 1"]
+    - name: kustomize-with-helm
+      generate:
+        command: ["kustomize"]
+        args: ["build", "--enable-helm"]
+    - name: helm-with-kustomize
+      init:
+        command: ["/bin/sh", "-c"]
+        args: ["helm dependency build"]
+      generate:
+        command: ["/bin/bash", "-c"]
+        args: ["helm template . --name-template ${ARGOCD_APP_NAME:0:52}
+            -f {{ .Values.global.valuesDirectoryURL }}/values-global.yaml
+            -f {{ .Values.global.valuesDirectoryURL }}/values-{{ .Values.clusterGroup.name }}.yaml
+            --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
+            --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
+            --set global.namespace=$ARGOCD_APP_NAMESPACE
+            --set global.pattern={{ .Values.global.pattern }}
+            --set global.hubClusterDomain={{ .Values.global.hubClusterDomain }}
+            --set global.localClusterDomain={{ coalesce .Values.global.localClusterDomain .Values.global.hubClusterDomain }}
+            --set global.valuesDirectoryURL={{ .Values.global.valuesDirectoryURL }}
+            --post-renderer ./kustomize"]
   applicationSet:
     resources:
       limits:
