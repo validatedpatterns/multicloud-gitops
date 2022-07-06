@@ -50,11 +50,11 @@ deploy: validate-origin ## deploys the pattern
 upgrade: validate-origin
 	helm upgrade $(NAME) common/install/ $(HELM_OPTS)
 
-legacy-install: validate-origin ## runs helm upgrade
-	helm install $(NAME) common/legacy-install/ $(HELM_OPTS)
+operator-deploy: validate-origin ## runs helm install
+	helm install $(NAME) common/operator-install/ $(HELM_OPTS)
 
-legacy-upgrade: validate-origin ## runs helm upgrade
-	helm upgrade $(NAME) common/legacy-install/ $(HELM_OPTS)
+operator-upgrade: validate-origin ## runs helm upgrade
+	helm upgrade $(NAME) common/operator-install/ $(HELM_OPTS)
 
 uninstall: ## runs helm uninstall
 	helm uninstall $(NAME)
