@@ -121,8 +121,8 @@ spec:
                     helm:
                       ignoreMissingValueFiles: true
                       valueFiles:
-                      - "https://github.com/pattern-clone/mypattern/raw/main/values-global.yaml"
-                      - "https://github.com/pattern-clone/mypattern/raw/main/values-edge.yaml"
+                      - "/values-global.yaml"
+                      - "/values-edge.yaml"
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -132,8 +132,6 @@ spec:
                         value: $ARGOCD_APP_NAMESPACE
                       - name: global.pattern
                         value: mypattern
-                      - name: global.valuesDirectoryURL
-                        value: https://github.com/pattern-clone/mypattern/raw/main
                       - name: global.hubClusterDomain
                         value: hub.example.com
                       - name: global.localClusterDomain

@@ -27,8 +27,8 @@ spec:
     helm:
       ignoreMissingValueFiles: true
       valueFiles:
-      - "https://github.com/pattern-clone/mypattern/raw/main/values-global.yaml"
-      - "https://github.com/pattern-clone/mypattern/raw/main/values-default.yaml"
+      - "/values-global.yaml"
+      - "/values-default.yaml"
       # Track the progress of https://github.com/argoproj/argo-cd/pull/6280
       parameters:
         - name: global.repoURL
@@ -37,8 +37,6 @@ spec:
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
         - name: global.namespace
           value: $ARGOCD_APP_NAMESPACE
-        - name: global.valuesDirectoryURL
-          value: https://github.com/pattern-clone/mypattern/raw/main
         - name: global.pattern
           value: install
         - name: global.hubClusterDomain

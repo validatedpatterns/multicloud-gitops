@@ -1,6 +1,5 @@
 global:
   pattern: common
-  valuesDirectoryURL: https://github.com/pattern-clone/common/raw/main
   options:
     useCSV: True
     syncPolicy: Automatic
@@ -46,7 +45,6 @@ clusterGroup:
 #  - name: factory
 #    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
 #    # Location of values-global.yaml, values-{name}.yaml, values-{app}.yaml
-#    # valuesDirectoryURL: https://github.com/dagger-refuse-cool/edge-gitops/raw/main/
 #    targetRevision: main
 #    path: applications/factory
 #    helmOverrides:
