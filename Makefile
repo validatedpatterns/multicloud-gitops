@@ -44,7 +44,11 @@ validate-origin: ## verify the git origin is available
 		echo "$(TARGET_REPO) - $(TARGET_BRANCH) exists" || \
 		(echo "$(TARGET_BRANCH) not found in $(TARGET_REPO)"; exit 1)
 
-deploy upgrade: validate-origin ## deploys the pattern
+# Default targets are "deploy" and "upgrade"; they can "move" to whichever install mechanism should be default.
+# legacy-deploy and legacy-upgrade should be present so that patterns don't need to depend on "deploy" and "upgrade"
+# pointing to one place or another, and don't need to change when they do (provide they use either legacy- or operator-
+# targets)
+deploy upgrade legacy-deploy legacy-upgrade: validate-origin ## deploys the pattern
 	helm upgrade --install $(NAME) common/install/ $(HELM_OPTS)
 
 operator-deploy operator-upgrade: validate-origin ## runs helm install
