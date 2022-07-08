@@ -9,7 +9,7 @@ HUBCLUSTER_APPS_DOMAIN=$(shell oc get ingresses.config/cluster -o jsonpath={.spe
 
 # --set values always take precedence over the contents of -f
 HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN)
-TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.valuesDirectoryURL="https://github.com/pattern-clone/mypattern/raw/main" --set global.pattern="mypattern" --set global.namespace="pattern-namespace" --set global.hubClusterDomain=hub.example.com --set global.localClusterDomain=region.example.com --set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml" --set clusterGroup.insecureUnsealVaultInsideCluster=true
+TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.pattern="mypattern" --set global.namespace="pattern-namespace" --set global.hubClusterDomain=hub.example.com --set global.localClusterDomain=region.example.com --set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml" --set clusterGroup.insecureUnsealVaultInsideCluster=true
 PATTERN_OPTS=-f common/examples/values-example.yaml
 
 
@@ -44,17 +44,15 @@ validate-origin: ## verify the git origin is available
 		echo "$(TARGET_REPO) - $(TARGET_BRANCH) exists" || \
 		(echo "$(TARGET_BRANCH) not found in $(TARGET_REPO)"; exit 1)
 
-deploy: validate-origin ## deploys the pattern
-	helm install $(NAME) common/install/ $(HELM_OPTS)
+# Default targets are "deploy" and "upgrade"; they can "move" to whichever install mechanism should be default.
+# legacy-deploy and legacy-upgrade should be present so that patterns don't need to depend on "deploy" and "upgrade"
+# pointing to one place or another, and don't need to change when they do (provide they use either legacy- or operator-
+# targets)
+deploy upgrade legacy-deploy legacy-upgrade: validate-origin ## deploys the pattern
+	helm upgrade --install $(NAME) common/install/ $(HELM_OPTS)
 
-upgrade: validate-origin
-	helm upgrade $(NAME) common/install/ $(HELM_OPTS)
-
-operator-deploy: validate-origin ## runs helm install
-	helm install $(NAME) common/operator-install/ $(HELM_OPTS)
-
-operator-upgrade: validate-origin ## runs helm upgrade
-	helm upgrade $(NAME) common/operator-install/ $(HELM_OPTS)
+operator-deploy operator-upgrade: validate-origin ## runs helm install
+	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
 
 uninstall: ## runs helm uninstall
 	helm uninstall $(NAME)

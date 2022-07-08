@@ -2,7 +2,6 @@ main:
   git:
     repoURL: https://github.com/pattern-clone/mypattern
     revision: main
-    #valuesDirectoryURL: https://github.com/hybrid-cloud-patterns/industrial-edge/raw/main/
 
   options:
     syncPolicy: Automatic
