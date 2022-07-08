@@ -1,5 +1,3 @@
-{{- $valuesDirectoryURL :=  cat .Values.main.git.repoURL "/raw/" .Values.main.git.revision -}}
-{{- $valuesDirectoryURLFixed :=  $valuesDirectoryURL | replace " " "" | replace ".git" "" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -19,8 +17,8 @@ spec:
     helm:
       ignoreMissingValueFiles: true
       valueFiles:
-      - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-global.yaml"
-      - "{{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}/values-{{ .Values.main.clusterGroupName }}.yaml"
+      - "/values-global.yaml"
+      - "/values-{{ .Values.main.clusterGroupName }}.yaml"
       # Track the progress of https://github.com/argoproj/argo-cd/pull/6280
       parameters:
         - name: global.repoURL
@@ -29,8 +27,6 @@ spec:
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
         - name: global.namespace
           value: $ARGOCD_APP_NAMESPACE
-        - name: global.valuesDirectoryURL
-          value: {{ coalesce .Values.main.git.valuesDirectoryURL $valuesDirectoryURLFixed }}
         - name: global.pattern
           value: {{ .Release.Name }}
         - name: global.hubClusterDomain

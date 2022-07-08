@@ -26,8 +26,8 @@ spec:
     helm:
       ignoreMissingValueFiles: true
       valueFiles:
-      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
-      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ $.Values.clusterGroup.name }}.yaml"
+      - "/values-global.yaml"
+      - "/values-{{ $.Values.clusterGroup.name }}.yaml"
       # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
@@ -38,8 +38,6 @@ spec:
           value: $ARGOCD_APP_NAMESPACE
         - name: global.pattern
           value: {{ $.Values.global.pattern }}
-        - name: global.valuesDirectoryURL
-          value: {{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}
         - name: global.hubClusterDomain
           value: {{ $.Values.global.hubClusterDomain }}
         - name: global.localClusterDomain
