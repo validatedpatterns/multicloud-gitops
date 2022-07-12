@@ -1,24 +1,10 @@
 ---
-# Source: pattern-install/templates/namespace.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: patterns-operator-system
----
-# Source: pattern-install/templates/operator_group.yaml
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: patterns-operator
-  namespace: patterns-operator-system
-spec:
----
 # Source: pattern-install/templates/pattern.yaml
 apiVersion: gitops.hybrid-cloud-patterns.io/v1alpha1
 kind: Pattern
 metadata:
   name: operator-install
-  namespace: patterns-operator-system
+  namespace: openshift-operators
 spec:
   clusterGroupName: default
   gitSpec:
@@ -30,7 +16,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: patterns-operator
-  namespace: patterns-operator-system
+  namespace: openshift-operators
   labels:
     operators.coreos.com/patterns-operator.openshift-operators: ""
 spec:
