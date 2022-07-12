@@ -1,7 +1,0 @@
----
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: patterns-operator
-  namespace: {{ .Values.vpoperator.namespace }}
-spec:

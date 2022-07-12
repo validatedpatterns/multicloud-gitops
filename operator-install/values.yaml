@@ -1,6 +1,3 @@
-vpoperator:
-  namespace: patterns-operator-system
-
 main:
   git:
     repoURL: https://github.com/pattern-clone/mypattern

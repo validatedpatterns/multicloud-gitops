@@ -2,7 +2,7 @@ apiVersion: gitops.hybrid-cloud-patterns.io/v1alpha1
 kind: Pattern
 metadata:
   name: {{ .Release.Name }}
-  namespace: {{ .Values.vpoperator.namespace }}
+  namespace: openshift-operators
 spec:
   clusterGroupName: {{ .Values.main.clusterGroupName }}
   gitSpec:
