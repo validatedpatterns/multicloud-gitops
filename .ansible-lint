@@ -1,4 +1,4 @@
-Vim filetype=yaml
+# Vim filetype=yaml
 ---
 offline: false
 
