@@ -1,6 +1,3 @@
 # Vim filetype=yaml
 ---
 offline: false
-
-warn_list:
-  - command-instead-of-shell
