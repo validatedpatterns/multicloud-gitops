@@ -28,6 +28,9 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- range $valueFile := .extraValueFiles }}
+      - {{ $valueFile | quote }}
+      {{- end }}
       # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL

@@ -43,6 +43,9 @@ spec:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-{{ .name }}.yaml"
+                      {{- range $valueFile := .extraValueFiles }}
+                      - {{ $valueFile | quote }}
+                      {{- end }}
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
