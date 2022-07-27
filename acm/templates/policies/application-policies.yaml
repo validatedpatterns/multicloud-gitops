@@ -63,6 +63,13 @@ spec:
                       - name: {{ .name }}
                         value: {{ .value | quote }}
                      {{- end }}
+                     {{- if .fileParameters }}
+                      fileParameters:
+                      {{- range .fileParameters }}
+                      - name: {{ .name }}
+                        path: {{ .path }}
+                      {{- end }}
+                     {{- end }}
                   destination:
                     server: https://kubernetes.default.svc
                     namespace: {{ $.Values.global.pattern }}-{{ .name }}

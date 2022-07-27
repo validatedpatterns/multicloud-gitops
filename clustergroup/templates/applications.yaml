@@ -52,6 +52,13 @@ spec:
           forceString: true
         {{- end }}
         {{- end }}
+      {{- if .fileParameters }}
+      fileParameters:
+      {{- range .fileParameters }}
+        - name: {{ .name }}
+          path: {{ .path }}
+      {{- end }}
+      {{- end }}
     {{- end }}
   {{- if .ignoreDifferences }}
   ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
