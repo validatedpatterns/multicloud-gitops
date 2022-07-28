@@ -43,13 +43,20 @@ spec:
             - "/values-global.yaml"
             - "/values-{{ $.Values.clusterGroup.name }}.yaml"
         {{- range .extraValueFiles }}
-            - "{{ . }}"
+            - {{ . | quote }}
         {{- end }}
-          #parameters:
-          #  - name: global.hubClusterDomain
-          #    value: {{ $.Values.global.hubClusterDomain }}
-          #  - name: global.localClusterDomain
-          #    value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
+          parameters:
+            - name: global.hubClusterDomain
+              value: {{ $.Values.global.hubClusterDomain }}
+            - name: global.localClusterDomain
+              value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
+        {{- range .overrides }}
+            - name: {{ .name  }}
+              value: {{ .value | quote  }}
+        {{- if .forceString }}
+              forceString: true
+        {{- end }}
+        {{- end }}
         {{- end }}
           #parameters:
           #  - name: global.repoURL
