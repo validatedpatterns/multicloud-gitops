@@ -26,7 +26,7 @@ spec:
       {{- end }}
       source:
         repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
-        targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }} 
+        targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
         {{- if .chart }}
         chart: {{ .chart }}
         {{- end }}
@@ -39,7 +39,7 @@ spec:
         {{- if not .kustomize }}
         helm:
           ignoreMissingValueFiles: true
-          valueFiles: |
+          valueFiles:
             - "/values-global.yaml"
             - "/values-{{ $.Values.clusterGroup.name }}.yaml"
         {{- range .extraValueFiles }}
