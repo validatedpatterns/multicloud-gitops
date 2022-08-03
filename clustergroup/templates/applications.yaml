@@ -1,5 +1,82 @@
 {{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
 {{- range .Values.clusterGroup.applications }}
+{{- if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationURL) (.destinationNamespace) }}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ .name }}
+  namespace: {{ $namespace }}
+  labels:
+    app: {{ .name }}
+spec:
+  {{- if .generators }}
+  generators: {{ .generators | toPrettyJson }}
+  {{- else }}
+  generators:
+    - git:
+        repoURL: {{ $.Values.global.repoURL }}
+        revision: {{ $.Values.global.targetRevision }}
+        {{- if .generatorFile }}
+        files:
+          - path: {{ .generatorFile | quote }}
+        {{- end }}
+  {{- end }}
+  template:
+    metadata:
+      name: {{ coalesce .namespace $namespace }}
+    spec:
+      project: {{ .project }}
+      {{- if .syncPolicy }}
+      syncPolicy: {{ .syncPolicy | toPrettyJson }}
+      {{- else }}
+      syncPolicy:
+        automated: {}
+      {{- end }}
+      {{- if .ignoreDifferences }}
+      ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
+      {{- end }}
+      source:
+        repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+        targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }} 
+        {{- if .chart }}
+        chart: {{ .chart }}
+        {{- end }}
+        {{- if .path }}
+        path: {{ .path }}
+        {{- end }}
+        {{- if .plugin }}
+        plugin: {{ .plugin }}
+        {{- end }}
+        {{- if not .kustomize }}
+        helm:
+          ignoreMissingValueFiles: true
+          valueFiles:
+            - "values.yaml"
+        {{- range .extraValueFiles }}
+            - {{ . | quote }}
+        {{- end }}
+        {{- if .useGeneratorValues }}
+          values: |-
+            {{ `{{ values }}` }}
+        {{- end }}
+          parameters:
+            - name: global.hubClusterDomain
+              value: {{ $.Values.global.hubClusterDomain }}
+            - name: global.localClusterDomain
+              value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
+        {{- range .overrides }}
+            - name: {{ .name  }}
+              value: {{ .value | quote  }}
+        {{- if .forceString }}
+              forceString: true
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      destination:
+        server: {{ coalesce .destinationURL "https://kubernetes.default.svc" }}
+        namespace: {{ coalesce .destinationNamespace .namespace $namespace }}
+{{- else }}
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -69,4 +146,5 @@ spec:
     #  selfHeal: true
 {{- end }}
 ---
+{{- end }}
 {{- end }}
