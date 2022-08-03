@@ -76,7 +76,6 @@ spec:
         server: {{ coalesce .destinationURL "https://kubernetes.default.svc" }}
         namespace: {{ coalesce .destinationNamespace .namespace $namespace }}
 {{- else }}
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
