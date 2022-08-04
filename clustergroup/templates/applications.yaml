@@ -1,6 +1,6 @@
 {{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
 {{- range .Values.clusterGroup.applications }}
-{{- if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationURL) (.destinationNamespace) }}
+{{- if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) }}
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -37,7 +37,7 @@ spec:
       {{- end }}
       source:
         repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
-        targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }} 
+        targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
         {{- if .chart }}
         chart: {{ .chart }}
         {{- end }}
@@ -73,7 +73,7 @@ spec:
         {{- end }}
         {{- end }}
       destination:
-        server: {{ coalesce .destinationURL "https://kubernetes.default.svc" }}
+        server: {{ coalesce .destinationServer "https://kubernetes.default.svc" }}
         namespace: {{ coalesce .destinationNamespace .namespace $namespace }}
 {{- else }}
 apiVersion: argoproj.io/v1alpha1
