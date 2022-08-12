@@ -17,6 +17,7 @@ vault_pki_max_lease_ttl: "8760h"
 output_file: "common/pattern-vault.init"
 external_secrets_ns: golang-external-secrets
 external_secrets_sa: golang-external-secrets
+external_secrets_secret: golang-external-secrets
 # Setting this to false makes the role store the vault unseal keys and root login
 # token inside a secret in the cluster.
 # *Note* that this is fundamentally unsafe
