@@ -72,27 +72,27 @@ spec:
               value: {{ $.Values.global.namespace }}
             - name: global.pattern
               value: {{ $.Values.global.pattern }}
-        {{- range .hubClusterDomainFields }}
+        {{- range .extraHubClusterDomainFields }}
             - name: {{ . }}
               value: {{ $.Values.global.hubClusterDomain }}
         {{- end }}
-        {{- range .localClusterDomainFields }}
+        {{- range .extraLocalClusterDomainFields }}
             - name: {{ . }}
               value: {{ $.Values.global.localClusterDomain }}
         {{- end }}
-        {{- range .repoURLFields }}
+        {{- range .extraRepoURLFields }}
             - name: {{ . }}
               value: {{ $.Values.global.repoURL }}
         {{- end }}
-        {{- range .targetRevisionFields }}
+        {{- range .extraTargetRevisionFields }}
             - name: {{ . }}
               value: {{ $.Values.global.targetRevision }}
         {{- end }}
-        {{- range .namespaceFields }}
+        {{- range .extraNamespaceFields }}
             - name: {{ . }}
               value: {{ $.Values.global.namespace }}
         {{- end }}
-        {{- range .patternNameFields }}
+        {{- range .extraPatternNameFields }}
             - name: {{ . }}
               value: {{ $.Values.global.pattern }}
         {{- end }}
@@ -153,27 +153,27 @@ spec:
           value: {{ $.Values.global.hubClusterDomain }}
         - name: global.localClusterDomain
           value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
-        {{- range .hubClusterDomainFields }}
+        {{- range .extraHubClusterDomainFields }}
         - name: {{ . }}
           value: {{ $.Values.global.hubClusterDomain }}
         {{- end }}
-        {{- range .localClusterDomainFields }}
+        {{- range .extraLocalClusterDomainFields }}
         - name: {{ . }}
           value: {{ $.Values.global.localClusterDomain }}
         {{- end }}
-        {{- range .repoURLFields }}
+        {{- range .extraRepoURLFields }}
         - name: {{ . }}
           value: $ARGOCD_APP_SOURCE_REPO_URL
         {{- end }}
-        {{- range .targetRevisionFields }}
+        {{- range .extraTargetRevisionFields }}
         - name: {{ . }}
           value: $ARGOCD_APP_SOURCE_TARGET_REVISION
         {{- end }}
-        {{- range .namespaceFields }}
+        {{- range .extraNamespaceFields }}
         - name: {{ . }}
           value: $ARGOCD_APP_NAMESPACE
         {{- end }}
-        {{- range .patternNameFields }}
+        {{- range .extraPatternNameFields }}
         - name: {{ . }}
           value: {{ $.Values.global.pattern }}
         {{- end }}
