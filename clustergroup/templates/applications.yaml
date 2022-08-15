@@ -72,6 +72,30 @@ spec:
               value: {{ $.Values.global.namespace }}
             - name: global.pattern
               value: {{ $.Values.global.pattern }}
+        {{- range .hubClusterDomainFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.hubClusterDomain }}
+        {{- end }}
+        {{- range .localClusterDomainFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.localClusterDomain }}
+        {{- end }}
+        {{- range .repoURLFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.repoURL }}
+        {{- end }}
+        {{- range .targetRevisionFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.targetRevision }}
+        {{- end }}
+        {{- range .namespaceFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.namespace }}
+        {{- end }}
+        {{- range .patternNameFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.pattern }}
+        {{- end }}
         {{- range .overrides }}
             - name: {{ .name  }}
               value: {{ .value | quote  }}
@@ -129,6 +153,30 @@ spec:
           value: {{ $.Values.global.hubClusterDomain }}
         - name: global.localClusterDomain
           value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
+        {{- range .hubClusterDomainFields }}
+        - name: {{ . }}
+          value: {{ $.Values.global.hubClusterDomain }}
+        {{- end }}
+        {{- range .localClusterDomainFields }}
+        - name: {{ . }}
+          value: {{ $.Values.global.localClusterDomain }}
+        {{- end }}
+        {{- range .repoURLFields }}
+        - name: {{ . }}
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        {{- end }}
+        {{- range .targetRevisionFields }}
+        - name: {{ . }}
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        {{- end }}
+        {{- range .namespaceFields }}
+        - name: {{ . }}
+          value: $ARGOCD_APP_NAMESPACE
+        {{- end }}
+        {{- range .patternNameFields }}
+        - name: {{ . }}
+          value: {{ $.Values.global.pattern }}
+        {{- end }}
         {{- range .overrides }}
         - name: {{ .name }}
           value: {{ .value | quote }}
