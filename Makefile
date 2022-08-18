@@ -88,6 +88,7 @@ super-linter: ## Runs super linter locally
 					-e VALIDATE_JSCPD=false \
 					-e VALIDATE_KUBERNETES_KUBEVAL=false \
 					-e VALIDATE_YAML=false \
+					$(DISABLE_LINTERS) \
 					-v $(PWD):/tmp/lint:rw,z docker.io/github/super-linter:slim-v4
 
 ansible-lint: ## run ansible lint on ansible/ folder
