@@ -36,10 +36,4 @@ kubeconform:
 	make -f common/Makefile CHARTS="$(wildcard charts/hub/*)" kubeconform
 
 super-linter: ## Runs super linter locally
-	podman run -e RUN_LOCAL=true -e USE_FIND_ALGORITHM=true	\
-					-e VALIDATE_BASH=false \
-					-e VALIDATE_JSCPD=false \
-					-e VALIDATE_KUBERNETES_KUBEVAL=false \
-					-e VALIDATE_YAML=false \
-					-e VALIDATE_ANSIBLE=false \
-					-v $(PWD):/tmp/lint:rw,z docker.io/github/super-linter:slim-v4
+	make -f common/Makefile DISABLE_LINTERS="-e VALIDATE_ANSIBLE=false" super-linter
