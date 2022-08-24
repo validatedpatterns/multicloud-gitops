@@ -1,5 +1,6 @@
-{{/* Only define this if there are any imperativejobs defined */}}
-{{- if gt (len $.Values.clusterGroup.imperative.jobs) 0 -}}
+{{/* Define this if needed (jobs defined or insecure unseal configured) */}}
+{{- if or (gt (len $.Values.clusterGroup.imperative.jobs) 0)
+    (and $.Values.clusterGroup.insecureUnsealVaultInsideCluster $.Values.clusterGroup.isHubCluster) -}}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
