@@ -6,3 +6,4 @@ values-secret.yaml
 pattern-vault.init
 pattern-vault.init.bak
 super-linter.log
+golang-external-secrets/Chart.lock
