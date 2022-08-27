@@ -17,7 +17,7 @@ clusterGroup:
       namespace: open-cluster-management
       channel: release-2.4
       csv: advanced-cluster-management.v2.4.1
-      
+
     odh:
       name: opendatahub-operator
       source: community-operators
@@ -30,7 +30,7 @@ clusterGroup:
 
   projects:
   - datacenter
- 
+
   applications:
     acm:
       name: acm
