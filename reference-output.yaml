@@ -31,11 +31,11 @@ kind: Secret
 apiVersion: v1
 metadata:
   name: s3-secret
-type: Opaque  
+type: Opaque
 data:
   # Pre-create as part of the initial 'helm install' chart
   # Create a file with the following:
-  #  s3.accessKey: KEY 
+  #  s3.accessKey: KEY
   #  s3.secretKey: secret key
   #application.properties: base64 encrypted value of the above file
   # This should live in the values-secret.yaml file
