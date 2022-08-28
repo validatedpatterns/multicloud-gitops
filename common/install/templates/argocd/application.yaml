@@ -31,6 +31,8 @@ spec:
           value: {{ .Release.Name }}
         - name: global.hubClusterDomain
           value: {{ .Values.global.hubClusterDomain }}
+        - name: vault.server.route.host
+          value: {{ .Values.vault.server.route.host }}
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: {}

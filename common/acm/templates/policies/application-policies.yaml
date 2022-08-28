@@ -57,6 +57,8 @@ spec:
                         value: {{ $.Values.global.pattern }}
                       - name: global.hubClusterDomain
                         value: {{ $.Values.global.hubClusterDomain }}
+                      - name: vault.server.route.host
+                        value: {{ $.Values.vault.server.route.host }}
                       - name: global.localClusterDomain
                         value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
                      {{- range .helmOverrides }}

@@ -6,15 +6,17 @@ TARGET_REPO=$(shell git remote show $(TARGET_ORIGIN) | grep Push | sed -e 's/.*U
 # git branch --show-current is also available as of git 2.22, but we will use this for compatibility
 TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 HUBCLUSTER_APPS_DOMAIN=$(shell oc get ingresses.config/cluster -o jsonpath={.spec.domain})
+# This is needed until supports passing 'null' variables to subcharts (see https://github.com/helm/helm/issues/9136)
+VAULT_ROUTE_HOST ?= "vault-vault.$(HUBCLUSTER_APPS_DOMAIN)"
 
 # --set values always take precedence over the contents of -f
 HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) \
-	--set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN)
+	--set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN) --set vault.server.route.host=$(VAULT_ROUTE_HOST)
 TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" \
 	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.pattern="mypattern" \
 	--set global.namespace="pattern-namespace" --set global.hubClusterDomain=hub.example.com --set global.localClusterDomain=region.example.com \
 	--set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml" \
-	--set clusterGroup.insecureUnsealVaultInsideCluster=true
+	--set clusterGroup.insecureUnsealVaultInsideCluster=true --set vault.server.route.host=vault-vault.hub.example.com
 PATTERN_OPTS=-f common/examples/values-example.yaml
 EXECUTABLES=git helm oc ansible
 

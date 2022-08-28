@@ -1,0 +1,21 @@
+---
+global:
+  openshift: true
+
+vault:
+  injector:
+    enabled: false
+  ui:
+    enabled: true
+    serviceType: "LoadBalancer"
+  server:
+    route:
+      enabled: true
+      tls:
+        termination: "edge"
+    image:
+      repository: "registry.connect.redhat.com/hashicorp/vault"
+      tag: "1.11.2-ubi"
+  # null does not get passed properly to subcharts https://github.com/helm/helm/issues/9136
+  # That is why it always must be explicitely overridden
+  #server.route.host: null
