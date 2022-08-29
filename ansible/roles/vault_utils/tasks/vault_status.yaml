@@ -51,6 +51,9 @@
   ansible.builtin.set_fact:
     vault_pods: "{{ vault_pods + [item.metadata.name] }}"
   loop: "{{ vault_pods_list.resources }}"
+  loop_control:
+    extended: true
+    label: "{{ ansible_loop.index }}"
   vars:
     vault_pods: []
 
