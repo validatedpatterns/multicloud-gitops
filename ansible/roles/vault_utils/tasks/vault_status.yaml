@@ -48,9 +48,12 @@
   register: vault_pods_list
 
 - name: "Get pods"
-  set_fact:
-    vault_pods: "{{ vault_pods_list | json_query(\"resources[].metadata.name\") }}"
+  ansible.builtin.set_fact:
+    vault_pods: "{{ vault_pods + [item.metadata.name] }}"
+  loop: "{{ vault_pods_list.resources }}"
+  vars:
+    vault_pods: []
 
 - name: "Followers"
-  set_fact:
+  ansible.builtin.set_fact:
     followers: "{{ vault_pods | difference(vault_pod) }}"

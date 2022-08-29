@@ -96,7 +96,7 @@
     namespace: "{{ vault_ns }}"
     pod: "{{ item.0 }}"
     command: vault operator unseal "{{ item.1 }}"
-  loop: "{{ followers|product(unseal_keys)|list }}"
+  loop: "{{ followers | product(unseal_keys) | list }}"
   loop_control:
     extended: true
     label: "Unsealing {{ item.0 }} with key {{ ansible_loop.index }}"
