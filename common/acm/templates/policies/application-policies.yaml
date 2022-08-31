@@ -41,8 +41,11 @@ spec:
                     helm:
                       ignoreMissingValueFiles: true
                       valueFiles:
-                      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-global.yaml"
-                      - "{{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}/values-{{ .name }}.yaml"
+                      - "/values-global.yaml"
+                      - "/values-{{ .name }}.yaml"
+                      {{- range $valueFile := .extraValueFiles }}
+                      - {{ $valueFile | quote }}
+                      {{- end }}
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -52,8 +55,6 @@ spec:
                         value: $ARGOCD_APP_NAMESPACE
                       - name: global.pattern
                         value: {{ $.Values.global.pattern }}
-                      - name: global.valuesDirectoryURL
-                        value: {{ coalesce .valuesDirectoryURL $.Values.global.valuesDirectoryURL }}
                       - name: global.hubClusterDomain
                         value: {{ $.Values.global.hubClusterDomain }}
                       - name: global.localClusterDomain
@@ -61,6 +62,13 @@ spec:
                      {{- range .helmOverrides }}
                       - name: {{ .name }}
                         value: {{ .value | quote }}
+                     {{- end }}
+                     {{- if .fileParameters }}
+                      fileParameters:
+                      {{- range .fileParameters }}
+                      - name: {{ .name }}
+                        path: {{ .path }}
+                      {{- end }}
                      {{- end }}
                   destination:
                     server: https://kubernetes.default.svc

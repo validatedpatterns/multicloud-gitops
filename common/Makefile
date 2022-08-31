@@ -8,10 +8,15 @@ TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 HUBCLUSTER_APPS_DOMAIN=$(shell oc get ingresses.config/cluster -o jsonpath={.spec.domain})
 
 # --set values always take precedence over the contents of -f
-HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) --set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN)
-TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.valuesDirectoryURL="https://github.com/pattern-clone/mypattern/raw/main" --set global.pattern="mypattern" --set global.namespace="pattern-namespace" --set global.hubClusterDomain=hub.example.com --set global.localClusterDomain=region.example.com --set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml" --set clusterGroup.insecureUnsealVaultInsideCluster=true
+HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) \
+	--set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN)
+TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" \
+	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.pattern="mypattern" \
+	--set global.namespace="pattern-namespace" --set global.hubClusterDomain=hub.example.com --set global.localClusterDomain=region.example.com \
+	--set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml" \
+	--set clusterGroup.insecureUnsealVaultInsideCluster=true
 PATTERN_OPTS=-f common/examples/values-example.yaml
-
+EXECUTABLES=git helm oc ansible
 
 .PHONY: help
 help: ## This help message
@@ -38,23 +43,30 @@ KUBECONFORM_SKIP ?= -skip 'CustomResourceDefinition'
 kubeconform: ## run helm kubeconform
 	@for t in $(CHARTS); do helm template $(TEST_OPTS) $(PATTERN_OPTS) $$t | kubeconform -strict $(KUBECONFORM_SKIP) -verbose -schema-location $(API_URL); if [ $$? != 0 ]; then exit 1; fi; done
 
+validate-prereq: ## verify pre-requisites
+	@for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done
+	@echo "Prerequisites checked '$(EXECUTABLES)': OK"
+	@ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1
+	@echo "Python kubernetes module: OK"
+	@echo -n "Check for kubernetes.core collection: "
+	@if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi
+	@echo "OK"
+
 validate-origin: ## verify the git origin is available
 	@echo Checking repo $(TARGET_REPO) - branch $(TARGET_BRANCH)
 	@git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null && \
 		echo "$(TARGET_REPO) - $(TARGET_BRANCH) exists" || \
 		(echo "$(TARGET_BRANCH) not found in $(TARGET_REPO)"; exit 1)
 
-deploy: validate-origin ## deploys the pattern
-	helm install $(NAME) common/install/ $(HELM_OPTS)
+# Default targets are "deploy" and "upgrade"; they can "move" to whichever install mechanism should be default.
+# legacy-deploy and legacy-upgrade should be present so that patterns don't need to depend on "deploy" and "upgrade"
+# pointing to one place or another, and don't need to change when they do (provide they use either legacy- or operator-
+# targets)
+deploy upgrade legacy-deploy legacy-upgrade: validate-prereq validate-origin ## deploys the pattern
+	helm upgrade --install $(NAME) common/install/ $(HELM_OPTS)
 
-upgrade: validate-origin
-	helm upgrade $(NAME) common/install/ $(HELM_OPTS)
-
-operator-deploy: validate-origin ## runs helm install
-	helm install $(NAME) common/operator-install/ $(HELM_OPTS)
-
-operator-upgrade: validate-origin ## runs helm upgrade
-	helm upgrade $(NAME) common/operator-install/ $(HELM_OPTS)
+operator-deploy operator-upgrade: validate-origin ## runs helm install
+	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
 
 uninstall: ## runs helm uninstall
 	helm uninstall $(NAME)
@@ -76,6 +88,7 @@ super-linter: ## Runs super linter locally
 					-e VALIDATE_JSCPD=false \
 					-e VALIDATE_KUBERNETES_KUBEVAL=false \
 					-e VALIDATE_YAML=false \
+					$(DISABLE_LINTERS) \
 					-v $(PWD):/tmp/lint:rw,z docker.io/github/super-linter:slim-v4
 
 ansible-lint: ## run ansible lint on ansible/ folder
