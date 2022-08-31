@@ -75,12 +75,8 @@ metadata:
 spec:
   dataFrom:
   - extract:
-      # Expects an entry called: aws_access_key_id
-      key: {{ default 'secret/data/hub/aws/access_key_id' .awsAccessKeyIdPath }}
-  dataFrom:
-  - extract:
-      # Expects an entry called: aws_secret_access_key
-      key: {{ default 'secret/data/hub/aws/secret_access_key' .awsSecretKeyPath }}
+      # Expects entries called: aws_access_key_id and aws_secret_access_key
+      key: {{ default 'secret/data/hub/aws' .awsKeyPath }}
   refreshInterval: 24h0m0s
   secretStoreRef:
     name: {{ $.Values.secretStore.name }}
