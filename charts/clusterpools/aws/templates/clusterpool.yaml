@@ -63,7 +63,7 @@ spec:
       type: kubernetes.io/dockerconfigjson
       data:
         .dockerconfigjson: |-
-          {{ "{{ .openshiftPullSecret | toString }}" }}
+          {{ "{{ .openshiftPullSecret.dockerconfigjson | toString }}" }}
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
