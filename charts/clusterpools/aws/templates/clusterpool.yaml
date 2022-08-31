@@ -53,7 +53,7 @@ spec:
   dataFrom:
   - extract:
       # Expects an entry called: .dockerconfigjson
-      key: {{ default 'secret/data/hub/openshiftPullSecret' .pullSecretKeyPath }}
+      key: {{ default "secret/data/hub/openshiftPullSecret" .pullSecretKeyPath }}
   refreshInterval: 24h0m0s
   secretStoreRef: 
     name: {{ $.Values.secretStore.name }}
@@ -76,7 +76,7 @@ spec:
   dataFrom:
   - extract:
       # Expects entries called: aws_access_key_id and aws_secret_access_key
-      key: {{ default 'secret/data/hub/aws' .awsKeyPath }}
+      key: {{ default "secret/data/hub/aws" .awsKeyPath }}
   refreshInterval: 24h0m0s
   secretStoreRef:
     name: {{ $.Values.secretStore.name }}
