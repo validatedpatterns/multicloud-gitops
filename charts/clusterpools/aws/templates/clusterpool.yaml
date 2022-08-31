@@ -82,7 +82,7 @@ spec:
     name: {{ $.Values.secretStore.name }}
     kind: {{ $.Values.secretStore.kind }}
   target:
-    name: {{ .name }}-aws-creds
+    name: {{ .name }}-creds
     creationPolicy: Owner
     template:
       type: Opaque
