@@ -9,7 +9,7 @@ help:
 %:
 	make -f common/Makefile $*
 
-install: deploy ## installs the pattern, inits the vault and loads the secrets
+install: operator-deploy ## installs the pattern, inits the vault and loads the secrets
 	@if grep -v -e '^\s\+#' "values-hub.yaml" | grep -q -e "insecureUnsealVaultInsideCluster:\s\+true"; then \
 	  echo "Skipping 'make vault-init' as we're unsealing the vault from inside the cluster"; \
 	else \
