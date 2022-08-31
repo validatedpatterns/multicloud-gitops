@@ -110,6 +110,14 @@ spec:
   clusterConditions:
     - status: 'True'
       type: ManagedClusterConditionAvailable
+  {{- if .clusterSelector }}
   clusterSelector: {{ .clusterSelector | toPrettyJson }}
+  {{- else }}
+  clusterSelector:
+    matchLabels:
+    {{- range .labels }}
+      {{ .name }}: {{ .value }}
+    {{- end }}
+  {{- end }}
 ---
 {{- end }}
