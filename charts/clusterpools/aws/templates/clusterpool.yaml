@@ -25,7 +25,7 @@ spec:
   platform:
     aws:
       credentialsSecretRef:
-        name: {{ .name }}-aws-creds
+        name: {{ .name }}-creds
       region: {{ .provider.region }}
 ---
 apiVersion: v1
@@ -50,10 +50,10 @@ metadata:
     helm.sh/hook-weight: "310"
   namespace: rhacm-clusterpools 
 spec: 
-  data:
-  - secretKey: openshiftPullSecret
-    remoteRef: 
-      key: adc32372-cafe-0488-a9ab-6a971a6ca2d8 
+  dataFrom:
+  - extract:
+      # Expects an entry called: .dockerconfigjson
+      key: {{ default 'secret/data/hub/openshiftPullSecret' .pullSecretKeyPath }}
   refreshInterval: 24h0m0s
   secretStoreRef: 
     name: {{ $.Values.secretStore.name }}
@@ -63,26 +63,24 @@ spec:
     creationPolicy: Owner
     template:
       type: kubernetes.io/dockerconfigjson
-      data:
-        .dockerconfigjson: |-
-          {{ "{{ .openshiftPullSecret | toString }}" }}
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
-  name: {{ .name }}-aws-creds
+  name: {{ .name }}-creds
   annotations:
     argocd.argoproj.io/sync-wave: "310"
     helm.sh/hook-weight: "310"
   namespace: rhacm-clusterpools 
 spec:
-  data:
-    - secretKey: awsAccessKey
-      remoteRef:
-        key: 0d1d17a7-9d6b-a2b4-6b20-04d87f770fce 
-    - secretKey: awsSecretKey
-      remoteRef:
-        key: 57afa209-35b7-da90-5b92-9621cc27030c
+  dataFrom:
+  - extract:
+      # Expects an entry called: aws_access_key_id
+      key: {{ default 'secret/data/hub/aws/access_key_id' .awsAccessKeyIdPath }}
+  dataFrom:
+  - extract:
+      # Expects an entry called: aws_secret_access_key
+      key: {{ default 'secret/data/hub/aws/secret_access_key' .awsSecretKeyPath }}
   refreshInterval: 24h0m0s
   secretStoreRef:
     name: {{ $.Values.secretStore.name }}
@@ -92,11 +90,6 @@ spec:
     creationPolicy: Owner
     template:
       type: Opaque
-      data:
-        aws_access_key_id: |-
-          {{ "{{ .awsAccessKey | toString }}" }}
-        aws_secret_access_key: |-
-          {{ "{{ .awsSecretKey | toString }}" }}
 ---
 {{- end }}
 {{- end }}
