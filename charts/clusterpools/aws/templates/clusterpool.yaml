@@ -48,9 +48,9 @@ metadata:
     argocd.argoproj.io/sync-wave: "310"
     helm.sh/hook-weight: "310"
 spec: 
-  dataFrom:
-  - extract:
-      # Expects an entry called: .dockerconfigjson
+  data:
+  - secretKey: openshiftPullSecret
+    remoteRef:
       key: {{ default "secret/data/hub/openshiftPullSecret" .pullSecretKeyPath }}
   refreshInterval: 24h0m0s
   secretStoreRef: 
@@ -61,6 +61,9 @@ spec:
     creationPolicy: Owner
     template:
       type: kubernetes.io/dockerconfigjson
+      data:
+        .dockerconfigjson: |-
+          {{ "{{ .openshiftPullSecret | toString }}" }}
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
