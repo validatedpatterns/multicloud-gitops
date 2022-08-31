@@ -1,0 +1,104 @@
+{{- range .Values.clusterPools }}
+{{ if .count }}
+apiVersion: hive.openshift.io/v1
+kind: ClusterPool
+metadata:
+  name: '{{ .name }}'
+  annotations:
+    argocd.argoproj.io/sync-wave: "320"
+    helm.sh/hook-weight: "320"
+  labels:
+    cloud: 'AWS'
+    region: '{{ .provider.region }}'
+    vendor: OpenShift
+spec:
+  size: {{ .count }}
+  runningCount: 0
+  baseDomain: {{ .provider.baseDomain }}
+  installConfigSecretTemplateRef:
+    name: {{ .name }}-install-config 
+  imageSetRef:
+    name: img{{ .version }}-x86-64-appsub
+  pullSecretRef:
+    name: {{ .name }}-pull-secret
+  skipMachinePools: true # Disable MachinePool as using custom install-config
+  platform:
+    aws:
+      credentialsSecretRef:
+        name: {{ .name }}-aws-creds
+      region: {{ .provider.region }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .name }}-install-config
+  annotations:
+    argocd.argoproj.io/sync-wave: "310"
+    helm.sh/hook-weight: "310"
+  namespace: rhacm-clusterpools 
+data:
+  # Base64 encoding of install-config yaml
+  install-config.yaml: {{ include "cluster.install-config" . | b64enc }} 
+type: Opaque
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: {{ .name }}-pull-secret
+  annotations:
+    argocd.argoproj.io/sync-wave: "310"
+    helm.sh/hook-weight: "310"
+  namespace: rhacm-clusterpools 
+spec: 
+  data:
+  - secretKey: openshiftPullSecret
+    remoteRef: 
+      key: adc32372-cafe-0488-a9ab-6a971a6ca2d8 
+  refreshInterval: 24h0m0s
+  secretStoreRef: 
+    name: {{ $.Values.secretStore.name }}
+    kind: {{ $.Values.secretStore.kind }}
+  target:
+    name: {{ .name }}-pull-secret
+    creationPolicy: Owner
+    template:
+      type: kubernetes.io/dockerconfigjson
+      data:
+        .dockerconfigjson: |-
+          {{ "{{ .openshiftPullSecret | toString }}" }}
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: {{ .name }}-aws-creds
+  annotations:
+    argocd.argoproj.io/sync-wave: "310"
+    helm.sh/hook-weight: "310"
+  namespace: rhacm-clusterpools 
+spec:
+  data:
+    - secretKey: awsAccessKey
+      remoteRef:
+        key: 0d1d17a7-9d6b-a2b4-6b20-04d87f770fce 
+    - secretKey: awsSecretKey
+      remoteRef:
+        key: 57afa209-35b7-da90-5b92-9621cc27030c
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: {{ $.Values.secretStore.name }}
+    kind: {{ $.Values.secretStore.kind }}
+  target:
+    name: {{ .name }}-aws-creds
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        aws_access_key_id: |-
+          {{ "{{ .awsAccessKey | toString }}" }}
+        aws_secret_access_key: |-
+          {{ "{{ .awsSecretKey | toString }}" }}
+---
+{{- end }}
+{{- end }}
+
+  

@@ -1,0 +1,22 @@
+clusterPools:
+  poolA:
+    name: foo
+    count: 1
+    version: 4.10.18
+
+    provider:
+      region: us-east-2
+      baseDomain: 
+      sshPublickey: 
+
+    masters:
+      machineType: m5.xlarge
+
+    workers:
+      count: 3
+      machineType: m5.xlarge
+
+
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore

@@ -34,6 +34,12 @@ clusterGroup:
         jsonPointers:
           - /spec/loggingCA
 
+    spokeclusters:
+      name: clusterpool
+      namespace: open-cluster-management
+      project: hub
+      path: charts/clusterpools/aws
+
     vault:
       name: vault
       namespace: vault
