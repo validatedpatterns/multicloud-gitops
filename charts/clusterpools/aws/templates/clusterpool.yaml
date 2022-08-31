@@ -35,7 +35,6 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "310"
     helm.sh/hook-weight: "310"
-  namespace: rhacm-clusterpools 
 data:
   # Base64 encoding of install-config yaml
   install-config.yaml: {{ include "cluster.install-config" . | b64enc }} 
@@ -48,7 +47,6 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "310"
     helm.sh/hook-weight: "310"
-  namespace: rhacm-clusterpools 
 spec: 
   dataFrom:
   - extract:
@@ -71,7 +69,6 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "310"
     helm.sh/hook-weight: "310"
-  namespace: rhacm-clusterpools 
 spec:
   dataFrom:
   - extract:
