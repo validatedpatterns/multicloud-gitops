@@ -40,16 +40,12 @@ clusterGroup:
       project: hub
       path: charts/clusterpools/aws
       overrides:
-      - name: clusterPools.poolA.count
+      - name: clusterPools.default.count
         value: 1
-      - name: clusterPools.poolA.name
-        value: beekhof-spoke
-      - name: clusterPools.poolA.provider.region
+      - name: clusterPools.default.provider.region
         value: ap-southeast-2
-      - name: clusterPools.poolA.provider.baseDomain
+      - name: clusterPools.default.provider.baseDomain
         value: blueprints.rhecoeng.com
-      - name: clusterPools.poolA.provider.sshPublickey
-        value: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4CLsedS4kA72xyY36lAPyTQhgw19v8cFO6aIEq7tO7VAv/rJDFNDhkw+SREBlJOvU7gisk5o3gAL62RHcN93HfDx/WjGWOEFRJfM80Lp+lf7irZx+yt2JIkGy5qNWhU0JgLTKLI9dV2mn6MST1KrGMcC9f1qJDOKaLqwVqvGiPuhbsy+Zeu2RNwUKUrJeXc+ybrznuRRZvVhZdz/FlB68lAklQt7BB94jbh2TRlQYGqGGcxR2Qc2zMI8CCp7lFncXuEMWu1+ibH59PhKsoKYfo+EzQ4SO0rW7CU5NxvwxTJd1Y8gVc4dIootgcVJL99USlir1fbF7A7Uos80RYhEv beekhof@iMac.local"
 
     vault:
       name: vault
