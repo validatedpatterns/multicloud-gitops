@@ -1,5 +1,5 @@
-{{- range .Values.clusterPools }}
-{{ if .count }}
+{{- range .Values.clusterGroup.managedClusterGroups }}
+{{- $group := . }}
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: ManagedClusterSet
 metadata:
@@ -10,10 +10,12 @@ spec:
   clusterSelector:
     selectorType: LegacyClusterSetLabel
 ---
+{{- range .clusterPool }}
+{{- $pool := . }}
 apiVersion: hive.openshift.io/v1
 kind: ClusterPool
 metadata:
-  name: '{{ .name }}'
+  name: "{{ .name }}"
   annotations:
     argocd.argoproj.io/sync-wave: "10"
   labels:
@@ -22,8 +24,8 @@ metadata:
     vendor: OpenShift
     cluster.open-cluster-management.io/clusterset: {{ .name }}
 spec:
-  size: {{ .count }}
-  runningCount: 0
+  size: {{ len .clusters }}
+  runningCount: {{ len .clusters }}
   baseDomain: {{ .provider.baseDomain }}
   installConfigSecretTemplateRef:
     name: {{ .name }}-install-config 
@@ -38,6 +40,24 @@ spec:
         name: {{ .name }}-creds
       region: {{ .provider.region }}
 ---
+{{- range .clusters }}
+apiVersion: hive.openshift.io/v1
+kind: ClusterClaim
+metadata:
+  name: '{{ . }}'
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+    cluster.open-cluster-management.io/createmanagedcluster: "true"
+  labels:
+    clusterClaimName: {{ . }}
+    {{- range $group.labels }}
+    {{ .name }}: {{ .value }}
+    {{- end }}
+    patternGroup: {{ $group.name }}
+spec:
+  clusterPoolName: {{ $pool.name }}
+---
+{{- end }}
 apiVersion: v1
 kind: Secret
 metadata:

@@ -1,5 +1,6 @@
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
 {{- range .Values.clusterGroup.managedClusterGroups }}
+{{- $group := . }}
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -118,6 +119,7 @@ spec:
     {{- range .labels }}
       {{ .name }}: {{ .value }}
     {{- end }}
+      patternGroup: {{ $group.name }}
   {{- end }}
 ---
 {{- end }}

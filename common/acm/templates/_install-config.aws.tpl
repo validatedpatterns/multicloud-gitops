@@ -7,18 +7,32 @@ controlPlane:
   architecture: amd64
   hyperthreading: Enabled
   name: controlPlane
-  replicas: {{ .controlPlane.count }}
+  {{- if .controlPlane }}
+  replicas: {{ default 3 .controlPlane.count }}
   platform:
     aws:
-      type: {{ .controlPlane.machineType }}
+      type: {{ default "m5.xlarge" .controlPlane.machineType }}
+  {{- else }}
+  replicas: 3
+  platform:
+    aws:
+      type: "m5.xlarge"
+  {{- end }}
 compute:
 - hyperthreading: Enabled
   architecture: amd64
   name: 'worker'
-  replicas: {{ .workers.count }}
+  {{- if .workers }}
+  replicas: {{ default 3 .workers.count }}
   platform:
     aws:
-      type: {{ .workers.machineType }}
+      type: {{ default "m5.xlarge" .workers.machineType }}
+  {{- else }}
+  replicas: 3
+  platform:
+    aws:
+      type: "m5.xlarge"
+  {{- end }}
 networking:
   clusterNetwork:
   - cidr: 10.128.0.0/14

@@ -34,24 +34,6 @@ clusterGroup:
         jsonPointers:
           - /spec/loggingCA
 
-    spokeclusters:
-      name: clusterpool
-      namespace: open-cluster-management
-      project: hub
-      path: charts/clusterpools/aws
-      overrides:
-      - name: clusterPools.default.count
-        value: 1
-      - name: clusterPools.default.provider.region
-        value: ap-southeast-2
-      - name: clusterPools.default.provider.baseDomain
-        value: blueprints.rhecoeng.com
-      ignoreDifferences:
-      - group: hive.openshift.io
-        kind: ClusterPool
-        jsonPointers:
-          - /spec/runningCount
-
     vault:
       name: vault
       namespace: vault
@@ -107,11 +89,17 @@ clusterGroup:
       # verbosity: "-v"
 
   managedClusterGroups:
-    region-one:
+    exampleRegion:
       name: region-one
-      clusterPool: spoke
-      clusters:
-      - spoke1
+      clusterPool:
+        examplePool:
+          name: spoke
+          openshiftVersion: 4.10.18
+          provider:
+            region: ap-southeast-2
+            baseDomain: blueprints.rhecoeng.com
+          clusters:
+          - spoke1
       labels:
       - name: clusterGroup
         value: region-one
