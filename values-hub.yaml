@@ -46,6 +46,11 @@ clusterGroup:
         value: ap-southeast-2
       - name: clusterPools.default.provider.baseDomain
         value: blueprints.rhecoeng.com
+      ignoreDifferences:
+      - group: hive.openshift.io
+        kind: ClusterPool
+        jsonPointers:
+          - /spec/runningCount
 
     vault:
       name: vault
@@ -104,7 +109,7 @@ clusterGroup:
   managedClusterGroups:
     region-one:
       name: region-one
-      clusterPool: beekhof-spoke
+      clusterPool: spoke
       clusters:
       - spoke1
       labels:
