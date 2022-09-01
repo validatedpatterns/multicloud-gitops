@@ -75,8 +75,8 @@ spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
-      key: {{ default "secret/data/hub/openshift" .pullSecretKeyPath }}
-      property: imagePullSecret
+      key: {{ default "secret/data/hub/openshiftPullSecret" .pullSecretKeyPath }}
+      property: content
   refreshInterval: 24h0m0s
   secretStoreRef: 
     name: {{ $.Values.secretStore.name }}
@@ -118,7 +118,7 @@ spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
-      key: {{ default "secret/data/hub/imagePullSecret" .pullSecretKeyPath }}
+      key: {{ default "secret/data/hub/openshiftPullSecret" .pullSecretKeyPath }}
       property: content
   - secretKey: awsKeyId
     remoteRef:
@@ -153,9 +153,9 @@ spec:
         baseDomain: "{{ .provider.baseDomain }}"
         pullSecret: |-
           {{ "{{ .openshiftPullSecret | toString }}" }}
-        ssh-privatekey: |-
+        aws_access_key_id: |-
           {{ "{{ .awsKeyId | toString }}" }}
-        ssh-publickey: |-
+        aws_secret_access_key: |-
           {{ "{{ .awsAccessKey | toString }}" }}
         ssh-privatekey: |-
           {{ "{{ .sshPrivateKey | toString }}" }}
