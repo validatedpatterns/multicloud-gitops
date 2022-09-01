@@ -83,6 +83,10 @@
     namespace: "{{ vault_ns }}"
     pod: "{{ item }}"
     command: vault operator raft join http://{{ vault_pod }}.{{ vault_ns }}-internal:8200
+  register: join_raft_cluster_out
+  until: join_raft_cluster_out is not failed
+  retries: 10
+  delay: 15
   loop: "{{ followers }}"
   loop_control:
     extended: true
