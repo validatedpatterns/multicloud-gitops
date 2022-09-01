@@ -15,7 +15,7 @@ spec:
 apiVersion: hive.openshift.io/v1
 kind: ClusterPool
 metadata:
-  name: "{{ .name }}"
+  name: "{{ .name }}-{{ $group.name }}"
   annotations:
     argocd.argoproj.io/sync-wave: "10"
   labels:
@@ -48,12 +48,12 @@ spec:
 apiVersion: hive.openshift.io/v1
 kind: ClusterClaim
 metadata:
-  name: '{{ . }}'
+  name: '{{ . }}-{{ $group.name }}'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
-    clusterClaimName: {{ . }}
+    clusterClaimName: {{ . }}-{{ $group.name }}
     {{- range $group.labels }}
     {{ .name }}: {{ .value }}
     {{- end }}
