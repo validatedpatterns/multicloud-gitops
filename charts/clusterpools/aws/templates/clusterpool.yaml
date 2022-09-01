@@ -1,5 +1,15 @@
 {{- range .Values.clusterPools }}
 {{ if .count }}
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: ManagedClusterSet
+metadata:
+  annotations:
+    cluster.open-cluster-management.io/submariner-broker-ns: {{ .name }}-broker
+  name: {{ .name }}
+spec:
+  clusterSelector:
+    selectorType: LegacyClusterSetLabel
+---
 apiVersion: hive.openshift.io/v1
 kind: ClusterPool
 metadata:
@@ -11,6 +21,7 @@ metadata:
     cloud: 'AWS'
     region: '{{ .provider.region }}'
     vendor: OpenShift
+    cluster.open-cluster-management.io/clusterset: {{ .name }}
 spec:
   size: {{ .count }}
   runningCount: 0
