@@ -109,6 +109,7 @@ spec:
     template:
       type: Opaque
 ---
+# For use when manually creating clusters with ACM
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
@@ -117,8 +118,8 @@ spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
-      key: {{ default "secret/data/hub/openshift" .pullSecretKeyPath }}
-      property: imagePullSecret
+      key: {{ default "secret/data/hub/imagePullSecret" .pullSecretKeyPath }}
+      property: content
   - secretKey: awsKeyId
     remoteRef:
       key: {{ default "secret/data/hub/aws" .awsKeyPath }}
@@ -129,12 +130,12 @@ spec:
       property: aws_secret_access_key
   - secretKey: sshPublicKey
     remoteRef:
-      key: {{ default "secret/data/hub/ssh" .sshKeyPath }}
-      property: publickey
+      key: {{ default "secret/data/hub/publickey" .sshPublicKeyPath }}
+      property: content
   - secretKey: sshPrivateKey
     remoteRef:
-      key: {{ default "secret/data/hub/ssh" .sshKeyPath }}
-      property: privatekey
+      key: {{ default "secret/data/hub/privatekey" .sshPrivateKeyPath }}
+      property: content
   refreshInterval: 24h0m0s
   secretStoreRef: 
     name: {{ $.Values.secretStore.name }}
