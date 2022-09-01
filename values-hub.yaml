@@ -91,15 +91,19 @@ clusterGroup:
   managedClusterGroups:
     exampleRegion:
       name: region-one
-      clusterPool:
-        examplePool:
-          name: spoke
-          openshiftVersion: 4.10.18
-          provider:
-            region: ap-southeast-2
-            baseDomain: blueprints.rhecoeng.com
-          clusters:
-          - spoke1
+
+      # Before enabling cluster provisioning, ensure AWS credentials and OCP
+      #   pull secrets are defined in Vault. See values-secret.yaml.template
+      #
+      #clusterPool:
+      #  examplePool:
+      #    name: spoke
+      #    openshiftVersion: 4.10.18
+      #    provider:
+      #      region: ap-southeast-2
+      #      baseDomain: blueprints.rhecoeng.com
+      #    clusters:
+      #    - spoke1
       labels:
       - name: clusterGroup
         value: region-one
