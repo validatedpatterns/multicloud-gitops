@@ -44,6 +44,8 @@ clusterGroup:
         value: 1
       - name: clusterPools.poolA.name
         value: beekhof-spoke
+      - name: clusterPools.poolA.provider.region
+        value: ap-southeast-2
       - name: clusterPools.poolA.provider.baseDomain
         value: blueprints.rhecoeng.com
       - name: clusterPools.poolA.provider.sshPublickey
