@@ -6,16 +6,16 @@ baseDomain: {{ .provider.baseDomain }}
 controlPlane:
   architecture: amd64
   hyperthreading: Enabled
-  name: master
-  replicas: 3
+  name: controlPlane
+  replicas: {{ default 3 .controlPlane.count }}
   platform:
     aws:
-      type: {{ .masters.machineType }}
+      type: {{ .controlPlane.machineType }}
 compute:
 - hyperthreading: Enabled
   architecture: amd64
   name: 'worker'
-  replicas: {{ .workers.count }}
+  replicas: {{ default 3 .workers.count }}
   platform:
     aws:
       type: {{ .workers.machineType }}
