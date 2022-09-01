@@ -15,8 +15,7 @@ kind: ClusterPool
 metadata:
   name: '{{ .name }}'
   annotations:
-    argocd.argoproj.io/sync-wave: "320"
-    helm.sh/hook-weight: "320"
+    argocd.argoproj.io/sync-wave: "10"
   labels:
     cloud: 'AWS'
     region: '{{ .provider.region }}'
@@ -43,9 +42,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: {{ .name }}-install-config
-  annotations:
-    argocd.argoproj.io/sync-wave: "310"
-    helm.sh/hook-weight: "310"
 data:
   # Base64 encoding of install-config yaml
   install-config.yaml: {{ include "cluster.install-config" . | b64enc }} 
@@ -55,9 +51,6 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: {{ .name }}-pull-secret
-  annotations:
-    argocd.argoproj.io/sync-wave: "310"
-    helm.sh/hook-weight: "310"
 spec: 
   data:
   - secretKey: openshiftPullSecret
@@ -81,9 +74,6 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: {{ .name }}-creds
-  annotations:
-    argocd.argoproj.io/sync-wave: "310"
-    helm.sh/hook-weight: "310"
 spec:
   dataFrom:
   - extract:
@@ -103,9 +93,6 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: {{ .name }}-infra-creds
-  annotations:
-    argocd.argoproj.io/sync-wave: "310"
-    helm.sh/hook-weight: "310"
 spec: 
   data:
   - secretKey: openshiftPullSecret
