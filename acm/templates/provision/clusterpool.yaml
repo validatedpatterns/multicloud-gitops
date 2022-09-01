@@ -24,7 +24,11 @@ metadata:
     vendor: OpenShift
     cluster.open-cluster-management.io/clusterset: {{ .name }}
 spec:
+  {{- if .size }}
+  size: {{ .size }}
+  {{- else }}
   size: {{ len .clusters }}
+  {{- end }}
   runningCount: {{ len .clusters }}
   baseDomain: {{ .provider.baseDomain }}
   installConfigSecretTemplateRef:
