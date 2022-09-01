@@ -1,21 +1,20 @@
 clusterPools:
-  poolA:
-    name: foo
-    count: 0
-    version: 4.10.18
+  default:
+    name: spoke
+    openshiftVersion: 4.10.18
+    count: 1
 
     provider:
       region: us-east-2
       baseDomain: example.com
-      sshPublickey: 
 
     controlPlane:
       machineType: m5.xlarge
-
-    workers:
       count: 3
+    
+    workers:
       machineType: m5.xlarge
-
+      count: 3
 
 secretStore:
   name: vault-backend

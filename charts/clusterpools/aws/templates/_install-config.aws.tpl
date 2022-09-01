@@ -7,7 +7,7 @@ controlPlane:
   architecture: amd64
   hyperthreading: Enabled
   name: controlPlane
-  replicas: {{ default 3 .controlPlane.count }}
+  replicas: {{ .controlPlane.count }}
   platform:
     aws:
       type: {{ .controlPlane.machineType }}
@@ -15,7 +15,7 @@ compute:
 - hyperthreading: Enabled
   architecture: amd64
   name: 'worker'
-  replicas: {{ default 3 .workers.count }}
+  replicas: {{ .workers.count }}
   platform:
     aws:
       type: {{ .workers.machineType }}
@@ -32,6 +32,5 @@ platform:
   aws:
     region: {{ .provider.region }}
 pullSecret: "" # skip, hive will inject based on it's secrets
-sshKey: |-
-    {{ .provider.sshPublickey }}
+sshKey: ""     # skip, hive will inject based on it's secrets
 {{- end -}}
