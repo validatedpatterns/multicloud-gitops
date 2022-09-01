@@ -6,10 +6,10 @@ clusterPools:
 
     provider:
       region: us-east-2
-      baseDomain: 
+      baseDomain: example.com
       sshPublickey: 
 
-    masters:
+    controlPlane:
       machineType: m5.xlarge
 
     workers:
