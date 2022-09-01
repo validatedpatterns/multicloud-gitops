@@ -133,7 +133,7 @@ spec:
     name: {{ $.Values.secretStore.name }}
     kind: {{ $.Values.secretStore.kind }}
   target:
-    name: {{ .name }}-a-infra-creds
+    name: {{ .name }}-infra-creds
     creationPolicy: Owner
     template:
       type: Opaque
