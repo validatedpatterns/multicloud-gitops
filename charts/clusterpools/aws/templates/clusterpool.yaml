@@ -88,6 +88,63 @@ spec:
     template:
       type: Opaque
 ---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: {{ .name }}-infra-creds
+  labels:
+    cluster.open-cluster-management.io/credentials: ""
+    cluster.open-cluster-management.io/type: aws
+  annotations:
+    argocd.argoproj.io/sync-wave: "310"
+    helm.sh/hook-weight: "310"
+spec: 
+  data:
+  - secretKey: openshiftPullSecret
+    remoteRef:
+      key: {{ default "secret/data/hub/openshift" .pullSecretKeyPath }}
+      property: imagePullSecret
+  - secretKey: awsKeyId
+    remoteRef:
+      key: {{ default "secret/data/hub/aws" .awsKeyPath }}
+      property: aws_access_key_id
+  - secretKey: awsAccessKey
+    remoteRef:
+      key: {{ default "secret/data/hub/aws" .awsKeyPath }}
+      property: aws_secret_access_key
+  - secretKey: sshPublicKey
+    remoteRef:
+      key: {{ default "secret/data/hub/ssh" .sshKeyPath }}
+      property: publickey
+  - secretKey: sshPrivateKey
+    remoteRef:
+      key: {{ default "secret/data/hub/ssh" .sshKeyPath }}
+      property: privatekey
+  refreshInterval: 24h0m0s
+  secretStoreRef: 
+    name: {{ $.Values.secretStore.name }}
+    kind: {{ $.Values.secretStore.kind }}
+  target:
+    name: {{ .name }}-a-infra-creds
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        baseDomain: "{{ .provider.baseDomain }}"
+        pullSecret: |-
+          {{ "{{ .openshiftPullSecret | toString }}" }}
+        ssh-privatekey: |-
+          {{ "{{ .awsKeyId | toString }}" }}
+        ssh-publickey: |-
+          {{ "{{ .awsAccessKey | toString }}" }}
+        ssh-privatekey: |-
+          {{ "{{ .sshPrivateKey | toString }}" }}
+        ssh-publickey: |-
+          {{ "{{ .sshPublicKey | toString }}" }}
+        httpProxy: ""
+        httpsProxy: ""
+        noProxy: ""
+        additionalTrustBundle: ""
 {{- end }}
 {{- end }}
 
