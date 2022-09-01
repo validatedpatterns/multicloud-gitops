@@ -103,9 +103,6 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: {{ .name }}-infra-creds
-  labels:
-    cluster.open-cluster-management.io/credentials: ""
-    cluster.open-cluster-management.io/type: aws
   annotations:
     argocd.argoproj.io/sync-wave: "310"
     helm.sh/hook-weight: "310"
@@ -140,6 +137,10 @@ spec:
     creationPolicy: Owner
     template:
       type: Opaque
+      metadata:
+        labels:
+          cluster.open-cluster-management.io/credentials: ""
+          cluster.open-cluster-management.io/type: aws
       data:
         baseDomain: "{{ .provider.baseDomain }}"
         pullSecret: |-
