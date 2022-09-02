@@ -147,11 +147,13 @@ spec:
   {{- if .ignoreDifferences }}
   ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
   {{- end }}
-{{- if eq $.Values.global.options.syncPolicy "Automatic" }}
+  {{- if .syncPolicy }}
+  syncPolicy: {{ .syncPolicy | toPrettyJson }}
+  {{- else }}
   syncPolicy:
     automated: {}
     #  selfHeal: true
-{{- end }}
+  {{- end }}
 ---
 {{- end }}
 {{- end }}
