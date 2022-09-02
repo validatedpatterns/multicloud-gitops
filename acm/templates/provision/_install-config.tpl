@@ -1,22 +1,35 @@
 {{- define "cluster.install-config" -}}
+
+{{- $type := "None" }}
+{{- $cloud := "None" }}
+{{- $region := "None" }}
+
+{{- if .platform.aws }}
+{{- $cloud = "aws" }}
+{{- $region = .platform.aws.region }}
+{{- $type = "m5.xlarge" }}
+{{- else if .platform.azure }}
+{{- $cloud = "azure" }}
+{{- $region = .platform.azure.region }}
+{{- $type = "Standard_D8s_v3" }}
+{{- end }}
+
 apiVersion: v1
 metadata:
   name: '{{ .name }}' 
-baseDomain: {{ .provider.baseDomain }}
+baseDomain: {{ .baseDomain }}
 controlPlane:
   architecture: amd64
   hyperthreading: Enabled
   name: controlPlane
   {{- if .controlPlane }}
   replicas: {{ default 3 .controlPlane.count }}
-  platform:
-    aws:
-      type: {{ default "m5.xlarge" .controlPlane.machineType }}
+  platform: {{- .controlPlane.platform | toPrettyJson }}
   {{- else }}
   replicas: 3
   platform:
-    aws:
-      type: "m5.xlarge"
+    {{ $cloud }}:
+      type: {{ $type }}
   {{- end }}
 compute:
 - hyperthreading: Enabled
@@ -24,14 +37,12 @@ compute:
   name: 'worker'
   {{- if .workers }}
   replicas: {{ default 3 .workers.count }}
-  platform:
-    aws:
-      type: {{ default "m5.xlarge" .workers.machineType }}
+  platform: {{- .workers.platform | toPrettyJson }}
   {{- else }}
   replicas: 3
   platform:
-    aws:
-      type: "m5.xlarge"
+    {{ $cloud }}:
+      type: {{ $type }}
   {{- end }}
 networking:
   clusterNetwork:
@@ -42,9 +53,7 @@ networking:
   networkType: OpenShiftSDN
   serviceNetwork:
   - 172.30.0.0/16
-platform:
-  aws:
-    region: {{ .provider.region }}
+platform: {{ .platform | toPrettyJson }}
 pullSecret: "" # skip, hive will inject based on it's secrets
 sshKey: ""     # skip, hive will inject based on it's secrets
 {{- end -}}

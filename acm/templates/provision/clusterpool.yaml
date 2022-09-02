@@ -10,17 +10,31 @@ spec:
   clusterSelector:
     selectorType: LegacyClusterSetLabel
 ---
-{{- range .clusterPool }}
+{{- range .clusterPools }}
+
 {{- $pool := . }}
+{{- $poolName := cat .name $group.name | replace " " "-" }}
+
+{{- $cloud := "None" }}
+{{- $region := "None" }}
+
+{{- if .platform.aws }}
+{{- $cloud = "aws" }}
+{{- $region = .platform.aws.region }}
+{{- else if .platform.azure }}
+{{- $cloud = "azure" }}
+{{- $region = .platform.azure.region }}
+{{- end }}
+
 apiVersion: hive.openshift.io/v1
 kind: ClusterPool
 metadata:
-  name: "{{ .name }}-{{ $group.name }}"
+  name: "{{ $poolName }}"
   annotations:
     argocd.argoproj.io/sync-wave: "10"
   labels:
-    cloud: 'AWS'
-    region: '{{ .provider.region }}'
+    cloud: {{ $cloud }}
+    region: '{{ $region }}'
     vendor: OpenShift
     cluster.open-cluster-management.io/clusterset: {{ .name }}
 spec:
@@ -30,19 +44,19 @@ spec:
   size: {{ len .clusters }}
   {{- end }}
   runningCount: {{ len .clusters }}
-  baseDomain: {{ .provider.baseDomain }}
+  baseDomain: {{ .baseDomain }}
   installConfigSecretTemplateRef:
-    name: {{ .name }}-install-config 
+    name: {{ $poolName }}-install-config 
   imageSetRef:
     name: img{{ .openshiftVersion }}-x86-64-appsub
   pullSecretRef:
-    name: {{ .name }}-pull-secret
+    name: {{ $poolName }}-pull-secret
   skipMachinePools: true # Disable MachinePool as using custom install-config
   platform:
-    aws:
+    {{ $cloud }}:
       credentialsSecretRef:
-        name: {{ .name }}-creds
-      region: {{ .provider.region }}
+        name: {{ $poolName }}-creds
+      region: {{ $region }}
 ---
 {{- range .clusters }}
 apiVersion: hive.openshift.io/v1

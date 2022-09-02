@@ -8,7 +8,7 @@ clusterGroup:
   managedClusterGroups:
 #    testRegion:
 #      name: region-one
-#      clusterPool:
+#      clusterPools:
 #        testPool:
 #          name: spoke
 #          openshiftVersion: 4.10.18
