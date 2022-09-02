@@ -67,3 +67,7 @@ clusterGroup:
         values:
           - OpenShift
 
+  # Create an ExternalSecret with a label that ArgoCD
+  # will detect and register as a new Cluster
+  externalClusters:
+    - example # Will read the key: cluster_example
