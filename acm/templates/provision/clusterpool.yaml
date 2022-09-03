@@ -51,6 +51,8 @@ spec:
     name: img{{ .openshiftVersion }}-x86-64-appsub
   pullSecretRef:
     name: {{ $poolName }}-pull-secret
+  sshPrivateKeySecretRef:
+    name: {{ $poolName }}-ssh-private-key
   skipMachinePools: true # Disable MachinePool as using custom install-config
   platform:
     {{ $cloud }}:
