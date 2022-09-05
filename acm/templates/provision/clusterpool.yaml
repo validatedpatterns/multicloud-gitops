@@ -1,0 +1,93 @@
+{{- range .Values.clusterGroup.managedClusterGroups }}
+{{- $group := . }}
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: ManagedClusterSet
+metadata:
+  annotations:
+    cluster.open-cluster-management.io/submariner-broker-ns: {{ .name }}-broker
+  name: {{ .name }}
+spec:
+   {{- if .clusterPoolSelector }}
+   clusterSelector: {{ .clusterPoolSelector | toPrettyJson }}
+   {{- else }}
+   clusterSelector:
+     labelSelector:
+       matchLabels:
+       {{- range .labels }}
+         {{ .name }}: {{ .value }}
+       {{- end }}
+       patternGroup: {{ $group.name }}
+   {{- end }}
+---
+{{- range .clusterPools }}
+
+{{- $pool := . }}
+{{- $poolName := cat .name $group.name | replace " " "-" }}
+
+{{- $cloud := "None" }}
+{{- $region := "None" }}
+
+{{- if .platform.aws }}
+{{- $cloud = "aws" }}
+{{- $region = .platform.aws.region }}
+{{- else if .platform.azure }}
+{{- $cloud = "azure" }}
+{{- $region = .platform.azure.region }}
+{{- end }}
+
+apiVersion: hive.openshift.io/v1
+kind: ClusterPool
+metadata:
+  name: "{{ $poolName }}"
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    cloud: {{ $cloud }}
+    region: '{{ $region }}'
+    vendor: OpenShift
+    cluster.open-cluster-management.io/clusterset: {{ .name }}
+spec:
+  {{- if .size }}
+  size: {{ .size }}
+  {{- else }}
+  size: {{ len .clusters }}
+  {{- end }}
+  runningCount: {{ len .clusters }}
+  baseDomain: {{ .baseDomain }}
+  installConfigSecretTemplateRef:
+    name: {{ $poolName }}-install-config 
+  imageSetRef:
+    name: img{{ .openshiftVersion }}-x86-64-appsub
+  pullSecretRef:
+    name: {{ $poolName }}-pull-secret
+  sshPrivateKeySecretRef:
+    name: {{ $poolName }}-ssh-private-key
+  skipMachinePools: true # Disable MachinePool as using custom install-config
+  platform:
+    {{ $cloud }}:
+      credentialsSecretRef:
+        name: {{ $poolName }}-creds
+      region: {{ $region }}
+---
+{{- range .clusters }}
+apiVersion: hive.openshift.io/v1
+kind: ClusterClaim
+metadata:
+  name: '{{ . }}-{{ $group.name }}'
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+    cluster.open-cluster-management.io/createmanagedcluster: "true"
+  labels:
+    clusterClaimName: {{ . }}-{{ $group.name }}
+    {{- range $group.labels }}
+    {{ .name }}: {{ .value }}
+    {{- end }}
+    patternGroup: {{ $group.name }}
+spec:
+  clusterPoolName: {{ $pool.name }}
+---
+{{- end }}
+{{- end }}
+{{- end }}
+
+  
