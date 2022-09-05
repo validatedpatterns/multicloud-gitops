@@ -7,17 +7,8 @@ metadata:
     cluster.open-cluster-management.io/submariner-broker-ns: {{ .name }}-broker
   name: {{ .name }}
 spec:
-   {{- if .clusterPoolSelector }}
-   clusterSelector: {{ .clusterPoolSelector | toPrettyJson }}
-   {{- else }}
-   clusterSelector:
-     labelSelector:
-       matchLabels:
-       {{- range .labels }}
-         {{ .name }}: {{ .value }}
-       {{- end }}
-       patternGroup: {{ $group.name }}
-   {{- end }}
+  clusterSelector:
+    selectorType: LegacyClusterSetLabel
 ---
 {{- range .clusterPools }}
 
