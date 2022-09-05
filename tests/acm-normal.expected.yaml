@@ -7,7 +7,6 @@ metadata:
     cluster.open-cluster-management.io/submariner-broker-ns: edge-broker
   name: edge
 spec:
-   selectorType: LabelSelector
    clusterSelector:
      labelSelector:
        matchLabels:
