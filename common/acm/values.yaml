@@ -6,3 +6,21 @@ global:
 
 clusterGroup:
   managedClusterGroups:
+#    testRegion:
+#      name: region-one
+#      clusterPools:
+#        testPool:
+#          name: spoke
+#          openshiftVersion: 4.10.18
+#          provider:
+#            region: ap-southeast-2
+#            baseDomain: blueprints.rhecoeng.com
+#          clusters:
+#          - spoke1
+#      labels:
+#      - name: clusterGroup
+#        value: region-one
+
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore
