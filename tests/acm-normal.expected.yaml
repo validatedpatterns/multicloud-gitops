@@ -7,8 +7,11 @@ metadata:
     cluster.open-cluster-management.io/submariner-broker-ns: edge-broker
   name: edge
 spec:
-  clusterSelector:
-    selectorType: LegacyClusterSetLabel
+   selectorType: LabelSelector
+   clusterSelector:
+     labelSelector:
+       matchLabels:
+       patternGroup: edge
 ---
 # Source: acm/templates/multiclusterhub.yaml
 apiVersion: operator.open-cluster-management.io/v1
