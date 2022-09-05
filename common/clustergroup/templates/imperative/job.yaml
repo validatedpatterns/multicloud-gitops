@@ -1,5 +1,5 @@
-{{/* Only define this if there are any imperativejobs defined */}}
-{{- if gt (len $.Values.clusterGroup.imperative.jobs) 0 -}}
+{{/* Define this if needed (jobs defined */}}
+{{- if (gt (len $.Values.clusterGroup.imperative.jobs) 0) -}}
 ---
 apiVersion: batch/v1
 kind: CronJob
