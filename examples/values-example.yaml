@@ -47,6 +47,11 @@ clusterGroup:
       namespace: application-ci
       project: datacenter
       path: charts/datacenter/pipelines
+    external:
+      name: external-app
+      namespace: demo
+      project: datacenter
+      clusterName: example
 
   managedClusterGroups:
   - name: edge

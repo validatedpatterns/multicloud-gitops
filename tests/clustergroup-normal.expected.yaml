@@ -68,6 +68,11 @@ data:
           namespace: open-cluster-management
           path: common/acm
           project: datacenter
+        external:
+          clusterName: example
+          name: external-app
+          namespace: demo
+          project: datacenter
         pipe:
           name: pipelines
           namespace: application-ci
@@ -498,6 +503,46 @@ spec:
     "kind": "ManagedClusterInfo"
   }
 ]
+  syncPolicy:
+    automated: {}
+    #  selfHeal: true
+---
+# Source: pattern-clustergroup/templates/applications.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-app
+  namespace: mypattern-example
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  destination:
+    name: example
+    namespace: demo
+  project: datacenter
+  source:
+    repoURL: https://github.com/pattern-clone/mypattern
+    targetRevision: 
+    path: 
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+      - "/values-global.yaml"
+      - "/values-example.yaml"
+      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
+      parameters:
+        - name: global.repoURL
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        - name: global.targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: global.namespace
+          value: $ARGOCD_APP_NAMESPACE
+        - name: global.pattern
+          value: mypattern
+        - name: global.hubClusterDomain
+          value: hub.example.com
+        - name: global.localClusterDomain
+          value: region.example.com
   syncPolicy:
     automated: {}
     #  selfHeal: true
