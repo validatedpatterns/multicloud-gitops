@@ -1,5 +1,6 @@
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
+{{- if .clusterPools }}{{- /* We only create ManagedClusterSets if there are clusterPools defined */}}
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: ManagedClusterSet
 metadata:
@@ -77,8 +78,7 @@ metadata:
 spec:
   clusterPoolName: {{ $pool.name }}
 ---
-{{- end }}
-{{- end }}
-{{- end }}
-
-  
+{{- end }}{{- /* range .range clusters */}}
+{{- end }}{{- /* range .clusterPools */}}
+{{- end }}{{- /* if .clusterPools) */}}
+{{- end }}{{- /* range .Values.clusterGroup.managedClusterGroups */}}

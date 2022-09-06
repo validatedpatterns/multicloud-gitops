@@ -1,15 +1,4 @@
 ---
-# Source: acm/templates/provision/clusterpool.yaml
-apiVersion: cluster.open-cluster-management.io/v1beta1
-kind: ManagedClusterSet
-metadata:
-  annotations:
-    cluster.open-cluster-management.io/submariner-broker-ns: edge-broker
-  name: edge
-spec:
-  clusterSelector:
-    selectorType: LegacyClusterSetLabel
----
 # Source: acm/templates/multiclusterhub.yaml
 apiVersion: operator.open-cluster-management.io/v1
 kind: MultiClusterHub
