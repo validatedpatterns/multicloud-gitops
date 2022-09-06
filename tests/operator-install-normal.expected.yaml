@@ -10,6 +10,8 @@ spec:
   gitSpec:
     targetRepo: https://github.com/pattern-clone/mypattern
     targetRevision: main
+  gitOpsSpec:
+    operatorChannel: stable
 ---
 # Source: pattern-install/templates/subscription.yaml
 apiVersion: operators.coreos.com/v1alpha1
