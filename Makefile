@@ -17,6 +17,7 @@ TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set glo
 	--set clusterGroup.insecureUnsealVaultInsideCluster=true
 PATTERN_OPTS=-f common/examples/values-example.yaml
 EXECUTABLES=git helm oc ansible
+CSV=$(shell oc get subscriptions -n openshift-operators openshift-gitops-operator -ojsonpath={.status.currentCSV})
 
 .PHONY: help
 help: ## This help message
@@ -70,6 +71,7 @@ operator-deploy operator-upgrade: validate-origin ## runs helm install
 
 uninstall: ## runs helm uninstall
 	helm uninstall $(NAME)
+	@oc delete csv -n openshift-operators $(CSV)
 
 vault-init: ## inits, unseals and configured the vault
 	common/scripts/vault-utils.sh vault_init common/pattern-vault.init
