@@ -1,0 +1,19 @@
+---
+global:
+  openshift: true
+
+vault:
+  injector:
+    enabled: false
+  ui:
+    enabled: true
+    serviceType: "LoadBalancer"
+  server:
+    route:
+      host: null
+      enabled: true
+      tls:
+        termination: "edge"
+    image:
+      repository: "registry.connect.redhat.com/hashicorp/vault"
+      tag: "1.11.2-ubi"
