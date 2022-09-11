@@ -1,6 +1,7 @@
 ---
 global:
   openshift: true
+  localClusterDomain: apps.foo.cluster.com
 
 vault:
   injector:
