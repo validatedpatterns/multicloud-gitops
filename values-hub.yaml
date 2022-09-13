@@ -38,28 +38,7 @@ clusterGroup:
       name: vault
       namespace: vault
       project: hub
-      chart: vault
-      repoURL: https://helm.releases.hashicorp.com
-      targetRevision: v0.21.0
-      overrides:
-      - name: global.openshift
-        value: "true"
-      - name: injector.enabled
-        value: "false"
-      - name: ui.enabled
-        value: "true"
-      - name: ui.serviceType
-        value: LoadBalancer
-      - name: server.route.enabled
-        value: "true"
-      - name: server.route.host
-        value: null
-      - name: server.route.tls.termination
-        value: edge
-      - name: server.image.repository
-        value: "registry.connect.redhat.com/hashicorp/vault"
-      - name: server.image.tag
-        value: "1.11.2-ubi"
+      path: common/hashicorp-vault
 
     golang-external-secrets:
       name: golang-external-secrets
