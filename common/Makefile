@@ -69,7 +69,9 @@ operator-deploy operator-upgrade: validate-origin ## runs helm install
 	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
 
 uninstall: ## runs helm uninstall
+	$(eval CSV := $(shell oc get subscriptions -n openshift-operators openshift-gitops-operator -ojsonpath={.status.currentCSV}))
 	helm uninstall $(NAME)
+	@oc delete csv -n openshift-operators $(CSV)
 
 vault-init: ## inits, unseals and configured the vault
 	common/scripts/vault-utils.sh vault_init common/pattern-vault.init
@@ -88,6 +90,7 @@ super-linter: ## Runs super linter locally
 					-e VALIDATE_JSCPD=false \
 					-e VALIDATE_KUBERNETES_KUBEVAL=false \
 					-e VALIDATE_YAML=false \
+					-e VALIDATE_ANSIBLE=false \
 					$(DISABLE_LINTERS) \
 					-v $(PWD):/tmp/lint:rw,z docker.io/github/super-linter:slim-v4
 
