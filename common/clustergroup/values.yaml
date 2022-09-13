@@ -41,6 +41,15 @@ clusterGroup:
     roleName: imperative-role
     roleYaml: ""
 
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore
+
+# Depends on the value of 'vault_hub' ansible variable used 
+# during the installation
+secretsBase:
+  key: secret/data/hub
+
 #  managedClusterGroups:
 #  - name: factory
 #    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git

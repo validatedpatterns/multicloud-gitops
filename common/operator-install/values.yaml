@@ -3,4 +3,7 @@ main:
     repoURL: https://github.com/pattern-clone/mypattern
     revision: main
 
+  gitops:
+    channel: "stable"
+
   clusterGroupName: default

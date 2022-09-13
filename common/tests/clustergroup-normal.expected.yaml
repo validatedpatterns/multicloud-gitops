@@ -68,11 +68,18 @@ data:
           namespace: open-cluster-management
           path: common/acm
           project: datacenter
+        external:
+          clusterName: example
+          name: external-app
+          namespace: demo
+          project: datacenter
         pipe:
           name: pipelines
           namespace: application-ci
           path: charts/datacenter/pipelines
           project: datacenter
+      externalClusters:
+      - example
       imperative:
         activeDeadlineSeconds: 3600
         clusterRoleName: imperative-cluster-role
@@ -147,15 +154,31 @@ data:
       git:
         repoURL: https://github.com/pattern-clone/mypattern
         revision: main
+    secretStore:
+      kind: ClusterSecretStore
+      name: vault-backend
     secrets:
       aws:
         s3Secret: test-secret
+      cluster_example:
+        config: |-
+          {
+            \"bearerToken\": \"<bearer_token>\",
+            \"tlsClientConfig\": {
+              \"insecure\": false,
+              \"caData\": \"<base64 encoded CA>\"
+            }
+          }
+        name: example
+        server: https://api.example.openshiftapps.com:6443
       git:
         token: test-git-token
         username: test-user
       imageregistry:
         account: test-account
         token: test-quay-token
+    secretsBase:
+      key: secret/data/hub
 ---
 # Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -488,6 +511,46 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: external-app
+  namespace: mypattern-example
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  destination:
+    name: example
+    namespace: demo
+  project: datacenter
+  source:
+    repoURL: https://github.com/pattern-clone/mypattern
+    targetRevision: 
+    path: 
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+      - "/values-global.yaml"
+      - "/values-example.yaml"
+      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
+      parameters:
+        - name: global.repoURL
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        - name: global.targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: global.namespace
+          value: $ARGOCD_APP_NAMESPACE
+        - name: global.pattern
+          value: mypattern
+        - name: global.hubClusterDomain
+          value: hub.example.com
+        - name: global.localClusterDomain
+          value: region.example.com
+  syncPolicy:
+    automated: {}
+    #  selfHeal: true
+---
+# Source: pattern-clustergroup/templates/applications.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: pipelines
   namespace: mypattern-example
   finalizers:
@@ -648,6 +711,28 @@ spec:
   href: 'https://example-gitops-server-mypattern-example.region.example.com'
   location: ApplicationMenu
   text: 'Example ArgoCD'
+---
+# Source: pattern-clustergroup/templates/cluster-external-secrets.yaml
+apiVersion: "external-secrets.io/v1beta1"
+kind: ExternalSecret
+metadata:
+  name: example-secret
+  namespace: mypattern-example
+spec:
+  refreshInterval: 15s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: example-secret
+    template:
+      type: Opaque
+      metadata:
+        labels:
+          argocd.argoproj.io/secret-type: cluster
+  dataFrom:
+  - extract:
+      key: secret/data/hub/cluster_example
 ---
 # Source: pattern-clustergroup/templates/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
