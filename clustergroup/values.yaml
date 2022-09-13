@@ -28,9 +28,9 @@ clusterGroup:
     # By default we run this every 10minutes
     schedule: "*/10 * * * *"
     # Schedule used to trigger the vault unsealing (if explicitely enabled)
-    # Set to run every 9 minutes in order for load-secrets to succeed within
+    # Set to run every 5 minutes in order for load-secrets to succeed within
     # a reasonable amount of time (it waits up to 15 mins)
-    insecureUnsealVaultInsideClusterSchedule: "*/9 * * * *"
+    insecureUnsealVaultInsideClusterSchedule: "*/5 * * * *"
     # Increase ansible verbosity with '-v' or '-vv..'
     verbosity: ""
     serviceAccountCreate: true
