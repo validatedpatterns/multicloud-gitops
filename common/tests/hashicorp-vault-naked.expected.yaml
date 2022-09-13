@@ -6,7 +6,7 @@ metadata:
   name: hashicorp-vault
   namespace: default
   labels:
-    helm.sh/chart: vault-0.21.0
+    helm.sh/chart: vault-0.22.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -18,7 +18,7 @@ metadata:
   name: hashicorp-vault-config
   namespace: default
   labels:
-    helm.sh/chart: vault-0.21.0
+    helm.sh/chart: vault-0.22.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -31,6 +31,10 @@ data:
       tls_disable = 1
       address = "[::]:8200"
       cluster_address = "[::]:8201"
+      # Enable unauthenticated metrics access (necessary for Prometheus Operator)
+      #telemetry {
+      #  unauthenticated_metrics_access = "true"
+      #}
     }
     storage "file" {
       path = "/vault/data"
@@ -45,6 +49,12 @@ data:
     #   key_ring    = "vault-helm-unseal-kr"
     #   crypto_key  = "vault-helm-unseal-key"
     #}
+    
+    # Example configuration for enabling Prometheus metrics in your config.
+    #telemetry {
+    #  prometheus_retention_time = "30s",
+    #  disable_hostname = true
+    #}
 ---
 # Source: hashicorp-vault/charts/vault/templates/server-clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -52,7 +62,7 @@ kind: ClusterRoleBinding
 metadata:
   name: hashicorp-vault-server-binding
   labels:
-    helm.sh/chart: vault-0.21.0
+    helm.sh/chart: vault-0.22.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -73,10 +83,11 @@ metadata:
   name: hashicorp-vault-internal
   namespace: default
   labels:
-    helm.sh/chart: vault-0.21.0
+    helm.sh/chart: vault-0.22.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
+    vault-internal: "true"
   annotations:
 
 spec:
@@ -102,7 +113,7 @@ metadata:
   name: hashicorp-vault
   namespace: default
   labels:
-    helm.sh/chart: vault-0.21.0
+    helm.sh/chart: vault-0.22.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -131,7 +142,7 @@ metadata:
   name: hashicorp-vault-ui
   namespace: default
   labels:
-    helm.sh/chart: vault-0.21.0
+    helm.sh/chart: vault-0.22.0
     app.kubernetes.io/name: vault-ui
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -173,7 +184,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: vault-0.21.0
+        helm.sh/chart: vault-0.22.0
         app.kubernetes.io/name: vault
         app.kubernetes.io/instance: hashicorp-vault
         component: server
@@ -206,7 +217,7 @@ spec:
       containers:
         - name: vault
           
-          image: registry.connect.redhat.com/hashicorp/vault:1.11.2-ubi
+          image: registry.connect.redhat.com/hashicorp/vault:1.11.3-ubi
           imagePullPolicy: IfNotPresent
           command:
           - "/bin/sh"
@@ -340,7 +351,7 @@ metadata:
   name: hashicorp-vault
   namespace: default
   labels:
-    helm.sh/chart: vault-0.21.0
+    helm.sh/chart: vault-0.22.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -367,7 +378,7 @@ spec:
   
   containers:
     - name: hashicorp-vault-server-test
-      image: registry.connect.redhat.com/hashicorp/vault:1.11.2-ubi
+      image: registry.connect.redhat.com/hashicorp/vault:1.11.3-ubi
       imagePullPolicy: IfNotPresent
       env:
         - name: VAULT_ADDR
