@@ -36,10 +36,7 @@ helmlint:
 	# no regional charts just yet: "$(wildcard charts/region/*)"
 	@for t in "$(wildcard charts/*/*)"; do helm lint $$t; if [ $$? != 0 ]; then exit 1; fi; done
 
-.PHONY: kubeval
+.PHONY: kubeconform
 kubeconform:
 	make -f common/Makefile CHARTS="$(wildcard charts/all/*)" kubeconform
 	make -f common/Makefile CHARTS="$(wildcard charts/hub/*)" kubeconform
-
-super-linter: ## Runs super linter locally
-	make -f common/Makefile DISABLE_LINTERS="-e VALIDATE_ANSIBLE=false" super-linter
