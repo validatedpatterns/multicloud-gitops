@@ -90,7 +90,7 @@ clusterGroup:
 
   managedClusterGroups:
     exampleRegion:
-      name: region-one
+      name: group-one
 
       # Before enabling cluster provisioning, ensure AWS and/or Azure
       #   credentials and OCP pull secrets are defined in Vault.
@@ -120,7 +120,7 @@ clusterGroup:
       #    - Three
       labels:
       - name: clusterGroup
-        value: region-one
+        value: group-one
       helmOverrides:
       - name: clusterGroup.isHubCluster
         value: false
