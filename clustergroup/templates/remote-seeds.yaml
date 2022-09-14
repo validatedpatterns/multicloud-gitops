@@ -5,7 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ $.Values.global.pattern }}-{{ $group.name }}-{{ . }}
-  Namespace: openshift-gitops
+  namespace: openshift-gitops
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:

@@ -573,7 +573,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: mypattern-argo-edge-perth
-  Namespace: openshift-gitops
+  namespace: openshift-gitops
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -624,7 +624,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: mypattern-argo-edge-sydney
-  Namespace: openshift-gitops
+  namespace: openshift-gitops
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
