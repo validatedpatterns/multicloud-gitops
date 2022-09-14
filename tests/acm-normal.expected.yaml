@@ -108,8 +108,6 @@ spec:
     name: img4.10.18-x86-64-appsub
   pullSecretRef:
     name: aws-ap-acm-provision-edge-pull-secret
-  sshPrivateKeySecretRef:
-    name: aws-ap-acm-provision-edge-ssh-private-key
   skipMachinePools: true # Disable MachinePool as using custom install-config
   platform:
     aws:
@@ -139,8 +137,6 @@ spec:
     name: img4.10.18-x86-64-appsub
   pullSecretRef:
     name: azure-us-acm-provision-edge-pull-secret
-  sshPrivateKeySecretRef:
-    name: azure-us-acm-provision-edge-ssh-private-key
   skipMachinePools: true # Disable MachinePool as using custom install-config
   platform:
     azure:
