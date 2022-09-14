@@ -117,8 +117,7 @@ metadata:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
   destination:
-    # TODO: Drop .clusterName ??
-    name: {{ coalesce .clusterName $.Values.global.targetCluster $.Values.clusterGroup.targetCluster }}
+    name: {{ coalesce $.Values.global.targetCluster $.Values.clusterGroup.targetCluster }}
     namespace: {{ default $namespace .namespace }}
   project: {{ .project }}
   source:
