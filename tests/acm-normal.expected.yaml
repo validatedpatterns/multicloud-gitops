@@ -10,28 +10,6 @@ data:
 type: Opaque
 ---
 # Source: acm/templates/provision/secrets-common.yaml
-apiVersion: external-secrets.io/v1beta1
-kind: ExternalSecret
-metadata:
-  name: aws-ap-acm-provision-edge-ssh-private-key
-spec:
-  data:
-  - secretKey: sshPrivateKey
-    remoteRef:
-      key: secret/data/hub/privatekey
-      property: content
-  refreshInterval: 24h0m0s
-  secretStoreRef:
-    name: vault-backend
-    kind: ClusterSecretStore
-  target:
-    name: aws-ap-acm-provision-edge-ssh-private-key
-    creationPolicy: Owner
-    template:
-      type: Opaque
-      data:
-        ssh-privatekey: |-
-          {{ .sshPrivateKey | toString }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -323,6 +301,30 @@ spec:
       data:
         .dockerconfigjson: |-
           {{ .openshiftPullSecret | toString }}
+---
+# Source: acm/templates/provision/secrets-common.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: aws-ap-acm-provision-edge-ssh-private-key
+spec:
+  data:
+  - secretKey: sshPrivateKey
+    remoteRef:
+      key: secret/data/hub/privatekey
+      property: content
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: aws-ap-acm-provision-edge-ssh-private-key
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        ssh-privatekey: |-
+          {{ .sshPrivateKey | toString }}
 ---
 # Source: acm/templates/provision/secrets-common.yaml
 apiVersion: external-secrets.io/v1beta1
