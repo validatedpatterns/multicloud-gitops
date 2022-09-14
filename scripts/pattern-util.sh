@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 if [ -z "$PATTERN_UTILITY_CONTAINER" ]; then
 	PATTERN_UTILITY_CONTAINER="quay.io/hybridcloudpatterns/hybridcloudpatterns-utility-ee"
