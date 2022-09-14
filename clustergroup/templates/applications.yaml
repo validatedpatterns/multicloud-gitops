@@ -117,7 +117,7 @@ metadata:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
   destination:
-    name: {{ coalesce $.Values.global.targetCluster $.Values.clusterGroup.targetCluster }}
+    name: {{ $.Values.clusterGroup.targetCluster }}
     namespace: {{ default $namespace .namespace }}
   project: {{ .project }}
   source:
