@@ -1,6 +1,6 @@
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
-{{- range .targetClusters }}
+{{- range .argoClusterSeeds }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

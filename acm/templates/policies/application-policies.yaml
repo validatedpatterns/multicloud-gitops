@@ -1,7 +1,7 @@
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
-{{- if not .targetClusters }}
+{{- if not .argoClusterSeeds }}
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -117,7 +117,7 @@ spec:
   {{- else }}
   clusterSelector:
     matchLabels:
-    {{- range .labels }}
+    {{- range .acmlabels }}
       {{ .name }}: {{ .value }}
     {{- end }}
   {{- end }}

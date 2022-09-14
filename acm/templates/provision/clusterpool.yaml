@@ -71,7 +71,7 @@ metadata:
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
     clusterClaimName: {{ . }}-{{ $group.name }}
-    {{- range $group.labels }}
+    {{- range $group.acmlabels }}
     {{ .name }}: {{ .value }}
     {{- end }}
 spec:

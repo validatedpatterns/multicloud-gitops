@@ -27,7 +27,7 @@ clusterGroup:
           clusters:
           - Two
           - Three
-      labels:
+      acmlabels:
       - name: clusterGroup
         value: region-one
       helmOverrides:
