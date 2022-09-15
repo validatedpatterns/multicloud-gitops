@@ -134,6 +134,8 @@ data:
         pipelines:
           csv: redhat-openshift-pipelines.v1.5.2
           name: openshift-pipelines-operator-rh
+    files:
+      cluster_example_ca: /path/to/ca.file
     global:
       git:
         account: hybrid-cloud-patterns
@@ -161,15 +163,7 @@ data:
       aws:
         s3Secret: test-secret
       cluster_example:
-        config: |-
-          {
-            \"bearerToken\": \"<bearer_token>\",
-            \"tlsClientConfig\": {
-              \"insecure\": false,
-              \"caData\": \"<base64 encoded CA>\"
-            }
-          }
-        name: example
+        bearerToken: <bearer_token>
         server: https://api.example.openshiftapps.com:6443
       git:
         token: test-git-token
@@ -730,9 +724,31 @@ spec:
       metadata:
         labels:
           argocd.argoproj.io/secret-type: cluster
-  dataFrom:
-  - extract:
+      data:
+        name: example
+        server: |-
+          {{ .kubeServer | toString }}
+        config: |
+          {
+            "bearerToken": {{ .kubeBearer | toString }},
+            "tlsClientConfig": {
+              "insecure": false,
+              "caData": {{ .kubeCA | toString }},
+            }
+          }
+  data:
+  - secretKey: kubeServer
+    remoteRef:
       key: secret/data/hub/cluster_example
+      property: server
+  - secretKey: kubeBearer
+    remoteRef:
+      key: secret/data/hub/cluster_example
+      property: bearerToken
+  - secretKey: kubeCA
+    remoteRef:
+      key: secret/data/hub/cluster_example_ca
+      property: b64content
 ---
 # Source: pattern-clustergroup/templates/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
