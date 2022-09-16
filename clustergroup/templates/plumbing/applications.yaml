@@ -1,3 +1,6 @@
+{{- if (eq .Values.enabled "core") }}
+{{ $_ := unset .Values.clusterGroup "applications" }}
+{{- end }}
 {{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
 {{- range .Values.clusterGroup.applications }}
 {{- if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) }}

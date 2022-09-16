@@ -1,3 +1,6 @@
+{{- if (eq .Values.enabled "plumbing") }}
+{{ $_ := unset .Values.clusterGroup "subscriptions" }}
+{{- end }}
 {{- range .Values.clusterGroup.subscriptions }}
 {{- $subs := . }}
 {{- $installPlanValue := .installPlanApproval }}

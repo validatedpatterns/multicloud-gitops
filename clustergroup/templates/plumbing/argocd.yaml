@@ -1,3 +1,4 @@
+{{- if not (eq .Values.enabled "core") }}
 {{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
@@ -121,3 +122,4 @@ spec:
   href: 'https://{{ .Values.clusterGroup.name }}-gitops-server-{{ $namespace }}.{{ coalesce .Values.global.localClusterDomain .Values.global.hubClusterDomain }}'
   location: ApplicationMenu
   text: '{{ title .Values.clusterGroup.name }} ArgoCD'
+{{- end }}

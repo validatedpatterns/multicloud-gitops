@@ -1,3 +1,6 @@
+{{- if (eq .Values.enabled "plumbing") }}
+{{ $_ := unset .Values.clusterGroup "namespaces" }}
+{{- end }}
 {{- range .Values.clusterGroup.namespaces }}
 
 {{- if empty $.Values.clusterGroup.operatorgroupExcludes }}

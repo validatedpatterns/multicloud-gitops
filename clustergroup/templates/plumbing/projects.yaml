@@ -1,3 +1,6 @@
+{{- if (eq .Values.enabled "core") }}
+{{ $_ := unset .Values.clusterGroup "projects" }}
+{{- end }}
 {{- range .Values.clusterGroup.projects }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject

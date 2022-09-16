@@ -161,6 +161,8 @@ data:
         pipelines:
           csv: redhat-openshift-pipelines.v1.5.2
           name: openshift-pipelines-operator-rh
+      targetCluster: in-cluster
+    enabled: all
     files:
       cluster_example_ca: /path/to/ca.file
     global:

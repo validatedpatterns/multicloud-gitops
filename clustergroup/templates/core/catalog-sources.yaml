@@ -1,3 +1,6 @@
+{{- if (eq .Values.enabled "plumbing") }}
+{{ $_ := unset .Values.clusterGroup "indexImages" }}
+{{- end }}
 {{- range .Values.clusterGroup.indexImages }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource

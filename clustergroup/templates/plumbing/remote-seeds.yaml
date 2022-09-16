@@ -1,3 +1,6 @@
+{{- if (eq .Values.enabled "core") }}
+{{ $_ := unset .Values.clusterGroup "managedClusterGroups" }}
+{{- end }}
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
 {{- range .argoClusterSeeds }}
