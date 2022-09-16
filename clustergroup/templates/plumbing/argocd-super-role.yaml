@@ -1,4 +1,4 @@
-{{- if not (eq .Values.enabled "core") }}
+{{- if not (eq .Values.clusterGroup.enabled "core") }}
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

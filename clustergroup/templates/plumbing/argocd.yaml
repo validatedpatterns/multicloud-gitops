@@ -1,4 +1,4 @@
-{{- if not (eq .Values.enabled "core") }}
+{{- if not (eq .Values.clusterGroup.enabled "core") }}
 {{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD

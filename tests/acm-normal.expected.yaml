@@ -545,6 +545,8 @@ spec:
                         value: hub.example.com
                       - name: global.localClusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+                      - name: clusterGroup.name
+                        value: acm-edge
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
@@ -621,6 +623,8 @@ spec:
                         value: hub.example.com
                       - name: global.localClusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+                      - name: clusterGroup.name
+                        value: acm-provision-edge
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:

@@ -1,6 +1,4 @@
-{{- if (eq .Values.enabled "plumbing") }}
-{{ $_ := unset .Values.clusterGroup "indexImages" }}
-{{- end }}
+{{- if not (eq .Values.clusterGroup.enabled "plumbing") }}
 {{- range .Values.clusterGroup.indexImages }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
@@ -10,4 +8,6 @@ metadata:
 spec:
   sourceType: grpc
   image: {{ .image }}:{{ .version }}
+---
+{{- end -}}
 {{- end -}}

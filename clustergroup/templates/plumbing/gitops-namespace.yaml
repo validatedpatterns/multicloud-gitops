@@ -1,4 +1,4 @@
-{{- if not (eq .Values.enabled "core") }}
+{{- if not (eq .Values.clusterGroup.enabled "core") }}
 apiVersion: v1
 kind: Namespace
 metadata:

@@ -1,3 +1,4 @@
+{{- if not (eq .Values.clusterGroup.enabled "plumbing") }}
 {{/* Define this if needed (jobs defined */}}
 {{- if (gt (len $.Values.clusterGroup.imperative.jobs) 0) -}}
 ---
@@ -64,4 +65,5 @@ spec:
             configMap:
               name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}-{{ $.Values.clusterGroup.name }}
           restartPolicy: Never
-{{ end }}
+{{- end }}
+{{- end }}

@@ -1,6 +1,4 @@
-{{- if (eq .Values.enabled "plumbing") }}
-{{ $_ := unset .Values.clusterGroup "namespaces" }}
-{{- end }}
+{{- if not (eq .Values.clusterGroup.enabled "plumbing") }}
 {{- range .Values.clusterGroup.namespaces }}
 
 {{- if empty $.Values.clusterGroup.operatorgroupExcludes }}
@@ -25,4 +23,5 @@ spec:
 ---
 {{- end }}
 
+{{- end }}
 {{- end }}
