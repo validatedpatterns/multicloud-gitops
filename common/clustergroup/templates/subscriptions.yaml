@@ -27,6 +27,8 @@ spec:
   {{- end }}
   {{- if $.Values.global.options.useCSV }}
   startingCSV: {{ $subs.csv }}
+  {{- else if $subs.csv }}
+  startingCSV: {{ $subs.csv }}
   {{- end }}
 ---
 {{- end }}
@@ -53,6 +55,8 @@ spec:
   {{- end }}
   {{- end }}
   {{- if $.Values.global.options.useCSV }}
+  startingCSV: {{ $subs.csv }}
+  {{- else if $subs.csv }}
   startingCSV: {{ $subs.csv }}
   {{- end }}
 ---
