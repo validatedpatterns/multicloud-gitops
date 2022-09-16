@@ -1,8 +1,7 @@
-{{- if (eq .Values.clusterGroup.enabled "core") }}
-{{ $_ := unset .Values.clusterGroup "managedClusterGroups" }}
-{{- end }}
+{{- if (eq .Values.enabled "all") }}
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
+{{- if .argoClusterSeeds }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -23,6 +22,7 @@ spec:
   - '*'
 status: {}
 ---
+{{- end }}
 {{- range .argoClusterSeeds }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -60,7 +60,7 @@ spec:
         value: "fixme.example.com"
       - name: clusterGroup.targetCluster
         value: {{ . }}
-      - name: clusterGroup.enabled
+      - name: enabled
         value: core
       - name: clusterGroup.name
         value: {{ $group.name }}
@@ -126,7 +126,7 @@ spec:
         value: {{ $.Values.global.hubClusterDomain }}
       - name: global.localClusterDomain
         value: "fixme.example.com"
-      - name: clusterGroup.enabled
+      - name: enabled
         value: plumbing
       - name: clusterGroup.targetCluster
         value: {{ . }}
@@ -160,5 +160,6 @@ spec:
     jsonPointers:
     - /status
 ---
+{{- end }}
 {{- end }}
 {{- end }}
