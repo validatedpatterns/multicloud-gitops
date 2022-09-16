@@ -766,6 +766,7 @@ spec:
   sourceNamespace: openshift-marketplace
   channel: release-2.4
   installPlanApproval: Automatic
+  startingCSV: advanced-cluster-management.v2.4.1
 ---
 # Source: pattern-clustergroup/templates/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
@@ -779,3 +780,4 @@ spec:
   sourceNamespace: openshift-marketplace
   channel: stable
   installPlanApproval: Automatic
+  startingCSV: redhat-openshift-pipelines.v1.5.2
