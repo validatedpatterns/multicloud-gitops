@@ -1,6 +1,4 @@
-{{- if (eq .Values.enabled "plumbing") }}
-{{ $_ := unset .Values.clusterGroup "namespaces" }}
-{{- end }}
+{{- if (eq .Values.enabled "core") }}
 {{- range .Values.clusterGroup.namespaces }}
 apiVersion: v1
 kind: Namespace
@@ -11,4 +9,5 @@ metadata:
   name: {{ . }}
 spec:
 ---
+{{- end }}
 {{- end }}
