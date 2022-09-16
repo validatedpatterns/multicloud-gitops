@@ -39,7 +39,7 @@ spec:
       - name: global.localClusterDomain
         value: "fixme.example.com"
       - name: clusterGroup.targetCluster
-        value: {{ $group.targetCluster }}
+        value: {{ . }}
       - name: clusterGroup.enabled
         value: core
       - name: clusterGroup.name
@@ -109,7 +109,7 @@ spec:
       - name: clusterGroup.enabled
         value: plumbing
       - name: clusterGroup.targetCluster
-        value: {{ $group.targetCluster }}
+        value: {{ . }}
       - name: clusterGroup.name
         value: {{ $group.name }}
      {{- range $group.helmOverrides }}
