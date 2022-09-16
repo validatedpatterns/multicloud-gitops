@@ -87,7 +87,7 @@ data:
         cronJobName: imperative-cronjob
         image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
         imagePullPolicy: Always
-        insecureUnsealVaultInsideClusterSchedule: '*/9 * * * *'
+        insecureUnsealVaultInsideClusterSchedule: '*/5 * * * *'
         jobName: imperative-job
         jobs:
         - name: test
@@ -363,7 +363,7 @@ metadata:
   name: unsealvault-cronjob
   namespace: imperative
 spec:
-  schedule: "*/9 * * * *"
+  schedule: "*/5 * * * *"
   # if previous Job is still running, skip execution of a new Job
   concurrencyPolicy: Forbid
   jobTemplate:
@@ -766,6 +766,7 @@ spec:
   sourceNamespace: openshift-marketplace
   channel: release-2.4
   installPlanApproval: Automatic
+  startingCSV: advanced-cluster-management.v2.4.1
 ---
 # Source: pattern-clustergroup/templates/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
@@ -779,3 +780,4 @@ spec:
   sourceNamespace: openshift-marketplace
   channel: stable
   installPlanApproval: Automatic
+  startingCSV: redhat-openshift-pipelines.v1.5.2
