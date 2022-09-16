@@ -1,5 +1,6 @@
 global:
   pattern: common
+  targetRevision: main
   options:
     useCSV: True
     syncPolicy: Automatic

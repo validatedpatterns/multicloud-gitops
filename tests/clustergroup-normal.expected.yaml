@@ -180,6 +180,7 @@ data:
         useCSV: false
       pattern: mypattern
       repoURL: https://github.com/pattern-clone/mypattern
+      targetRevision: main
     main:
       clusterGroupName: example
       git:
@@ -335,7 +336,7 @@ spec:
               command:
               - 'sh'
               - '-c'
-              - "mkdir /git/{repo,home};git clone --single-branch --branch  --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
+              - "mkdir /git/{repo,home};git clone --single-branch --branch main --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
               volumeMounts:
               - name: git
                 mountPath: "/git"
@@ -409,7 +410,7 @@ spec:
               command:
               - 'sh'
               - '-c'
-              - "mkdir /git/{repo,home};git clone --single-branch --branch  --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
+              - "mkdir /git/{repo,home};git clone --single-branch --branch main --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
               volumeMounts:
               - name: git
                 mountPath: "/git"
@@ -517,7 +518,7 @@ spec:
   project: datacenter
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/acm
     helm:
       ignoreMissingValueFiles: true
@@ -566,7 +567,7 @@ spec:
   project: datacenter
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: charts/datacenter/pipelines
     helm:
       ignoreMissingValueFiles: true
@@ -603,7 +604,7 @@ spec:
   project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/clustergroup
     helm:
       ignoreMissingValueFiles: true
@@ -660,7 +661,7 @@ spec:
   project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/clustergroup
     helm:
       ignoreMissingValueFiles: true
@@ -717,7 +718,7 @@ spec:
   project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/clustergroup
     helm:
       ignoreMissingValueFiles: true
@@ -774,7 +775,7 @@ spec:
   project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/clustergroup
     helm:
       ignoreMissingValueFiles: true
