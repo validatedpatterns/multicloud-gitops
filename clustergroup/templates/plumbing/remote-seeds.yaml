@@ -40,6 +40,8 @@ spec:
         value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
       - name: clusterGroup.targetCluster
         value: {{ $group.targetCluster }}
+      - name: clusterGroup.enabled
+        value: core
      {{- range $group.helmOverrides }}
       - name: {{ .name }}
         value: {{ .value | quote }}
@@ -67,5 +69,72 @@ spec:
     kind: Route
     jsonPointers:
     - /status
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $.Values.global.pattern }}-{{ $group.name }}-{{ . }}-plumbing
+  namespace: openshift-gitops
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  project: default
+  source:
+    repoURL: {{ coalesce $group.repoURL $.Values.global.repoURL }}
+    targetRevision: {{ coalesce $group.targetRevision $.Values.global.targetRevision }}
+    path: {{ default "common/clustergroup" $group.path }}
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+      - "/values-global.yaml"
+      - "/values-{{ $group.name }}.yaml"
+      {{- range $valueFile := $group.extraValueFiles }}
+      - {{ $valueFile | quote }}
+      {{- end }}
+      parameters:
+      - name: global.repoURL
+        value: $ARGOCD_APP_SOURCE_REPO_URL
+      - name: global.targetRevision
+        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+      - name: global.namespace
+        value: $ARGOCD_APP_NAMESPACE
+      - name: global.pattern
+        value: {{ $.Values.global.pattern }}
+      - name: global.hubClusterDomain
+        value: {{ $.Values.global.hubClusterDomain }}
+      - name: global.localClusterDomain
+        value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
+      - name: clusterGroup.enabled
+        value: plumbing
+      - name: clusterGroup.targetCluster
+        value: {{ $group.targetCluster }}
+     {{- range $group.helmOverrides }}
+      - name: {{ .name }}
+        value: {{ .value | quote }}
+     {{- end }}
+     {{- if $group.fileParameters }}
+      fileParameters:
+      {{- range $group.fileParameters }}
+      - name: {{ .name }}
+        path: {{ .path }}
+      {{- end }}
+     {{- end }}
+  destination:
+    name: in-cluster
+    namespace: {{ $.Values.global.pattern }}-{{ $group.name }}
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  - group: route.openshift.io
+    kind: Route
+    jsonPointers:
+    - /status
+---
 {{- end }}
 {{- end }}
