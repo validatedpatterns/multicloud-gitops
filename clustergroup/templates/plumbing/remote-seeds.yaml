@@ -3,6 +3,26 @@
 {{- end }}
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .name }}
+  namespace: openshift-gitops
+spec:
+  description: "Cluster Group {{ . }}"
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+status: {}
+---
 {{- range .argoClusterSeeds }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -12,7 +32,7 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
-  project: default
+  project: {{ $group.name }}
   source:
     repoURL: {{ coalesce $group.repoURL $.Values.global.repoURL }}
     targetRevision: {{ coalesce $group.targetRevision $.Values.global.targetRevision }}
@@ -80,7 +100,7 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
-  project: default
+  project: {{ $group.name }}
   source:
     repoURL: {{ coalesce $group.repoURL $.Values.global.repoURL }}
     targetRevision: {{ coalesce $group.targetRevision $.Values.global.targetRevision }}
