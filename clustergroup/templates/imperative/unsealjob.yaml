@@ -54,6 +54,6 @@ spec:
             emptyDir: {}
           - name: values-volume
             configMap:
-              name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}
+              name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}-{{ $.Values.clusterGroup.name }}
           restartPolicy: Never
 {{ end }}
