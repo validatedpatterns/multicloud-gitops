@@ -1,5 +1,34 @@
 ---
-# Source: pattern-clustergroup/templates/gitops-namespace.yaml
+# Source: pattern-clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: pattern
+    argocd.argoproj.io/managed-by: mypattern-example
+  name: open-cluster-management
+spec:
+---
+# Source: pattern-clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: pattern
+    argocd.argoproj.io/managed-by: mypattern-example
+  name: application-ci
+spec:
+---
+# Source: pattern-clustergroup/templates/imperative/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: imperative
+    argocd.argoproj.io/managed-by: mypattern-example
+  name: imperative
+---
+# Source: pattern-clustergroup/templates/plumbing/gitops-namespace.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -11,35 +40,6 @@ metadata:
   # - any references to secrets and route URLs in documentation
   name: mypattern-example
 spec: {}
----
-# Source: pattern-clustergroup/templates/imperative/namespace.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    name: imperative
-    argocd.argoproj.io/managed-by: mypattern-example
-  name: imperative
----
-# Source: pattern-clustergroup/templates/namespaces.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    name: pattern
-    argocd.argoproj.io/managed-by: mypattern-example
-  name: open-cluster-management
-spec:
----
-# Source: pattern-clustergroup/templates/namespaces.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    name: pattern
-    argocd.argoproj.io/managed-by: mypattern-example
-  name: application-ci
-spec:
 ---
 # Source: pattern-clustergroup/templates/imperative/serviceaccount.yaml
 apiVersion: v1
@@ -216,7 +216,21 @@ rules:
     - list
     - watch
 ---
-# Source: pattern-clustergroup/templates/argocd-super-role.yaml
+# Source: pattern-clustergroup/templates/imperative/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: imperative-cluster-admin-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: imperative-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: imperative-sa
+    namespace: imperative
+---
+# Source: pattern-clustergroup/templates/plumbing/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -235,7 +249,7 @@ subjects:
     name: openshift-gitops-argocd-server
     namespace: openshift-gitops
 ---
-# Source: pattern-clustergroup/templates/argocd-super-role.yaml
+# Source: pattern-clustergroup/templates/plumbing/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -259,20 +273,6 @@ subjects:
   - kind: ServiceAccount
     name: example-gitops-argocd-dex-server
     namespace: mypattern-example
----
-# Source: pattern-clustergroup/templates/imperative/rbac.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: imperative-cluster-admin-rolebinding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: imperative-cluster-role
-subjects:
-  - kind: ServiceAccount
-    name: imperative-sa
-    namespace: imperative
 ---
 # Source: pattern-clustergroup/templates/imperative/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -455,10 +455,10 @@ spec:
               name: helm-values-configmap
           restartPolicy: Never
 ---
-# Source: pattern-clustergroup/templates/subscriptions.yaml
+# Source: pattern-clustergroup/templates/core/subscriptions.yaml
 ---
 ---
-# Source: pattern-clustergroup/templates/projects.yaml
+# Source: pattern-clustergroup/templates/plumbing/projects.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -479,7 +479,7 @@ spec:
   - '*'
 status: {}
 ---
-# Source: pattern-clustergroup/templates/applications.yaml
+# Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -528,7 +528,7 @@ spec:
     automated: {}
     #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/applications.yaml
+# Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -568,7 +568,7 @@ spec:
     automated: {}
     #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/remote-seeds.yaml
+# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -672,7 +672,7 @@ spec:
     jsonPointers:
     - /status
 ---
-# Source: pattern-clustergroup/templates/argocd.yaml
+# Source: pattern-clustergroup/templates/plumbing/argocd.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
@@ -783,7 +783,7 @@ spec:
     ca: {}
 status:
 ---
-# Source: pattern-clustergroup/templates/argocd.yaml
+# Source: pattern-clustergroup/templates/plumbing/argocd.yaml
 apiVersion: console.openshift.io/v1
 kind: ConsoleLink
 metadata:
@@ -797,7 +797,7 @@ spec:
   location: ApplicationMenu
   text: 'Example ArgoCD'
 ---
-# Source: pattern-clustergroup/templates/cluster-external-secrets.yaml
+# Source: pattern-clustergroup/templates/core/cluster-external-secrets.yaml
 apiVersion: "external-secrets.io/v1beta1"
 kind: ExternalSecret
 metadata:
@@ -841,10 +841,57 @@ spec:
       property: bearerToken
   - secretKey: kubeCA
     remoteRef:
-      key: secret/data/hub/cluster_example_ca
+      key: secret/data/hub/cluster_perth_ca
       property: b64content
 ---
-# Source: pattern-clustergroup/templates/operatorgroup.yaml
+# Source: pattern-clustergroup/templates/core/cluster-external-secrets.yaml
+apiVersion: "external-secrets.io/v1beta1"
+kind: ExternalSecret
+metadata:
+  name: sydney-secret
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "100"
+spec:
+  refreshInterval: 15s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: sydney-secret
+    template:
+      type: Opaque
+      metadata:
+        labels:
+          argocd.argoproj.io/secret-type: cluster
+      data:
+        name: sydney
+        server: |-
+          {{ .kubeServer | toString }}
+        config: |
+          {
+            "bearerToken": "{{ .kubeBearer | toString }}",
+            "tlsClientConfig": {
+              "insecure": false,
+              "caData": "{{ .kubeCA | toString }}"
+            }
+          }
+  data:
+  - secretKey: kubeServer
+    remoteRef:
+      key: secret/data/hub/cluster_sydney
+      property: server
+  - secretKey: kubeBearer
+    remoteRef:
+      key: secret/data/hub/cluster_sydney
+      property: bearerToken
+  - secretKey: kubeCA
+    remoteRef:
+      key: secret/data/hub/cluster_sydney_ca
+      property: b64content
+---
+# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -854,7 +901,7 @@ spec:
   targetNamespaces:
   - open-cluster-management
 ---
-# Source: pattern-clustergroup/templates/operatorgroup.yaml
+# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -864,7 +911,7 @@ spec:
   targetNamespaces:
   - application-ci
 ---
-# Source: pattern-clustergroup/templates/subscriptions.yaml
+# Source: pattern-clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -878,7 +925,7 @@ spec:
   installPlanApproval: Automatic
   startingCSV: advanced-cluster-management.v2.4.1
 ---
-# Source: pattern-clustergroup/templates/subscriptions.yaml
+# Source: pattern-clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
