@@ -1,4 +1,4 @@
-{{- if not (eq .Values.clusterGroup.enabled "plumbing") }}
+{{- if not (eq .Values.enabled "plumbing") }}
 {{/* Define this if needed (jobs defined or insecure unseal configured) */}}
 {{- if or (gt (len $.Values.clusterGroup.imperative.jobs) 0)
     (and $.Values.clusterGroup.insecureUnsealVaultInsideCluster $.Values.clusterGroup.isHubCluster) -}}

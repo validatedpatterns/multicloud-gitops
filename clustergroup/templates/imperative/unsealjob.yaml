@@ -1,4 +1,4 @@
-{{- if not (eq .Values.clusterGroup.enabled "plumbing") }}
+{{- if not (eq .Values.enabled "plumbing") }}
 {{/* Only define this if the values.insecureUnsealVaultInsideCluster is set to tre and we're on the cluster */}}
 {{- if and $.Values.clusterGroup.insecureUnsealVaultInsideCluster $.Values.clusterGroup.isHubCluster }}
 ---

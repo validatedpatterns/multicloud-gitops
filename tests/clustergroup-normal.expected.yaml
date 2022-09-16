@@ -52,7 +52,7 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: helm-values-configmap
+  name: helm-values-configmap-example
   namespace: imperative
 data:
   values.yaml: |
@@ -376,7 +376,7 @@ spec:
             emptyDir: {}
           - name: values-volume
             configMap:
-              name: helm-values-configmap
+              name: helm-values-configmap-example
           restartPolicy: Never
 ---
 # Source: pattern-clustergroup/templates/imperative/unsealjob.yaml
@@ -454,7 +454,7 @@ spec:
             emptyDir: {}
           - name: values-volume
             configMap:
-              name: helm-values-configmap
+              name: helm-values-configmap-example
           restartPolicy: Never
 ---
 # Source: pattern-clustergroup/templates/core/subscriptions.yaml
@@ -468,6 +468,27 @@ metadata:
   namespace: mypattern-example
 spec:
   description: "Pattern datacenter"
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+status: {}
+---
+# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: argo-edge
+  namespace: openshift-gitops
+spec:
+  description: "Cluster Group map[argoClusterSeeds:[perth sydney] helmOverrides:[map[name:clusterGroup.isHubCluster value:false]] name:argo-edge]"
   destinations:
   - namespace: '*'
     server: '*'
@@ -579,7 +600,7 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
-  project: default
+  project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
     targetRevision: 
@@ -601,9 +622,13 @@ spec:
       - name: global.hubClusterDomain
         value: hub.example.com
       - name: global.localClusterDomain
-        value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+        value: "fixme.example.com"
       - name: clusterGroup.targetCluster
-        value: 
+        value: perth
+      - name: enabled
+        value: core
+      - name: clusterGroup.name
+        value: argo-edge
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
@@ -622,15 +647,17 @@ spec:
     kind: Route
     jsonPointers:
     - /status
+---
+# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mypattern-argo-edge-sydney
+  name: mypattern-argo-edge-perth-plumbing
   namespace: openshift-gitops
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
-  project: default
+  project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
     targetRevision: 
@@ -652,13 +679,131 @@ spec:
       - name: global.hubClusterDomain
         value: hub.example.com
       - name: global.localClusterDomain
-        value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+        value: "fixme.example.com"
+      - name: enabled
+        value: plumbing
       - name: clusterGroup.targetCluster
-        value: 
+        value: perth
+      - name: clusterGroup.name
+        value: argo-edge
+      - name: clusterGroup.isHubCluster
+        value: "false"
+  destination:
+    name: in-cluster
+    namespace: mypattern-argo-edge
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  - group: route.openshift.io
+    kind: Route
+    jsonPointers:
+    - /status
+---
+# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mypattern-argo-edge-sydney
+  namespace: openshift-gitops
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  project: argo-edge
+  source:
+    repoURL: https://github.com/pattern-clone/mypattern
+    targetRevision: 
+    path: common/clustergroup
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+      - "/values-global.yaml"
+      - "/values-argo-edge.yaml"
+      parameters:
+      - name: global.repoURL
+        value: $ARGOCD_APP_SOURCE_REPO_URL
+      - name: global.targetRevision
+        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+      - name: global.namespace
+        value: $ARGOCD_APP_NAMESPACE
+      - name: global.pattern
+        value: mypattern
+      - name: global.hubClusterDomain
+        value: hub.example.com
+      - name: global.localClusterDomain
+        value: "fixme.example.com"
+      - name: clusterGroup.targetCluster
+        value: sydney
+      - name: enabled
+        value: core
+      - name: clusterGroup.name
+        value: argo-edge
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
     name: sydney
+    namespace: mypattern-argo-edge
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  - group: route.openshift.io
+    kind: Route
+    jsonPointers:
+    - /status
+---
+# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mypattern-argo-edge-sydney-plumbing
+  namespace: openshift-gitops
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  project: argo-edge
+  source:
+    repoURL: https://github.com/pattern-clone/mypattern
+    targetRevision: 
+    path: common/clustergroup
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+      - "/values-global.yaml"
+      - "/values-argo-edge.yaml"
+      parameters:
+      - name: global.repoURL
+        value: $ARGOCD_APP_SOURCE_REPO_URL
+      - name: global.targetRevision
+        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+      - name: global.namespace
+        value: $ARGOCD_APP_NAMESPACE
+      - name: global.pattern
+        value: mypattern
+      - name: global.hubClusterDomain
+        value: hub.example.com
+      - name: global.localClusterDomain
+        value: "fixme.example.com"
+      - name: enabled
+        value: plumbing
+      - name: clusterGroup.targetCluster
+        value: sydney
+      - name: clusterGroup.name
+        value: argo-edge
+      - name: clusterGroup.isHubCluster
+        value: "false"
+  destination:
+    name: in-cluster
     namespace: mypattern-argo-edge
   syncPolicy:
     automated:
@@ -715,6 +860,7 @@ spec:
             --set global.pattern=mypattern
             --set global.hubClusterDomain=hub.example.com
             --set global.localClusterDomain=region.example.com
+            --set clusterGroup.name=example
             --post-renderer ./kustomize"]
   applicationSet:
     resources:
@@ -798,100 +944,6 @@ spec:
   href: 'https://example-gitops-server-mypattern-example.region.example.com'
   location: ApplicationMenu
   text: 'Example ArgoCD'
----
-# Source: pattern-clustergroup/templates/core/cluster-external-secrets.yaml
-apiVersion: "external-secrets.io/v1beta1"
-kind: ExternalSecret
-metadata:
-  name: perth-secret
-  namespace: openshift-gitops
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "100"
-spec:
-  refreshInterval: 15s
-  secretStoreRef:
-    name: vault-backend
-    kind: ClusterSecretStore
-  target:
-    name: perth-secret
-    template:
-      type: Opaque
-      metadata:
-        labels:
-          argocd.argoproj.io/secret-type: cluster
-      data:
-        name: example
-        server: |-
-          {{ .kubeServer | toString }}
-        config: |
-          {
-            "bearerToken": {{ .kubeBearer | toString | quote }},
-            "tlsClientConfig": {
-              "insecure": false,
-              "caData": {{ .kubeCA | toString | quote }}
-            }
-          }
-  data:
-  - secretKey: kubeServer
-    remoteRef:
-      key: secret/data/hub/cluster_example
-      property: server
-  - secretKey: kubeBearer
-    remoteRef:
-      key: secret/data/hub/cluster_example
-      property: bearerToken
-  - secretKey: kubeCA
-    remoteRef:
-      key: secret/data/hub/cluster_perth_ca
-      property: b64content
----
-# Source: pattern-clustergroup/templates/core/cluster-external-secrets.yaml
-apiVersion: "external-secrets.io/v1beta1"
-kind: ExternalSecret
-metadata:
-  name: sydney-secret
-  namespace: openshift-gitops
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "100"
-spec:
-  refreshInterval: 15s
-  secretStoreRef:
-    name: vault-backend
-    kind: ClusterSecretStore
-  target:
-    name: sydney-secret
-    template:
-      type: Opaque
-      metadata:
-        labels:
-          argocd.argoproj.io/secret-type: cluster
-      data:
-        name: sydney
-        server: |-
-          {{ .kubeServer | toString }}
-        config: |
-          {
-            "bearerToken": "{{ .kubeBearer | toString }}",
-            "tlsClientConfig": {
-              "insecure": false,
-              "caData": "{{ .kubeCA | toString }}"
-            }
-          }
-  data:
-  - secretKey: kubeServer
-    remoteRef:
-      key: secret/data/hub/cluster_sydney
-      property: server
-  - secretKey: kubeBearer
-    remoteRef:
-      key: secret/data/hub/cluster_sydney
-      property: bearerToken
-  - secretKey: kubeCA
-    remoteRef:
-      key: secret/data/hub/cluster_sydney_ca
-      property: b64content
 ---
 # Source: pattern-clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1

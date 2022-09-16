@@ -1,4 +1,4 @@
-{{- if (eq .Values.clusterGroup.enabled "core") }}
+{{- if (eq .Values.enabled "core") }}
 {{ $_ := unset .Values.clusterGroup "applications" }}
 {{- end }}
 {{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}

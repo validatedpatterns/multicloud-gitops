@@ -1,4 +1,4 @@
-{{- if not (eq .Values.clusterGroup.enabled "plumbing") }}
+{{- if not (eq .Values.enabled "plumbing") }}
 {{- range .Values.clusterGroup.namespaces }}
 apiVersion: v1
 kind: Namespace
