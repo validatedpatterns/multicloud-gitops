@@ -42,6 +42,8 @@ spec:
         value: {{ $group.targetCluster }}
       - name: clusterGroup.enabled
         value: core
+      - name: clusterGroup.name
+        value: {{ $group.name }}
      {{- range $group.helmOverrides }}
       - name: {{ .name }}
         value: {{ .value | quote }}
@@ -108,6 +110,8 @@ spec:
         value: plumbing
       - name: clusterGroup.targetCluster
         value: {{ $group.targetCluster }}
+      - name: clusterGroup.name
+        value: {{ $group.name }}
      {{- range $group.helmOverrides }}
       - name: {{ .name }}
         value: {{ .value | quote }}
