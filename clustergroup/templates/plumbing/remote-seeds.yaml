@@ -37,7 +37,7 @@ spec:
       - name: global.hubClusterDomain
         value: {{ $.Values.global.hubClusterDomain }}
       - name: global.localClusterDomain
-        value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
+        value: "fixme.example.com"
       - name: clusterGroup.targetCluster
         value: {{ $group.targetCluster }}
       - name: clusterGroup.enabled
@@ -103,7 +103,7 @@ spec:
       - name: global.hubClusterDomain
         value: {{ $.Values.global.hubClusterDomain }}
       - name: global.localClusterDomain
-        value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
+        value: "fixme.example.com"
       - name: clusterGroup.enabled
         value: plumbing
       - name: clusterGroup.targetCluster
