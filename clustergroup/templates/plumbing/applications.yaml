@@ -1,7 +1,8 @@
-{{- if (eq .Values.enabled "core") }}
-{{ $_ := unset .Values.clusterGroup "applications" }}
-{{- end }}
+{{- if not (eq .Values.enabled "core") }}
 {{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
+{{- if (eq .Values.enabled "plumbing") }}
+{{- $namespace := "openshift-gitops" }}
+{{- end }}
 {{- range .Values.clusterGroup.applications }}
 {{- if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) }}
 apiVersion: argoproj.io/v1alpha1
@@ -208,5 +209,6 @@ spec:
     #  selfHeal: true
   {{- end }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
