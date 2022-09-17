@@ -144,7 +144,7 @@ spec:
      {{- end }}
   destination:
     name: in-cluster
-    namespace: {{ $.Values.global.pattern }}-{{ $group.name }}
+    namespace: openshift-gitops
   syncPolicy:
     automated:
       selfHeal: true
