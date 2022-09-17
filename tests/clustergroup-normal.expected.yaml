@@ -145,6 +145,8 @@ data:
       namespaces:
       - open-cluster-management
       - application-ci
+      projects:
+      - datacenter
       subscriptions:
         acm:
           channel: release-2.4
@@ -459,6 +461,26 @@ spec:
 # Source: pattern-clustergroup/templates/core/subscriptions.yaml
 ---
 ---
+# Source: pattern-clustergroup/templates/plumbing/projects.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: datacenter
+spec:
+  description: "Pattern datacenter"
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+status: {}
+---
 # Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
@@ -667,7 +689,7 @@ spec:
         value: "false"
   destination:
     name: in-cluster
-    namespace: mypattern-argo-edge
+    namespace: openshift-gitops
   syncPolicy:
     automated:
       selfHeal: true
@@ -779,7 +801,7 @@ spec:
         value: "false"
   destination:
     name: in-cluster
-    namespace: mypattern-argo-edge
+    namespace: openshift-gitops
   syncPolicy:
     automated:
       selfHeal: true
