@@ -30,7 +30,6 @@ metadata:
   labels:
     clusterClaimName: One-acm-provision-edge
     clusterGroup: region
-    patternGroup: acm-provision-edge
 spec:
   clusterPoolName: aws-ap
 ---
@@ -45,7 +44,6 @@ metadata:
   labels:
     clusterClaimName: Two-acm-provision-edge
     clusterGroup: region
-    patternGroup: acm-provision-edge
 spec:
   clusterPoolName: azure-us
 ---
@@ -60,7 +58,6 @@ metadata:
   labels:
     clusterClaimName: Three-acm-provision-edge
     clusterGroup: region
-    patternGroup: acm-provision-edge
 spec:
   clusterPoolName: azure-us
 ---
@@ -455,7 +452,6 @@ spec:
   clusterSelector:
     matchLabels:
       clusterGroup: acm-region
-      patternGroup: acm-edge
 ---
 # Source: acm/templates/policies/application-policies.yaml
 apiVersion: apps.open-cluster-management.io/v1
@@ -469,7 +465,6 @@ spec:
   clusterSelector:
     matchLabels:
       clusterGroup: region
-      patternGroup: acm-provision-edge
 ---
 # Source: acm/templates/policies/ocp-gitops-policy.yaml
 apiVersion: apps.open-cluster-management.io/v1
