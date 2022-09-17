@@ -80,7 +80,6 @@ spec:
     namespace: {{ $.Values.global.pattern }}-{{ $group.name }}
   syncPolicy:
     automated:
-      prune: false
       selfHeal: true
   ignoreDifferences:
   - group: apps
@@ -148,7 +147,6 @@ spec:
     namespace: {{ $.Values.global.pattern }}-{{ $group.name }}
   syncPolicy:
     automated:
-      prune: false
       selfHeal: true
   ignoreDifferences:
   - group: apps
