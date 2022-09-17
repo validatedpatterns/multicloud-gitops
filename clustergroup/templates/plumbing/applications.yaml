@@ -64,6 +64,8 @@ spec:
             {{ `{{ values }}` }}
         {{- end }}
           parameters:
+            - name: global.clusterDomain
+              value: {{ $.Values.global.clusterDomain }}
             - name: global.hubClusterDomain
               value: {{ $.Values.global.hubClusterDomain }}
             - name: global.localClusterDomain
@@ -155,6 +157,8 @@ spec:
           value: $ARGOCD_APP_NAMESPACE
         - name: global.pattern
           value: {{ $.Values.global.pattern }}
+        - name: global.clusterDomain
+          value: {{ $.Values.global.clusterDomain }}
         - name: global.hubClusterDomain
           value: {{ $.Values.global.hubClusterDomain }}
         - name: global.localClusterDomain

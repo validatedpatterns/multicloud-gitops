@@ -537,9 +537,11 @@ spec:
                       - name: global.pattern
                         value: mypattern
                       - name: global.hubClusterDomain
-                        value: hub.example.com
+                        value: apps.hub.example.com
                       - name: global.localClusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+                      - name: global.clusterDomain
+                        value: 'fixme.{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
                       - name: clusterGroup.name
                         value: acm-edge
                       - name: clusterGroup.isHubCluster
@@ -615,9 +617,11 @@ spec:
                       - name: global.pattern
                         value: mypattern
                       - name: global.hubClusterDomain
-                        value: hub.example.com
+                        value: apps.hub.example.com
                       - name: global.localClusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+                      - name: global.clusterDomain
+                        value: 'fixme.{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
                       - name: clusterGroup.name
                         value: acm-provision-edge
                       - name: clusterGroup.isHubCluster
