@@ -1,4 +1,4 @@
-{{- if (eq .Values.enabled "core") }}
+{{- if (eq .Values.enabled "all") }}
 {{ $_ := unset .Values.clusterGroup "projects" }}
 {{- end }}
 {{- range .Values.clusterGroup.projects }}
