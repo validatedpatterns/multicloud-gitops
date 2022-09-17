@@ -95,8 +95,10 @@ clusterGroup:
     # Requires a cluster_{name} entry in your secret store containing
     # ??what does it contain??
     argoClusterSeeds:
-    - perth
-    - sydney
+    - name: perth
+      domain: beekhof.net
+    - name: sydney
+      domain: beekhof.net
     helmOverrides:
     - name: clusterGroup.isHubCluster
       value: "false"

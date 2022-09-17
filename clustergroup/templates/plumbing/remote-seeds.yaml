@@ -8,7 +8,7 @@ metadata:
   name: {{ .name }}
   namespace: openshift-gitops
 spec:
-  description: "Cluster Group {{ . }}"
+  description: "Cluster Group {{ $group.name }}"
   destinations:
   - namespace: '*'
     server: '*'
@@ -27,7 +27,7 @@ status: {}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ $.Values.global.pattern }}-{{ $group.name }}-{{ . }}
+  name: {{ $.Values.global.pattern }}-{{ $group.name }}-{{ .name }}
   namespace: openshift-gitops
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
@@ -57,9 +57,11 @@ spec:
       - name: global.hubClusterDomain
         value: {{ $.Values.global.hubClusterDomain }}
       - name: global.localClusterDomain
-        value: "fixme.example.com"
+        value: apps.{{ .domain }}
+      - name: global.clusterDomain
+        value: {{ .domain }}
       - name: clusterGroup.targetCluster
-        value: {{ . }}
+        value: {{ .name }}
       - name: enabled
         value: core
       - name: clusterGroup.name
@@ -76,7 +78,7 @@ spec:
       {{- end }}
      {{- end }}
   destination:
-    name: {{ . }}
+    name: {{ .name }}
     namespace: {{ $.Values.global.pattern }}-{{ $group.name }}
   syncPolicy:
     automated:
@@ -94,7 +96,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ $.Values.global.pattern }}-{{ $group.name }}-{{ . }}-plumbing
+  name: {{ $.Values.global.pattern }}-{{ $group.name }}-{{ .name }}-plumbing
   namespace: openshift-gitops
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
@@ -124,11 +126,13 @@ spec:
       - name: global.hubClusterDomain
         value: {{ $.Values.global.hubClusterDomain }}
       - name: global.localClusterDomain
-        value: "fixme.example.com"
+        value: apps.{{ .domain }}
+      - name: global.clusterDomain
+        value: {{ .domain }}
       - name: enabled
         value: plumbing
       - name: clusterGroup.targetCluster
-        value: {{ . }}
+        value: {{ .name }}
       - name: clusterGroup.name
         value: {{ $group.name }}
      {{- range $group.helmOverrides }}
