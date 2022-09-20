@@ -712,6 +712,9 @@ kind: ExternalSecret
 metadata:
   name: example-secret
   namespace: mypattern-example
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "100"
 spec:
   refreshInterval: 15s
   secretStoreRef:
