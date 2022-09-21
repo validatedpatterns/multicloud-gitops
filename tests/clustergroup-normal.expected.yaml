@@ -733,10 +733,10 @@ spec:
           {{ .kubeServer | toString }}
         config: |
           {
-            "bearerToken": {{ .kubeBearer | toString }},
+            "bearerToken": {{ .kubeBearer | toString | quote }},
             "tlsClientConfig": {
               "insecure": false,
-              "caData": {{ .kubeCA | toString }},
+              "caData": {{ .kubeCA | toString | quote }}
             }
           }
   data:
