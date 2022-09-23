@@ -8,10 +8,17 @@ fi
 # /home/runner is the normal homedir
 # $HOME is mounted as itself for any files that are referenced with absolute paths
 # $HOME is mounted to /root because the UID in the container is 0 and that's where SSH looks for credentials
+# We bind mount the SSH_AUTH_SOCK socket if it is set, so ssh works without user prompting
+SSH_SOCK_MOUNTS=""
+if [ -n "$SSH_AUTH_SOCK" ]; then
+	SSH_SOCK_MOUNTS="-v $(readlink -f $SSH_AUTH_SOCK):/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent"
+fi
 
 podman run -it \
 	--security-opt label=disable \
 	-e KUBECONFIG="${KUBECONFIG}" \
+	${SSH_SOCK_MOUNTS} \
+	-e GIT_SSH_COMMAND="ssh -o IgnoreUnknown=pubkeyacceptedalgorithms" \
 	-v ${HOME}:/home/runner \
 	-v ${HOME}:${HOME} \
 	-v ${HOME}:/root \
