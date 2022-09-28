@@ -469,6 +469,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: datacenter
+  namespace: mypattern-example
 spec:
   description: "Pattern datacenter"
   destinations:

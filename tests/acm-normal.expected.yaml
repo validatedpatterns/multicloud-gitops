@@ -540,8 +540,9 @@ spec:
                         value: apps.hub.example.com
                       - name: global.localClusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+                      # Requires ACM 2.6 or higher
                       - name: global.clusterDomain
-                        value: 'fixme.{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+                        value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}'
                       - name: clusterGroup.name
                         value: acm-edge
                       - name: clusterGroup.isHubCluster
@@ -620,8 +621,9 @@ spec:
                         value: apps.hub.example.com
                       - name: global.localClusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+                      # Requires ACM 2.6 or higher
                       - name: global.clusterDomain
-                        value: 'fixme.{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+                        value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}'
                       - name: clusterGroup.name
                         value: acm-provision-edge
                       - name: clusterGroup.isHubCluster
