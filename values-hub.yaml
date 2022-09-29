@@ -70,6 +70,12 @@ clusterGroup:
   managedClusterGroups:
     exampleRegion:
       name: region-one
+      labels:
+      - name: clusterGroup
+        value: region-one
+      helmOverrides:
+      - name: clusterGroup.isHubCluster
+        value: false
 
       # Before enabling cluster provisioning, ensure AWS and/or Azure
       #   credentials and OCP pull secrets are defined in Vault.
@@ -97,12 +103,6 @@ clusterGroup:
       #    clusters:
       #    - Two
       #    - Three
-      labels:
-      - name: clusterGroup
-        value: region-one
-      helmOverrides:
-      - name: clusterGroup.isHubCluster
-        value: false
 
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
