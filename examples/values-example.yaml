@@ -94,7 +94,7 @@ clusterGroup:
   - name: argo-edge
     # Requires a cluster_{name} entry in your secret store containing
     # ??what does it contain??
-    argoClusterSeeds:
+    hostedArgoSites:
     - name: perth
       domain: beekhof.net
     - name: sydney

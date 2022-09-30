@@ -134,14 +134,14 @@ data:
           value: "false"
         name: acm-provision-edge
         targetRevision: main
-      - argoClusterSeeds:
+      - helmOverrides:
+        - name: clusterGroup.isHubCluster
+          value: "false"
+        hostedArgoSites:
         - domain: beekhof.net
           name: perth
         - domain: beekhof.net
           name: sydney
-        helmOverrides:
-        - name: clusterGroup.isHubCluster
-          value: "false"
         name: argo-edge
       name: example
       namespaces:
@@ -464,14 +464,14 @@ spec:
 # Source: pattern-clustergroup/templates/core/subscriptions.yaml
 ---
 ---
-# Source: pattern-clustergroup/templates/plumbing/projects.yaml
+# Source: pattern-clustergroup/templates/plumbing/hosted-sites.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: datacenter
-  namespace: mypattern-example
+  name: argo-edge
+  namespace: openshift-gitops
 spec:
-  description: "Pattern datacenter"
+  description: "Cluster Group argo-edge"
   destinations:
   - namespace: '*'
     server: '*'
@@ -485,14 +485,14 @@ spec:
   - '*'
 status: {}
 ---
-# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
+# Source: pattern-clustergroup/templates/plumbing/projects.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: argo-edge
-  namespace: openshift-gitops
+  name: datacenter
+  namespace: mypattern-example
 spec:
-  description: "Cluster Group argo-edge"
+  description: "Pattern datacenter"
   destinations:
   - namespace: '*'
     server: '*'
@@ -599,7 +599,7 @@ spec:
     automated: {}
     #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
+# Source: pattern-clustergroup/templates/plumbing/hosted-sites.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -657,7 +657,7 @@ spec:
     jsonPointers:
     - /status
 ---
-# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
+# Source: pattern-clustergroup/templates/plumbing/hosted-sites.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -715,7 +715,7 @@ spec:
     jsonPointers:
     - /status
 ---
-# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
+# Source: pattern-clustergroup/templates/plumbing/hosted-sites.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -773,7 +773,7 @@ spec:
     jsonPointers:
     - /status
 ---
-# Source: pattern-clustergroup/templates/plumbing/remote-seeds.yaml
+# Source: pattern-clustergroup/templates/plumbing/hosted-sites.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

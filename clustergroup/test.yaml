@@ -96,7 +96,7 @@ clusterGroup:
   managedClusterGroups:
     region-one:
       name: region-one
-      argoClusterSeeds:
+      hostedArgoSites:
       - perth
       - sydney
       helmOverrides:

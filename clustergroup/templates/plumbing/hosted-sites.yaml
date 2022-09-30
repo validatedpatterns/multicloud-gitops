@@ -1,7 +1,7 @@
 {{- if (eq .Values.enabled "all") }}
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
-{{- if .argoClusterSeeds }}
+{{- if .hostedArgoSites }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -23,7 +23,7 @@ spec:
 status: {}
 ---
 {{- end }}
-{{- range .argoClusterSeeds }}
+{{- range .hostedArgoSites }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
