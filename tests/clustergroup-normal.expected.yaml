@@ -138,9 +138,13 @@ data:
         - name: clusterGroup.isHubCluster
           value: "false"
         hostedArgoSites:
-        - domain: beekhof.net
+        - bearer_secret_key: secret/data/hub/cluster_perth
+          ca_secret_key: secret/data/hub/cluster_perth_ca
+          domain: perth1.beekhof.net
           name: perth
-        - domain: beekhof.net
+        - bearer_secret_key: secret/data/hub/cluster_sydney
+          ca_secret_key: secret/data/hub/cluster_syndey_ca
+          domain: syd.beekhof.net
           name: sydney
         name: argo-edge
       name: example
@@ -630,15 +634,19 @@ spec:
       - name: global.hubClusterDomain
         value: apps.hub.example.com
       - name: global.localClusterDomain
-        value: apps.beekhof.net
+        value: apps.perth1.beekhof.net
       - name: global.clusterDomain
-        value: beekhof.net
-      - name: clusterGroup.targetCluster
-        value: perth
+        value: perth1.beekhof.net
       - name: enabled
         value: core
       - name: clusterGroup.name
         value: argo-edge
+      - name: clusterGroup.targetCluster
+        value: perth
+      - name: clusterGroup.hostedSite.bearer_secret_key
+        value: secret/data/hub/cluster_perth
+      - name: clusterGroup.hostedSite.ca_secret_key
+        value: secret/data/hub/cluster_perth_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
@@ -688,15 +696,19 @@ spec:
       - name: global.hubClusterDomain
         value: apps.hub.example.com
       - name: global.localClusterDomain
-        value: apps.beekhof.net
+        value: apps.perth1.beekhof.net
       - name: global.clusterDomain
-        value: beekhof.net
+        value: perth1.beekhof.net
       - name: enabled
         value: plumbing
-      - name: clusterGroup.targetCluster
-        value: perth
       - name: clusterGroup.name
         value: argo-edge
+      - name: clusterGroup.targetCluster
+        value: perth
+      - name: clusterGroup.hostedSite.bearer_secret_key
+        value: secret/data/hub/cluster_perth
+      - name: clusterGroup.hostedSite.ca_secret_key
+        value: secret/data/hub/cluster_perth_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
@@ -746,15 +758,19 @@ spec:
       - name: global.hubClusterDomain
         value: apps.hub.example.com
       - name: global.localClusterDomain
-        value: apps.beekhof.net
+        value: apps.syd.beekhof.net
       - name: global.clusterDomain
-        value: beekhof.net
-      - name: clusterGroup.targetCluster
-        value: sydney
+        value: syd.beekhof.net
       - name: enabled
         value: core
       - name: clusterGroup.name
         value: argo-edge
+      - name: clusterGroup.targetCluster
+        value: sydney
+      - name: clusterGroup.hostedSite.bearer_secret_key
+        value: secret/data/hub/cluster_sydney
+      - name: clusterGroup.hostedSite.ca_secret_key
+        value: secret/data/hub/cluster_syndey_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
@@ -804,15 +820,19 @@ spec:
       - name: global.hubClusterDomain
         value: apps.hub.example.com
       - name: global.localClusterDomain
-        value: apps.beekhof.net
+        value: apps.syd.beekhof.net
       - name: global.clusterDomain
-        value: beekhof.net
+        value: syd.beekhof.net
       - name: enabled
         value: plumbing
-      - name: clusterGroup.targetCluster
-        value: sydney
       - name: clusterGroup.name
         value: argo-edge
+      - name: clusterGroup.targetCluster
+        value: sydney
+      - name: clusterGroup.hostedSite.bearer_secret_key
+        value: secret/data/hub/cluster_sydney
+      - name: clusterGroup.hostedSite.ca_secret_key
+        value: secret/data/hub/cluster_syndey_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:

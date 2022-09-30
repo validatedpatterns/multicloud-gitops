@@ -96,9 +96,13 @@ clusterGroup:
     # ??what does it contain??
     hostedArgoSites:
     - name: perth
-      domain: beekhof.net
+      domain: perth1.beekhof.net
+      bearer_secret_key: secret/data/hub/cluster_perth
+      ca_secret_key: secret/data/hub/cluster_perth_ca
     - name: sydney
-      domain: beekhof.net
+      domain: syd.beekhof.net
+      bearer_secret_key: secret/data/hub/cluster_sydney
+      ca_secret_key: secret/data/hub/cluster_syndey_ca
     helmOverrides:
     - name: clusterGroup.isHubCluster
       value: "false"

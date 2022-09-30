@@ -60,12 +60,16 @@ spec:
         value: apps.{{ .domain }}
       - name: global.clusterDomain
         value: {{ .domain }}
-      - name: clusterGroup.targetCluster
-        value: {{ .name }}
       - name: enabled
         value: core
       - name: clusterGroup.name
         value: {{ $group.name }}
+      - name: clusterGroup.targetCluster
+        value: {{ .name }}
+      - name: clusterGroup.hostedSite.bearer_secret_key
+        value: {{ .bearer_secret_key }}
+      - name: clusterGroup.hostedSite.ca_secret_key
+        value: {{ .ca_secret_key }}
      {{- range $group.helmOverrides }}
       - name: {{ .name }}
         value: {{ .value | quote }}
@@ -131,10 +135,14 @@ spec:
         value: {{ .domain }}
       - name: enabled
         value: plumbing
-      - name: clusterGroup.targetCluster
-        value: {{ .name }}
       - name: clusterGroup.name
         value: {{ $group.name }}
+      - name: clusterGroup.targetCluster
+        value: {{ .name }}
+      - name: clusterGroup.hostedSite.bearer_secret_key
+        value: {{ .bearer_secret_key }}
+      - name: clusterGroup.hostedSite.ca_secret_key
+        value: {{ .ca_secret_key }}
      {{- range $group.helmOverrides }}
       - name: {{ .name }}
         value: {{ .value | quote }}
