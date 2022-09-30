@@ -92,8 +92,6 @@ clusterGroup:
     - name: clusterGroup
       value: region
   - name: argo-edge
-    # Requires a cluster_{name} entry in your secret store containing
-    # ??what does it contain??
     hostedArgoSites:
     - name: perth
       domain: perth1.beekhof.net
