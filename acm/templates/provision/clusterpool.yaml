@@ -14,7 +14,7 @@ spec:
 {{- range .clusterPools }}
 
 {{- $pool := . }}
-{{- $poolName := cat .name $group.name | replace " " "-" }}
+{{- $poolName := print .name "-" $group.name }}
 
 {{- $cloud := "None" }}
 {{- $region := "None" }}
