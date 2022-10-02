@@ -95,12 +95,10 @@ clusterGroup:
     hostedArgoSites:
     - name: perth
       domain: perth1.beekhof.net
-      bearer_secret_key: secret/data/hub/cluster_perth
-      ca_secret_key: secret/data/hub/cluster_perth_ca
+      bearerKeyPath: secret/data/hub/cluster_perth
+      caKeyPath: secret/data/hub/cluster_perth_ca
     - name: sydney
       domain: syd.beekhof.net
-      bearer_secret_key: secret/data/hub/cluster_sydney
-      ca_secret_key: secret/data/hub/cluster_syndey_ca
     helmOverrides:
     - name: clusterGroup.isHubCluster
       value: "false"

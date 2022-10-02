@@ -24,6 +24,8 @@ status: {}
 ---
 {{- end }}
 {{- range .hostedArgoSites }}
+{{ $bearerDefault := print "secret/data/hub/cluster_" .name }}
+{{ $caDefault := print "secret/data/hub/cluster_"  .name "_ca" }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -66,10 +68,10 @@ spec:
         value: {{ $group.name }}
       - name: clusterGroup.targetCluster
         value: {{ .name }}
-      - name: clusterGroup.hostedSite.bearer_secret_key
-        value: {{ .bearer_secret_key }}
-      - name: clusterGroup.hostedSite.ca_secret_key
-        value: {{ .ca_secret_key }}
+      - name: clusterGroup.hostedSite.bearerKeyPath
+        value: {{ default $bearerDefault .bearerKeyPath }}
+      - name: clusterGroup.hostedSite.caKeyPath
+        value: {{ default $caDefault .caKeyPath }}
      {{- range $group.helmOverrides }}
       - name: {{ .name }}
         value: {{ .value | quote }}
@@ -139,10 +141,10 @@ spec:
         value: {{ $group.name }}
       - name: clusterGroup.targetCluster
         value: {{ .name }}
-      - name: clusterGroup.hostedSite.bearer_secret_key
-        value: {{ .bearer_secret_key }}
-      - name: clusterGroup.hostedSite.ca_secret_key
-        value: {{ .ca_secret_key }}
+      - name: clusterGroup.hostedSite.bearerKeyPath
+        value: {{ default $bearerDefault .bearerKeyPath }}
+      - name: clusterGroup.hostedSite.caKeyPath
+        value: {{ default $caDefault .caKeyPath }}
      {{- range $group.helmOverrides }}
       - name: {{ .name }}
         value: {{ .value | quote }}

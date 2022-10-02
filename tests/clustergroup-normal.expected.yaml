@@ -138,13 +138,11 @@ data:
         - name: clusterGroup.isHubCluster
           value: "false"
         hostedArgoSites:
-        - bearer_secret_key: secret/data/hub/cluster_perth
-          ca_secret_key: secret/data/hub/cluster_perth_ca
+        - bearerKeyPath: secret/data/hub/cluster_perth
+          caKeyPath: secret/data/hub/cluster_perth_ca
           domain: perth1.beekhof.net
           name: perth
-        - bearer_secret_key: secret/data/hub/cluster_sydney
-          ca_secret_key: secret/data/hub/cluster_syndey_ca
-          domain: syd.beekhof.net
+        - domain: syd.beekhof.net
           name: sydney
         name: argo-edge
       name: example
@@ -643,9 +641,9 @@ spec:
         value: argo-edge
       - name: clusterGroup.targetCluster
         value: perth
-      - name: clusterGroup.hostedSite.bearer_secret_key
+      - name: clusterGroup.hostedSite.bearerKeyPath
         value: secret/data/hub/cluster_perth
-      - name: clusterGroup.hostedSite.ca_secret_key
+      - name: clusterGroup.hostedSite.caKeyPath
         value: secret/data/hub/cluster_perth_ca
       - name: clusterGroup.isHubCluster
         value: "false"
@@ -705,9 +703,9 @@ spec:
         value: argo-edge
       - name: clusterGroup.targetCluster
         value: perth
-      - name: clusterGroup.hostedSite.bearer_secret_key
+      - name: clusterGroup.hostedSite.bearerKeyPath
         value: secret/data/hub/cluster_perth
-      - name: clusterGroup.hostedSite.ca_secret_key
+      - name: clusterGroup.hostedSite.caKeyPath
         value: secret/data/hub/cluster_perth_ca
       - name: clusterGroup.isHubCluster
         value: "false"
@@ -767,10 +765,10 @@ spec:
         value: argo-edge
       - name: clusterGroup.targetCluster
         value: sydney
-      - name: clusterGroup.hostedSite.bearer_secret_key
+      - name: clusterGroup.hostedSite.bearerKeyPath
         value: secret/data/hub/cluster_sydney
-      - name: clusterGroup.hostedSite.ca_secret_key
-        value: secret/data/hub/cluster_syndey_ca
+      - name: clusterGroup.hostedSite.caKeyPath
+        value: secret/data/hub/cluster_sydney_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
@@ -829,10 +827,10 @@ spec:
         value: argo-edge
       - name: clusterGroup.targetCluster
         value: sydney
-      - name: clusterGroup.hostedSite.bearer_secret_key
+      - name: clusterGroup.hostedSite.bearerKeyPath
         value: secret/data/hub/cluster_sydney
-      - name: clusterGroup.hostedSite.ca_secret_key
-        value: secret/data/hub/cluster_syndey_ca
+      - name: clusterGroup.hostedSite.caKeyPath
+        value: secret/data/hub/cluster_sydney_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
