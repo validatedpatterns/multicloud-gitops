@@ -17,7 +17,7 @@ function doTest() {
     OUTPUT=${TESTDIR}/.${FILENAME}
     REFERENCE=${TESTDIR}/${FILENAME}
 
-    echo "Testing $name chart (${TEST_VARIANT})" >&2
+    echo -e "\nTesting $name chart (${TEST_VARIANT}) with opts [$CHART_OPTS]" >&2
     helm template --kubeconfig /tmp/doesnotexistever $target --name-template $name ${CHART_OPTS} > ${OUTPUT}
     rc=$?
     if [ $rc -ne 0 ]; then
@@ -33,9 +33,9 @@ function doTest() {
     rc=$?
     if [ $rc = 0 ]; then
 	rm -f ${TESTDIR}/.${name}.*
-	echo -e "PASS on $name $TEST_VARIANT with opts [$CHART_OPTS]\n"
+	echo "PASS" >&2
     else
-	echo -e "FAIL on $name $TEST_VARIANT with opts [$CHART_OPTS]\n"
+	echo "FAIL" >&2
 	exit $rc
     fi
 }
@@ -48,7 +48,7 @@ function doTestCompare() {
     OUTPUT=${TESTDIR}/.${FILENAME}
     REFERENCE=${TESTDIR}/${FILENAME}
 
-    echo "Testing $name chart (${TEST_VARIANT})" >&2
+    echo -e "\nTesting $name chart (${TEST_VARIANT})" >&2
     # Another method of finding variables missing from values.yaml, eg.
     # -    name: -datacenter
     # +    name: pattern-name-datacenter
@@ -72,17 +72,17 @@ function doTestCompare() {
 
     if [ $rc = 0 ]; then
 	rm -f ${TESTDIR}/.${name}.*
-	echo -e "PASS on $name $TEST_VARIANT with opts [$CHART_OPTS]\n"
+	echo "PASS" >&2
     else
-	echo -e "FAIL on $name $TEST_VARIANT with opts [$CHART_OPTS]\n"
+	echo "FAIL" >&2
 	exit $rc
     fi
 }
 
 if [ $2 = "all" ]; then
     echo -e "\n#####################"
-    echo -e "### ${name}"
-    echo -e "#####################\n"
+    echo "### ${name}"
+    echo "#####################"
 
     # Test that all values used by the chart are in values.yaml with the same defaults as the pattern
     doTest naked
