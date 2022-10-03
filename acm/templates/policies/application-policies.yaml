@@ -1,6 +1,7 @@
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
+{{- if not .hostedArgoSites }}
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -60,6 +61,11 @@ spec:
                         value: {{ $.Values.global.hubClusterDomain }}
                       - name: global.localClusterDomain
                         value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
+                      # Requires ACM 2.6 or higher
+                      - name: global.clusterDomain
+                        value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}` }}'
+                      - name: clusterGroup.name
+                        value: {{ $group.name }}
                      {{- range .helmOverrides }}
                       - name: {{ .name }}
                         value: {{ .value | quote }}
@@ -116,9 +122,10 @@ spec:
   {{- else }}
   clusterSelector:
     matchLabels:
-    {{- range .labels }}
+    {{- range .acmlabels }}
       {{ .name }}: {{ .value }}
     {{- end }}
   {{- end }}
 ---
+{{- end }}
 {{- end }}

@@ -96,9 +96,9 @@ clusterGroup:
   managedClusterGroups:
     region-one:
       name: region-one
-      labels:
-      - name: clusterGroup
-        value: region-one
+      hostedArgoSites:
+      - perth
+      - sydney
       helmOverrides:
       - name: clusterGroup.isHubCluster
         value: false
