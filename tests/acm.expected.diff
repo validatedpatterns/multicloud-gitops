@@ -1,5 +1,5 @@
---- tests/acm-naked.expected.yml
-+++ tests/acm-normal.expected.yml
+--- tests/acm-naked.expected.yaml
++++ tests/acm-normal.expected.yaml
 @@ -1,6 +1,386 @@
  ---
 -# Source: acm/templates/policies/application-policies.yaml

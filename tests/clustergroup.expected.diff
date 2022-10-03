@@ -1,5 +1,5 @@
---- tests/clustergroup-naked.expected.yml
-+++ tests/clustergroup-normal.expected.yml
+--- tests/clustergroup-naked.expected.yaml
++++ tests/clustergroup-normal.expected.yaml
 @@ -1,17 +1,243 @@
  ---
 +# Source: pattern-clustergroup/templates/core/namespaces.yaml
