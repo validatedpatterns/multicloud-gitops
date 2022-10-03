@@ -31,7 +31,7 @@ function doTest() {
     diff -u ${REFERENCE} ${OUTPUT}
     rc=$?
     if [ $rc = 0 ]; then
-	rm -f ${TESTDIR}/.${name}.*
+	rm -f ${OUTPUT}
 	echo "PASS" >&2
     elif [ -z $GITHUB_ACTIONS ]; then
 	read -p "Are these changes expected? [y/N]  " EXPECTED
@@ -39,6 +39,7 @@ function doTest() {
 	    y*|Y*)
 		echo "Updating ${REFERENCE}"
 		cp ${OUTPUT} ${REFERENCE}
+		rm -f ${OUTPUT}
 		rc=0
 		;;
 	    *) ;;
@@ -81,7 +82,7 @@ function doTestCompare() {
     rc=$?
 
     if [ $rc = 0 ]; then
-	rm -f ${TESTDIR}/.${name}.*
+	rm -f ${OUTPUT}
 	echo "PASS" >&2
     elif [ -z $GITHUB_ACTIONS ]; then
 	read -p "Are these changes expected? [y/N]  " EXPECTED
@@ -89,6 +90,7 @@ function doTestCompare() {
 	    y*|Y*)
 		echo "Updating ${REFERENCE}"
 		cp ${OUTPUT} ${REFERENCE}
+		rm -f ${OUTPUT}
 		rc=0
 		;;
 	    *) ;;
