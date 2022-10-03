@@ -119,6 +119,14 @@ spec:
       type: ManagedClusterConditionAvailable
   {{- if .clusterSelector }}
   clusterSelector: {{ .clusterSelector | toPrettyJson }}
+  {{- else if (not $group.acmlabels) }}
+  clusterSelector:
+    matchLabels:
+      clusterGroup: {{ $group.name }}
+  {{- else if eq (len $group.acmlabels) 0 }}
+  clusterSelector:
+    matchLabels:
+      clusterGroup: {{ $group.name }}
   {{- else }}
   clusterSelector:
     matchLabels:

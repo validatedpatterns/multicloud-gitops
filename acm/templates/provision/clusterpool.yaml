@@ -69,9 +69,15 @@ metadata:
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
     clusterClaimName: {{ . }}-{{ $group.name }}
+  {{- if (not $group.acmlabels) }}
+    clusterGroup: {{ $group.name }}
+  {{- else if eq (len $group.acmlabels) 0 }}
+    clusterGroup: {{ $group.name }}
+  {{- else }}
     {{- range $group.acmlabels }}
     {{ .name }}: {{ .value }}
     {{- end }}
+  {{- end }}
 spec:
   clusterPoolName: {{ $pool.name }}
 ---
