@@ -1,5 +1,5 @@
---- tests/acm-naked.expected.yaml	
-+++ tests/acm-normal.expected.yaml	2022-10-03 11:27:20.418172850 +1100
+--- tests/acm-naked.expected.yml
++++ tests/acm-normal.expected.yml
 @@ -1,6 +1,386 @@
  ---
 -# Source: acm/templates/policies/application-policies.yaml

@@ -1,5 +1,5 @@
---- tests/operator-install-naked.expected.yaml	
-+++ tests/operator-install-normal.expected.yaml	
+--- tests/operator-install-naked.expected.yml
++++ tests/operator-install-normal.expected.yml
 @@ -6,7 +6,7 @@
    name: operator-install
    namespace: openshift-operators

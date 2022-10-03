@@ -1,5 +1,5 @@
---- tests/install-naked.expected.yaml	
-+++ tests/install-normal.expected.yaml	2022-10-03 11:27:20.420172850 +1100
+--- tests/install-naked.expected.yml
++++ tests/install-normal.expected.yml
 @@ -11,14 +11,14 @@
  apiVersion: argoproj.io/v1alpha1
  kind: Application
