@@ -1,5 +1,5 @@
---- tests/examples-kustomize-renderer-naked.expected.yml
-+++ tests/examples-kustomize-renderer-normal.expected.yml
+--- tests/examples-kustomize-renderer-naked.expected.yaml
++++ tests/examples-kustomize-renderer-normal.expected.yaml
 @@ -7,12 +7,12 @@
  data:
    IMAGE_PROVIDER: 

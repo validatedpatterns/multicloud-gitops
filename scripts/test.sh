@@ -12,7 +12,7 @@ function doTest() {
     CHART_OPTS="$2"
     TESTDIR=tests
     TEST=${name}-${TEST_VARIANT}
-    FILENAME=${TEST}.expected.yml
+    FILENAME=${TEST}.expected.yaml
     OUTPUT=${TESTDIR}/.${FILENAME}
     REFERENCE=${TESTDIR}/${FILENAME}
 
@@ -55,7 +55,7 @@ function doTestCompare() {
     TEST_VARIANT="differences"
     TESTDIR=tests
     TEST=${name}
-    FILENAME=${TEST}.expected.yml
+    FILENAME=${TEST}.expected.yaml
     OUTPUT=${TESTDIR}/.${FILENAME}
     REFERENCE=${TESTDIR}/${FILENAME}
 
@@ -70,7 +70,7 @@ function doTestCompare() {
     REFERENCE=${TESTDIR}/${FILENAME}
 
     # Drop the date from the diff output, it will not be stable
-    diff -u ${TESTDIR}/${name}-naked.expected.yml ${TESTDIR}/${name}-normal.expected.yml | sed 's/\.yml.*20[0-9][0-9].*/.yml/g' > ${OUTPUT}
+    diff -u ${TESTDIR}/${name}-naked.expected.yaml ${TESTDIR}/${name}-normal.expected.yaml | sed 's/\.yaml.*20[0-9][0-9].*/.yaml/g' > ${OUTPUT}
 
     if [ ! -e ${REFERENCE} -a -z $GITHUB_ACTIONS ]; then
 	cp ${OUTPUT} ${REFERENCE}

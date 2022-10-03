@@ -1,5 +1,5 @@
---- tests/hashicorp-vault-naked.expected.yml
-+++ tests/hashicorp-vault-normal.expected.yml
+--- tests/hashicorp-vault-naked.expected.yaml
++++ tests/hashicorp-vault-normal.expected.yaml
 @@ -340,7 +340,7 @@
    applicationMenu:
      section: HashiCorp Vault
