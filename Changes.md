@@ -1,6 +1,7 @@
-# Changes 
+# Changes
 
 ## October 3, 2022
+
 * Restore the ability to install a non-default site: `make TARGET_SITE=mysite install`
 * Revised tests (new output and filenames, requires adding new result files to git)
 * ACM 2.6 required for ACM-based managed sites
@@ -11,9 +12,9 @@
   The following example would deploy the namespaces, subscriptions, and
   applications defined in `values-group-one.yaml` to the `perth` cluster
   directly from ArgoCD on the hub.
-  
-  ```
-  managedClusterGroups: 
+
+  ```yaml
+  managedClusterGroups:
   - name: group-one
     hostedArgoSites:
     - name: perth
