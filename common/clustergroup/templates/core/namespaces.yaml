@@ -1,3 +1,4 @@
+{{- if not (eq .Values.enabled "plumbing") }}
 {{- range .Values.clusterGroup.namespaces }}
 apiVersion: v1
 kind: Namespace
@@ -8,4 +9,5 @@ metadata:
   name: {{ . }}
 spec:
 ---
+{{- end }}
 {{- end }}
