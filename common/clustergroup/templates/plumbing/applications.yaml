@@ -1,4 +1,8 @@
-{{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
+{{- if not (eq .Values.enabled "core") }}
+{{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
+{{- if (eq .Values.enabled "plumbing") }}
+{{- $namespace = "openshift-gitops" }}
+{{- end }}
 {{- range .Values.clusterGroup.applications }}
 {{- if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) }}
 apiVersion: argoproj.io/v1alpha1
@@ -60,6 +64,8 @@ spec:
             {{ `{{ values }}` }}
         {{- end }}
           parameters:
+            - name: global.clusterDomain
+              value: {{ $.Values.global.clusterDomain }}
             - name: global.hubClusterDomain
               value: {{ $.Values.global.hubClusterDomain }}
             - name: global.localClusterDomain
@@ -72,6 +78,8 @@ spec:
               value: {{ $.Values.global.namespace }}
             - name: global.pattern
               value: {{ $.Values.global.pattern }}
+            - name: clusterGroup.name
+              value: {{ .Values.clusterGroup.name }}
         {{- range .extraHubClusterDomainFields }}
             - name: {{ . }}
               value: {{ $.Values.global.hubClusterDomain }}
@@ -117,7 +125,7 @@ metadata:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
   destination:
-    name: {{ coalesce .clusterName "in-cluster" }}
+    name: {{ $.Values.clusterGroup.targetCluster }}
     namespace: {{ default $namespace .namespace }}
   project: {{ .project }}
   source:
@@ -149,6 +157,8 @@ spec:
           value: $ARGOCD_APP_NAMESPACE
         - name: global.pattern
           value: {{ $.Values.global.pattern }}
+        - name: global.clusterDomain
+          value: {{ $.Values.global.clusterDomain }}
         - name: global.hubClusterDomain
           value: {{ $.Values.global.hubClusterDomain }}
         - name: global.localClusterDomain
@@ -203,5 +213,6 @@ spec:
     #  selfHeal: true
   {{- end }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
