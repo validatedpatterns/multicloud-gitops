@@ -1,6 +1,7 @@
 # Changes 
 
 ## October 3, 2022
+* Revised tests (new output and filenames, requires adding new result files to git)
 * ACM 2.6 required for ACM-based managed sites
 * Introduced global.clusterDomain template variable (without the `apps.` prefix)
 * Removed the ability to send specific charts to another cluster, use hosted argo sites instead
