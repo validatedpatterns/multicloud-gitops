@@ -25,8 +25,8 @@ function doTest() {
     fi
     if [ ! -e ${REFERENCE} ]; then
 	cp ${OUTPUT} ${REFERENCE}
-	echo -e "\n\n#### Created test output\007\n#### Now add ${REFERENCE} to Git\n\n\007"  >&2
-	exit 2
+	git add ${REFERENCE}
+	echo -e "\n\n#### Created test output\007\n\n\007"  >&2
     fi
     diff -u ${REFERENCE} ${OUTPUT}
     rc=$?
