@@ -20,12 +20,12 @@ function doTest() {
     helm template --kubeconfig /tmp/doesnotexistever $target --name-template $name ${CHART_OPTS} > ${OUTPUT}
     rc=$?
     if [ $rc -ne 0 ]; then
-	echo "FAIL on helm template $target --name-template $name ${CHART_OPTS}"
+	echo "FAIL on helm template $target --name-template $name ${CHART_OPTS}"  >&2
 	exit 1
     fi
     if [ ! -e ${REFERENCE} ]; then
 	cp ${OUTPUT} ${REFERENCE}
-	echo -e "\n\n#### Created test output\007\n#### Now add ${REFERENCE} to Git\n\n\007"
+	echo -e "\n\n#### Created test output\007\n#### Now add ${REFERENCE} to Git\n\n\007"  >&2
 	exit 2
     fi
     diff -u ${REFERENCE} ${OUTPUT}
@@ -73,7 +73,7 @@ function doTestCompare() {
 
     if [ ! -e ${REFERENCE} ]; then	
 	cp ${OUTPUT} ${REFERENCE}
-	echo -e "\n\n#### Created test output\007\n#### Now add ${REFERENCE} to Git\n\n\007"
+	echo -e "\n\n#### Created test output\007\n#### Now add ${REFERENCE} to Git\n\n\007"  >&2
 	exit 2
     fi
 
@@ -101,9 +101,9 @@ function doTestCompare() {
 }
 
 if [ $2 = "all" ]; then
-    echo -e "\n#####################"
-    echo "### ${name}"
-    echo "#####################"
+    echo -e "\n#####################" >&2
+    echo "### ${name}" >&2
+    echo "#####################" >&2
 
     # Test that all values used by the chart are in values.yaml with the same defaults as the pattern
     doTest naked
