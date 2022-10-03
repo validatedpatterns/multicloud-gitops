@@ -31,7 +31,7 @@ function doTest() {
     diff -u ${REFERENCE} ${OUTPUT}
     rc=$?
     if [ $rc = 0 ]; then
-	rm -f ${TESTDIR}/.${name}.*
+	rm -f ${OUTPUT}
 	echo "PASS" >&2
     elif [ -z $GITHUB_ACTIONS ]; then
 	read -p "Are these changes expected? [y/N]  " EXPECTED
@@ -39,6 +39,7 @@ function doTest() {
 	    y*|Y*)
 		echo "Updating ${REFERENCE}"
 		cp ${OUTPUT} ${REFERENCE}
+		rm -f ${OUTPUT}
 		rc=0
 		;;
 	    *) ;;
@@ -71,17 +72,17 @@ function doTestCompare() {
     # Drop the date from the diff output, it will not be stable
     diff -u ${TESTDIR}/${name}-naked.expected.yml ${TESTDIR}/${name}-normal.expected.yml | sed 's/\.yml.*20[0-9][0-9].*/.yml/g' > ${OUTPUT}
 
-    if [ ! -e ${REFERENCE} ]; then	
+    if [ ! -e ${REFERENCE} -a -z $GITHUB_ACTIONS ]; then
 	cp ${OUTPUT} ${REFERENCE}
-	echo -e "\n\n#### Created test output\007\n#### Now add ${REFERENCE} to Git\n\n\007"  >&2
-	exit 2
+	git add ${REFERENCE}
+	echo -e "\n\n#### Created test output\007\n\n\007"  >&2
     fi
 
     diff -u ${REFERENCE} ${OUTPUT}
     rc=$?
 
     if [ $rc = 0 ]; then
-	rm -f ${TESTDIR}/.${name}.*
+	rm -f ${OUTPUT}
 	echo "PASS" >&2
     elif [ -z $GITHUB_ACTIONS ]; then
 	read -p "Are these changes expected? [y/N]  " EXPECTED
@@ -89,6 +90,7 @@ function doTestCompare() {
 	    y*|Y*)
 		echo "Updating ${REFERENCE}"
 		cp ${OUTPUT} ${REFERENCE}
+		rm -f ${OUTPUT}
 		rc=0
 		;;
 	    *) ;;
