@@ -23,28 +23,32 @@ if [ $rc -ne 0 ]; then
     echo "FAIL on helm template $target --name-template $name ${CHART_OPTS}"
     exit 1
 fi
-#cp ${OUTPUT} ${REFERENCE}
 if [ ! -e ${REFERENCE} ]; then
-    touch ${REFERENCE}
+    cp ${OUTPUT} ${REFERENCE}
 fi
 diff -u ${REFERENCE}  ${OUTPUT}
 rc=$?
-if [ $rc = 0 ]; then
-    rm -f ${OUTPUT}
-fi
 
 if [ $TEST_VARIANT = normal -a $rc = 0 ]; then
     # Another method of finding variables missing from values.yaml, eg.
     # -    name: -datacenter
     # +    name: pattern-name-datacenter
-    # Alas we can't make it fatal because there *should* be some differences
-    diff -u ${TESTDIR}/${name}-naked.expected.yaml ${TESTDIR}/${name}-normal.expected.yaml
+    diff -u ${TESTDIR}/${name}-naked.expected.yaml ${TESTDIR}/${name}-normal.expected.yaml | sed 's/20[0-9][0-9]-[09][0-9].*//' > ${OUTPUT}.variant
+
+    if [ ! -e ${REFERENCE}.variant ]; then
+	cp ${OUTPUT}.variant ${REFERENCE}.variant
+    fi
+
+    diff -u ${REFERENCE}.variant  ${OUTPUT}.variant
+    rc=$?
 fi
 
 if [ $rc = 0 ]; then
-	echo "PASS on $target $TEST_VARIANT with opts [$CHART_OPTS]"
+    rm -f ${OUTPUT}
+    rm -f ${OUTPUT}.variant
+    echo "PASS on $target $TEST_VARIANT with opts [$CHART_OPTS]"
 else
-	echo "FAIL on $target $TEST_VARIANT with opts [$CHART_OPTS]"
+    echo "FAIL on $target $TEST_VARIANT with opts [$CHART_OPTS]"
 fi
 
 exit $rc
