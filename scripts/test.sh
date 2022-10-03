@@ -4,7 +4,6 @@
 # This won't protect us if a user has ~/.kube
 # Also call helm template with a non existing --kubeconfig while we're at it
 unset KUBECONFIG
-
 target=$1
 name=$(echo $1 | sed -e s@/@-@g -e s@charts-@@)
 
@@ -34,7 +33,18 @@ function doTest() {
     if [ $rc = 0 ]; then
 	rm -f ${TESTDIR}/.${name}.*
 	echo "PASS" >&2
-    else
+    elif [ -z $GITHUB_ACTIONS ]; then
+	read -p "Are these changes expected? [y/N]  " EXPECTED
+	case $EXPECTED in
+	    y*|Y*)
+		echo "Updating ${REFERENCE}"
+		cp ${OUTPUT} ${REFERENCE}
+		rc=0
+		;;
+	    *) ;;
+	esac
+    fi
+    if [ $rc != 0 ]; then
 	echo "FAIL" >&2
 	exit $rc
     fi
@@ -73,7 +83,18 @@ function doTestCompare() {
     if [ $rc = 0 ]; then
 	rm -f ${TESTDIR}/.${name}.*
 	echo "PASS" >&2
-    else
+    elif [ -z $GITHUB_ACTIONS ]; then
+	read -p "Are these changes expected? [y/N]  " EXPECTED
+	case $EXPECTED in
+	    y*|Y*)
+		echo "Updating ${REFERENCE}"
+		cp ${OUTPUT} ${REFERENCE}
+		rc=0
+		;;
+	    *) ;;
+	esac
+    fi
+    if [ $rc != 0 ]; then
 	echo "FAIL" >&2
 	exit $rc
     fi
