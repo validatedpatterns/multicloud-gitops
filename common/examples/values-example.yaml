@@ -47,32 +47,58 @@ clusterGroup:
       namespace: application-ci
       project: datacenter
       path: charts/datacenter/pipelines
-    external:
-      name: external-app
-      namespace: demo
-      project: datacenter
-      clusterName: example
 
   managedClusterGroups:
-  - name: edge
+  - name: acm-edge
     # Optional - Point to a different repo
-    # repoURL: https://github.com/dagger-refuse-cool/mySite.git
+    # repoURL: https://github.com/hybrid-cloud-patterns/mySite.git
     # Must contain values-{clustergroupname}.yaml at the top level
     targetRevision: main
     helmOverrides:
     # Values must be strings!
     - name: clusterGroup.isHubCluster
       value: "false"
-    clusterSelector:
-#      matchLabels:
-#        clusterGroup: factory
-      matchExpressions:
-      - key: vendor
-        operator: In
-        values:
-          - OpenShift
-
-  # Create an ExternalSecret with a label that ArgoCD
-  # will detect and register as a new Cluster
-  externalClusters:
-    - example # Will read the key: cluster_example
+    acmlabels:
+    - name: clusterGroup
+      value: acm-region
+  - name: acm-provision-edge
+    targetRevision: main
+    helmOverrides:
+    - name: clusterGroup.isHubCluster
+      value: "false"
+    clusterPools:
+      exampleAWSPool:
+        size: 3
+        name: aws-ap
+        openshiftVersion: 4.10.18
+        baseDomain: blueprints.rhecoeng.com
+        platform:
+          aws:
+            region: ap-southeast-2
+        clusters:
+        - One
+      exampleAzurePool:
+        name: azure-us
+        openshiftVersion: 4.10.18
+        baseDomain: blueprints.rhecoeng.com
+        platform:
+          azure:
+            baseDomainResourceGroupName: dojo-dns-zones
+            region: eastus
+        clusters:
+        - Two
+        - Three
+    acmlabels:
+    - name: clusterGroup
+      value: region
+  - name: argo-edge
+    hostedArgoSites:
+    - name: perth
+      domain: perth1.beekhof.net
+      bearerKeyPath: secret/data/hub/cluster_perth
+      caKeyPath: secret/data/hub/cluster_perth_ca
+    - name: sydney
+      domain: syd.beekhof.net
+    helmOverrides:
+    - name: clusterGroup.isHubCluster
+      value: "false"
