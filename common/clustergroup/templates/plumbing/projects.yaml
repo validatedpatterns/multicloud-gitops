@@ -1,9 +1,15 @@
+{{- if not (eq .Values.enabled "core") }}
+{{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
 {{- range .Values.clusterGroup.projects }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: {{ . }}
-  namespace: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
+{{- if (eq $.Values.enabled "plumbing") }}
+  namespace: openshift-gitops
+{{- else }}
+  namespace: {{ $namespace }}
+{{- end }}
 spec:
   description: "Pattern {{ . }}"
   destinations:
@@ -19,4 +25,5 @@ spec:
   - '*'
 status: {}
 ---
+{{- end }}
 {{- end }}

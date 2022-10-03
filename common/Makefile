@@ -1,6 +1,10 @@
 NAME=$(shell basename `pwd`)
 # This is to ensure that whether we start with a git@ or https:// URL, we end up with an https:// URL
 # This is because we expect to use tokens for repo authentication as opposed to SSH keys
+ifneq ($(origin TARGET_SITE), undefined)
+  TARGET_SITE_OPT=--set main.clusterGroupName=$(TARGET_SITE)
+endif
+
 TARGET_ORIGIN ?= origin
 TARGET_REPO=$(shell git remote show $(TARGET_ORIGIN) | grep Push | sed -e 's/.*URL:[[:space:]]*//' -e 's%^git@%%' -e 's%^https://%%' -e 's%:%/%' -e 's%^%https://%')
 # git branch --show-current is also available as of git 2.22, but we will use this for compatibility
@@ -9,10 +13,10 @@ HUBCLUSTER_APPS_DOMAIN=$(shell oc get ingresses.config/cluster -o jsonpath={.spe
 
 # --set values always take precedence over the contents of -f
 HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) \
-	--set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN)
+	--set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN) $(TARGET_SITE_OPT)
 TEST_OPTS= -f common/examples/values-secret.yaml -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" \
 	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.pattern="mypattern" \
-	--set global.namespace="pattern-namespace" --set global.hubClusterDomain=hub.example.com --set global.localClusterDomain=region.example.com \
+	--set global.namespace="pattern-namespace" --set global.hubClusterDomain=apps.hub.example.com --set global.localClusterDomain=apps.region.example.com --set global.clusterDomain=region.example.com\
 	--set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml" \
 	--set clusterGroup.insecureUnsealVaultInsideCluster=true
 PATTERN_OPTS=-f common/examples/values-example.yaml
@@ -29,10 +33,7 @@ show: ## show the starting template without installing it
 
 CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | sed -e 's/.\///')
 test: ## run helm tests
-# Test that all values used by the chart are in values.yaml with the same defaults as the pattern
-	@for t in $(CHARTS); do common/scripts/test.sh $$t naked ""; if [ $$? != 0 ]; then exit 1; fi; done
-# Test the charts as the pattern would drive them
-	@for t in $(CHARTS); do common/scripts/test.sh $$t normal "$(TEST_OPTS) $(PATTERN_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
+	@for t in $(CHARTS); do common/scripts/test.sh $$t all "$(TEST_OPTS) $(PATTERN_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
 
 helmlint: ## run helm lint
 	@for t in $(CHARTS); do helm lint $(TEST_OPTS) $(PATTERN_OPTS) $$t; if [ $$? != 0 ]; then exit 1; fi; done

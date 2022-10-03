@@ -1,4 +1,5 @@
-{{- $namespace := cat $.Values.global.pattern $.Values.clusterGroup.name | replace " " "-" }}
+{{- if (eq .Values.enabled "all") }}
+{{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
@@ -37,8 +38,10 @@ spec:
             --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
             --set global.namespace=$ARGOCD_APP_NAMESPACE
             --set global.pattern={{ .Values.global.pattern }}
+            --set global.clusterDomain={{ .Values.global.clusterDomain }}
             --set global.hubClusterDomain={{ .Values.global.hubClusterDomain }}
             --set global.localClusterDomain={{ coalesce .Values.global.localClusterDomain .Values.global.hubClusterDomain }}
+            --set clusterGroup.name={{ .Values.clusterGroup.name }}
             --post-renderer ./kustomize"]
   applicationSet:
     resources:
@@ -121,3 +124,4 @@ spec:
   href: 'https://{{ .Values.clusterGroup.name }}-gitops-server-{{ $namespace }}.{{ coalesce .Values.global.localClusterDomain .Values.global.hubClusterDomain }}'
   location: ApplicationMenu
   text: '{{ title .Values.clusterGroup.name }} ArgoCD'
+{{- end }}

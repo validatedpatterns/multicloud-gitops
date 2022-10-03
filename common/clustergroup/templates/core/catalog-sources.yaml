@@ -1,3 +1,4 @@
+{{- if not (eq .Values.enabled "plumbing") }}
 {{- range .Values.clusterGroup.indexImages }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
@@ -7,4 +8,6 @@ metadata:
 spec:
   sourceType: grpc
   image: {{ .image }}:{{ .version }}
+---
+{{- end -}}
 {{- end -}}

@@ -1,3 +1,4 @@
+{{- if not (eq .Values.enabled "plumbing") }}
 {{/* Only define this if the values.insecureUnsealVaultInsideCluster is set to tre and we're on the cluster */}}
 {{- if and $.Values.clusterGroup.insecureUnsealVaultInsideCluster $.Values.clusterGroup.isHubCluster }}
 ---
@@ -54,6 +55,7 @@ spec:
             emptyDir: {}
           - name: values-volume
             configMap:
-              name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}
+              name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}-{{ $.Values.clusterGroup.name }}
           restartPolicy: Never
-{{ end }}
+{{- end }}
+{{- end }}
