@@ -41,11 +41,18 @@ metadata:
   name: example-pattern-example
 spec: {}
 ---
+# Source: pattern-clustergroup/templates/imperative/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: imperative-sa
+  namespace: imperative
+---
 # Source: pattern-clustergroup/templates/imperative/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: -example
+  name: helm-values-configmap-example
   namespace: imperative
 data:
   values.yaml: |
@@ -67,11 +74,26 @@ data:
           path: charts/datacenter/pipelines
           project: datacenter
       imperative:
+        activeDeadlineSeconds: 3600
+        clusterRoleName: imperative-cluster-role
+        clusterRoleYaml: ""
+        cronJobName: imperative-cronjob
+        image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
+        imagePullPolicy: Always
+        insecureUnsealVaultInsideClusterSchedule: '*/5 * * * *'
+        jobName: imperative-job
         jobs:
         - name: regional-ca
           playbook: ansible/playbooks/on-hub-get-regional-ca.yml
           timeout: 234
         namespace: imperative
+        roleName: imperative-role
+        roleYaml: ""
+        schedule: '*/10 * * * *'
+        serviceAccountCreate: true
+        serviceAccountName: imperative-sa
+        valuesConfigMap: helm-values-configmap
+        verbosity: ""
       insecureUnsealVaultInsideCluster: true
       isHubCluster: true
       managedClusterGroups:
@@ -156,7 +178,7 @@ data:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: 
+  name: imperative-cluster-role
 rules:
   - apiGroups:
     - '*'
@@ -175,10 +197,10 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: 
+  name: imperative-cluster-role
 subjects:
   - kind: ServiceAccount
-    name: 
+    name: imperative-sa
     namespace: imperative
 ---
 # Source: pattern-clustergroup/templates/plumbing/argocd-super-role.yaml
@@ -229,7 +251,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: 
+  name: imperative-role
   namespace: imperative
 rules:
   - apiGroups:
@@ -248,36 +270,36 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: 
+  name: imperative-role
 subjects:
   - kind: ServiceAccount
-    name: 
+    name: imperative-sa
     namespace: imperative
 ---
 # Source: pattern-clustergroup/templates/imperative/job.yaml
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: 
+  name: imperative-cronjob
   namespace: imperative
 spec:
-  schedule: 
+  schedule: "*/10 * * * *"
   # if previous Job is still running, skip execution of a new Job
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
-      activeDeadlineSeconds: 
+      activeDeadlineSeconds: 3600
       template:
         metadata:
-          name: 
+          name: imperative-job
         spec:
-          serviceAccountName: 
+          serviceAccountName: imperative-sa
           initContainers:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there            
             - name: git-init
-              image: 
-              imagePullPolicy: 
+              image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
+              imagePullPolicy: Always
               env:
                 - name: HOME
                   value: /git/home
@@ -289,8 +311,8 @@ spec:
               - name: git
                 mountPath: "/git"
             - name: regional-ca
-              image: 
-              imagePullPolicy: 
+              image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
+              imagePullPolicy: Always
               env:
                 - name: HOME
                   value: /git/home
@@ -312,8 +334,8 @@ spec:
                   subPath: values.yaml
           containers:            
             - name: "done"
-              image: 
-              imagePullPolicy: 
+              image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
+              imagePullPolicy: Always
               command:
                 - 'sh'
                 - '-c'
@@ -325,7 +347,7 @@ spec:
             emptyDir: {}
           - name: values-volume
             configMap:
-              name: -example
+              name: helm-values-configmap-example
           restartPolicy: Never
 ---
 # Source: pattern-clustergroup/templates/imperative/unsealjob.yaml
@@ -335,23 +357,23 @@ metadata:
   name: unsealvault-cronjob
   namespace: imperative
 spec:
-  schedule: 
+  schedule: "*/5 * * * *"
   # if previous Job is still running, skip execution of a new Job
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
-      activeDeadlineSeconds: 
+      activeDeadlineSeconds: 3600
       template:
         metadata:
           name: unsealvault-job
         spec:
-          serviceAccountName: 
+          serviceAccountName: imperative-sa
           initContainers:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there            
             - name: git-init
-              image: 
-              imagePullPolicy: 
+              image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
+              imagePullPolicy: Always
               env:
                 - name: HOME
                   value: /git/home
@@ -363,8 +385,8 @@ spec:
               - name: git
                 mountPath: "/git"
             - name: unseal-playbook
-              image: 
-              imagePullPolicy: 
+              image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
+              imagePullPolicy: Always
               env:
                 - name: HOME
                   value: /git/home
@@ -390,8 +412,8 @@ spec:
                   subPath: values.yaml
           containers:            
             - name: "done"
-              image: 
-              imagePullPolicy: 
+              image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
+              imagePullPolicy: Always
               command:
                 - 'sh'
                 - '-c'
@@ -403,7 +425,7 @@ spec:
             emptyDir: {}
           - name: values-volume
             configMap:
-              name: -example
+              name: helm-values-configmap-example
           restartPolicy: Never
 ---
 # Source: pattern-clustergroup/templates/core/subscriptions.yaml

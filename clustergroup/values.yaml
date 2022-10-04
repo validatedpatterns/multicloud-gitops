@@ -54,13 +54,37 @@ clusterGroup:
       path: charts/datacenter/pipelines
 
   imperative:
-    namespace: imperative
     # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
     # The default schedule is every 10 minutes: imperative.schedule
     # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
     # imagePullPolicy is set to always: imperative.imagePullPolicy
     # For additional overrides that apply to the jobs, please refer to
     # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
+    # This image contains ansible + kubernetes.core by default and is used to run the jobs
+    image: "registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest"
+    namespace: "imperative"
+    # configmap name in the namespace that will contain all helm values
+    valuesConfigMap: "helm-values-configmap"
+    cronJobName: "imperative-cronjob"
+    jobName: "imperative-job"
+    imagePullPolicy: Always
+    # This is the maximum timeout of all the jobs (1h)
+    activeDeadlineSeconds: 3600
+    # By default we run this every 10minutes
+    schedule: "*/10 * * * *"
+    # Schedule used to trigger the vault unsealing (if explicitely enabled)
+    # Set to run every 5 minutes in order for load-secrets to succeed within
+    # a reasonable amount of time (it waits up to 15 mins)
+    insecureUnsealVaultInsideClusterSchedule: "*/5 * * * *"
+    # Increase ansible verbosity with '-v' or '-vv..'
+    verbosity: ""
+    serviceAccountCreate: true
+    # service account to be used to run the cron pods
+    serviceAccountName: imperative-sa
+    clusterRoleName: imperative-cluster-role
+    clusterRoleYaml: ""
+    roleName: imperative-role
+    roleYaml: ""
     jobs:
     - name: regional-ca
       # ansible playbook to be run
