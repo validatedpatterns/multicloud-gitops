@@ -26,13 +26,13 @@ from unittest.mock import call, patch
 from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_bytes
 
-sys.path.insert(1, './ansible/plugins/modules')
+sys.path.insert(1, "./ansible/plugins/modules")
 import vault_load_secrets
 
 
 def set_module_args(args):
     """prepare arguments so that they will be picked up during module creation"""
-    args = json.dumps({'ANSIBLE_MODULE_ARGS': args})
+    args = json.dumps({"ANSIBLE_MODULE_ARGS": args})
     basic._ANSIBLE_ARGS = to_bytes(args)
 
 
@@ -50,14 +50,14 @@ class AnsibleFailJson(Exception):
 
 def exit_json(*args, **kwargs):
     """function to patch over exit_json; package return data into an exception"""
-    if 'changed' not in kwargs:
-        kwargs['changed'] = False
+    if "changed" not in kwargs:
+        kwargs["changed"] = False
     raise AnsibleExitJson(kwargs)
 
 
 def fail_json(*args, **kwargs):
     """function to patch over fail_json; package return data into an exception"""
-    kwargs['failed'] = True
+    kwargs["failed"] = True
     raise AnsibleFailJson(kwargs)
 
 
@@ -78,61 +78,61 @@ class TestMyModule(unittest.TestCase):
         with self.assertRaises(AnsibleExitJson) as ansible_err:
             set_module_args(
                 {
-                    'values_secrets': "/tmp/nonexisting",
+                    "values_secrets": "/tmp/nonexisting",
                 }
             )
             vault_load_secrets.main()
 
         ret = ansible_err.exception.args[0]
-        self.assertEqual(ret['failed'], True)
-        self.assertEqual(ret['error'], 'Missing values-secrets.yaml file')
+        self.assertEqual(ret["failed"], True)
+        self.assertEqual(ret["error"], "Missing values-secrets.yaml file")
         self.assertEqual(
-            ret['msg'], 'Values secrets file does not exist: /tmp/nonexisting'
+            ret["msg"], "Values secrets file does not exist: /tmp/nonexisting"
         )
 
     def test_ensure_command_called(self):
         set_module_args(
             {
-                'values_secrets': os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), 'values-secret.yaml'
+                "values_secrets": os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "values-secret.yaml"
                 )
             }
         )
 
-        with patch.object(vault_load_secrets, 'run_command') as mock_run_command:
-            stdout = 'configuration updated'
-            stderr = ''
+        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
             ret = 0
             mock_run_command.return_value = ret, stdout, stderr  # successful execution
 
             with self.assertRaises(AnsibleExitJson) as result:
                 vault_load_secrets.main()
             self.assertTrue(
-                result.exception.args[0]['changed']
+                result.exception.args[0]["changed"]
             )  # ensure result is changed
             assert mock_run_command.call_count == 9
 
         calls = [
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/config-demo\' secret=\'demo123\'"'
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/config-demo' secret='demo123'\""
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/googleapi\' key=\'lskdjflskjdflsdjflsdkjfldsjkfldsj\'"'
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/googleapi' key='lskdjflskjdflsdjflsdkjfldsjkfldsj'\""
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/cluster_alejandro\' name=\'alejandro\' bearerToken=\'sha256~bumxi-012345678901233455675678678098-abcdef\'"'
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/cluster_alejandro' name='alejandro' bearerToken='sha256~bumxi-012345678901233455675678678098-abcdef'\""
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/test\' s3.accessKey=\'1234\' s3.secretKey=\'4321\' s3Secret=\'czMuYWNjZXNzS2V5OiAxMjM0CnMzLnNlY3JldEtleTogNDMyMQ==\'"'
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/test' s3.accessKey='1234' s3.secretKey='4321' s3Secret='czMuYWNjZXNzS2V5OiAxMjM0CnMzLnNlY3JldEtleTogNDMyMQ=='\""
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/test2\' s3.accessKey=\'accessKey\' s3.secretKey=\'secretKey\' s3Secret=\'fooo\'"'
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/test2' s3.accessKey='accessKey' s3.secretKey='secretKey' s3Secret='fooo'\""
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/test3\' s3.accessKey=\'aaaaa\' s3.secretKey=\'bbbbbbbb\' s3Secret=\'czMuYWNjZXNzS2V5OiBhYWFhYQpzMy5zZWNyZXRLZXk6IGJiYmJiYmJi\'"'
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/test3' s3.accessKey='aaaaa' s3.secretKey='bbbbbbbb' s3Secret='czMuYWNjZXNzS2V5OiBhYWFhYQpzMy5zZWNyZXRLZXk6IGJiYmJiYmJi'\""
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/region-one/config-demo\' secret=\'region123\'"'
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/region-one/config-demo' secret='region123'\""
             ),
             call(
                 "cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/cluster_alejandro_ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'"
@@ -144,5 +144,5 @@ class TestMyModule(unittest.TestCase):
         mock_run_command.assert_has_calls(calls)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

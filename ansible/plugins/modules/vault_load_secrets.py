@@ -58,12 +58,12 @@ import yaml
 from ansible.module_utils.basic import AnsibleModule
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community',
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: vault_load_secrets
 short_description: Loads secrets into the HashiCorp Vault
@@ -95,20 +95,20 @@ options:
     required: false
     type: str
     default: secret
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Loads secrets file into the vault of a cluster
   vault_load_secrets:
     values_secrets: ~/values-secret.yaml
-'''
+"""
 
 
 def parse_values(values_file):
-    '''
+    """
     Parses a values-secrets.yaml file (usually placed in ~)
     and returns a Python Obect with the parsed yaml.
 
@@ -118,25 +118,25 @@ def parse_values(values_file):
 
     Returns:
         secrets_yaml(obj): The python object containing the parsed yaml
-    '''
-    with open(values_file, 'r', encoding='utf-8') as file:
+    """
+    with open(values_file, "r", encoding="utf-8") as file:
         secrets_yaml = yaml.safe_load(file.read())
     return secrets_yaml
 
 
 def get_version(syaml):
-    '''
+    """
     Return the version: of the parsed yaml object. If it does not exist
     return 1.0
 
     Returns:
         ret(str): The version value in of the top-level 'version:' key
-    '''
-    return syaml.get('version', '1.0')
+    """
+    return syaml.get("version", "1.0")
 
 
 def run_command(command):
-    '''
+    """
     Runs a command on the host ansible is running on. A failing command
     will raise an exception in this function directly (due to check=True)
 
@@ -145,7 +145,7 @@ def run_command(command):
 
     Returns:
         ret(subprocess.CompletedProcess): The return value from run()
-    '''
+    """
     ret = subprocess.run(
         command,
         shell=True,
@@ -159,7 +159,7 @@ def run_command(command):
 
 
 def sanitize_values(module, syaml):
-    '''
+    """
     Sanitizes the secrets YAML object. If a specific secret key has
     s3.accessKey and s3.secretKey but not s3Secret, the latter will be
     generated as the base64 encoding of both s3.accessKey and s3.secretKey.
@@ -182,15 +182,15 @@ def sanitize_values(module, syaml):
 
     Returns:
         syaml(obj): The parsed yaml object sanitized
-    '''
-    if not ('secrets' in syaml or 'files' in syaml):
+    """
+    if not ("secrets" in syaml or "files" in syaml):
         module.fail_json(
             f"Values secrets file does not contain 'secrets' or"
             f"'files' keys: {syaml}"
         )
 
-    secrets = syaml.get('secrets', {})
-    files = syaml.get('files', {})
+    secrets = syaml.get("secrets", {})
+    files = syaml.get("files", {})
     if len(secrets) == 0 and len(files) == 0:
         module.fail_json(
             f"Neither 'secrets' nor 'files have any secrets to " f"be parsed: {syaml}"
@@ -212,19 +212,19 @@ def sanitize_values(module, syaml):
     # generate s3Secret so a user does not need to do it manually which tends to be error-prone
     for secret in secrets:
         tmp = secrets[secret]
-        if 's3.accessKey' in tmp and 's3.secretKey' in tmp and 's3Secret' not in tmp:
+        if "s3.accessKey" in tmp and "s3.secretKey" in tmp and "s3Secret" not in tmp:
             s3secret = (
                 f"s3.accessKey: {tmp['s3.accessKey']}\n"
                 f"s3.secretKey: {tmp['s3.secretKey']}"
             )
             s3secretb64 = base64.b64encode(s3secret.encode())
-            secrets[secret]['s3Secret'] = s3secretb64.decode("utf-8")
+            secrets[secret]["s3Secret"] = s3secretb64.decode("utf-8")
 
     return syaml
 
 
 def get_secrets_vault_paths(module, syaml, keyname):
-    '''
+    """
     Walks a secrets yaml object to look for all top-level keys that start with
     'keyname' and returns a list of tuples [(keyname1, path1), (keyname2, path2)...]
     where the path is the relative vault path
@@ -248,7 +248,7 @@ def get_secrets_vault_paths(module, syaml, keyname):
 
     Returns:
         keys_paths(list): List of tuples containing (keyname, relative-vault-path)
-    '''
+    """
     all_keys = syaml.keys()
     keys_paths = []
     for key in all_keys:
@@ -260,11 +260,11 @@ def get_secrets_vault_paths(module, syaml, keyname):
         # If there is no '.' after secrets or files, assume the secrets need to
         # go to the hub vault path
         if key == keyname:
-            keys_paths.append((key, 'hub'))
+            keys_paths.append((key, "hub"))
             continue
 
         # We are in the presence of either 'secrets.region-one' or 'files.cluster1' top-level keys
-        tmp = key.split('.')
+        tmp = key.split(".")
         if len(tmp) != 2:
             module.fail_json(f"values-secrets.yaml key is non-conformant: {key}")
 
@@ -278,7 +278,7 @@ def get_secrets_vault_paths(module, syaml, keyname):
 # https://github.com/kubernetes/kubernetes/issues/89899. Until those are solved
 # it makes little sense to invoke the APIs via the python wrappers
 def inject_secrets(module, syaml, namespace, pod, basepath):
-    '''
+    """
     Walks a secrets yaml object and injects all the secrets into the vault via 'oc exec' calls
 
     Parameters:
@@ -295,12 +295,12 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
 
     Returns:
         counter(int): The number of secrets injected
-    '''
+    """
     counter = 0
-    for i in get_secrets_vault_paths(module, syaml, 'secrets'):
+    for i in get_secrets_vault_paths(module, syaml, "secrets"):
         path = f"{basepath}/{i[1]}"
         for secret in syaml[i[0]]:
-            properties = ''
+            properties = ""
             for key, value in syaml[i[0]][secret].items():
                 properties += f"{key}='{value}' "
             properties = properties.rstrip()
@@ -311,7 +311,7 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
             run_command(cmd)
             counter += 1
 
-    for i in get_secrets_vault_paths(module, syaml, 'files'):
+    for i in get_secrets_vault_paths(module, syaml, "files"):
         path = f"{basepath}/{i[1]}"
         for filekey in syaml[i[0]]:
             file = os.path.expanduser(syaml[i[0]][filekey])
@@ -328,44 +328,44 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
 
 
 def run(module):
-    '''Main ansible module entry point'''
+    """Main ansible module entry point"""
     results = dict(changed=False)
 
     args = module.params
-    values_secrets = os.path.expanduser(args.get('values_secrets'))
-    basepath = args.get('basepath')
-    namespace = args.get('namespace')
-    pod = args.get('pod')
+    values_secrets = os.path.expanduser(args.get("values_secrets"))
+    basepath = args.get("basepath")
+    namespace = args.get("namespace")
+    pod = args.get("pod")
 
     if not os.path.exists(values_secrets):
-        results['failed'] = True
-        results['error'] = "Missing values-secrets.yaml file"
-        results['msg'] = f"Values secrets file does not exist: {values_secrets}"
+        results["failed"] = True
+        results["error"] = "Missing values-secrets.yaml file"
+        results["msg"] = f"Values secrets file does not exist: {values_secrets}"
         module.exit_json(**results)
 
     syaml = parse_values(values_secrets)
     version = get_version(syaml)
 
-    if version != '1.0':
+    if version != "1.0":
         module.fail_json(f"Version {version} is currently not supported")
 
     # In the future we can use the version field to manage different formats if needed
     secrets = sanitize_values(module, syaml)
     nr_secrets = inject_secrets(module, secrets, namespace, pod, basepath)
-    results['failed'] = False
-    results['changed'] = True
-    results['msg'] = f"{nr_secrets} secrets injected"
+    results["failed"] = False
+    results["changed"] = True
+    results["msg"] = f"{nr_secrets} secrets injected"
     module.exit_json(**results)
 
 
 def main():
-    '''Main entry point where the AnsibleModule class is instantiated'''
+    """Main entry point where the AnsibleModule class is instantiated"""
     module = AnsibleModule(
-        argument_spec=yaml.safe_load(DOCUMENTATION)['options'],
+        argument_spec=yaml.safe_load(DOCUMENTATION)["options"],
         supports_check_mode=False,
     )
     run(module)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
