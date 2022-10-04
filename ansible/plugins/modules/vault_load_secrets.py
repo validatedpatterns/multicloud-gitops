@@ -178,18 +178,18 @@ def sanitize_values(module, syaml):
         syaml(obj): The parsed yaml object sanitized
     '''
     if not ('secrets' in syaml or 'files' in syaml):
-        module.fail_json(f"Values secrets file does not contain 'secrets' or" \
+        module.fail_json(f"Values secrets file does not contain 'secrets' or"
                          f"'files' keys: {syaml}")
 
     secrets = syaml.get('secrets', {})
     files = syaml.get('files', {})
     if len(secrets) == 0 and len(files) == 0:
-        module.fail_json(f"Neither 'secrets' nor 'files have any secrets to " \
+        module.fail_json(f"Neither 'secrets' nor 'files have any secrets to "
                          f"be parsed: {syaml}")
 
     for secret in secrets:
         if not isinstance(secrets[secret], dict):
-            module.fail_json(f"Each key under 'secrets' needs to point to " \
+            module.fail_json(f"Each key under 'secrets' needs to point to "
                              f"a dictionary of key value pairs: {syaml}")
 
     for file in files:
@@ -259,6 +259,7 @@ def get_secrets_vault_paths(module, syaml, keyname):
 
     return keys_paths
 
+
 # NOTE(bandini): we shell out to oc exec it because of
 # https://github.com/ansible-collections/kubernetes.core/issues/506 and
 # https://github.com/kubernetes/kubernetes/issues/89899. Until those are solved
@@ -303,11 +304,11 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
                    f"'cat - > /tmp/vcontent'; "
                    f"oc exec -n {namespace} {pod} -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | "
                    f"vault kv put {path}/{filekey} b64content=- content=@/tmp/vcontent; "
-                   f"rm /tmp/vcontent'"
-                  )
+                   f"rm /tmp/vcontent'")
             run_command(cmd)
             counter += 1
     return counter
+
 
 def run(module):
     '''Main ansible module entry point'''
