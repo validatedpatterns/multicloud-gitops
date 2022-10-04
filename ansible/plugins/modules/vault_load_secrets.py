@@ -60,7 +60,7 @@ from ansible.module_utils.basic import AnsibleModule
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
-    'supported_by': 'community'
+    'supported_by': 'community',
 }
 
 DOCUMENTATION = '''
@@ -146,9 +146,15 @@ def run_command(command):
     Returns:
         ret(subprocess.CompletedProcess): The return value from run()
     '''
-    ret = subprocess.run(command, shell=True, env=os.environ.copy(),
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                         universal_newlines=True, check=True)
+    ret = subprocess.run(
+        command,
+        shell=True,
+        env=os.environ.copy(),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+        check=True,
+    )
     return ret
 
 
@@ -178,19 +184,24 @@ def sanitize_values(module, syaml):
         syaml(obj): The parsed yaml object sanitized
     '''
     if not ('secrets' in syaml or 'files' in syaml):
-        module.fail_json(f"Values secrets file does not contain 'secrets' or"
-                         f"'files' keys: {syaml}")
+        module.fail_json(
+            f"Values secrets file does not contain 'secrets' or"
+            f"'files' keys: {syaml}"
+        )
 
     secrets = syaml.get('secrets', {})
     files = syaml.get('files', {})
     if len(secrets) == 0 and len(files) == 0:
-        module.fail_json(f"Neither 'secrets' nor 'files have any secrets to "
-                         f"be parsed: {syaml}")
+        module.fail_json(
+            f"Neither 'secrets' nor 'files have any secrets to " f"be parsed: {syaml}"
+        )
 
     for secret in secrets:
         if not isinstance(secrets[secret], dict):
-            module.fail_json(f"Each key under 'secrets' needs to point to "
-                             f"a dictionary of key value pairs: {syaml}")
+            module.fail_json(
+                f"Each key under 'secrets' needs to point to "
+                f"a dictionary of key value pairs: {syaml}"
+            )
 
     for file in files:
         path = files[file]
@@ -202,8 +213,10 @@ def sanitize_values(module, syaml):
     for secret in secrets:
         tmp = secrets[secret]
         if 's3.accessKey' in tmp and 's3.secretKey' in tmp and 's3Secret' not in tmp:
-            s3secret = (f"s3.accessKey: {tmp['s3.accessKey']}\n"
-                        f"s3.secretKey: {tmp['s3.secretKey']}")
+            s3secret = (
+                f"s3.accessKey: {tmp['s3.accessKey']}\n"
+                f"s3.secretKey: {tmp['s3.secretKey']}"
+            )
             s3secretb64 = base64.b64encode(s3secret.encode())
             secrets[secret]['s3Secret'] = s3secretb64.decode("utf-8")
 
@@ -291,8 +304,10 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
             for key, value in syaml[i[0]][secret].items():
                 properties += f"{key}='{value}' "
             properties = properties.rstrip()
-            cmd = (f"oc exec -n {namespace} {pod} -i -- sh -c "
-                   f"\"vault kv put '{path}/{secret}' {properties}\"")
+            cmd = (
+                f"oc exec -n {namespace} {pod} -i -- sh -c "
+                f"\"vault kv put '{path}/{secret}' {properties}\""
+            )
             run_command(cmd)
             counter += 1
 
@@ -300,11 +315,13 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
         path = f"{basepath}/{i[1]}"
         for filekey in syaml[i[0]]:
             file = os.path.expanduser(syaml[i[0]][filekey])
-            cmd = (f"cat '{file}' | oc exec -n {namespace} {pod} -i -- sh -c "
-                   f"'cat - > /tmp/vcontent'; "
-                   f"oc exec -n {namespace} {pod} -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | "
-                   f"vault kv put {path}/{filekey} b64content=- content=@/tmp/vcontent; "
-                   f"rm /tmp/vcontent'")
+            cmd = (
+                f"cat '{file}' | oc exec -n {namespace} {pod} -i -- sh -c "
+                f"'cat - > /tmp/vcontent'; "
+                f"oc exec -n {namespace} {pod} -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | "
+                f"vault kv put {path}/{filekey} b64content=- content=@/tmp/vcontent; "
+                f"rm /tmp/vcontent'"
+            )
             run_command(cmd)
             counter += 1
     return counter
@@ -312,9 +329,7 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
 
 def run(module):
     '''Main ansible module entry point'''
-    results = dict(
-        changed=False
-    )
+    results = dict(changed=False)
 
     args = module.params
     values_secrets = os.path.expanduser(args.get('values_secrets'))
