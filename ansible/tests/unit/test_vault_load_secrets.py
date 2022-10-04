@@ -38,11 +38,13 @@ def set_module_args(args):
 
 class AnsibleExitJson(Exception):
     """Exception class to be raised by module.exit_json and caught by the test case"""
+
     pass
 
 
 class AnsibleFailJson(Exception):
     """Exception class to be raised by module.fail_json and caught by the test case"""
+
     pass
 
 
@@ -61,9 +63,9 @@ def fail_json(*args, **kwargs):
 
 class TestMyModule(unittest.TestCase):
     def setUp(self):
-        self.mock_module_helper = patch.multiple(basic.AnsibleModule,
-                                                 exit_json=exit_json,
-                                                 fail_json=fail_json)
+        self.mock_module_helper = patch.multiple(
+            basic.AnsibleModule, exit_json=exit_json, fail_json=fail_json
+        )
         self.mock_module_helper.start()
         self.addCleanup(self.mock_module_helper.stop)
 
@@ -74,21 +76,28 @@ class TestMyModule(unittest.TestCase):
 
     def test_module_fail_when_values_secret_not_existing(self):
         with self.assertRaises(AnsibleExitJson) as ansible_err:
-            set_module_args({
-                'values_secrets': "/tmp/nonexisting",
-            })
+            set_module_args(
+                {
+                    'values_secrets': "/tmp/nonexisting",
+                }
+            )
             vault_load_secrets.main()
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret['failed'], True)
         self.assertEqual(ret['error'], 'Missing values-secrets.yaml file')
-        self.assertEqual(ret['msg'], 'Values secrets file does not exist: /tmp/nonexisting')
+        self.assertEqual(
+            ret['msg'], 'Values secrets file does not exist: /tmp/nonexisting'
+        )
 
     def test_ensure_command_called(self):
-        set_module_args({
-            'values_secrets': os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                           'values-secret.yaml')
-        })
+        set_module_args(
+            {
+                'values_secrets': os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), 'values-secret.yaml'
+                )
+            }
+        )
 
         with patch.object(vault_load_secrets, 'run_command') as mock_run_command:
             stdout = 'configuration updated'
@@ -98,19 +107,39 @@ class TestMyModule(unittest.TestCase):
 
             with self.assertRaises(AnsibleExitJson) as result:
                 vault_load_secrets.main()
-            self.assertTrue(result.exception.args[0]['changed'])  # ensure result is changed
+            self.assertTrue(
+                result.exception.args[0]['changed']
+            )  # ensure result is changed
             assert mock_run_command.call_count == 9
 
         calls = [
-            call('oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/config-demo\' secret=\'demo123\'"'),
-            call('oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/googleapi\' key=\'lskdjflskjdflsdjflsdkjfldsjkfldsj\'"'),
-            call('oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/cluster_alejandro\' name=\'alejandro\' bearerToken=\'sha256~bumxi-012345678901233455675678678098-abcdef\'"'),
-            call('oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/test\' s3.accessKey=\'1234\' s3.secretKey=\'4321\' s3Secret=\'czMuYWNjZXNzS2V5OiAxMjM0CnMzLnNlY3JldEtleTogNDMyMQ==\'"'),
-            call('oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/test2\' s3.accessKey=\'accessKey\' s3.secretKey=\'secretKey\' s3Secret=\'fooo\'"'),
-            call('oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/test3\' s3.accessKey=\'aaaaa\' s3.secretKey=\'bbbbbbbb\' s3Secret=\'czMuYWNjZXNzS2V5OiBhYWFhYQpzMy5zZWNyZXRLZXk6IGJiYmJiYmJi\'"'),
-            call('oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/region-one/config-demo\' secret=\'region123\'"'),
-            call("cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/cluster_alejandro_ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'"),
-            call("cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/region-one/ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'")
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/config-demo\' secret=\'demo123\'"'
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/googleapi\' key=\'lskdjflskjdflsdjflsdkjfldsjkfldsj\'"'
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/cluster_alejandro\' name=\'alejandro\' bearerToken=\'sha256~bumxi-012345678901233455675678678098-abcdef\'"'
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/test\' s3.accessKey=\'1234\' s3.secretKey=\'4321\' s3Secret=\'czMuYWNjZXNzS2V5OiAxMjM0CnMzLnNlY3JldEtleTogNDMyMQ==\'"'
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/test2\' s3.accessKey=\'accessKey\' s3.secretKey=\'secretKey\' s3Secret=\'fooo\'"'
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/hub/test3\' s3.accessKey=\'aaaaa\' s3.secretKey=\'bbbbbbbb\' s3Secret=\'czMuYWNjZXNzS2V5OiBhYWFhYQpzMy5zZWNyZXRLZXk6IGJiYmJiYmJi\'"'
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv put \'secret/region-one/config-demo\' secret=\'region123\'"'
+            ),
+            call(
+                "cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/cluster_alejandro_ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'"
+            ),
+            call(
+                "cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/region-one/ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'"
+            ),
         ]
         mock_run_command.assert_has_calls(calls)
 
