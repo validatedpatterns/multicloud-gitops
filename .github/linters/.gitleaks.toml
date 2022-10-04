@@ -1,0 +1,8 @@
+[whitelist]
+# As of v4, gitleaks only matches against filename, not path in the
+# files directive.  Leaving content for backwards compatibility.
+files = [
+  "common/ansible/plugins/modules/*.py",
+  "common/ansible/tests/unit/test_*.py",
+  "common/ansible/tests/unit/*.yaml",
+]
