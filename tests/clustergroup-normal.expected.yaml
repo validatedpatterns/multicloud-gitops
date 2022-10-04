@@ -167,10 +167,6 @@ data:
           name: openshift-pipelines-operator-rh
       targetCluster: in-cluster
     enabled: all
-    files:
-      cluster_example_ca: /path/to/ca.file
-    files.region2:
-      testbar: ~/ca.crt
     global:
       clusterDomain: region.example.com
       git:
@@ -196,25 +192,8 @@ data:
     secretStore:
       kind: ClusterSecretStore
       name: vault-backend
-    secrets:
-      aws:
-        s3Secret: test-secret
-      cluster_example:
-        bearerToken: <bearer_token>
-        server: https://api.example.openshiftapps.com:6443
-      git:
-        token: test-git-token
-        username: test-user
-      imageregistry:
-        account: test-account
-        token: test-quay-token
-    secrets.region1:
-      test:
-        secret1: foo1
-        secret2: bar1
     secretsBase:
       key: secret/data/hub
-    version: 1
 ---
 # Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
