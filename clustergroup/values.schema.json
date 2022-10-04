@@ -1,0 +1,535 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/ValidatedPatterns",
+    "definitions": {
+        "ValidatedPatterns": {
+		    "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "enabled": {
+                    "type": "string",
+					"enum": ["all", "core", "plumbing"]
+                },
+                "secretStore": {
+                    "$ref": "#/definitions/SecretStore"
+                },
+                "main": {
+                    "$ref": "#/definitions/Main"
+                },
+                "global": {
+                    "$ref": "#/definitions/Global"
+                },
+                "clusterGroup": {
+                    "$ref": "#/definitions/ClusterGroup"
+                }
+            },
+            "required": [
+                "clusterGroup"
+            ],
+            "title": "ValidatedPatterns"
+        },
+        "SecretStore": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                }
+			},
+            "required": [
+              "name",
+			  "kind"
+			],
+            "title": "SecretsStore"
+        },
+        "GlobalGit": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "hostname": {
+                    "type": "string"
+                },
+                "account": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "dev_revision": {
+                    "type": "string"
+                }
+			},
+            "required": [
+                "hostname",
+                "account",
+				"email"
+            ],
+            "title": "GlobalGit"
+        },
+        "GitSecrets": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "username": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+			},
+            "required": [
+                "username",
+				"token"
+            ],
+            "title": "GitSecrets"
+        },
+        "Main": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "clusterGroupName": {
+                    "type": "string"
+                },
+                "hubClusterDomain": {
+                    "type": "string"
+                },
+                "localClusterDomain": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "clusterGroupName"
+            ],
+            "title": "Main"
+        },
+        "Global": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "pattern": {
+                    "type": "string"
+                },
+                "localClusterDomain": {
+                    "type": "string"
+                },
+                "targetRevision": {
+                    "type": "string"
+                },
+                "hubClusterDomain": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "repoURL": {
+                    "type": "string"
+                },
+                "git": {
+                    "$ref": "#/definitions/GlobalGit"
+                },
+                "options": {
+                    "$ref": "#/definitions/Options"
+                }
+            },
+            "required": [
+                "options",
+                "pattern"
+            ],
+            "title": "Global"
+        },
+        "Options": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "useCSV": {
+                    "type": "boolean"
+                },
+                "syncPolicy": {
+                    "type": "string"
+                },
+                "installPlanApproval": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "installPlanApproval",
+                "syncPolicy",
+                "useCSV"
+            ],
+            "title": "Options"
+        },
+        "ClusterGroup": {
+		    "type": "object",
+			"additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "targetCluster": {
+                    "type": "string"
+                },
+                "isHubCluster": {
+                    "type": "boolean"
+                },
+                "insecureUnsealVaultInsideCluster": {
+                    "type": "boolean"
+                },
+                "namespaces": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subscriptions": {
+                    "type": "object",
+                    "items": {
+                        "$ref": "#/definitions/Subscription"
+                    }
+                },
+                "projects": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "applications": {
+                    "type": "object",
+                    "items": {
+                        "$ref": "#/definitions/Application"
+                    }
+                },
+                "imperative": {
+                    "$ref": "#/definitions/Imperative"
+                },
+                "managedClusterGroups": {
+			        "anyOf": [
+			        { "type": "array" },
+			        { "type": "object" }
+			        ],
+                    "items": {
+                        "$ref": "#/definitions/ManagedClusterGroup"
+                    }
+                },
+                "externalClusters": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "applications",
+                "imperative",
+                "insecureUnsealVaultInsideCluster",
+                "isHubCluster",
+                "managedClusterGroups",
+                "name",
+                "namespaces",
+                "projects",
+                "subscriptions"
+            ],
+            "title": "ClusterGroup"
+        },
+        "Application": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "project": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "namespace",
+                "path",
+                "project"
+            ],
+            "title": "Application"
+        },
+        "Imperative": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "jobs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Job"
+                    }
+                },
+				"image": {
+					"type": "string",
+					"default": "registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest"
+                },
+				"namespace": {
+					"type": "string",
+					"default": "imperative",
+					"enum": ["imperative"]
+                },
+				"serviceAccountCreate": {
+                    "type": "boolean"
+                },
+				"valuesConfigMap": {
+					"type": "string"
+                },
+				"cronJobName": {
+					"type": "string"
+                },
+				"jobName": {
+					"type": "string"
+                },
+				"imagePullPolicy": {
+					"type": "string",
+					"default": "Always",
+					"enum": ["Always", "IfNotPresent", "Never"]
+                },
+				"activeDeadlineSeconds": {
+					"type": "integer",
+					"default": 3600
+                },
+				"schedule": {
+					"type": "string",
+					"default": "*/10 * * * *"
+                },
+				"insecureUnsealVaultInsideClusterSchedule": {
+					"type": "string",
+				    "default": "*/5 * * * *"
+                },
+				"verbosity": {
+					"type": "string",
+					"default": "",
+					"enum": ["","-v", "-vv", "-vvv", "-vvvv"]
+                },
+				"serviceAccountName": {
+					"type": "string"
+                },
+				"clusterRoleName": {
+					"type": "string"
+                },
+				"clusterRoleYaml": {
+					"type": "string"
+                },
+				"roleName": {
+					"type": "string"
+                },
+				"roleYaml": {
+					"type": "string"
+                }
+            },
+            "required": [
+                "jobs",
+                "valuesConfigMap",
+                "cronJobName",
+                "jobName",
+                "activeDeadlineSeconds",
+                "schedule"
+            ],
+            "title": "Imperative"
+        },
+        "Job": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "playbook": {
+                    "type": "string"
+                },
+                "timeout": {
+                    "type": "integer"
+                },
+                "verbosity": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "playbook"
+            ],
+            "title": "Job"
+        },
+        "ManagedClusterGroup": {
+			"type": "object",
+            "additionalProperties": false, 
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "targetRevision": {
+                    "type": "string"
+                },
+                "acmlabels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ACMLabels"
+                    }
+                },
+		        "hostedArgoSites": {
+                    "type": "array",
+		            "items": {
+                        "$ref": "#/definitions/HostedArgoSites"
+                    }
+                },
+		        "clusterPools": {
+                    "type": "object",
+		            "items": {
+                        "$ref": "#/definitions/ClusterPools"
+                    }
+                },
+                "helmOverrides": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/HelmOverride"
+                    }
+                }
+            },
+            "required": [
+            ],
+            "title": "ManagedClusterGroup"
+        },
+        "ClusterPools": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "size": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "openshiftVersion": {
+                    "type": "string"
+                },
+                "baseDomain": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "object",
+					"$ref": "#/definitions/ClusterPoolsPlatform"
+                },
+                "clusters": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "name",
+				"openshiftVersion",
+				"baseDomain",
+				"platform",
+				"clusters"
+            ],
+            "title": "ClusterPools"
+        },
+        "ClusterPoolsPlatform": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "baseDomainResourceGroupName": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "region"
+            ],
+            "title": "ClusterPoolsPlatform"
+        },
+        "HelmOverride": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "value"
+            ],
+            "title": "HelmOverride"
+        },
+        "ACMLabels": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "value"
+            ],
+            "title": "ACMLabels"
+        },
+        "Subscription": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "channel": {
+                    "type": "string"
+                },
+                "csv": {
+                    "type": "string"
+                },
+                "disabled": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "name",
+                "channel"
+            ],
+            "title": "Subscription"
+        },
+	    "HostedArgoSites": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+				"domain": {
+				    "type": "string"
+				},
+				"bearerKeyPath": {
+				    "type": "string"
+				},
+				"caKeyPath": {
+				    "type": "string"
+				}
+            },
+            "required": [
+                "name",
+				"domain"
+            ],
+            "title": "HostedArgoSites"
+        }
+    }
+}
