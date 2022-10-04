@@ -53,8 +53,8 @@ files.region2:
 import base64
 import os
 import subprocess
-import yaml
 
+import yaml
 from ansible.module_utils.basic import AnsibleModule
 
 ANSIBLE_METADATA = {

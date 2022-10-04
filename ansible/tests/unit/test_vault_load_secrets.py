@@ -21,8 +21,8 @@ import json
 import os
 import sys
 import unittest
+from unittest.mock import call, patch
 
-from unittest.mock import patch, call
 from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_bytes
 
@@ -98,7 +98,7 @@ class TestMyModule(unittest.TestCase):
 
             with self.assertRaises(AnsibleExitJson) as result:
                 vault_load_secrets.main()
-            self.assertTrue(result.exception.args[0]['changed']) # ensure result is changed
+            self.assertTrue(result.exception.args[0]['changed'])  # ensure result is changed
             assert mock_run_command.call_count == 9
 
         calls = [
@@ -113,6 +113,7 @@ class TestMyModule(unittest.TestCase):
             call("cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/region-one/ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'")
         ]
         mock_run_command.assert_has_calls(calls)
+
 
 if __name__ == '__main__':
     unittest.main()
