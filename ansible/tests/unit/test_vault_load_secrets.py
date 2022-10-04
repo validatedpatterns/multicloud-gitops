@@ -1,13 +1,32 @@
+# Copyright 2022 Red Hat, Inc.
+# All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+"""
+Simple module to test vault_load_secrets
+"""
+
 import json
 import os
 import sys
 import unittest
 
-sys.path.insert(1, './ansible/plugins/modules')
 from unittest.mock import patch, call
 from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_bytes
 
+sys.path.insert(1, './ansible/plugins/modules')
 import vault_load_secrets
 
 
@@ -40,22 +59,11 @@ def fail_json(*args, **kwargs):
     raise AnsibleFailJson(kwargs)
 
 
-def get_bin_path(self, arg, required=False):
-    """Mock AnsibleModule.get_bin_path"""
-    if arg.endswith('my_command'):
-        return '/usr/bin/my_command'
-    else:
-        if required:
-            fail_json(msg='%r not found !' % arg)
-
-
 class TestMyModule(unittest.TestCase):
-
     def setUp(self):
         self.mock_module_helper = patch.multiple(basic.AnsibleModule,
                                                  exit_json=exit_json,
-                                                 fail_json=fail_json,
-                                                 get_bin_path=get_bin_path)
+                                                 fail_json=fail_json)
         self.mock_module_helper.start()
         self.addCleanup(self.mock_module_helper.stop)
 
@@ -78,14 +86,15 @@ class TestMyModule(unittest.TestCase):
 
     def test_ensure_command_called(self):
         set_module_args({
-            'values_secrets': os.path.join(os.path.dirname(os.path.abspath(__file__)), 'values-secret.yaml')
+            'values_secrets': os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                           'values-secret.yaml')
         })
 
         with patch.object(vault_load_secrets, 'run_command') as mock_run_command:
             stdout = 'configuration updated'
             stderr = ''
-            rc = 0
-            mock_run_command.return_value = rc, stdout, stderr  # successful execution
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
 
             with self.assertRaises(AnsibleExitJson) as result:
                 vault_load_secrets.main()

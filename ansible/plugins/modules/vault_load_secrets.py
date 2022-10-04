@@ -106,6 +106,7 @@ EXAMPLES = '''
     values_secrets: ~/values-secret.yaml
 '''
 
+
 def parse_values(values_file):
     '''
     Parses a values-secrets.yaml file (usually placed in ~)
@@ -122,6 +123,7 @@ def parse_values(values_file):
         secrets_yaml = yaml.safe_load(file.read())
     return secrets_yaml
 
+
 def get_version(syaml):
     '''
     Return the version: of the parsed yaml object. If it does not exist
@@ -131,6 +133,7 @@ def get_version(syaml):
         ret(str): The version value in of the top-level 'version:' key
     '''
     return syaml.get('version', '1.0')
+
 
 def run_command(command):
     '''
@@ -144,9 +147,10 @@ def run_command(command):
         ret(subprocess.CompletedProcess): The return value from run()
     '''
     ret = subprocess.run(command, shell=True, env=os.environ.copy(),
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                        universal_newlines=True, check=True)
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         universal_newlines=True, check=True)
     return ret
+
 
 def sanitize_values(module, syaml):
     '''
@@ -205,6 +209,7 @@ def sanitize_values(module, syaml):
 
     return syaml
 
+
 def get_secrets_vault_paths(module, syaml, keyname):
     '''
     Walks a secrets yaml object to look for all top-level keys that start with
@@ -254,9 +259,10 @@ def get_secrets_vault_paths(module, syaml, keyname):
 
     return keys_paths
 
-# NOTE(bandini): we shell out to oc exec it because of https://github.com/ansible-collections/kubernetes.core/issues/506
-# and https://github.com/kubernetes/kubernetes/issues/89899. Until those are solved it makes little sense
-# to invoke the APIs via the python wrappers
+# NOTE(bandini): we shell out to oc exec it because of
+# https://github.com/ansible-collections/kubernetes.core/issues/506 and
+# https://github.com/kubernetes/kubernetes/issues/89899. Until those are solved
+# it makes little sense to invoke the APIs via the python wrappers
 def inject_secrets(module, syaml, namespace, pod, basepath):
     '''
     Walks a secrets yaml object and injects all the secrets into the vault via 'oc exec' calls
