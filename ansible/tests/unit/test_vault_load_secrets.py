@@ -3,7 +3,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(1, './ansible/ansible_plugins/modules')
+sys.path.insert(1, './ansible/plugins/modules')
 from unittest.mock import patch, call
 from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_bytes
