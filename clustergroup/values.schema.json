@@ -112,6 +112,9 @@
                 "pattern": {
                     "type": "string"
                 },
+                "clusterDomain": {
+                    "type": "string"
+                },
                 "localClusterDomain": {
                     "type": "string"
                 },
@@ -219,7 +222,6 @@
             },
             "required": [
                 "applications",
-                "imperative",
                 "insecureUnsealVaultInsideCluster",
                 "isHubCluster",
                 "managedClusterGroups",
@@ -325,12 +327,7 @@
                 }
             },
             "required": [
-                "jobs",
-                "valuesConfigMap",
-                "cronJobName",
-                "jobName",
-                "activeDeadlineSeconds",
-                "schedule"
+                "jobs"
             ],
             "title": "Imperative"
         },

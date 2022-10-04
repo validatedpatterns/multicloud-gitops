@@ -1,90 +1,125 @@
 global:
-  pattern: common
-  targetRevision: main
+  pattern: example-pattern
   options:
-    useCSV: True
+    useCSV: False
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
-enabled: "all"
+enabled: all
 
-# Note that sometimes changing helm values might require a hard refresh (https://github.com/helm/helm/issues/3486)
 clusterGroup:
   name: example
+  insecureUnsealVaultInsideCluster: true
   isHubCluster: true
-  targetCluster: in-cluster
-  # Note: setting this to true stores the vault unseal keys inside a cluster secret and
-  # is fundamentally insecure
-  insecureUnsealVaultInsideCluster: false
+
+  namespaces:
+  - open-cluster-management
+  - application-ci
+
+  subscriptions:
+    acm:
+      name: advanced-cluster-management
+      namespace: open-cluster-management
+      channel: release-2.4
+      csv: advanced-cluster-management.v2.4.1
+
+    odh:
+      name: opendatahub-operator
+      source: community-operators
+      csv: opendatahub-operator.v1.1.0
+      disabled: true
+
+    pipelines:
+      name: openshift-pipelines-operator-rh
+      csv: redhat-openshift-pipelines.v1.5.2
+
+  projects:
+  - datacenter
+
+  applications:
+    acm:
+      name: acm
+      namespace: open-cluster-management
+      project: datacenter
+      path: common/acm
+      ignoreDifferences:
+      - group: internal.open-cluster-management.io
+        kind: ManagedClusterInfo
+        jsonPointers:
+        - /spec/loggingCA
+    pipe:
+      name: pipelines
+      namespace: application-ci
+      project: datacenter
+      path: charts/datacenter/pipelines
 
   imperative:
-    jobs: []
-    # This image contains ansible + kubernetes.core by default and is used to run the jobs
-    image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
-    namespace: "imperative"
-    # configmap name in the namespace that will contain all helm values
-    valuesConfigMap: "helm-values-configmap"
-    cronJobName: "imperative-cronjob"
-    jobName: "imperative-job"
-    imagePullPolicy: Always
-    # This is the maximum timeout of all the jobs (1h)
-    activeDeadlineSeconds: 3600
-    # By default we run this every 10minutes
-    schedule: "*/10 * * * *"
-    # Schedule used to trigger the vault unsealing (if explicitely enabled)
-    # Set to run every 5 minutes in order for load-secrets to succeed within
-    # a reasonable amount of time (it waits up to 15 mins)
-    insecureUnsealVaultInsideClusterSchedule: "*/5 * * * *"
-    # Increase ansible verbosity with '-v' or '-vv..'
-    verbosity: ""
-    serviceAccountCreate: true
-    # service account to be used to run the cron pods
-    serviceAccountName: imperative-sa
-    clusterRoleName: imperative-cluster-role
-    clusterRoleYaml: ""
-    roleName: imperative-role
-    roleYaml: ""
+    namespace: imperative
+    # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
+    # The default schedule is every 10 minutes: imperative.schedule
+    # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
+    # imagePullPolicy is set to always: imperative.imagePullPolicy
+    # For additional overrides that apply to the jobs, please refer to
+    # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
+    jobs:
+    - name: regional-ca
+      # ansible playbook to be run
+      playbook: ansible/playbooks/on-hub-get-regional-ca.yml
+      # per playbook timeout in seconds
+      timeout: 234
+      # verbosity: "-v"
 
-secretStore:
-  name: vault-backend
-  kind: ClusterSecretStore
-
-# Depends on the value of 'vault_hub' ansible variable used 
-# during the installation
-secretsBase:
-  key: secret/data/hub
-
-#  managedClusterGroups:
-#  - name: factory
-#    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
-#    # Location of values-global.yaml, values-{name}.yaml, values-{app}.yaml
-#    targetRevision: main
-#    path: applications/factory
-#    helmOverrides:
-#    - name: clusterGroup.isHubCluster
-#      value: false
-#    clusterSelector:
-#      matchExpressions:
-#      - key: vendor
-#        operator: In
-#        values:
-#          - OpenShift
-#
-#  namespaces:
-#  - open-cluster-management
-#
-#  subscriptions:
-#  - name: advanced-cluster-management
-#    namespace: open-cluster-management
-#    source: redhat-operators
-#    channel: release-2.3
-#    csv: v2.3.2
-#
-#  projects:
-#  - datacenter
-#
-#  applications:
-#  - name: acm
-#    namespace: default
-#    project: datacenter
-#    path: applications/acm
+  managedClusterGroups:
+  - name: acm-edge
+    # Optional - Point to a different repo
+    # repoURL: https://github.com/hybrid-cloud-patterns/mySite.git
+    # Must contain values-{clustergroupname}.yaml at the top level
+    targetRevision: main
+    helmOverrides:
+    # Values must be strings!
+    - name: clusterGroup.isHubCluster
+      value: "false"
+    acmlabels:
+    - name: clusterGroup
+      value: acm-region
+  - name: acm-provision-edge
+    targetRevision: main
+    helmOverrides:
+    - name: clusterGroup.isHubCluster
+      value: "false"
+    clusterPools:
+      exampleAWSPool:
+        size: 3
+        name: aws-ap
+        openshiftVersion: 4.10.18
+        baseDomain: blueprints.rhecoeng.com
+        platform:
+          aws:
+            region: ap-southeast-2
+        clusters:
+        - One
+      exampleAzurePool:
+        name: azure-us
+        openshiftVersion: 4.10.18
+        baseDomain: blueprints.rhecoeng.com
+        platform:
+          azure:
+            baseDomainResourceGroupName: dojo-dns-zones
+            region: eastus
+        clusters:
+        - Two
+        - Three
+    acmlabels:
+    - name: clusterGroup
+      value: region
+  - name: argo-edge
+    hostedArgoSites:
+    - name: perth
+      domain: perth1.beekhof.net
+      bearerKeyPath: secret/data/hub/cluster_perth
+      caKeyPath: secret/data/hub/cluster_perth_ca
+    - name: sydney
+      domain: syd.beekhof.net
+    helmOverrides:
+    - name: clusterGroup.isHubCluster
+      value: "false"
