@@ -24,7 +24,6 @@ podman run -it \
 	--security-opt label=disable \
 	-e KUBECONFIG="${KUBECONFIG}" \
 	${SSH_SOCK_MOUNTS} \
-	-e GIT_SSH_COMMAND="ssh -o IgnoreUnknown=pubkeyacceptedalgorithms" \
 	-v ${HOME}:/home/runner \
 	-v ${HOME}:${HOME} \
 	-v ${HOME}:/root \

@@ -121,6 +121,8 @@ def parse_values(values_file):
     """
     with open(values_file, "r", encoding="utf-8") as file:
         secrets_yaml = yaml.safe_load(file.read())
+    if secrets_yaml is None:
+        return {}
     return secrets_yaml
 
 
@@ -190,7 +192,14 @@ def sanitize_values(module, syaml):
         )
 
     secrets = syaml.get("secrets", {})
+    # We need to explicitely check for None because the file might contain the
+    # top-level 'secrets:' or 'files:' key but have nothing else under it which will
+    # return None and not {}
+    if secrets is None:
+        secrets = {}
     files = syaml.get("files", {})
+    if files is None:
+        files = {}
     if len(secrets) == 0 and len(files) == 0:
         module.fail_json(
             f"Neither 'secrets' nor 'files have any secrets to " f"be parsed: {syaml}"
@@ -205,7 +214,7 @@ def sanitize_values(module, syaml):
 
     for file in files:
         path = files[file]
-        if not os.path.isfile(path):
+        if not os.path.isfile(os.path.expanduser(path)):
             module.fail_json(f"File {path} does not exist")
 
     # If s3Secret key does not exist but s3.accessKey and s3.secretKey do exist
@@ -299,7 +308,7 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
     counter = 0
     for i in get_secrets_vault_paths(module, syaml, "secrets"):
         path = f"{basepath}/{i[1]}"
-        for secret in syaml[i[0]]:
+        for secret in syaml[i[0]] or []:
             properties = ""
             for key, value in syaml[i[0]][secret].items():
                 properties += f"{key}='{value}' "
@@ -313,7 +322,7 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
 
     for i in get_secrets_vault_paths(module, syaml, "files"):
         path = f"{basepath}/{i[1]}"
-        for filekey in syaml[i[0]]:
+        for filekey in syaml[i[0]] or []:
             file = os.path.expanduser(syaml[i[0]][filekey])
             cmd = (
                 f"cat '{file}' | oc exec -n {namespace} {pod} -i -- sh -c "
