@@ -121,7 +121,7 @@ def parse_values(values_file):
     """
     with open(values_file, "r", encoding="utf-8") as file:
         secrets_yaml = yaml.safe_load(file.read())
-    if secrets_yaml == None:
+    if secrets_yaml is None:
         return {}
     return secrets_yaml
 
@@ -195,10 +195,10 @@ def sanitize_values(module, syaml):
     # We need to explicitely check for None because the file might contain the
     # top-level 'secrets:' or 'files:' key but have nothing else under it which will
     # return None and not {}
-    if secrets == None:
+    if secrets is None:
         secrets = {}
     files = syaml.get("files", {})
-    if files == None:
+    if files is None:
         files = {}
     if len(secrets) == 0 and len(files) == 0:
         module.fail_json(

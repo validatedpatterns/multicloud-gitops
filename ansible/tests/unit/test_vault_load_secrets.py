@@ -94,7 +94,8 @@ class TestMyModule(unittest.TestCase):
         set_module_args(
             {
                 "values_secrets": os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "values-secret-empty-files.yaml"
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "values-secret-empty-files.yaml",
                 )
             }
         )
@@ -127,7 +128,8 @@ class TestMyModule(unittest.TestCase):
             set_module_args(
                 {
                     "values_secrets": os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)), "values-secret-broken1.yaml"
+                        os.path.dirname(os.path.abspath(__file__)),
+                        "values-secret-broken1.yaml",
                     )
                 }
             )
@@ -141,7 +143,8 @@ class TestMyModule(unittest.TestCase):
             set_module_args(
                 {
                     "values_secrets": os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)), "values-secret-broken2.yaml"
+                        os.path.dirname(os.path.abspath(__file__)),
+                        "values-secret-broken2.yaml",
                     )
                 }
             )
@@ -154,7 +157,8 @@ class TestMyModule(unittest.TestCase):
         set_module_args(
             {
                 "values_secrets": os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "values-secret-empty-secrets.yaml"
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "values-secret-empty-secrets.yaml",
                 )
             }
         )
@@ -178,6 +182,7 @@ class TestMyModule(unittest.TestCase):
             ),
         ]
         mock_run_command.assert_has_calls(calls)
+
     def test_ensure_command_called(self):
         set_module_args(
             {
