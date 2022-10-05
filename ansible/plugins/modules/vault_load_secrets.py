@@ -192,7 +192,14 @@ def sanitize_values(module, syaml):
         )
 
     secrets = syaml.get("secrets", {})
+    # We need to explicitely check for None because the file might contain the
+    # top-level 'secrets:' or 'files:' key but have nothing else under it which will
+    # return None and not {}
+    if secrets == None:
+        secrets = {}
     files = syaml.get("files", {})
+    if files == None:
+        files = {}
     if len(secrets) == 0 and len(files) == 0:
         module.fail_json(
             f"Neither 'secrets' nor 'files have any secrets to " f"be parsed: {syaml}"
@@ -301,7 +308,7 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
     counter = 0
     for i in get_secrets_vault_paths(module, syaml, "secrets"):
         path = f"{basepath}/{i[1]}"
-        for secret in syaml[i[0]]:
+        for secret in syaml[i[0]] or []:
             properties = ""
             for key, value in syaml[i[0]][secret].items():
                 properties += f"{key}='{value}' "
@@ -315,7 +322,7 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
 
     for i in get_secrets_vault_paths(module, syaml, "files"):
         path = f"{basepath}/{i[1]}"
-        for filekey in syaml[i[0]]:
+        for filekey in syaml[i[0]] or []:
             file = os.path.expanduser(syaml[i[0]][filekey])
             cmd = (
                 f"cat '{file}' | oc exec -n {namespace} {pod} -i -- sh -c "
