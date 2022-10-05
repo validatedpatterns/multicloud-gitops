@@ -121,6 +121,8 @@ def parse_values(values_file):
     """
     with open(values_file, "r", encoding="utf-8") as file:
         secrets_yaml = yaml.safe_load(file.read())
+    if secrets_yaml == None:
+        return {}
     return secrets_yaml
 
 
