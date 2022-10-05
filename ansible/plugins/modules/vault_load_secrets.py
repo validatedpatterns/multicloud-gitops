@@ -214,7 +214,7 @@ def sanitize_values(module, syaml):
 
     for file in files:
         path = files[file]
-        if not os.path.isfile(path):
+        if not os.path.isfile(os.path.expanduser(path)):
             module.fail_json(f"File {path} does not exist")
 
     # If s3Secret key does not exist but s3.accessKey and s3.secretKey do exist
