@@ -90,6 +90,99 @@ class TestMyModule(unittest.TestCase):
             ret["msg"], "Values secrets file does not exist: /tmp/nonexisting"
         )
 
+    def test_ensure_empty_files_but_not_secrets_is_ok(self):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "values-secret-empty-files.yaml",
+                )
+            }
+        )
+
+        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 2
+
+        calls = [
+            call(
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/config-demo' secret='VALUE'\""  # noqa: E501
+            ),
+            call(
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/aws' access_key_id='VALUE' secret_access_key='VALUE'\""  # noqa: E501
+            ),
+        ]
+        mock_run_command.assert_has_calls(calls)
+
+    def test_ensure_broken1_file_fails(self):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        os.path.dirname(os.path.abspath(__file__)),
+                        "values-secret-broken1.yaml",
+                    )
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+
+    def test_ensure_broken2_file_fails(self):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        os.path.dirname(os.path.abspath(__file__)),
+                        "values-secret-broken2.yaml",
+                    )
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+
+    def test_ensure_empty_secrets_but_not_files_is_ok(self):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "values-secret-empty-secrets.yaml",
+                )
+            }
+        )
+
+        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 1
+
+        calls = [
+            call(
+                "cat '/home/michele/.ssh/id_rsa.pub' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/publickey b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
+            ),
+        ]
+        mock_run_command.assert_has_calls(calls)
+
     def test_ensure_command_called(self):
         set_module_args(
             {
