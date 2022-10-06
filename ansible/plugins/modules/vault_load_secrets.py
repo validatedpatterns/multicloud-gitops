@@ -206,10 +206,7 @@ def sanitize_values(module, syaml):
         )
 
     if isinstance(secrets, list) or isinstance(files, list):
-        module.fail_json(
-            f"Neither 'secrets' nor 'files can be lists: {syaml}"
-        )
-
+        module.fail_json(f"Neither 'secrets' nor 'files can be lists: {syaml}")
 
     for secret in secrets:
         if not isinstance(secrets[secret], dict):
