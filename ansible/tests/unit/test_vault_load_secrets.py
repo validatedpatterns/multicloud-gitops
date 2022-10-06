@@ -68,6 +68,7 @@ class TestMyModule(unittest.TestCase):
         )
         self.mock_module_helper.start()
         self.addCleanup(self.mock_module_helper.stop)
+        self.testdir = os.path.dirname(os.path.abspath(__file__))
 
     def test_module_fail_when_required_args_missing(self):
         with self.assertRaises(AnsibleFailJson):
@@ -94,7 +95,7 @@ class TestMyModule(unittest.TestCase):
         set_module_args(
             {
                 "values_secrets": os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
+                    self.testdir,
                     "values-secret-empty-files.yaml",
                 )
             }
@@ -123,41 +124,24 @@ class TestMyModule(unittest.TestCase):
         ]
         mock_run_command.assert_has_calls(calls)
 
-    def test_ensure_broken1_file_fails(self):
-        with self.assertRaises(AnsibleFailJson) as ansible_err:
-            set_module_args(
-                {
-                    "values_secrets": os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)),
-                        "values-secret-broken1.yaml",
-                    )
-                }
-            )
-            vault_load_secrets.main()
+    def test_ensure_broken_files_fail(self):
+        for i in (
+            "values-secret-broken1.yaml",
+            "values-secret-broken2.yaml",
+            "values-secret-broken3.yaml",
+        ):
+            with self.assertRaises(AnsibleFailJson) as ansible_err:
+                set_module_args({"values_secrets": os.path.join(self.testdir, i)})
+                vault_load_secrets.main()
 
-        ret = ansible_err.exception.args[0]
-        self.assertEqual(ret["failed"], True)
-
-    def test_ensure_broken2_file_fails(self):
-        with self.assertRaises(AnsibleFailJson) as ansible_err:
-            set_module_args(
-                {
-                    "values_secrets": os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)),
-                        "values-secret-broken2.yaml",
-                    )
-                }
-            )
-            vault_load_secrets.main()
-
-        ret = ansible_err.exception.args[0]
-        self.assertEqual(ret["failed"], True)
+            ret = ansible_err.exception.args[0]
+            self.assertEqual(ret["failed"], True)
 
     def test_ensure_empty_secrets_but_not_files_is_ok(self):
         set_module_args(
             {
                 "values_secrets": os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
+                    self.testdir,
                     "values-secret-empty-secrets.yaml",
                 )
             }
@@ -185,11 +169,7 @@ class TestMyModule(unittest.TestCase):
 
     def test_ensure_command_called(self):
         set_module_args(
-            {
-                "values_secrets": os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "values-secret.yaml"
-                )
-            }
+            {"values_secrets": os.path.join(self.testdir, "values-secret.yaml")}
         )
 
         with patch.object(vault_load_secrets, "run_command") as mock_run_command:
