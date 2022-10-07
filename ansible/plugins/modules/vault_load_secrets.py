@@ -51,9 +51,9 @@ files.region2:
 """
 
 import base64
-from collections.abc import MutableMapping
 import os
 import subprocess
+from collections.abc import MutableMapping
 
 import yaml
 from ansible.module_utils.basic import AnsibleModule

@@ -6,7 +6,7 @@ secrets:
     secret: VALUE
 
   # Required for automated spoke deployment
-  #aws:
+  # aws:
   #    access_key_id: VALUE
   #    secret_access_key: VALUE
 

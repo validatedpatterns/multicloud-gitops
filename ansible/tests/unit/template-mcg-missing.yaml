@@ -1,5 +1,4 @@
 ---
-# This template file 
 secrets:
   # NEVER COMMIT THESE VALUES TO GIT
   config-demo:
@@ -8,7 +7,7 @@ secrets:
     foo: bar
 
   # Required for automated spoke deployment
-  #aws:
+  # aws:
   #    access_key_id: VALUE
   #    secret_access_key: VALUE
 
