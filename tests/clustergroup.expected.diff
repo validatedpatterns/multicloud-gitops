@@ -134,6 +134,7 @@
 +        hostname: github.com
 +      hubClusterDomain: apps.hub.example.com
 +      localClusterDomain: apps.region.example.com
++      multiClusterTarget: all
 +      namespace: pattern-namespace
        options:
          installPlanApproval: Automatic
@@ -756,7 +757,7 @@
  ---
  # Source: pattern-clustergroup/templates/imperative/role.yaml
  apiVersion: rbac.authorization.k8s.io/v1
-@@ -306,11 +321,11 @@
+@@ -306,11 +322,11 @@
                command:
                - 'sh'
                - '-c'
@@ -770,7 +771,7 @@
                image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
                imagePullPolicy: Always
                env:
-@@ -325,7 +340,7 @@
+@@ -325,7 +341,7 @@
                  - ansible-playbook
                  - -e
                  - "@/values/values.yaml"
@@ -779,7 +780,7 @@
                volumeMounts:                
                  - name: git
                    mountPath: "/git"
-@@ -380,7 +395,7 @@
+@@ -380,7 +396,7 @@
                command:
                - 'sh'
                - '-c'
@@ -788,7 +789,7 @@
                volumeMounts:
                - name: git
                  mountPath: "/git"
-@@ -457,7 +472,7 @@
+@@ -457,7 +473,7 @@
  kind: AppProject
  metadata:
    name: datacenter
@@ -797,7 +798,7 @@
  spec:
    description: "Pattern datacenter"
    destinations:
-@@ -478,7 +493,7 @@
+@@ -478,7 +494,7 @@
  kind: Application
  metadata:
    name: acm
@@ -806,7 +807,7 @@
    finalizers:
    - resources-finalizer.argocd.argoproj.io/foreground
  spec:
-@@ -487,7 +502,7 @@
+@@ -487,7 +503,7 @@
      namespace: open-cluster-management
    project: datacenter
    source:
@@ -815,7 +816,7 @@
      targetRevision: 
      path: common/acm
      helm:
-@@ -504,13 +519,13 @@
+@@ -504,13 +520,13 @@
          - name: global.namespace
            value: $ARGOCD_APP_NAMESPACE
          - name: global.pattern
@@ -833,7 +834,7 @@
    ignoreDifferences: [
    {
      "group": "internal.open-cluster-management.io",
-@@ -529,7 +544,7 @@
+@@ -529,7 +545,7 @@
  kind: Application
  metadata:
    name: pipelines
@@ -842,7 +843,7 @@
    finalizers:
    - resources-finalizer.argocd.argoproj.io/foreground
  spec:
-@@ -538,7 +553,7 @@
+@@ -538,7 +554,7 @@
      namespace: application-ci
    project: datacenter
    source:
@@ -851,7 +852,7 @@
      targetRevision: 
      path: charts/datacenter/pipelines
      helm:
-@@ -555,13 +570,13 @@
+@@ -555,13 +571,13 @@
          - name: global.namespace
            value: $ARGOCD_APP_NAMESPACE
          - name: global.pattern
@@ -869,7 +870,7 @@
    syncPolicy:
      automated: {}
      #  selfHeal: true
-@@ -570,14 +585,14 @@
+@@ -570,14 +586,14 @@
  apiVersion: argoproj.io/v1alpha1
 @@ -65,7 +850,7 @@
    # Changing the name affects the ClusterRoleBinding, the generated secret,

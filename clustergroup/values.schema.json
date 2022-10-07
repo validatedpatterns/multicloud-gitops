@@ -8,6 +8,7 @@
             "properties": {
                 "enabled": {
                     "type": "string",
+					"description": "",
 					"enum": ["all", "core", "plumbing"]
                 },
                 "secretStore": {
@@ -107,8 +108,11 @@
         },
         "Global": {
             "type": "object",
-            "additionalProperties": false,
+            "additionalProperties": true,
             "properties": {
+                "useCSV": {
+                    "type": "boolean"
+                },
                 "pattern": {
                     "type": "string"
                 },
@@ -201,7 +205,7 @@
                 "applications": {
                     "type": "object",
                     "items": {
-                        "$ref": "#/definitions/Application"
+                        "$ref": "#/definitions/Applications"
                     }
                 },
                 "imperative": {
@@ -232,12 +236,60 @@
             ],
             "title": "ClusterGroup"
         },
-        "Application": {
+        "Applications": {
             "type": "object",
             "additionalProperties": true,
             "properties": {
                 "name": {
                     "type": "string"
+                },
+                "repoURL": {
+                    "type": "string"
+                },
+                "targetRevision": {
+                    "type": "string"
+                },
+                "chart": {
+                    "type": "string"
+                },
+                "kustomize": {
+                    "type": "boolean"
+                },
+                "plugin": {
+                    "type": "object"
+                },
+                "extraValueFiles": {
+                    "type": "array"
+                },
+                "extraHubClusterDomainFields": {
+                    "type": "array"
+                },
+                "extraLocalClusterDomainFields": {
+                    "type": "array"
+                },
+                "extraRepoURLFields": {
+                    "type": "array"
+                },
+                "extraTargetRevisionFields": {
+                    "type": "array"
+                },
+                "extraNamespaceFields": {
+                    "type": "array"
+                },
+                "extraPatternNameFields": {
+                    "type": "array"
+                },
+                "overrides": {
+                    "type": "object"
+                },
+                "fileParameters": {
+                    "type": "array"
+                },
+                "ignoreDifferences": {
+                    "type": "array"
+                },
+                "syncPolicy": {
+                    "type": "object"
                 },
                 "namespace": {
                     "type": "string"
@@ -255,7 +307,7 @@
                 "path",
                 "project"
             ],
-            "title": "Application"
+            "title": "Applications"
         },
         "Imperative": {
             "type": "object",
@@ -483,7 +535,13 @@
                 "name": {
                     "type": "string"
                 },
+                "namespaces": {
+                    "type": "array"
+                },
                 "namespace": {
+                    "type": "string"
+                },
+                "sourceNamespace": {
                     "type": "string"
                 },
                 "source": {
@@ -495,15 +553,39 @@
                 "csv": {
                     "type": "string"
                 },
+                "installPlanApproval": {
+                    "type": "string",
+					"enum": ["Manual", "Automatic"]
+                },
+                "config": {
+				    "type": "object",
+                    "$ref": "#/definitions/SubscriptionsConfigEnv"
+                },
                 "disabled": {
                     "type": "boolean"
                 }
             },
             "required": [
-                "name",
-                "channel"
+                "name"
             ],
             "title": "Subscription"
+        },
+        "SubscriptionsConfigEnv": {
+            "type": "array",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+				"value"
+            ],
+            "title": "SubscriptionsConfigEnv"
         },
 	    "HostedArgoSites": {
             "type": "object",

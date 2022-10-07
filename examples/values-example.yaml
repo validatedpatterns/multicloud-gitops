@@ -3,8 +3,9 @@ global:
     useCSV: False
     syncPolicy: Automatic
     installPlanApproval: Automatic
+  multiClusterTarget: all
 
-enabled: all
+#enabled: all
 
 clusterGroup:
   name: example
