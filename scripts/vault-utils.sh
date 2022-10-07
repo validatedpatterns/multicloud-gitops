@@ -7,8 +7,9 @@ get_abs_filename() {
 }
 
 SCRIPT=$(get_abs_filename "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
-COMMONPATH=$(dirname "$SCRIPTPATH")
+SCRIPTPATH=$(dirname "${SCRIPT}")
+COMMONPATH=$(dirname "${SCRIPTPATH}")
+PATTERNPATH=$(dirname "${COMMONPATH}")
 ANSIBLEPATH="$(dirname ${SCRIPTPATH})/ansible"
 PLAYBOOKPATH="${ANSIBLEPATH}/playbooks"
 export ANSIBLE_CONFIG="${ANSIBLEPATH}/ansible.cfg"
@@ -27,4 +28,4 @@ if [ -z ${TASK} ]; then
 	exit 1
 fi
 
-ansible-playbook -t "${TASK}" -e output_file="${OUTFILE}" "${PLAYBOOKPATH}/vault/vault.yaml"
+ansible-playbook -t "${TASK}" -e pattern_dir="${PATTERNPATH}" -e output_file="${OUTFILE}" "${PLAYBOOKPATH}/vault/vault.yaml"
