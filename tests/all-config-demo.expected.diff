@@ -1,0 +1,13 @@
+--- tests/all-config-demo-naked.expected.yaml
++++ tests/all-config-demo-normal.expected.yaml
+@@ -23,8 +23,8 @@
+         </head>
+           <body>
+             <h1>
+-            Hub Cluster domain is 'hub.example.com' <br>
+-            Pod is running on Local Cluster Domain 'region-one.example.com' <br>
++            Hub Cluster domain is 'apps.hub.example.com' <br>
++            Pod is running on Local Cluster Domain 'apps.region.example.com' <br>
+             </h1>
+             <h2>
+             The secret is <a href="/secret/secret">secret</a>

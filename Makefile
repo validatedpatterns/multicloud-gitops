@@ -9,14 +9,20 @@ help:
 %:
 	make -f common/Makefile $*
 
-install: operator-deploy ## installs the pattern, inits the vault and loads the secrets
+install: operator-deploy post-install ## installs the pattern, inits the vault and loads the secrets
+	echo "Installed"
+
+legacy-install: legacy-deploy post-install ## install the pattern the old way without the operator
+	echo "Installed"
+
+post-install: ## Post-install tasks - vault init and load-secrets
 	@if grep -v -e '^\s\+#' "values-hub.yaml" | grep -q -e "insecureUnsealVaultInsideCluster:\s\+true"; then \
 	  echo "Skipping 'make vault-init' as we're unsealing the vault from inside the cluster"; \
 	else \
 	  make vault-init; \
 	fi
 	make load-secrets
-	echo "Installed"
+	echo "Done"
 
 common-test:
 	make -C common -f common/Makefile test
@@ -30,10 +36,7 @@ helmlint:
 	# no regional charts just yet: "$(wildcard charts/region/*)"
 	@for t in "$(wildcard charts/*/*)"; do helm lint $$t; if [ $$? != 0 ]; then exit 1; fi; done
 
-.PHONY: kubeval
+.PHONY: kubeconform
 kubeconform:
 	make -f common/Makefile CHARTS="$(wildcard charts/all/*)" kubeconform
 	make -f common/Makefile CHARTS="$(wildcard charts/hub/*)" kubeconform
-
-super-linter: ## Runs super linter locally
-	make -f common/Makefile DISABLE_LINTERS="-e VALIDATE_ANSIBLE=false" super-linter

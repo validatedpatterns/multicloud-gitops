@@ -11,8 +11,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Lint Ansible Playbook
-        # Using the latest as of today (2022-06-23) v6.2.1
-        uses: ansible/ansible-lint-action@v6.2.1
+        # Using the latest as of today (2022-09-02) v6.6.1
+        uses: ansible/ansible-lint-action@v6.6.1
         # Let's point it to the path
         with:
           path: "ansible/"

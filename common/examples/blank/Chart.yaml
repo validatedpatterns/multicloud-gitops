@@ -1,0 +1,6 @@
+apiVersion: v2
+description: An empty Helm chart
+keywords:
+- pattern
+name: blank
+version: 0.0.1

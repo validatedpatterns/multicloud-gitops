@@ -14,7 +14,7 @@ spec:
 {{- range .clusterPools }}
 
 {{- $pool := . }}
-{{- $poolName := cat .name $group.name | replace " " "-" }}
+{{- $poolName := print .name "-" $group.name }}
 
 {{- $cloud := "None" }}
 {{- $region := "None" }}
@@ -52,8 +52,6 @@ spec:
     name: img{{ .openshiftVersion }}-x86-64-appsub
   pullSecretRef:
     name: {{ $poolName }}-pull-secret
-  sshPrivateKeySecretRef:
-    name: {{ $poolName }}-ssh-private-key
   skipMachinePools: true # Disable MachinePool as using custom install-config
   platform:
     {{ $cloud }}:
@@ -71,10 +69,15 @@ metadata:
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
     clusterClaimName: {{ . }}-{{ $group.name }}
-    {{- range $group.labels }}
+  {{- if (not $group.acmlabels) }}
+    clusterGroup: {{ $group.name }}
+  {{- else if eq (len $group.acmlabels) 0 }}
+    clusterGroup: {{ $group.name }}
+  {{- else }}
+    {{- range $group.acmlabels }}
     {{ .name }}: {{ .value }}
     {{- end }}
-    patternGroup: {{ $group.name }}
+  {{- end }}
 spec:
   clusterPoolName: {{ $pool.name }}
 ---

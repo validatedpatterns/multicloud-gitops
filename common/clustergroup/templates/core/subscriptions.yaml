@@ -1,8 +1,10 @@
+{{- if not (eq .Values.enabled "plumbing") }}
 {{- range .Values.clusterGroup.subscriptions }}
 {{- $subs := . }}
 {{- $installPlanValue := .installPlanApproval }}
 
 {{- if $subs.namespaces }}
+{{- if not $subs.disabled }}
 {{- range .namespaces }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
@@ -27,8 +29,11 @@ spec:
   {{- end }}
   {{- if $.Values.global.options.useCSV }}
   startingCSV: {{ $subs.csv }}
+  {{- else if $subs.csv }}
+  startingCSV: {{ $subs.csv }}
   {{- end }}
 ---
+{{- end }}
 {{- end }}
 {{- else if not $subs.disabled }}
 apiVersion: operators.coreos.com/v1alpha1
@@ -54,8 +59,11 @@ spec:
   {{- end }}
   {{- if $.Values.global.options.useCSV }}
   startingCSV: {{ $subs.csv }}
+  {{- else if $subs.csv }}
+  startingCSV: {{ $subs.csv }}
   {{- end }}
 ---
 {{- end }}
 {{- end }}
 ---
+{{- end }}
