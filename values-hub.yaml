@@ -72,7 +72,7 @@ clusterGroup:
       name: group-one
       labels:
       - name: clusterGroup
-        value: region-one
+        value: group-one
       helmOverrides:
       - name: clusterGroup.isHubCluster
         value: false
