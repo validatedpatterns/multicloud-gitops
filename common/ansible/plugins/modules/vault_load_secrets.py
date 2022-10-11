@@ -53,6 +53,7 @@ files.region2:
 import base64
 import os
 import subprocess
+from collections.abc import MutableMapping
 
 import yaml
 from ansible.module_utils.basic import AnsibleModule
@@ -95,6 +96,19 @@ options:
     required: false
     type: str
     default: secret
+  check_missing_secrets:
+    description:
+      - Validate the ~/values-secret.yaml file against the top-level
+        values-secret-template.yaml and error out if secrets are missing
+    required: false
+    type: bool
+    default: False
+  values_secret_template:
+    description:
+      - Path of the values-secret-template.yaml file of the pattern
+    required: false
+    type: str
+    default: ""
 """
 
 RETURN = """
@@ -160,6 +174,38 @@ def run_command(command):
     return ret
 
 
+def flatten(dictionary, parent_key=False, separator="."):
+    """
+    Turn a nested dictionary into a flattened dictionary and also
+    drop any key that has 'None' as their value
+
+    Parameters:
+        dictionary(dict): The dictionary to flatten
+
+        parent_key(str): The string to prepend to dictionary's keys
+
+        separator(str): The string used to separate flattened keys
+
+    Returns:
+
+        dictionary: A flattened dictionary where the keys represent the
+        path to reach the leaves
+    """
+
+    items = []
+    for key, value in dictionary.items():
+        new_key = str(parent_key) + separator + key if parent_key else key
+        if isinstance(value, MutableMapping):
+            items.extend(flatten(value, new_key, separator).items())
+        elif isinstance(value, list):
+            for k, v in enumerate(value):
+                items.extend(flatten({str(k): v}, new_key).items())
+        else:
+            if value is not None:
+                items.append((new_key, value))
+    return dict(items)
+
+
 def sanitize_values(module, syaml):
     """
     Sanitizes the secrets YAML object. If a specific secret key has
@@ -202,8 +248,11 @@ def sanitize_values(module, syaml):
         files = {}
     if len(secrets) == 0 and len(files) == 0:
         module.fail_json(
-            f"Neither 'secrets' nor 'files have any secrets to " f"be parsed: {syaml}"
+            f"Neither 'secrets' nor 'files have any secrets to be parsed: {syaml}"
         )
+
+    if isinstance(secrets, list) or isinstance(files, list):
+        module.fail_json(f"Neither 'secrets' nor 'files can be lists: {syaml}")
 
     for secret in secrets:
         if not isinstance(secrets[secret], dict):
@@ -336,6 +385,27 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
     return counter
 
 
+def check_for_missing_secrets(module, syaml, values_secret_template):
+    with open(values_secret_template, "r", encoding="utf-8") as file:
+        template_yaml = yaml.safe_load(file.read())
+    if template_yaml is None:
+        module.fail_json(f"Template {values_secret_template} is empty")
+
+    syaml_flat = flatten(syaml)
+    template_flat = flatten(template_yaml)
+
+    syaml_keys = set(syaml_flat.keys())
+    template_keys = set(template_flat.keys())
+
+    if template_keys <= syaml_keys:
+        return
+
+    diff = template_keys - syaml_keys
+    module.fail_json(
+        f"Values secret yaml is missing needed secrets from the templates: {diff}"
+    )
+
+
 def run(module):
     """Main ansible module entry point"""
     results = dict(changed=False)
@@ -345,6 +415,12 @@ def run(module):
     basepath = args.get("basepath")
     namespace = args.get("namespace")
     pod = args.get("pod")
+    check_missing_secrets = args.get("check_missing_secrets")
+    values_secret_template = args.get("values_secret_template")
+    if check_missing_secrets and values_secret_template == "":
+        module.fail_json(
+            "No values_secret_template defined and check_missing_secrets set to True"
+        )
 
     if not os.path.exists(values_secrets):
         results["failed"] = True
@@ -360,6 +436,12 @@ def run(module):
 
     # In the future we can use the version field to manage different formats if needed
     secrets = sanitize_values(module, syaml)
+
+    # If the user specified check_for_missing_secrets then we read values_secret_template
+    # and check if there are any missing secrets
+    if check_missing_secrets:
+        check_for_missing_secrets(module, syaml, values_secret_template)
+
     nr_secrets = inject_secrets(module, secrets, namespace, pod, basepath)
     results["failed"] = False
     results["changed"] = True
