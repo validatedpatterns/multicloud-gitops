@@ -45,6 +45,9 @@ spec:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-{{ .name }}.yaml"
+                      {{- if $.Values.global.clusterVersion }}
+                      - "/values-{{ $.Values.global.clusterVersion }}-{{ .name }}.yaml"
+                      {{- end }}
                       {{- range $valueFile := .extraValueFiles }}
                       - {{ $valueFile | quote }}
                       {{- end }}
@@ -64,6 +67,9 @@ spec:
                       # Requires ACM 2.6 or higher
                       - name: global.clusterDomain
                         value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}` }}'
+                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
+                      - name: global.clusterVersion
+                        value: '{{ `{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}` }}'
                       - name: clusterGroup.name
                         value: {{ $group.name }}
                      {{- range .helmOverrides }}

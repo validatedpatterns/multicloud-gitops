@@ -1,5 +1,13 @@
 # Changes
 
+## October 13, 2022
+
+* Added global.clusterVersion as a new helm variable which represents the OCP
+  Major.Minor cluster version. By default now a user can add a
+  values-<ocpversion>-<clustergroup>.yaml file to have specific cluster version
+  overrides (e.g. values-4.10-hub.yaml). Will need Validated Patterns >= 0.0.6
+  when deploying with the operator.
+
 ## October 4, 2022
 
 * Extended the values-secret.yaml file to support multiple vault paths and re-wrote
