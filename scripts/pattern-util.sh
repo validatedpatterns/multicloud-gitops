@@ -14,9 +14,16 @@ if [ -n "$SSH_AUTH_SOCK" ]; then
 	SSH_SOCK_MOUNTS="-v ${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK} -e SSH_AUTH_SOCK=${SSH_AUTH_SOCK}"
 fi
 
+# We must pass -e KUBECONFIG *only* if it is set, otherwise we end up passing
+# KUBECONFIG="" which then will confuse ansible
+KUBECONF_ENV=""
+if [ -n "$KUBECONFIG" ]; then
+	KUBECONF_ENV="-e KUBECONFIG=${KUBECONFIG}"
+fi
+
 podman run -it \
 	--security-opt label=disable \
-	-e KUBECONFIG="${KUBECONFIG}" \
+	${KUBECONF_ENV} \
 	${SSH_SOCK_MOUNTS} \
 	-v ${HOME}:/home/runner \
 	-v ${HOME}:${HOME} \
