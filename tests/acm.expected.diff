@@ -461,7 +461,7 @@
  # Source: acm/templates/policies/ocp-gitops-policy.yaml
  apiVersion: apps.open-cluster-management.io/v1
  kind: PlacementRule
-@@ -44,6 +482,175 @@
+@@ -44,6 +482,181 @@
          values:
            - OpenShift
  ---
@@ -510,6 +510,9 @@
 +                      valueFiles:
 +                      - "/values-global.yaml"
 +                      - "/values-acm-edge.yaml"
++                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
++                      # hub's cluster version, whereas we want to include the spoke cluster version
++                      - '/values-{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}-acm-edge.yaml'
 +                      parameters:
 +                      - name: global.repoURL
 +                        value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -594,6 +597,9 @@
 +                      valueFiles:
 +                      - "/values-global.yaml"
 +                      - "/values-acm-provision-edge.yaml"
++                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
++                      # hub's cluster version, whereas we want to include the spoke cluster version
++                      - '/values-{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}-acm-provision-edge.yaml'
 +                      parameters:
 +                      - name: global.repoURL
 +                        value: $ARGOCD_APP_SOURCE_REPO_URL

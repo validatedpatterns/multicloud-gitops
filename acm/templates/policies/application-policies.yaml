@@ -45,9 +45,9 @@ spec:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-{{ .name }}.yaml"
-                      {{- if $.Values.global.clusterVersion }}
-                      - "/values-{{ $.Values.global.clusterVersion }}-{{ .name }}.yaml"
-                      {{- end }}
+                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                      # hub's cluster version, whereas we want to include the spoke cluster version
+                      - '/values-{{ `{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}` }}-{{ .name }}.yaml'
                       {{- range $valueFile := .extraValueFiles }}
                       - {{ $valueFile | quote }}
                       {{- end }}

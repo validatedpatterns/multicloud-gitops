@@ -527,6 +527,9 @@ spec:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-acm-edge.yaml"
+                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                      # hub's cluster version, whereas we want to include the spoke cluster version
+                      - '/values-{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}-acm-edge.yaml'
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -611,6 +614,9 @@ spec:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-acm-provision-edge.yaml"
+                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                      # hub's cluster version, whereas we want to include the spoke cluster version
+                      - '/values-{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}-acm-provision-edge.yaml'
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
