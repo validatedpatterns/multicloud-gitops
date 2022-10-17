@@ -191,7 +191,10 @@
                     }
                 },
                 "subscriptions": {
-                    "type": "object",
+			        "anyOf": [
+			        { "type": "array" },
+			        { "type": "object" }
+			        ],
                     "items": {
                         "$ref": "#/definitions/Subscription"
                     }
@@ -203,7 +206,10 @@
                     }
                 },
                 "applications": {
-                    "type": "object",
+			        "anyOf": [
+			        { "type": "array" },
+			        { "type": "object" }
+			        ],
                     "items": {
                         "$ref": "#/definitions/Applications"
                     }
