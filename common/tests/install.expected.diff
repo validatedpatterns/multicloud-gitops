@@ -32,10 +32,10 @@
          - name: global.hubClusterDomain
 -          value: 
 +          value: apps.hub.example.com
+         - name: global.clusterVersion
+           value: ""
    syncPolicy:
-     automated: {}
- ---
-@@ -61,4 +61,4 @@
+@@ -63,4 +63,4 @@
    config:
      env:
        - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
