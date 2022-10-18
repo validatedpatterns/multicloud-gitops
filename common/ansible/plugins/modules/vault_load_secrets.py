@@ -53,6 +53,7 @@ files.region2:
 import base64
 import os
 import subprocess
+import time
 from collections.abc import MutableMapping
 
 import yaml
@@ -151,27 +152,36 @@ def get_version(syaml):
     return syaml.get("version", "1.0")
 
 
-def run_command(command):
+def run_command(command, attempts=1, sleep=3):
     """
     Runs a command on the host ansible is running on. A failing command
     will raise an exception in this function directly (due to check=True)
 
     Parameters:
         command(str): The command to be run.
+        attempts(int): Number of times to retry in case of Error (defaults to 1)
+        sleep(int): Number of seconds to wait in between retry attempts (defaults to 3s)
 
     Returns:
         ret(subprocess.CompletedProcess): The return value from run()
     """
-    ret = subprocess.run(
-        command,
-        shell=True,
-        env=os.environ.copy(),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-        check=True,
-    )
-    return ret
+    for attempt in range(attempts):
+        try:
+            ret = subprocess.run(
+                command,
+                shell=True,
+                env=os.environ.copy(),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
+                check=True,
+            )
+            return ret
+        except subprocess.CalledProcessError as e:
+            # We reached maximum nr of retries. Re-raise the last error
+            if attempt >= attempts - 1:
+                raise e
+            time.sleep(sleep)
 
 
 def flatten(dictionary, parent_key=False, separator="."):
@@ -366,7 +376,7 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
                 f"oc exec -n {namespace} {pod} -i -- sh -c "
                 f"\"vault kv put '{path}/{secret}' {properties}\""
             )
-            run_command(cmd)
+            run_command(cmd, attempts=3)
             counter += 1
 
     for i in get_secrets_vault_paths(module, syaml, "files"):
@@ -380,7 +390,7 @@ def inject_secrets(module, syaml, namespace, pod, basepath):
                 f"vault kv put {path}/{filekey} b64content=- content=@/tmp/vcontent; "
                 f"rm /tmp/vcontent'"
             )
-            run_command(cmd)
+            run_command(cmd, attempts=3)
             counter += 1
     return counter
 
