@@ -512,7 +512,7 @@
 +                      - "/values-acm-edge.yaml"
 +                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
 +                      # hub's cluster version, whereas we want to include the spoke cluster version
-+                      - '/values-{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}-acm-edge.yaml'
++                      - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-edge.yaml'
 +                      parameters:
 +                      - name: global.repoURL
 +                        value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -531,7 +531,7 @@
 +                        value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}'
 +                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
 +                      - name: global.clusterVersion
-+                        value: '{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}'
++                        value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
 +                      - name: clusterGroup.name
 +                        value: acm-edge
 +                      - name: clusterGroup.isHubCluster
@@ -599,7 +599,7 @@
 +                      - "/values-acm-provision-edge.yaml"
 +                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
 +                      # hub's cluster version, whereas we want to include the spoke cluster version
-+                      - '/values-{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}-acm-provision-edge.yaml'
++                      - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-provision-edge.yaml'
 +                      parameters:
 +                      - name: global.repoURL
 +                        value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -618,7 +618,7 @@
 +                        value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}'
 +                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
 +                      - name: global.clusterVersion
-+                        value: '{{ (cat (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major (semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) | replace " " "." }}'
++                        value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
 +                      - name: clusterGroup.name
 +                        value: acm-provision-edge
 +                      - name: clusterGroup.isHubCluster
