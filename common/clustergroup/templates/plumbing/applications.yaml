@@ -56,6 +56,9 @@ spec:
           ignoreMissingValueFiles: true
           valueFiles:
             - "values.yaml"
+            {{- if $.Values.global.clusterVersion }}
+            - "/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+            {{- end }}
         {{- range .extraValueFiles }}
             - {{ . | quote }}
         {{- end }}
@@ -66,6 +69,8 @@ spec:
           parameters:
             - name: global.clusterDomain
               value: {{ $.Values.global.clusterDomain }}
+            - name: global.clusterVersion
+              value: "{{ $.Values.global.clusterVersion }}"
             - name: global.hubClusterDomain
               value: {{ $.Values.global.hubClusterDomain }}
             - name: global.localClusterDomain
@@ -144,6 +149,9 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- if $.Values.global.clusterVersion }}
+      - "/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- end }}
       {{- range $valueFile := .extraValueFiles }}
       - {{ $valueFile | quote }}
       {{- end }}
@@ -159,6 +167,8 @@ spec:
           value: {{ $.Values.global.pattern }}
         - name: global.clusterDomain
           value: {{ $.Values.global.clusterDomain }}
+        - name: global.clusterVersion
+          value: "{{ $.Values.global.clusterVersion }}"
         - name: global.hubClusterDomain
           value: {{ $.Values.global.hubClusterDomain }}
         - name: global.localClusterDomain

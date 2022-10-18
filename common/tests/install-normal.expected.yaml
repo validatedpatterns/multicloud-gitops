@@ -41,6 +41,8 @@ spec:
           value: install
         - name: global.hubClusterDomain
           value: apps.hub.example.com
+        - name: global.clusterVersion
+          value: ""
   syncPolicy:
     automated: {}
 ---
