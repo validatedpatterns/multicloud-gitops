@@ -1,5 +1,12 @@
 - name: MultiCloud-GitOps bootstrap
   hosts: localhost
   connection: local
-  roles:
-    - bootstrap
+  tasks:
+  - name: Make sure make is installed
+    become: true
+    ansible.builtin.package:
+      name: make
+      state: present
+
+  - name: Launch the installation
+    ansible.builtin.command: "make install"
