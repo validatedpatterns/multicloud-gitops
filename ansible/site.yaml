@@ -9,4 +9,11 @@
       state: present
 
   - name: Launch the installation
-    ansible.builtin.command: "make install"
+    ansible.builtin.command: make install
+    args:
+      chdir: "{{ lookup('env', 'PWD') }}"
+    register: output
+
+  - name: Print output of installation
+    ansible.builtin.debug:
+      msg: "{{ output }}"
