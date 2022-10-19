@@ -6,7 +6,7 @@
   # from a virtualenv
   - name: Make sure make is installed
     become: true
-    ansible.builtin.command: dnf install -y make
+    ansible.builtin.command: dnf install -y make ansible
     failed_when: false
 
   - name: Launch the installation
