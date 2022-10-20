@@ -6,7 +6,7 @@
   # from a virtualenv
   - name: Make sure make is installed
     become: true
-    ansible.builtin.command: dnf install -y make ansible
+    ansible.builtin.command: dnf install -y make ansible python3-kubernetes
     failed_when: false
 
   - name: Make sure kubernetes module is installed
