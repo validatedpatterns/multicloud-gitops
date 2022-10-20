@@ -1,5 +1,24 @@
 - name: MultiCloud-GitOps bootstrap
   hosts: localhost
   connection: local
-  roles:
-    - bootstrap
+  tasks:
+  # We cannot use .package or .dnf modules because python3 that is used comes
+  # from a virtualenv
+  - name: Make sure make is installed
+    become: true
+    ansible.builtin.command: dnf install -y make ansible python3-kubernetes
+    failed_when: false
+
+  - name: Make sure kubernetes module is installed
+    ansible.builtin.command: pip3 install openshift
+    failed_when: false
+
+  - name: Launch the installation
+    ansible.builtin.command: make install
+    args:
+      chdir: "{{ lookup('env', 'PWD') }}"
+    register: output
+
+  - name: Print output of installation
+    ansible.builtin.debug:
+      msg: "{{ output }}"
