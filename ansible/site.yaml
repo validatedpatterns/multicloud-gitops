@@ -9,6 +9,10 @@
     ansible.builtin.command: dnf install -y make ansible
     failed_when: false
 
+  - name: Make sure kubernetes module is installed
+    ansible.builtin.command: pip3 install openshift
+    failed_when: false
+
   - name: Launch the installation
     ansible.builtin.command: make install
     args:
