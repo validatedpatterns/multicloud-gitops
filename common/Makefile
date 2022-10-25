@@ -54,11 +54,17 @@ validate-prereq: ## verify pre-requisites
 	@if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi
 	@echo "OK"
 
+# We only check the remote ssh git branch's existance if we're not running inside a container
+# as getting ssh auth working inside a container seems a bit brittle
 validate-origin: ## verify the git origin is available
 	@echo Checking repo $(TARGET_REPO) - branch $(TARGET_BRANCH)
-	@git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null && \
-		echo "$(TARGET_REPO) - $(TARGET_BRANCH) exists" || \
-		(echo "$(TARGET_BRANCH) not found in $(TARGET_REPO)"; exit 1)
+	@if [ ! -f /run/.containerenv ]; then\
+		git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null &&\
+				echo "$(TARGET_REPO) - $(TARGET_BRANCH) exists" ||\
+				(echo "$(TARGET_BRANCH) not found in $(TARGET_REPO)"; exit 1);\
+	else\
+		echo "Running inside a container: Skipping git ssh checks";\
+	fi
 
 # Default targets are "deploy" and "upgrade"; they can "move" to whichever install mechanism should be default.
 # legacy-deploy and legacy-upgrade should be present so that patterns don't need to depend on "deploy" and "upgrade"
