@@ -4,3 +4,13 @@ mountRole: "hub-role"
 
 global:
   hubClusterDomain: hub.example.com
+
+external-secrets:
+  image:
+    tag: v0.6.0-ubi
+  webhook:
+    image:
+      tag: v0.6.0-ubi
+  certController:
+    image:
+      tag: v0.6.0-ubi
