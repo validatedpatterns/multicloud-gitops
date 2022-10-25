@@ -116,7 +116,7 @@
 +          exampleAWSPool:
 +            baseDomain: blueprints.rhecoeng.com
 +            clusters:
-+            - One
++            - one
 +            name: aws-ap
 +            openshiftVersion: 4.10.18
 +            platform:
@@ -126,8 +126,8 @@
 +          exampleAzurePool:
 +            baseDomain: blueprints.rhecoeng.com
 +            clusters:
-+            - Two
-+            - Three
++            - two
++            - three
 +            name: azure-us
 +            openshiftVersion: 4.10.18
 +            platform:
