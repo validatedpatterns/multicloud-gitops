@@ -48,10 +48,6 @@ jobs:
       #     VALIDATE_ALL_CODEBASE: false
       #     DEFAULT_BRANCH: main
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run make common-test
-        run: |
-          make common-test
-
       - name: Run make test
         run: |
           make test
