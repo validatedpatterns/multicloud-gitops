@@ -23,12 +23,12 @@ type: Opaque
 apiVersion: hive.openshift.io/v1
 kind: ClusterClaim
 metadata:
-  name: 'One-acm-provision-edge'
+  name: 'one-acm-provision-edge'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
-    clusterClaimName: One-acm-provision-edge
+    clusterClaimName: one-acm-provision-edge
     clusterGroup: region
 spec:
   clusterPoolName: aws-ap
@@ -37,12 +37,12 @@ spec:
 apiVersion: hive.openshift.io/v1
 kind: ClusterClaim
 metadata:
-  name: 'Two-acm-provision-edge'
+  name: 'two-acm-provision-edge'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
-    clusterClaimName: Two-acm-provision-edge
+    clusterClaimName: two-acm-provision-edge
     clusterGroup: region
 spec:
   clusterPoolName: azure-us
@@ -51,12 +51,12 @@ spec:
 apiVersion: hive.openshift.io/v1
 kind: ClusterClaim
 metadata:
-  name: 'Three-acm-provision-edge'
+  name: 'three-acm-provision-edge'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
-    clusterClaimName: Three-acm-provision-edge
+    clusterClaimName: three-acm-provision-edge
     clusterGroup: region
 spec:
   clusterPoolName: azure-us
