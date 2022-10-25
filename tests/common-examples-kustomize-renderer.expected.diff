@@ -1,0 +1,14 @@
+--- tests/common-examples-kustomize-renderer-naked.expected.yaml
++++ tests/common-examples-kustomize-renderer-normal.expected.yaml
+@@ -10,9 +10,9 @@
+   GIT_EMAIL: SOMEWHERE@EXAMPLE.COM
+   GIT_DEV_REPO_URL: https:///PLAINTEXT/manuela-dev.git
+   GIT_DEV_REPO_REVISION: main
+-  GIT_OPS_REPO_TEST_URL: 
++  GIT_OPS_REPO_TEST_URL: https://github.com/pattern-clone/mypattern
+   GIT_OPS_REPO_TEST_REVISION: 
+-  GIT_OPS_REPO_PROD_URL: 
++  GIT_OPS_REPO_PROD_URL: https://github.com/pattern-clone/mypattern
+   GIT_OPS_REPO_PROD_REVISION: 
+   IOT_CONSUMER_IMAGE: iot-consumer
+   IOT_CONSUMER_YAML_PATH: images.(name==messaging).newTag
