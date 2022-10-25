@@ -76,7 +76,7 @@ clusterGroup:
           aws:
             region: ap-southeast-2
         clusters:
-        - One
+        - one
       exampleAzurePool:
         name: azure-us
         openshiftVersion: 4.10.18
@@ -86,8 +86,8 @@ clusterGroup:
             baseDomainResourceGroupName: dojo-dns-zones
             region: eastus
         clusters:
-        - Two
-        - Three
+        - two
+        - three
     acmlabels:
     - name: clusterGroup
       value: region
