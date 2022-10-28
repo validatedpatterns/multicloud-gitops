@@ -1,5 +1,14 @@
 # Changes
 
+## October 28, 2022
+
+* Updated vault helm chart to v0.22.1 and vault containers to 1.12.0
+
+## October 25, 2022
+
+* Updated External Secrets Operator to v0.6.0
+* Moved to -UBI based ESO containers
+
 ## October 13, 2022
 
 * Added global.clusterVersion as a new helm variable which represents the OCP
