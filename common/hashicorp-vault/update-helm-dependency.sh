@@ -19,7 +19,9 @@ pushd "${CHARTDIR}"
 rm -rf "${NAME}"
 tar xfz "${TAR}"
 pushd "${NAME}"
-patch -p1 < ../../patch-server-route.diff
+for i in ../../local-patches/*.patch; do
+	patch -p1 < "${i}"
+done
 popd
 tar cvfz "${TAR}" "${NAME}"
 rm -rf "${NAME}"

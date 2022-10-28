@@ -1,13 +1,12 @@
 --- tests/clustergroup-naked.expected.yaml
 +++ tests/clustergroup-normal.expected.yaml
-@@ -1,17 +1,229 @@
+@@ -1,17 +1,227 @@
  ---
 +# Source: pattern-clustergroup/templates/core/namespaces.yaml
 +apiVersion: v1
 +kind: Namespace
 +metadata:
 +  labels:
-+    name: pattern
 +    argocd.argoproj.io/managed-by: mypattern-example
 +  name: open-cluster-management
 +spec:
@@ -17,7 +16,6 @@
 +kind: Namespace
 +metadata:
 +  labels:
-+    name: pattern
 +    argocd.argoproj.io/managed-by: mypattern-example
 +  name: application-ci
 +spec:
@@ -232,7 +230,7 @@
  # Source: pattern-clustergroup/templates/plumbing/argocd-super-role.yaml
  # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
  apiVersion: rbac.authorization.k8s.io/v1
-@@ -36,7 +248,7 @@
+@@ -36,7 +246,7 @@
  apiVersion: rbac.authorization.k8s.io/v1
  kind: ClusterRoleBinding
  metadata:
@@ -241,7 +239,7 @@
  roleRef:
    apiGroup: rbac.authorization.k8s.io
    kind: ClusterRole
-@@ -45,16 +257,587 @@
+@@ -45,16 +255,587 @@
    - kind: ServiceAccount
      # This is the {ArgoCD.name}-argocd-application-controller
      name: example-gitops-argocd-application-controller
@@ -832,7 +830,7 @@
  ---
  # Source: pattern-clustergroup/templates/plumbing/argocd.yaml
  apiVersion: argoproj.io/v1alpha1
-@@ -65,7 +848,7 @@
+@@ -65,7 +846,7 @@
    # Changing the name affects the ClusterRoleBinding, the generated secret,
    # route URL, and argocd.argoproj.io/managed-by annotations
    name: example-gitops
@@ -841,7 +839,7 @@
    annotations:
      argocd.argoproj.io/compare-options: IgnoreExtraneous
  spec:
-@@ -94,10 +877,10 @@
+@@ -94,10 +875,10 @@
              --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
              --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
              --set global.namespace=$ARGOCD_APP_NAMESPACE
@@ -856,7 +854,7 @@
              --set clusterGroup.name=example
              --post-renderer ./kustomize"]
    applicationSet:
-@@ -174,11 +957,59 @@
+@@ -174,11 +955,59 @@
  kind: ConsoleLink
  metadata:
    name: example-gitops-link
