@@ -182,7 +182,7 @@ class TestMyModule(unittest.TestCase):
 
     def test_ensure_command_called(self):
         set_module_args(
-            {"values_secrets": os.path.join(self.testdir_v1, "values-secret.yaml")}
+            {"values_secrets": os.path.join(self.testdir_v1, "values-secret-good.yaml")}
         )
 
         with patch.object(vault_load_secrets, "run_command") as mock_run_command:
