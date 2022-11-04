@@ -20,6 +20,7 @@ Simple module to test vault_load_secrets
 import json
 import os
 import sys
+import tempfile
 import unittest
 from unittest.mock import call, patch
 
@@ -60,6 +61,14 @@ def fail_json(*args, **kwargs):
     kwargs["failed"] = True
     kwargs["args"] = args
     raise AnsibleFailJson(kwargs)
+
+
+def template_values_secret(fname, find, replacewith):
+    """creates a temp file from a yaml file and replaces some text"""
+    with open(fname, "r") as fh, tempfile.NamedTemporaryFile(delete=False) as tmp:
+        content = fh.read()
+        tmp.write(content.replace(find, replacewith).encode())
+    return tmp.name
 
 
 class TestMyModule(unittest.TestCase):
@@ -141,12 +150,18 @@ class TestMyModule(unittest.TestCase):
             self.assertEqual(ret["failed"], True)
 
     def test_ensure_empty_secrets_but_not_files_is_ok(self):
+        tmp_testfile = tempfile.NamedTemporaryFile(delete=False)
+        tmp_valuesfile = template_values_secret(
+            os.path.join(
+                self.testdir_v1,
+                "values-secret-empty-secrets.yaml",
+            ),
+            "__PLACEHOLDER__",
+            tmp_testfile.name,
+        )
         set_module_args(
             {
-                "values_secrets": os.path.join(
-                    self.testdir_v1,
-                    "values-secret-empty-secrets.yaml",
-                )
+                "values_secrets": tmp_valuesfile,
             }
         )
 
@@ -165,7 +180,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                "cat '/home/michele/.ssh/id_rsa.pub' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/publickey b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                f"cat '{tmp_testfile.name}' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/publickey b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
         ]
