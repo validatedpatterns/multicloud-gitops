@@ -73,6 +73,13 @@ class TestMyModule(unittest.TestCase):
         self.testdir_v1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "v1")
         self.testfile = open('/tmp/ca.crt', 'w')
 
+    def tearDown(self):
+        self.testfile.close()
+        try:
+            os.remove('/tmp/ca.crt')
+        except OSError:
+            pass
+
     def test_module_fail_when_required_args_missing(self):
         with self.assertRaises(AnsibleFailJson):
             set_module_args({})
