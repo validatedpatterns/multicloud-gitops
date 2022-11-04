@@ -20,7 +20,6 @@ Simple module to test vault_load_secrets
 import json
 import os
 import sys
-import tempfile
 import unittest
 from unittest.mock import call, patch
 
@@ -71,12 +70,12 @@ class TestMyModule(unittest.TestCase):
         self.mock_module_helper.start()
         self.addCleanup(self.mock_module_helper.stop)
         self.testdir_v1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "v1")
-        self.testfile = open('/tmp/ca.crt', 'w')
+        self.testfile = open("/tmp/ca.crt", "w")
 
     def tearDown(self):
         self.testfile.close()
         try:
-            os.remove('/tmp/ca.crt')
+            os.remove("/tmp/ca.crt")
         except OSError:
             pass
 
@@ -174,7 +173,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                f"cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/publickey b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/publickey b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
         ]
