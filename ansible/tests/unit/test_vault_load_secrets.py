@@ -63,14 +63,6 @@ def fail_json(*args, **kwargs):
     raise AnsibleFailJson(kwargs)
 
 
-def template_values_secret(fname, find, replacewith):
-    """creates a temp file from a yaml file and replaces some text"""
-    with open(fname, "r") as fh, tempfile.NamedTemporaryFile(delete=False) as tmp:
-        content = fh.read()
-        tmp.write(content.replace(find, replacewith).encode())
-    return tmp.name
-
-
 class TestMyModule(unittest.TestCase):
     def setUp(self):
         self.mock_module_helper = patch.multiple(
@@ -79,6 +71,7 @@ class TestMyModule(unittest.TestCase):
         self.mock_module_helper.start()
         self.addCleanup(self.mock_module_helper.stop)
         self.testdir_v1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "v1")
+        self.testfile = open('/tmp/ca.crt', 'w')
 
     def test_module_fail_when_required_args_missing(self):
         with self.assertRaises(AnsibleFailJson):
@@ -150,18 +143,12 @@ class TestMyModule(unittest.TestCase):
             self.assertEqual(ret["failed"], True)
 
     def test_ensure_empty_secrets_but_not_files_is_ok(self):
-        tmp_testfile = tempfile.NamedTemporaryFile(delete=False)
-        tmp_valuesfile = template_values_secret(
-            os.path.join(
-                self.testdir_v1,
-                "values-secret-empty-secrets.yaml",
-            ),
-            "__PLACEHOLDER__",
-            tmp_testfile.name,
-        )
         set_module_args(
             {
-                "values_secrets": tmp_valuesfile,
+                "values_secrets": os.path.join(
+                    self.testdir_v1,
+                    "values-secret-empty-secrets.yaml",
+                ),
             }
         )
 
@@ -180,7 +167,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                f"cat '{tmp_testfile.name}' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/publickey b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                f"cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/publickey b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
         ]
@@ -234,11 +221,11 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                "cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/cluster_alejandro_ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/hub/cluster_alejandro_ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
             call(
-                "cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/region-one/ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/region-one/ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
         ]
@@ -333,7 +320,7 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                "cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/region-one/ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/region-one/ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
         ]
