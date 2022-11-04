@@ -69,7 +69,7 @@ class TestMyModule(unittest.TestCase):
         )
         self.mock_module_helper.start()
         self.addCleanup(self.mock_module_helper.stop)
-        self.testdir = os.path.dirname(os.path.abspath(__file__))
+        self.testdir_v1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "v1")
 
     def test_module_fail_when_required_args_missing(self):
         with self.assertRaises(AnsibleFailJson):
@@ -96,7 +96,7 @@ class TestMyModule(unittest.TestCase):
         set_module_args(
             {
                 "values_secrets": os.path.join(
-                    self.testdir,
+                    self.testdir_v1,
                     "values-secret-empty-files.yaml",
                 )
             }
@@ -134,7 +134,7 @@ class TestMyModule(unittest.TestCase):
             "values-secret-broken3.yaml",
         ):
             with self.assertRaises(AnsibleFailJson) as ansible_err:
-                set_module_args({"values_secrets": os.path.join(self.testdir, i)})
+                set_module_args({"values_secrets": os.path.join(self.testdir_v1, i)})
                 vault_load_secrets.main()
 
             ret = ansible_err.exception.args[0]
@@ -144,7 +144,7 @@ class TestMyModule(unittest.TestCase):
         set_module_args(
             {
                 "values_secrets": os.path.join(
-                    self.testdir,
+                    self.testdir_v1,
                     "values-secret-empty-secrets.yaml",
                 )
             }
@@ -173,7 +173,7 @@ class TestMyModule(unittest.TestCase):
 
     def test_ensure_command_called(self):
         set_module_args(
-            {"values_secrets": os.path.join(self.testdir, "values-secret.yaml")}
+            {"values_secrets": os.path.join(self.testdir_v1, "values-secret.yaml")}
         )
 
         with patch.object(vault_load_secrets, "run_command") as mock_run_command:
@@ -195,7 +195,7 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/googleapi' key='lskdjflskjdflsdjflsdkjfldsjkfldsj'\"",  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/googleapi' key='test123'\"",  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -232,10 +232,12 @@ class TestMyModule(unittest.TestCase):
     def test_ensure_good_template_checking(self):
         set_module_args(
             {
-                "values_secrets": os.path.join(self.testdir, "mcg-values-secret.yaml"),
+                "values_secrets": os.path.join(
+                    self.testdir_v1, "mcg-values-secret.yaml"
+                ),
                 "check_missing_secrets": True,
                 "values_secret_template": os.path.join(
-                    self.testdir, "template-mcg-working.yaml"
+                    self.testdir_v1, "template-mcg-working.yaml"
                 ),
             }
         )
@@ -263,10 +265,12 @@ class TestMyModule(unittest.TestCase):
     def test_ensure_bad_template_checking(self):
         set_module_args(
             {
-                "values_secrets": os.path.join(self.testdir, "mcg-values-secret.yaml"),
+                "values_secrets": os.path.join(
+                    self.testdir_v1, "mcg-values-secret.yaml"
+                ),
                 "check_missing_secrets": True,
                 "values_secret_template": os.path.join(
-                    self.testdir, "template-mcg-missing.yaml"
+                    self.testdir_v1, "template-mcg-missing.yaml"
                 ),
             }
         )
@@ -288,7 +292,7 @@ class TestMyModule(unittest.TestCase):
 
     def test_ensure_fqdn_secrets(self):
         set_module_args(
-            {"values_secrets": os.path.join(self.testdir, "values-secret-fqdn.yaml")}
+            {"values_secrets": os.path.join(self.testdir_v1, "values-secret-fqdn.yaml")}
         )
 
         with patch.object(vault_load_secrets, "run_command") as mock_run_command:
