@@ -286,6 +286,40 @@ class TestMyModule(unittest.TestCase):
             )
             assert mock_run_command.call_count == 0
 
+    def test_ensure_fqdn_secrets(self):
+        set_module_args(
+            {"values_secrets": os.path.join(self.testdir, "values-secret-fqdn.yaml")}
+        )
+
+        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 3
+
+        calls = [
+            call(
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/hub/test' secret1='foo'\"",  # noqa: E501
+                attempts=3,
+            ),
+            call(
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put 'secret/region-one.blueprints.rhecoeng.com/config-demo' secret='region123'\"",  # noqa: E501
+                attempts=3,
+            ),
+            call(
+                "cat '/home/michele/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put secret/region-one/ca b64content=- content=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                attempts=3,
+            ),
+        ]
+        mock_run_command.assert_has_calls(calls)
+
 
 if __name__ == "__main__":
     unittest.main()
