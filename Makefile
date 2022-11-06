@@ -26,11 +26,13 @@ help: ## This help message
 
 #  Makefiles in the individual patterns should call these targets explicitly
 #  e.g. from industrial-edge: make -f common/Makefile show
+.PHONY: show
 show: ## show the starting template without installing it
 	helm template common/operator-install/ --name-template $(NAME) $(HELM_OPTS)
 
 # We only check the remote ssh git branch's existance if we're not running inside a container
 # as getting ssh auth working inside a container seems a bit brittle
+.PHONY: validate-origin
 validate-origin: ## verify the git origin is available
 	@echo Checking repo $(TARGET_REPO) - branch $(TARGET_BRANCH)
 	@if [ ! -f /run/.containerenv ]; then\
@@ -41,41 +43,51 @@ validate-origin: ## verify the git origin is available
 		echo "Running inside a container: Skipping git ssh checks";\
 	fi
 
+.PHONY: operator-deploy operator-upgrade
 operator-deploy operator-upgrade: validate-origin ## runs helm install
 	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
 
+.PHONY: deploy upgrade legacy-deploy legacy-upgrade
 deploy upgrade legacy-deploy legacy-upgrade: ## does nothing anymore. use operator-deploy
 	@echo "UNSUPPORTED TARGET: please switch to 'operator-deploy'"
 
+.PHONY: uninstall
 uninstall: ## runs helm uninstall
 	$(eval CSV := $(shell oc get subscriptions -n openshift-operators openshift-gitops-operator -ojsonpath={.status.currentCSV}))
 	helm uninstall $(NAME)
 	@oc delete csv -n openshift-operators $(CSV)
 
+.PHONY: vault-init
 vault-init: ## inits, unseals and configured the vault
 	common/scripts/vault-utils.sh vault_init common/pattern-vault.init
 	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
 	common/scripts/vault-utils.sh vault_secrets_init common/pattern-vault.init
 
+.PHONY: vault-unseal
 vault-unseal: ## unseals the vault
 	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
 
+.PHONY: load-secrets
 load-secrets: ## loads the secrets into the vault
 	common/scripts/vault-utils.sh push_secrets common/pattern-vault.init $(NAME)
 
 CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | grep -v examples | sed -e 's/.\///')
+.PHONY: test
 test: ## run helm tests
 	@for t in $(CHARTS); do common/scripts/test.sh $$t all "$(TEST_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
 
+.PHONY: helmlint
 helmlint: ## run helm lint
 	@for t in $(CHARTS); do common/scripts/lint.sh $$t $(TEST_OPTS); if [ $$? != 0 ]; then exit 1; fi; done
 
 API_URL ?= https://raw.githubusercontent.com/hybrid-cloud-patterns/ocp-schemas/main/openshift/4.10/
 KUBECONFORM_SKIP ?= -skip 'CustomResourceDefinition'
 # We need to skip 'CustomResourceDefinition' as openapi2jsonschema seems to be unable to generate them ATM
+.PHONY: kubeconform
 kubeconform: ## run helm kubeconform
 	@for t in $(CHARTS); do helm template $(TEST_OPTS) $(PATTERN_OPTS) $$t | kubeconform -strict $(KUBECONFORM_SKIP) -verbose -schema-location $(API_URL); if [ $$? != 0 ]; then exit 1; fi; done
 
+.PHONY: validate-prereq
 validate-prereq: ## verify pre-requisites
 	@for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done
 	@echo "Prerequisites checked '$(EXECUTABLES)': OK"
@@ -85,6 +97,7 @@ validate-prereq: ## verify pre-requisites
 	@if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi
 	@echo "OK"
 
+.PHONY: super-linter
 super-linter: ## Runs super linter locally
 	rm -rf .mypy_cache
 	podman run -e RUN_LOCAL=true -e USE_FIND_ALGORITHM=true	\
@@ -98,10 +111,10 @@ super-linter: ## Runs super linter locally
 					$(DISABLE_LINTERS) \
 					-v $(PWD):/tmp/lint:rw,z docker.io/github/super-linter:slim-v4
 
+.PHONY: ansible-lint
 ansible-lint: ## run ansible lint on ansible/ folder
 	podman run -it -v $(PWD):/workspace:rw,z --workdir /workspace --entrypoint "/usr/local/bin/ansible-lint" quay.io/ansible/creator-ee:latest  "-vvv" "ansible/"
 
+.PHONY: ansible-unittest
 ansible-unittest: ## run ansible unit tests
 	pytest -r a --fulltrace --color yes ansible/tests/unit/test_*.py
-
-.phony: install test
