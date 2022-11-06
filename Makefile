@@ -6,7 +6,7 @@ ifneq ($(origin TARGET_SITE), undefined)
 endif
 
 TARGET_ORIGIN ?= origin
-TARGET_REPO=$(shell git remote show $(TARGET_ORIGIN) | grep Push | sed -e 's/.*URL:[[:space:]]*//' -e 's%^git@%%' -e 's%^https://%%' -e 's%:%/%' -e 's%^%https://%')
+TARGET_REPO=$(shell git ls-remote --get-url --symref $(TARGET_ORIGIN) | sed -e 's/.*URL:[[:space:]]*//' -e 's%^git@%%' -e 's%^https://%%' -e 's%:%/%' -e 's%^%https://%')
 # git branch --show-current is also available as of git 2.22, but we will use this for compatibility
 TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
