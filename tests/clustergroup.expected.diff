@@ -239,7 +239,7 @@
  roleRef:
    apiGroup: rbac.authorization.k8s.io
    kind: ClusterRole
-@@ -45,16 +255,587 @@
+@@ -45,16 +255,591 @@
    - kind: ServiceAccount
      # This is the {ArgoCD.name}-argocd-application-controller
      name: example-gitops-argocd-application-controller
@@ -519,6 +519,8 @@
 +          value: region.example.com
 +        - name: global.clusterVersion
 +          value: ""
++        - name: global.clusterPlatform
++          value: ""
 +        - name: global.hubClusterDomain
 +          value: apps.hub.example.com
 +        - name: global.localClusterDomain
@@ -571,6 +573,8 @@
 +        - name: global.clusterDomain
 +          value: region.example.com
 +        - name: global.clusterVersion
++          value: ""
++        - name: global.clusterPlatform
 +          value: ""
 +        - name: global.hubClusterDomain
 +          value: apps.hub.example.com
@@ -830,7 +834,7 @@
  ---
  # Source: pattern-clustergroup/templates/plumbing/argocd.yaml
  apiVersion: argoproj.io/v1alpha1
-@@ -65,7 +846,7 @@
+@@ -65,7 +850,7 @@
    # Changing the name affects the ClusterRoleBinding, the generated secret,
    # route URL, and argocd.argoproj.io/managed-by annotations
    name: example-gitops
@@ -839,7 +843,7 @@
    annotations:
      argocd.argoproj.io/compare-options: IgnoreExtraneous
  spec:
-@@ -94,10 +875,10 @@
+@@ -94,10 +879,10 @@
              --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
              --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
              --set global.namespace=$ARGOCD_APP_NAMESPACE
@@ -854,7 +858,7 @@
              --set clusterGroup.name=example
              --post-renderer ./kustomize"]
    applicationSet:
-@@ -174,11 +955,59 @@
+@@ -174,11 +959,59 @@
  kind: ConsoleLink
  metadata:
    name: example-gitops-link

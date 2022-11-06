@@ -1,5 +1,9 @@
 # Changes
 
+## November 6, 2022
+
+* Add support for /values-<CloudPlatform>-<clusterGroup>.yaml (e.g. /values-AWS-group-one.yaml)
+
 ## October 28, 2022
 
 * Updated vault helm chart to v0.22.1 and vault containers to 1.12.0
