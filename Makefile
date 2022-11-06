@@ -12,14 +12,6 @@ TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 # --set values always take precedence over the contents of -f
 HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT)
-TEST_OPTS= -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" \
-	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.pattern="mypattern" \
-	--set global.namespace="pattern-namespace" --set global.hubClusterDomain=apps.hub.example.com --set global.localClusterDomain=apps.region.example.com --set global.clusterDomain=region.example.com\
-	--set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml" \
-	--set clusterGroup.insecureUnsealVaultInsideCluster=true
-PATTERN_OPTS=-f common/examples/values-example.yaml
-EXECUTABLES=git helm oc ansible
-
 .PHONY: help
 help: ## This help message
 	@printf "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)\n"
@@ -72,6 +64,15 @@ load-secrets: ## loads the secrets into the vault
 	common/scripts/vault-utils.sh push_secrets common/pattern-vault.init $(NAME)
 
 CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | grep -v examples | sed -e 's/.\///')
+# Section related to tests and linting
+TEST_OPTS= -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" \
+	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.pattern="mypattern" \
+	--set global.namespace="pattern-namespace" --set global.hubClusterDomain=apps.hub.example.com --set global.localClusterDomain=apps.region.example.com --set global.clusterDomain=region.example.com\
+	--set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml" \
+	--set clusterGroup.insecureUnsealVaultInsideCluster=true
+PATTERN_OPTS=-f common/examples/values-example.yaml
+EXECUTABLES=git helm oc ansible
+
 .PHONY: test
 test: ## run helm tests
 	@for t in $(CHARTS); do common/scripts/test.sh $$t all "$(TEST_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
