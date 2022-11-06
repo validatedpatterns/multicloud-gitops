@@ -41,7 +41,7 @@ operator-deploy operator-upgrade: validate-origin ## runs helm install
 
 .PHONY: deploy upgrade legacy-deploy legacy-upgrade
 deploy upgrade legacy-deploy legacy-upgrade: ## does nothing anymore. use operator-deploy
-	@echo "UNSUPPORTED TARGET: please switch to 'operator-deploy'"
+	@echo "UNSUPPORTED TARGET: please switch to 'operator-deploy'"; exit 1
 
 .PHONY: uninstall
 uninstall: ## runs helm uninstall
