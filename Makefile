@@ -27,7 +27,7 @@ help: ## This help message
 #  Makefiles in the individual patterns should call these targets explicitly
 #  e.g. from industrial-edge: make -f common/Makefile show
 show: ## show the starting template without installing it
-	helm template common/install/ --name-template $(NAME) $(HELM_OPTS)
+	helm template common/operator-install/ --name-template $(NAME) $(HELM_OPTS)
 
 # We only check the remote ssh git branch's existance if we're not running inside a container
 # as getting ssh auth working inside a container seems a bit brittle
@@ -41,19 +41,11 @@ validate-origin: ## verify the git origin is available
 		echo "Running inside a container: Skipping git ssh checks";\
 	fi
 
-# Default targets are "deploy" and "upgrade"; they can "move" to whichever install mechanism should be default.
-# legacy-deploy and legacy-upgrade should be present so that patterns don't need to depend on "deploy" and "upgrade"
-# pointing to one place or another, and don't need to change when they do (provide they use either legacy- or operator-
-# targets)
-deploy upgrade legacy-deploy legacy-upgrade: validate-prereq validate-origin ## deploys the pattern
-	$(eval HUBCLUSTER_APPS_DOMAIN := $(shell oc get ingresses.config/cluster -o jsonpath={.spec.domain}))
-	$(eval HUBCLUSTER_VERSION := $(shell oc get OpenShiftControllerManager/cluster -o jsonpath='{.status.version}' | sed -n -E 's/([0-9]+).([0-9]+).*/\1.\2/p'))
-	$(eval LEGACY_INSTALL_HELM_OPTS := -f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) \
-	--set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN) --set global.clusterVersion="$(HUBCLUSTER_VERSION)" $(TARGET_SITE_OPT))
-	helm upgrade --install $(NAME) common/install/ $(LEGACY_INSTALL_HELM_OPTS)
-
 operator-deploy operator-upgrade: validate-origin ## runs helm install
 	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
+
+deploy upgrade legacy-deploy legacy-upgrade: ## does nothing anymore. use operator-deploy
+	@echo "UNSUPPORTED TARGET: please switch to 'operator-deploy'"
 
 uninstall: ## runs helm uninstall
 	$(eval CSV := $(shell oc get subscriptions -n openshift-operators openshift-gitops-operator -ojsonpath={.status.currentCSV}))
