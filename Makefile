@@ -9,12 +9,9 @@ TARGET_ORIGIN ?= origin
 TARGET_REPO=$(shell git remote show $(TARGET_ORIGIN) | grep Push | sed -e 's/.*URL:[[:space:]]*//' -e 's%^git@%%' -e 's%^https://%%' -e 's%:%/%' -e 's%^%https://%')
 # git branch --show-current is also available as of git 2.22, but we will use this for compatibility
 TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
-HUBCLUSTER_APPS_DOMAIN=$(shell oc get ingresses.config/cluster -o jsonpath={.spec.domain})
-HUBCLUSTER_VERSION=$(shell oc get OpenShiftControllerManager/cluster -o jsonpath='{.status.version}' | sed -n -E 's/([0-9]+).([0-9]+).*/\1.\2/p')
 
 # --set values always take precedence over the contents of -f
-HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) \
-	--set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN) --set global.clusterVersion="$(HUBCLUSTER_VERSION)" $(TARGET_SITE_OPT)
+HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT)
 TEST_OPTS= -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" \
 	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.pattern="mypattern" \
 	--set global.namespace="pattern-namespace" --set global.hubClusterDomain=apps.hub.example.com --set global.localClusterDomain=apps.region.example.com --set global.clusterDomain=region.example.com\
@@ -49,7 +46,11 @@ validate-origin: ## verify the git origin is available
 # pointing to one place or another, and don't need to change when they do (provide they use either legacy- or operator-
 # targets)
 deploy upgrade legacy-deploy legacy-upgrade: validate-prereq validate-origin ## deploys the pattern
-	helm upgrade --install $(NAME) common/install/ $(HELM_OPTS)
+	$(eval HUBCLUSTER_APPS_DOMAIN := $(shell oc get ingresses.config/cluster -o jsonpath={.spec.domain}))
+	$(eval HUBCLUSTER_VERSION := $(shell oc get OpenShiftControllerManager/cluster -o jsonpath='{.status.version}' | sed -n -E 's/([0-9]+).([0-9]+).*/\1.\2/p'))
+	$(eval LEGACY_INSTALL_HELM_OPTS := -f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) \
+	--set global.hubClusterDomain=$(HUBCLUSTER_APPS_DOMAIN) --set global.clusterVersion="$(HUBCLUSTER_VERSION)" $(TARGET_SITE_OPT))
+	helm upgrade --install $(NAME) common/install/ $(LEGACY_INSTALL_HELM_OPTS)
 
 operator-deploy operator-upgrade: validate-origin ## runs helm install
 	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
