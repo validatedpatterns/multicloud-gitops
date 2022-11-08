@@ -461,7 +461,7 @@
  # Source: acm/templates/policies/ocp-gitops-policy.yaml
  apiVersion: apps.open-cluster-management.io/v1
  kind: PlacementRule
-@@ -44,6 +482,181 @@
+@@ -44,6 +482,187 @@
          values:
            - OpenShift
  ---
@@ -510,6 +510,7 @@
 +                      valueFiles:
 +                      - "/values-global.yaml"
 +                      - "/values-acm-edge.yaml"
++                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-edge.yaml'
 +                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
 +                      # hub's cluster version, whereas we want to include the spoke cluster version
 +                      - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-edge.yaml'
@@ -532,6 +533,8 @@
 +                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
 +                      - name: global.clusterVersion
 +                        value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
++                      - name: global.clusterPlatform
++                        value: 
 +                      - name: clusterGroup.name
 +                        value: acm-edge
 +                      - name: clusterGroup.isHubCluster
@@ -597,6 +600,7 @@
 +                      valueFiles:
 +                      - "/values-global.yaml"
 +                      - "/values-acm-provision-edge.yaml"
++                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-provision-edge.yaml'
 +                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
 +                      # hub's cluster version, whereas we want to include the spoke cluster version
 +                      - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-provision-edge.yaml'
@@ -619,6 +623,8 @@
 +                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
 +                      - name: global.clusterVersion
 +                        value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
++                      - name: global.clusterPlatform
++                        value: 
 +                      - name: clusterGroup.name
 +                        value: acm-provision-edge
 +                      - name: clusterGroup.isHubCluster
