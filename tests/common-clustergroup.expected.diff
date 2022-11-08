@@ -216,7 +216,7 @@
  roleRef:
    apiGroup: rbac.authorization.k8s.io
    kind: ClusterRole
-@@ -44,17 +231,428 @@
+@@ -44,17 +231,436 @@
  subjects:
    - kind: ServiceAccount
      # This is the {ArgoCD.name}-argocd-application-controller
@@ -500,6 +500,8 @@
 +          value: region.example.com
 +        - name: global.clusterVersion
 +          value: ""
++        - name: global.clusterPlatform
++          value: ""
 +        - name: global.hubClusterDomain
 +          value: apps.hub.example.com
 +        - name: global.localClusterDomain
@@ -553,6 +555,8 @@
 +          value: region.example.com
 +        - name: global.clusterVersion
 +          value: ""
++        - name: global.clusterPlatform
++          value: ""
 +        - name: global.hubClusterDomain
 +          value: apps.hub.example.com
 +        - name: global.localClusterDomain
@@ -596,6 +600,8 @@
 +        - name: global.clusterDomain
 +          value: region.example.com
 +        - name: global.clusterVersion
++          value: ""
++        - name: global.clusterPlatform
 +          value: ""
 +        - name: global.hubClusterDomain
 +          value: apps.hub.example.com
@@ -641,6 +647,8 @@
 +          value: region.example.com
 +        - name: global.clusterVersion
 +          value: ""
++        - name: global.clusterPlatform
++          value: ""
 +        - name: global.hubClusterDomain
 +          value: apps.hub.example.com
 +        - name: global.localClusterDomain
@@ -651,7 +659,7 @@
  ---
  # Source: pattern-clustergroup/templates/plumbing/argocd.yaml
  apiVersion: argoproj.io/v1alpha1
-@@ -64,8 +662,8 @@
+@@ -64,8 +670,8 @@
    - argoproj.io/finalizer
    # Changing the name affects the ClusterRoleBinding, the generated secret,
    # route URL, and argocd.argoproj.io/managed-by annotations
@@ -662,7 +670,7 @@
    annotations:
      argocd.argoproj.io/compare-options: IgnoreExtraneous
  spec:
-@@ -90,15 +688,15 @@
+@@ -90,15 +696,15 @@
          command: ["/bin/bash", "-c"]
          args: ["helm template . --name-template ${ARGOCD_APP_NAME:0:52}
              -f $(git rev-parse --show-toplevel)/values-global.yaml
@@ -684,7 +692,7 @@
              --post-renderer ./kustomize"]
    applicationSet:
      resources:
-@@ -173,12 +771,65 @@
+@@ -173,12 +779,65 @@
  apiVersion: console.openshift.io/v1
  kind: ConsoleLink
  metadata:

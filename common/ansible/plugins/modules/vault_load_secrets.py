@@ -332,7 +332,7 @@ def get_secrets_vault_paths(module, syaml, keyname):
             continue
 
         # We are in the presence of either 'secrets.region-one' or 'files.cluster1' top-level keys
-        tmp = key.split(".")
+        tmp = key.split(".", 1)
         if len(tmp) != 2:
             module.fail_json(f"values-secrets.yaml key is non-conformant: {key}")
 

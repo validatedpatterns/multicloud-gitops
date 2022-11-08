@@ -7,10 +7,10 @@ global:
 
 external-secrets:
   image:
-    tag: v0.6.0-ubi
+    tag: v0.6.1-ubi
   webhook:
     image:
-      tag: v0.6.0-ubi
+      tag: v0.6.1-ubi
   certController:
     image:
-      tag: v0.6.0-ubi
+      tag: v0.6.1-ubi

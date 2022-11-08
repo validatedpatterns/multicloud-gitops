@@ -528,6 +528,8 @@ spec:
           value: region.example.com
         - name: global.clusterVersion
           value: ""
+        - name: global.clusterPlatform
+          value: ""
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -580,6 +582,8 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
+          value: ""
+        - name: global.clusterPlatform
           value: ""
         - name: global.hubClusterDomain
           value: apps.hub.example.com
