@@ -71,6 +71,8 @@ spec:
               value: {{ $.Values.global.clusterDomain }}
             - name: global.clusterVersion
               value: "{{ $.Values.global.clusterVersion }}"
+            - name: global.clusterPlatform
+              value: "{{ $.Values.global.clusterPlatform }}"
             - name: global.hubClusterDomain
               value: {{ $.Values.global.hubClusterDomain }}
             - name: global.localClusterDomain
@@ -149,6 +151,9 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- if $.Values.global.clusterPlatform }}
+      - "/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- end }}
       {{- if $.Values.global.clusterVersion }}
       - "/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
       {{- end }}
@@ -169,6 +174,8 @@ spec:
           value: {{ $.Values.global.clusterDomain }}
         - name: global.clusterVersion
           value: "{{ $.Values.global.clusterVersion }}"
+        - name: global.clusterPlatform
+          value: "{{ $.Values.global.clusterPlatform }}"
         - name: global.hubClusterDomain
           value: {{ $.Values.global.hubClusterDomain }}
         - name: global.localClusterDomain
