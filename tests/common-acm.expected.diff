@@ -51,7 +51,7 @@
  # Source: acm/templates/policies/ocp-gitops-policy.yaml
  apiVersion: apps.open-cluster-management.io/v1
  kind: PlacementRule
-@@ -44,6 +70,94 @@
+@@ -44,6 +70,97 @@
          values:
            - OpenShift
  ---
@@ -100,6 +100,7 @@
 +                      valueFiles:
 +                      - "/values-global.yaml"
 +                      - "/values-group-one.yaml"
++                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-group-one.yaml'
 +                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
 +                      # hub's cluster version, whereas we want to include the spoke cluster version
 +                      - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-group-one.yaml'
@@ -122,6 +123,8 @@
 +                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
 +                      - name: global.clusterVersion
 +                        value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
++                      - name: global.clusterPlatform
++                        value: 
 +                      - name: clusterGroup.name
 +                        value: group-one
 +                      - name: clusterGroup.isHubCluster
