@@ -1,0 +1,235 @@
+{{- if not (eq .Values.enabled "core") }}
+{{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
+{{- if (eq .Values.enabled "plumbing") }}
+{{- $namespace = "openshift-gitops" }}
+{{- end }}
+{{- range .Values.clusterGroup.applications }}
+{{- if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) }}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ .name }}
+  namespace: {{ $namespace }}
+  labels:
+    app: {{ .name }}
+spec:
+  {{- if .generators }}
+  generators: {{ .generators | toPrettyJson }}
+  {{- else }}
+  generators:
+    - git:
+        repoURL: {{ $.Values.global.repoURL }}
+        revision: {{ $.Values.global.targetRevision }}
+        {{- if .generatorFile }}
+        files:
+          - path: {{ .generatorFile | quote }}
+        {{- end }}
+  {{- end }}
+  template:
+    metadata:
+      name: {{ coalesce .namespace $namespace }}
+    spec:
+      project: {{ .project }}
+      {{- if .syncPolicy }}
+      syncPolicy: {{ .syncPolicy | toPrettyJson }}
+      {{- else }}
+      syncPolicy:
+        automated: {}
+      {{- end }}
+      {{- if .ignoreDifferences }}
+      ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
+      {{- end }}
+      source:
+        repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+        targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
+        {{- if .chart }}
+        chart: {{ .chart }}
+        {{- end }}
+        {{- if .path }}
+        path: {{ .path }}
+        {{- end }}
+        {{- if .plugin }}
+        plugin: {{ .plugin }}
+        {{- end }}
+        {{- if not .kustomize }}
+        helm:
+          ignoreMissingValueFiles: true
+          valueFiles:
+            - "values.yaml"
+            {{- if $.Values.global.clusterVersion }}
+            - "/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+            {{- end }}
+        {{- range .extraValueFiles }}
+            - {{ . | quote }}
+        {{- end }}
+        {{- if .useGeneratorValues }}
+          values: |-
+            {{ `{{ values }}` }}
+        {{- end }}
+          parameters:
+            - name: global.clusterDomain
+              value: {{ $.Values.global.clusterDomain }}
+            - name: global.clusterVersion
+              value: "{{ $.Values.global.clusterVersion }}"
+            - name: global.clusterPlatform
+              value: "{{ $.Values.global.clusterPlatform }}"
+            - name: global.hubClusterDomain
+              value: {{ $.Values.global.hubClusterDomain }}
+            - name: global.localClusterDomain
+              value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
+            - name: global.repoURL
+              value: {{ $.Values.global.repoURL }}
+            - name: global.targetRevision
+              value: {{ $.Values.global.targetRevision }}
+            - name: global.namespace
+              value: {{ $.Values.global.namespace }}
+            - name: global.pattern
+              value: {{ $.Values.global.pattern }}
+            - name: clusterGroup.name
+              value: {{ .Values.clusterGroup.name }}
+        {{- range .extraHubClusterDomainFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.hubClusterDomain }}
+        {{- end }}
+        {{- range .extraLocalClusterDomainFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.localClusterDomain }}
+        {{- end }}
+        {{- range .extraRepoURLFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.repoURL }}
+        {{- end }}
+        {{- range .extraTargetRevisionFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.targetRevision }}
+        {{- end }}
+        {{- range .extraNamespaceFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.namespace }}
+        {{- end }}
+        {{- range .extraPatternNameFields }}
+            - name: {{ . }}
+              value: {{ $.Values.global.pattern }}
+        {{- end }}
+        {{- range .overrides }}
+            - name: {{ .name  }}
+              value: {{ .value | quote  }}
+        {{- if .forceString }}
+              forceString: true
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      destination:
+        server: {{ coalesce .destinationServer "https://kubernetes.default.svc" }}
+        namespace: {{ coalesce .destinationNamespace .namespace $namespace }}
+{{- else }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .name }}
+  namespace: {{ $namespace }}
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  destination:
+    name: {{ $.Values.clusterGroup.targetCluster }}
+    namespace: {{ default $namespace .namespace }}
+  project: {{ .project }}
+  source:
+    repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+    targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
+    {{- if .chart }}
+    chart: {{ .chart }}
+    {{- else }}
+    path: {{ .path }}
+    {{- end }}
+    {{- if .plugin }}
+    plugin: {{ .plugin | toPrettyJson }}
+    {{- else if not .kustomize }}
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+      - "/values-global.yaml"
+      - "/values-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- if $.Values.global.clusterPlatform }}
+      - "/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- end }}
+      {{- if $.Values.global.clusterVersion }}
+      - "/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- end }}
+      {{- range $valueFile := .extraValueFiles }}
+      - {{ $valueFile | quote }}
+      {{- end }}
+      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
+      parameters:
+        - name: global.repoURL
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        - name: global.targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: global.namespace
+          value: $ARGOCD_APP_NAMESPACE
+        - name: global.pattern
+          value: {{ $.Values.global.pattern }}
+        - name: global.clusterDomain
+          value: {{ $.Values.global.clusterDomain }}
+        - name: global.clusterVersion
+          value: "{{ $.Values.global.clusterVersion }}"
+        - name: global.clusterPlatform
+          value: "{{ $.Values.global.clusterPlatform }}"
+        - name: global.hubClusterDomain
+          value: {{ $.Values.global.hubClusterDomain }}
+        - name: global.localClusterDomain
+          value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
+        {{- range .extraHubClusterDomainFields }}
+        - name: {{ . }}
+          value: {{ $.Values.global.hubClusterDomain }}
+        {{- end }}
+        {{- range .extraLocalClusterDomainFields }}
+        - name: {{ . }}
+          value: {{ $.Values.global.localClusterDomain }}
+        {{- end }}
+        {{- range .extraRepoURLFields }}
+        - name: {{ . }}
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        {{- end }}
+        {{- range .extraTargetRevisionFields }}
+        - name: {{ . }}
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        {{- end }}
+        {{- range .extraNamespaceFields }}
+        - name: {{ . }}
+          value: $ARGOCD_APP_NAMESPACE
+        {{- end }}
+        {{- range .extraPatternNameFields }}
+        - name: {{ . }}
+          value: {{ $.Values.global.pattern }}
+        {{- end }}
+        {{- range .overrides }}
+        - name: {{ .name }}
+          value: {{ .value | quote }}
+        {{- if .forceString }}
+          forceString: true
+        {{- end }}
+        {{- end }}
+      {{- if .fileParameters }}
+      fileParameters:
+      {{- range .fileParameters }}
+        - name: {{ .name }}
+          path: {{ .path }}
+      {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- if .ignoreDifferences }}
+  ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
+  {{- end }}
+  {{- if .syncPolicy }}
+  syncPolicy: {{ .syncPolicy | toPrettyJson }}
+  {{- else }}
+  syncPolicy:
+    automated: {}
+    #  selfHeal: true
+  {{- end }}
+---
+{{- end }}
+{{- end }}
+{{- end }}

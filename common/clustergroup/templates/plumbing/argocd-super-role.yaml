@@ -1,0 +1,43 @@
+{{- if (eq .Values.enabled "all") }}
+# WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: openshift-gitops-cluster-admin-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller
+    namespace: openshift-gitops
+  # NOTE: THIS MUST BE FIXED FOR MULTITENANT SETUP
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-server
+    namespace: openshift-gitops
+---
+# WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}-cluster-admin-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    # This is the {ArgoCD.name}-argocd-application-controller
+    name: {{ .Values.clusterGroup.name }}-gitops-argocd-application-controller
+    namespace: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}
+  # NOTE: THIS MUST BE FIXED FOR MULTITENANT SETUP
+  - kind: ServiceAccount
+    # This is the {ArgoCD.name}-argocd-server
+    name: {{ .Values.clusterGroup.name }}-gitops-argocd-server
+    namespace: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}
+  # NOTE: This is needed starting with gitops-1.5.0 (see issue common#76)
+  - kind: ServiceAccount
+    name: {{ .Values.clusterGroup.name }}-gitops-argocd-dex-server
+    namespace: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}
+{{- end }}

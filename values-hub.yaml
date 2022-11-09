@@ -3,7 +3,7 @@ clusterGroup:
   isHubCluster: true
   # Note: setting this to true stores the vault unseal keys inside a cluster secret and
   # is fundamentally insecure
-  insecureUnsealVaultInsideCluster: false
+  insecureUnsealVaultInsideCluster: true
 
   namespaces:
   - open-cluster-management
@@ -15,8 +15,8 @@ clusterGroup:
     acm:
       name: advanced-cluster-management
       namespace: open-cluster-management
-      channel: release-2.5
-      csv: advanced-cluster-management.v2.5.0
+      channel: release-2.6
+      #csv: advanced-cluster-management.v2.6.1
 
   projects:
   - hub
@@ -38,28 +38,7 @@ clusterGroup:
       name: vault
       namespace: vault
       project: hub
-      chart: vault
-      repoURL: https://helm.releases.hashicorp.com
-      targetRevision: v0.20.1
-      overrides:
-      - name: global.openshift
-        value: "true"
-      - name: injector.enabled
-        value: "false"
-      - name: ui.enabled
-        value: "true"
-      - name: ui.serviceType
-        value: LoadBalancer
-      - name: server.route.enabled
-        value: "true"
-      - name: server.route.host
-        value: null
-      - name: server.route.tls.termination
-        value: edge
-      - name: server.image.repository
-        value: "registry.connect.redhat.com/hashicorp/vault"
-      - name: server.image.tag
-        value: "1.10.3-ubi"
+      path: common/hashicorp-vault
 
     golang-external-secrets:
       name: golang-external-secrets
@@ -89,14 +68,41 @@ clusterGroup:
       # verbosity: "-v"
 
   managedClusterGroups:
-    region-one:
-      name: region-one
+    exampleRegion:
+      name: group-one
+      labels:
+      - name: clusterGroup
+        value: group-one
       helmOverrides:
       - name: clusterGroup.isHubCluster
         value: false
-      clusterSelector:
-        matchLabels:
-          clusterGroup: region-one
+
+      # Before enabling cluster provisioning, ensure AWS and/or Azure
+      #   credentials and OCP pull secrets are defined in Vault.
+      #   See values-secret.yaml.template
+      #
+      #clusterPools:
+      #  exampleAWSPool:
+      #    name: aws-ap
+      #    openshiftVersion: 4.10.18
+      #    baseDomain: blueprints.rhecoeng.com
+      #    platform:
+      #      aws:
+      #        region: ap-southeast-2
+      #    clusters:
+      #    - One
+      #
+      #  exampleAzurePool:
+      #    name: azure-us
+      #    openshiftVersion: 4.10.18
+      #    baseDomain: blueprints.rhecoeng.com
+      #    platform:
+      #      azure:
+      #        baseDomainResourceGroupName: dojo-dns-zones
+      #        region: eastus
+      #    clusters:
+      #    - Two
+      #    - Three
 
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #

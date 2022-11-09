@@ -1,0 +1,43 @@
+--- tests/install-naked.expected.yaml
++++ tests/install-normal.expected.yaml
+@@ -11,14 +11,14 @@
+ apiVersion: argoproj.io/v1alpha1
+ kind: Application
+ metadata:
+-  name: install-default
++  name: install-example
+   namespace: openshift-gitops
+   finalizers:
+   - resources-finalizer.argocd.argoproj.io/foreground
+ spec:
+   destination:
+     name: in-cluster
+-    namespace: install-default
++    namespace: install-example
+   project: default
+   source:
+     repoURL: https://github.com/pattern-clone/mypattern
+@@ -28,7 +28,7 @@
+       ignoreMissingValueFiles: true
+       valueFiles:
+       - "/values-global.yaml"
+-      - "/values-default.yaml"
++      - "/values-example.yaml"
+       # Track the progress of https://github.com/argoproj/argo-cd/pull/6280
+       parameters:
+         - name: global.repoURL
+@@ -40,7 +40,7 @@
+         - name: global.pattern
+           value: install
+         - name: global.hubClusterDomain
+-          value: 
++          value: apps.hub.example.com
+         - name: global.clusterVersion
+           value: ""
+   syncPolicy:
+@@ -63,4 +63,4 @@
+   config:
+     env:
+       - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
+-        value: install-default,openshift-gitops
++        value: install-example,openshift-gitops

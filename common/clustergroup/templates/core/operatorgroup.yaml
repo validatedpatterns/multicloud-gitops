@@ -1,0 +1,27 @@
+{{- if not (eq .Values.enabled "plumbing") }}
+{{- range .Values.clusterGroup.namespaces }}
+
+{{- if empty $.Values.clusterGroup.operatorgroupExcludes }}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ . }}-operator-group
+  namespace: {{ . }}
+spec:
+  targetNamespaces:
+  - {{ . }}
+---
+{{- else if not (has .  $.Values.clusterGroup.operatorgroupExcludes) }}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ . }}-operator-group
+  namespace: {{ . }}
+spec:
+  targetNamespaces:
+  - {{ . }}
+---
+{{- end }}
+
+{{- end }}
+{{- end }}

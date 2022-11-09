@@ -1,14 +1,18 @@
 global:
   pattern: common
+  targetRevision: main
   options:
     useCSV: True
     syncPolicy: Automatic
     installPlanApproval: Automatic
 
+enabled: "all"
+
 # Note that sometimes changing helm values might require a hard refresh (https://github.com/helm/helm/issues/3486)
 clusterGroup:
   name: example
   isHubCluster: true
+  targetCluster: in-cluster
   # Note: setting this to true stores the vault unseal keys inside a cluster secret and
   # is fundamentally insecure
   insecureUnsealVaultInsideCluster: false
@@ -28,9 +32,9 @@ clusterGroup:
     # By default we run this every 10minutes
     schedule: "*/10 * * * *"
     # Schedule used to trigger the vault unsealing (if explicitely enabled)
-    # Set to run every 9 minutes in order for load-secrets to succeed within
+    # Set to run every 5 minutes in order for load-secrets to succeed within
     # a reasonable amount of time (it waits up to 15 mins)
-    insecureUnsealVaultInsideClusterSchedule: "*/9 * * * *"
+    insecureUnsealVaultInsideClusterSchedule: "*/5 * * * *"
     # Increase ansible verbosity with '-v' or '-vv..'
     verbosity: ""
     serviceAccountCreate: true
@@ -40,6 +44,15 @@ clusterGroup:
     clusterRoleYaml: ""
     roleName: imperative-role
     roleYaml: ""
+
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore
+
+# Depends on the value of 'vault_hub' ansible variable used 
+# during the installation
+secretsBase:
+  key: secret/data/hub
 
 #  managedClusterGroups:
 #  - name: factory

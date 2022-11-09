@@ -1,5 +1,6 @@
-{{/* Only define this if there are any imperativejobs defined */}}
-{{- if gt (len $.Values.clusterGroup.imperative.jobs) 0 -}}
+{{- if not (eq .Values.enabled "plumbing") }}
+{{/* Define this if needed (jobs defined */}}
+{{- if (gt (len $.Values.clusterGroup.imperative.jobs) 0) -}}
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -62,6 +63,7 @@ spec:
             emptyDir: {}
           - name: values-volume
             configMap:
-              name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}
+              name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}-{{ $.Values.clusterGroup.name }}
           restartPolicy: Never
-{{ end }}
+{{- end }}
+{{- end }}

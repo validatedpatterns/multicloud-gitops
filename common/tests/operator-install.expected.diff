@@ -1,0 +1,11 @@
+--- tests/operator-install-naked.expected.yaml
++++ tests/operator-install-normal.expected.yaml
+@@ -6,7 +6,7 @@
+   name: operator-install
+   namespace: openshift-operators
+ spec:
+-  clusterGroupName: default
++  clusterGroupName: example
+   gitSpec:
+     targetRepo: https://github.com/pattern-clone/mypattern
+     targetRevision: main

@@ -67,7 +67,7 @@
     unseal_keys: "{{ vault_init_json['unseal_keys_hex'] }}"
   when: vault_sealed
 
-- name: Unseal vault
+- name: Unseal leader
   kubernetes.core.k8s_exec:
     namespace: "{{ vault_ns }}"
     pod: "{{ vault_pod }}"
@@ -77,6 +77,36 @@
     extended: true
     label: "Unsealing with key {{ ansible_loop.index }}"
   when: vault_sealed
+
+- name: Join Raft cluster
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ item }}"
+    command: vault operator raft join http://{{ vault_pod }}.{{ vault_ns }}-internal:8200
+  register: join_raft_cluster_out
+  until: join_raft_cluster_out is not failed
+  retries: 10
+  delay: 15
+  loop: "{{ followers }}"
+  loop_control:
+    extended: true
+    label: "Joining Raft Cluster on http://{{ vault_pod }}.{{ vault_ns }}-internal:8200"
+  when:
+    - vault_sealed
+    - followers | length > 0
+
+- name: Unseal followers
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ item.0 }}"
+    command: vault operator unseal "{{ item.1 }}"
+  loop: "{{ followers | product(unseal_keys) | list }}"
+  loop_control:
+    extended: true
+    label: "Unsealing {{ item.0 }} with key {{ ansible_loop.index }}"
+  when:
+    - vault_sealed
+    - followers | length > 0
 
 - name: Login into vault
   kubernetes.core.k8s_exec:

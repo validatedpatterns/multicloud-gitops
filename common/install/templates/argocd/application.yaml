@@ -19,6 +19,9 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-{{ .Values.main.clusterGroupName }}.yaml"
+      {{- if .Values.global.clusterVersion }}
+      - "/values-{{ .Values.global.clusterVersion }}-{{ .Values.main.clusterGroupName }}.yaml"
+      {{- end }}
       # Track the progress of https://github.com/argoproj/argo-cd/pull/6280
       parameters:
         - name: global.repoURL
@@ -31,6 +34,8 @@ spec:
           value: {{ .Release.Name }}
         - name: global.hubClusterDomain
           value: {{ .Values.global.hubClusterDomain }}
+        - name: global.clusterVersion
+          value: "{{ .Values.global.clusterVersion }}"
 {{- if eq .Values.main.options.syncPolicy "Automatic" }}
   syncPolicy:
     automated: {}

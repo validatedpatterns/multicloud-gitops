@@ -1,0 +1,13 @@
+{{- if not (eq .Values.enabled "plumbing") }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}
+  # The name here needs to be consistent with
+  # - acm/templates/policies/application-policies.yaml
+  # - clustergroup/templates/applications.yaml
+  # - any references to secrets and route URLs in documentation
+  name: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}
+spec: {}
+{{- end }}

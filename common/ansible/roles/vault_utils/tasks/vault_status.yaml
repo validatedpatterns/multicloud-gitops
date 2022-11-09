@@ -38,3 +38,24 @@
   ansible.builtin.set_fact:
     vault_status: "{{ vault_status_json.stdout | from_json }}"
   when: vault_status_json.stdout_lines | length > 0
+
+- name: List Vault pods
+  kubernetes.core.k8s_info:
+    namespace: "{{ vault_ns }}"
+    kind: Pod
+    label_selectors:
+      - "component = server"
+  register: vault_pods_list
+
+- name: "Get pods"
+  ansible.builtin.set_fact:
+    vault_pods: "{{ vault_pods + [item.metadata.name] }}"
+  loop: "{{ vault_pods_list.resources }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"
+  vars:
+    vault_pods: []
+
+- name: "Followers"
+  ansible.builtin.set_fact:
+    followers: "{{ vault_pods | difference(vault_pod) }}"

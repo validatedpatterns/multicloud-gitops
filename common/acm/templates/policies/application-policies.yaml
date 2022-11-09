@@ -1,5 +1,7 @@
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
 {{- range .Values.clusterGroup.managedClusterGroups }}
+{{- $group := . }}
+{{- if not .hostedArgoSites }}
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -43,6 +45,13 @@ spec:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-{{ .name }}.yaml"
+                      - '/values-{{ `{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}` }}-{{ .name }}.yaml'
+                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                      # hub's cluster version, whereas we want to include the spoke cluster version
+                      - '/values-{{ `{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}` }}-{{ .name }}.yaml'
+                      {{- range $valueFile := .extraValueFiles }}
+                      - {{ $valueFile | quote }}
+                      {{- end }}
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -56,9 +65,26 @@ spec:
                         value: {{ $.Values.global.hubClusterDomain }}
                       - name: global.localClusterDomain
                         value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
+                      # Requires ACM 2.6 or higher
+                      - name: global.clusterDomain
+                        value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}` }}'
+                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
+                      - name: global.clusterVersion
+                        value: '{{ `{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}` }}'
+                      - name: global.clusterPlatform
+                        value: {{ $.Values.global.clusterPlatform }}
+                      - name: clusterGroup.name
+                        value: {{ $group.name }}
                      {{- range .helmOverrides }}
                       - name: {{ .name }}
                         value: {{ .value | quote }}
+                     {{- end }}
+                     {{- if .fileParameters }}
+                      fileParameters:
+                      {{- range .fileParameters }}
+                      - name: {{ .name }}
+                        path: {{ .path }}
+                      {{- end }}
                      {{- end }}
                   destination:
                     server: https://kubernetes.default.svc
@@ -100,6 +126,23 @@ spec:
   clusterConditions:
     - status: 'True'
       type: ManagedClusterConditionAvailable
+  {{- if .clusterSelector }}
   clusterSelector: {{ .clusterSelector | toPrettyJson }}
+  {{- else if (not $group.acmlabels) }}
+  clusterSelector:
+    matchLabels:
+      clusterGroup: {{ $group.name }}
+  {{- else if eq (len $group.acmlabels) 0 }}
+  clusterSelector:
+    matchLabels:
+      clusterGroup: {{ $group.name }}
+  {{- else }}
+  clusterSelector:
+    matchLabels:
+    {{- range .acmlabels }}
+      {{ .name }}: {{ .value }}
+    {{- end }}
+  {{- end }}
 ---
+{{- end }}
 {{- end }}

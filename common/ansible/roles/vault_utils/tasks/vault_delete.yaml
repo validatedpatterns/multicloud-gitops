@@ -1,5 +1,6 @@
 ---
 - include_tasks: pre_check.yaml
+- include_tasks: vault_status.yaml
 
 # Note: We do not wait on purpose here as the pod will be recreated
 # anyways and that would race. We are fine with having it gone once
@@ -9,7 +10,8 @@
     api_version: v1
     kind: Pod
     namespace: "{{ vault_ns }}"
-    name: "{{ vault_pod }}"
+    name: "{{ item }}"
+  loop: "{{ vault_pods }}"
 
 - name: Delete vault pvc
   kubernetes.core.k8s:
@@ -17,4 +19,5 @@
     api_version: v1
     kind: PersistentVolumeClaim
     namespace: "{{ vault_ns }}"
-    name: "{{ vault_pvc }}"
+    name: "data-{{ item }}"
+  loop: "{{ vault_pods }}"
