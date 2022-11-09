@@ -39,7 +39,6 @@ If set to false they will be stored inside a secret defined by `unseal_secret`
 in the `imperative` namespace:
 
 ```yaml
-file_unseal: true
 # token inside a secret in the cluster.
 # *Note* that this is fundamentally unsafe
 output_file: "common/pattern-vault.init"
@@ -218,11 +217,9 @@ Internals
 Here is the rough high-level algorithm used to unseal the vault:
 
 1. Check vault status. If vault is not initialized go to 2. If initialized go to 3.
-2. Initialize vault and store unseal keys + login token either on a local file
-   or inside a secret in k8s (file_unseal var controls this)
+2. Initialize vault and store unseal keys + login token inside a secret in k8s
 3. Check vault status. If vault is unsealed go to 5. else to to 4.
-4. Unseal the vault using the secrets read from the file or the secret
-   (file_unseal controls this)
+4. Unseal the vault using the secrets read from the k8s secret
 5. Configure the vault (should be idempotent)
 
 ## License
