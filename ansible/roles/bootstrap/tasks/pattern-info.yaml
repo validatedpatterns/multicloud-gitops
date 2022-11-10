@@ -11,6 +11,7 @@
   ansible.builtin.set_fact:
     secrets_file: "{{ lookup('env', 'HOME') }}/values-secret.yaml"
     globals_file: "{{ pattern_repo_dir }}/values-global.yaml"
+    pattern_dir: "{{ pattern_repo_dir }}"
     target_branch: "{{ lookup('pipe', 'git rev-parse  --abbrev-ref HEAD') }}"
 
 # TARGET_REPO=$(shell git remote show origin | grep Push | sed -e 's/.*URL:[[:space:]]*//' -e 's%^git@%%' -e 's%^https://%%' -e 's%:%/%' -e 's%^%https://%')
