@@ -1,9 +1,11 @@
 # VP hashicorp-vault
 
-**IMPORTANT**: Due to the fact that 'null' values do not work in helm charts ([GH#9136](https://github.com/helm/helm/issues/9136)),
-we need to patch the chart to skip setting the host.
+**IMPORTANT**: Due to the fact that 'null' values do not work in helm charts
+([GH#9136](https://github.com/helm/helm/issues/9136)), we need to patch the
+chart to skip setting the host.
 
-Make sure to run "./update-helm-dependency.sh"
+Make sure to run "./update-helm-dependency.sh" after you updated the subchart
+(by calling helm dependency update .)
 
 We can drop this local patch when any one the two conditions is true:
 
