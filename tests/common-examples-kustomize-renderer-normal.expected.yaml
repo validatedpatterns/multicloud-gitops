@@ -1,0 +1,36 @@
+---
+# Source: example/templates/environment.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: environment
+data:
+  IMAGE_PROVIDER: 
+  IMAGE_ACCOUNT: PLAINTEXT
+  GIT_EMAIL: SOMEWHERE@EXAMPLE.COM
+  GIT_DEV_REPO_URL: https:///PLAINTEXT/manuela-dev.git
+  GIT_DEV_REPO_REVISION: main
+  GIT_OPS_REPO_TEST_URL: https://github.com/pattern-clone/mypattern
+  GIT_OPS_REPO_TEST_REVISION: 
+  GIT_OPS_REPO_PROD_URL: https://github.com/pattern-clone/mypattern
+  GIT_OPS_REPO_PROD_REVISION: 
+  IOT_CONSUMER_IMAGE: iot-consumer
+  IOT_CONSUMER_YAML_PATH: images.(name==messaging).newTag
+  IOT_CONSUMER_TEST_KUSTOMIZATION_PATH: charts/datacenter/manuela-tst/kustomization.yaml
+  IOT_CONSUMER_PROD_KUSTOMIZATION_PATH: charts/factory/manuela-stormshift/messaging/kustomization.yaml
+  IOT_CONSUMER_PROD_IMAGESTREAM_PATH: charts/factory/manuela-stormshift/messaging/messaging-is.yaml
+  IOT_FRONTEND_IMAGE: iot-frontend
+  IOT_FRONTEND_YAML_PATH: images.(name==line-dashboard).newTag
+  IOT_FRONTEND_TEST_KUSTOMIZATION_PATH: charts/datacenter/manuela-tst/kustomization.yaml
+  IOT_FRONTEND_PROD_KUSTOMIZATION_PATH: charts/factory/manuela-stormshift/line-dashboard/kustomization.yaml
+  IOT_FRONTEND_PROD_IMAGESTREAM_PATH: charts/factory/manuela-stormshift/line-dashboard/line-dashboard-is.yaml
+  IOT_SWSENSOR_IMAGE: iot-software-sensor
+  IOT_SWSENSOR_YAML_PATH: images.(name==machine-sensor).newTag
+  IOT_SWSENSOR_TEST_KUSTOMIZATION_PATH: charts/datacenter/manuela-tst/kustomization.yaml
+  IOT_SWSENSOR_PROD_KUSTOMIZATION_PATH: charts/factory/manuela-stormshift/machine-sensor/kustomization.yaml
+  IOT_SWSENSOR_PROD_IMAGESTREAM_PATH: charts/factory/manuela-stormshift/machine-sensor/machine-sensor-is.yaml
+  IOT_ANOMALY_IMAGE: iot-anomaly-detection
+  IOT_ANOMALY_YAML_PATH: images.(name==anomaly-detection).newTag
+  IOT_ANOMALY_TEST_KUSTOMIZATION_PATH: charts/datacenter/manuela-tst/kustomization.yaml
+  IOT_ANOMALY_PROD_KUSTOMIZATION_PATH: charts/factory/manuela-stormshift/anomaly-detection/kustomization.yaml
+  IOT_ANOMALY_PROD_IMAGESTREAM_PATH: charts/factory/manuela-stormshift/anomaly-detection/anomaly-detection-is.yaml
