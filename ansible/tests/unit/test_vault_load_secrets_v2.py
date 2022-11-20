@@ -110,5 +110,59 @@ class TestMyModule(unittest.TestCase):
             ret["msg"], "Values secrets file does not exist: /tmp/nonexisting"
         )
 
+    def test_ensure_no_vault_policies_is_ok(self):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    self.testdir_v2, "values-secret-v2-nopolicies.yaml"
+                ),
+            }
+        )
+        with patch.object(load_secrets_v2, "run_command") as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 0
+
+    def test_ensure_policies_are_injected(self):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    self.testdir_v2, "values-secret-v2-base.yaml"
+                ),
+            }
+        )
+        with patch.object(load_secrets_v2, "run_command") as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 2
+
+        calls = [
+            call(
+                "echo 'length=10\nrule \"charset\" { charset = \"abcdefghijklmnopqrstuvwxyz\" min-chars = 1 }\nrule \"charset\" { charset = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" min-chars = 1 }\nrule \"charset\" { charset = \"0123456789\" min-chars = 1 }\n' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/basicPolicy.hcl';oc exec -n vault vault-0 -i -- sh -c 'vault write sys/policies/password/basicPolicy  policy=@/tmp/basicPolicy.hcl'",  # noqa: E501
+                attempts=3,
+            ),
+            call(
+                "echo 'length=20\nrule \"charset\" { charset = \"abcdefghijklmnopqrstuvwxyz\" min-chars = 1 }\nrule \"charset\" { charset = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" min-chars = 1 }\nrule \"charset\" { charset = \"0123456789\" min-chars = 1 }\nrule \"charset\" { charset = \"!@#$%^&*\" min-chars = 1 }\n' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/advancedPolicy.hcl';oc exec -n vault vault-0 -i -- sh -c 'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl'",  # noqa: E501
+                attempts=3,
+            )
+        ]
+        mock_run_command.assert_has_calls(calls)
+
 if __name__ == "__main__":
     unittest.main()
