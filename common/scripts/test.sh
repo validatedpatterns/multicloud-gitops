@@ -111,10 +111,17 @@ if [ $2 = "all" ]; then
     doTest naked
 
     # Test the charts as the pattern would drive them
-    doTest normal "$3"
+    INPUTS=$(ls -1 common/examples/*.yaml | grep -v secret)
+    for input in $INPUTS; do
+	variant=normal
+	if [ "$input" != "common/examples/values-example.yaml" ]; then
+		variant=$(echo $input | sed -e 's@.*/@@' -e 's@\.yaml@@')
+        fi
+        doTest $variant "$3 -f $input"
+    done
 
     # Ensure the differences between the two results are also stable
-    doTestCompare
+    #doTestCompare
 else
     doTest $2 "$3"
 fi
