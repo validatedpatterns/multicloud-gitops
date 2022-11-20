@@ -36,8 +36,8 @@ sys.modules["ansible.module_utils.load_secrets_common"] = load_secrets_common
 import load_secrets_v1  # noqa: E402
 import load_secrets_v2  # noqa: E402
 
-sys.modules["ansible.module_utils.load_secrets_v2"] = load_secrets_v2
 sys.modules["ansible.module_utils.load_secrets_v1"] = load_secrets_v1
+sys.modules["ansible.module_utils.load_secrets_v2"] = load_secrets_v2
 import vault_load_secrets  # noqa: E402
 
 

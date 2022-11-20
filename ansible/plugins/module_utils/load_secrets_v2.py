@@ -17,38 +17,41 @@
 Module that implements V2 of the values-secret.yaml spec
 """
 
+import base64
+import os
 
-# import base64
-# import os
-
-# from ansible.module_utils.load_secrets_common import (
-#     parse_values,
-#     run_command,
-#     flatten,
-# )
+import yaml
+from ansible.module_utils.load_secrets_common import flatten, parse_values, run_command
 
 
 class LoadSecretsV2:
-    def __init__(self):
+    def __init__(
+        self, module, values_secrets, basepath, namespace, pod, values_secret_template
+    ):
+        self.module = module
+        self.basepath = basepath
+        self.namespace = namespace
+        self.pod = pod
+        self.values_secret_template = values_secret_template
+        self.syaml = parse_values(values_secrets)
+
+
+    def sanitize_values(self):
+        """
+        Sanitizes the secrets YAML object version 2.0
+        ..TODO..
+
+        Parameters:
+            module(AnsibleModule): The current AnsibleModule being used
+
+            syaml(obj): The parsed yaml object representing the secrets
+
+        Returns:
+            syaml(obj): The parsed yaml object sanitized
+        """
+
+        return syaml
+
+
+    def get_secrets_vault_paths(self, keyname):
         return
-
-
-def sanitize_values(module, syaml):
-    """
-    Sanitizes the secrets YAML object version 2.0
-    ..TODO..
-
-    Parameters:
-        module(AnsibleModule): The current AnsibleModule being used
-
-        syaml(obj): The parsed yaml object representing the secrets
-
-    Returns:
-        syaml(obj): The parsed yaml object sanitized
-    """
-
-    return syaml
-
-
-def get_secrets_vault_paths(module, syaml, keyname):
-    return
