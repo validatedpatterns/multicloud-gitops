@@ -194,5 +194,50 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(ret["failed"], True)
         assert (ret["args"][1] == "Secret has vaultPolicy set to nonExisting but no such policy exists")
 
+    def test_ensure_error_file_wrong_onmissing_value(self):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2, "values-secret-v2-files-wrong-onmissingvalue.yaml"
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert (ret["args"][1] == "onMissingValue: generate is invalid")
+
+    def test_ensure_error_file_emptypath(self):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2, "values-secret-v2-files-emptypath.yaml"
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert (ret["args"][1] == "ca_crt has unset path")
+
+    def test_ensure_error_file_wrongpath(self):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2, "values-secret-v2-files-wrongpath.yaml"
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert (ret["args"][1] == "ca_crt has non-existing path: /tmp/nonexisting")
+
 if __name__ == "__main__":
     unittest.main()

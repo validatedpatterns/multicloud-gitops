@@ -55,6 +55,9 @@ class LoadSecretsV2:
             return (False, f"Field {f} is missing name")
 
         on_missing_value = self._get_field_on_missing_value(f)
+        if on_missing_value not in ["error", "generate", "prompt"]:
+            return (False, f"onMissingValue: {on_missing_value} is invalid")
+
         value = self._get_field_value(f)
         if on_missing_value in ["error"] and (value == None or len(value) < 1):
             return (False, "Secret has onMissingValue set to 'error' and has no value set")
@@ -69,6 +72,28 @@ class LoadSecretsV2:
         return (True, '')
 
     def _validate_file(self, f):
+        # These fields are mandatory
+        try:
+            name = f["name"]
+        except KeyError:
+            return (False, f"Field {f} is missing name")
+
+        on_missing_value = self._get_field_on_missing_value(f)
+        if on_missing_value not in ["error", "prompt"]:
+            return (False, f"onMissingValue: {on_missing_value} is invalid")
+
+        path = f.get("path", None)
+        if on_missing_value in ["error"] and path == None:
+            return (False, f"{name} has unset path")
+
+        if on_missing_value in ["prompt"] and path != None:
+            return (False, f"{name} has onMissingValue set to 'prompt' but path is set")
+
+        if on_missing_value in ["prompt"]:
+            # FIXME: implement proper prompting
+            path = "/tmp/ca.crt"
+        if not os.path.isfile(os.path.expanduser(path)):
+            return (False, f"{name} has non-existing path: {path}")
         return (True, '')
 
     def _validate_secrets(self):
@@ -85,15 +110,19 @@ class LoadSecretsV2:
                     return (False, f"Secret {s} is missing {i}")
 
             fields = s.get("fields", [])
-            file = s.get("file", [])
-            if len(fields) == 0 and len(file) == 0:
-                return (False, f"Secret {s} does not have either fields nor file")
+            files = s.get("files", [])
+            if len(fields) == 0 and len(files) == 0:
+                return (False, f"Secret {s} does not have either fields nor files")
 
             for i in fields:
                 (ret, msg) = self._validate_field(i)
-                if ret == False:
+                if not ret:
                     return (False, msg)
 
+            for i in files:
+                (ret, msg) = self._validate_file(i)
+                if not ret:
+                    return (False, msg)
         return (True, '')
 
 
