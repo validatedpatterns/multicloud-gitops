@@ -1,4 +1,5 @@
-- name: MultiCloud-GitOps bootstrap
+# This is only needed for RHPDS
+- name: MultiCloud-GitOps RHPDS bootstrap
   hosts: localhost
   connection: local
   tasks:
