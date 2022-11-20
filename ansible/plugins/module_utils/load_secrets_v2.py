@@ -21,7 +21,11 @@ Module that implements V2 of the values-secret.yaml spec
 import base64
 import os
 
-def sanitize_values_v2(module, syaml):
+class LoadSecretsV2:
+    def __init__():
+        return
+
+def sanitize_values(module, syaml):
     """
     Sanitizes the secrets YAML object version 2.0
     ..TODO..

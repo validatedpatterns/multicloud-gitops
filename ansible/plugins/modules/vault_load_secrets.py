@@ -54,8 +54,10 @@ import os
 
 import yaml
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.load_secrets_common import parse_values, get_version, run_command, flatten
+from ansible.module_utils.load_secrets_common import parse_values, get_version
 
+from ansible.module_utils.load_secrets_v2 import LoadSecretsV2
+from ansible.module_utils.load_secrets_v1 import LoadSecretsV1
 
 ANSIBLE_METADATA = {
     "metadata_version": "1.1",
@@ -121,82 +123,6 @@ EXAMPLES = """
 
 
 
-
-# NOTE(bandini): we shell out to oc exec it because of
-# https://github.com/ansible-collections/kubernetes.core/issues/506 and
-# https://github.com/kubernetes/kubernetes/issues/89899. Until those are solved
-# it makes little sense to invoke the APIs via the python wrappers
-def inject_secrets(module, syaml, namespace, pod, basepath, get_secrets_vault_paths_func):
-    """
-    Walks a secrets yaml object and injects all the secrets into the vault via 'oc exec' calls
-
-    Parameters:
-        module(AnsibleModule): The current AnsibleModule being used
-
-        syaml(obj): The parsed yaml object representing the secrets
-
-        namespace(str): The namespace in which the vault is
-
-        pod(str): The pod name where the vault is
-
-        basepath(str): The base string to which we concatenate the vault
-        relative paths
-
-    Returns:
-        counter(int): The number of secrets injected
-    """
-    counter = 0
-    for i in get_secrets_vault_paths_func(module, syaml, "secrets"):
-        path = f"{basepath}/{i[1]}"
-        for secret in syaml[i[0]] or []:
-            properties = ""
-            for key, value in syaml[i[0]][secret].items():
-                properties += f"{key}='{value}' "
-            properties = properties.rstrip()
-            cmd = (
-                f"oc exec -n {namespace} {pod} -i -- sh -c "
-                f"\"vault kv put '{path}/{secret}' {properties}\""
-            )
-            run_command(cmd, attempts=3)
-            counter += 1
-
-    for i in get_secrets_vault_paths_func(module, syaml, "files"):
-        path = f"{basepath}/{i[1]}"
-        for filekey in syaml[i[0]] or []:
-            file = os.path.expanduser(syaml[i[0]][filekey])
-            cmd = (
-                f"cat '{file}' | oc exec -n {namespace} {pod} -i -- sh -c "
-                f"'cat - > /tmp/vcontent'; "
-                f"oc exec -n {namespace} {pod} -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | "
-                f"vault kv put {path}/{filekey} b64content=- content=@/tmp/vcontent; "
-                f"rm /tmp/vcontent'"
-            )
-            run_command(cmd, attempts=3)
-            counter += 1
-    return counter
-
-
-def check_for_missing_secrets(module, syaml, values_secret_template):
-    with open(values_secret_template, "r", encoding="utf-8") as file:
-        template_yaml = yaml.safe_load(file.read())
-    if template_yaml is None:
-        module.fail_json(f"Template {values_secret_template} is empty")
-
-    syaml_flat = flatten(syaml)
-    template_flat = flatten(template_yaml)
-
-    syaml_keys = set(syaml_flat.keys())
-    template_keys = set(template_flat.keys())
-
-    if template_keys <= syaml_keys:
-        return
-
-    diff = template_keys - syaml_keys
-    module.fail_json(
-        f"Values secret yaml is missing needed secrets from the templates: {diff}"
-    )
-
-
 def run(module):
     """Main ansible module entry point"""
     results = dict(changed=False)
@@ -223,21 +149,22 @@ def run(module):
     version = get_version(syaml)
 
     if version == "2.0":
-        from ansible.module_utils.load_secrets_v2 import sanitize_values, get_secrets_vault_paths
+        secret_obj = LoadSecretsV2()
     elif version == "1.0":
-        from ansible.module_utils.load_secrets_v1 import sanitize_values, get_secrets_vault_paths
+        secret_obj = LoadSecretsV1(
+            module, values_secrets, basepath, namespace, pod, values_secret_template
+        )
     else:
         module.fail_json(f"Version {version} is currently not supported")
 
-    # In the future we can use the version field to manage different formats if needed
-    secrets = sanitize_values(module, syaml)
+    secret_obj.sanitize_values()
 
     # If the user specified check_for_missing_secrets then we read values_secret_template
     # and check if there are any missing secrets
     if check_missing_secrets:
-        check_for_missing_secrets(module, syaml, values_secret_template)
+        secret_obj.check_for_missing_secrets()
 
-    nr_secrets = inject_secrets(module, secrets, namespace, pod, basepath, get_secrets_vault_paths)
+    nr_secrets = secret_obj.inject_secrets()
     results["failed"] = False
     results["changed"] = True
     results["msg"] = f"{nr_secrets} secrets injected"
