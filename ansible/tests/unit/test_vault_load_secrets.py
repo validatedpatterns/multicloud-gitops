@@ -26,7 +26,18 @@ from unittest.mock import call, patch
 from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_bytes
 
+# TODO(bandini): I could not come up with something better to force the imports to be existing
+# when we 'import vault_load_secrets'
+sys.path.insert(1, "./ansible/plugins/module_utils")
 sys.path.insert(1, "./ansible/plugins/modules")
+import load_secrets_common  # noqa: E402
+
+sys.modules["ansible.module_utils.load_secrets_common"] = load_secrets_common
+import load_secrets_v1  # noqa: E402
+import load_secrets_v2  # noqa: E402
+
+sys.modules["ansible.module_utils.load_secrets_v2"] = load_secrets_v2
+sys.modules["ansible.module_utils.load_secrets_v1"] = load_secrets_v1
 import vault_load_secrets  # noqa: E402
 
 
@@ -110,7 +121,7 @@ class TestMyModule(unittest.TestCase):
             }
         )
 
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(load_secrets_common, "run_command") as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -158,7 +169,7 @@ class TestMyModule(unittest.TestCase):
             }
         )
 
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(load_secrets_common, "run_command") as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -184,7 +195,9 @@ class TestMyModule(unittest.TestCase):
             {"values_secrets": os.path.join(self.testdir_v1, "values-secret-good.yaml")}
         )
 
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch(
+            "ansible.module_utils.load_secrets_common", "run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -249,7 +262,7 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(load_secrets_common, "run_command") as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -282,7 +295,7 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(load_secrets_common, "run_command") as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -303,7 +316,7 @@ class TestMyModule(unittest.TestCase):
             {"values_secrets": os.path.join(self.testdir_v1, "values-secret-fqdn.yaml")}
         )
 
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(load_secrets_common, "run_command") as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0

@@ -19,10 +19,19 @@ Module that implements V1 of the values-secret.yaml spec
 
 import base64
 import os
-from ansible.module_utils.load_secrets_common import parse_values, get_version, run_command, flatten
+import yaml
+from ansible.module_utils.load_secrets_common import (
+    parse_values,
+    get_version,
+    run_command,
+    flatten,
+)
+
 
 class LoadSecretsV1:
-    def __init__(self, module, values_secrets, basepath, namespace, pod, values_secret_template):
+    def __init__(
+        self, module, values_secrets, basepath, namespace, pod, values_secret_template
+    ):
         self.module = module
         self.basepath = basepath
         self.namespace = namespace
@@ -91,14 +100,17 @@ class LoadSecretsV1:
         # generate s3Secret so a user does not need to do it manually which tends to be error-prone
         for secret in secrets:
             tmp = secrets[secret]
-            if "s3.accessKey" in tmp and "s3.secretKey" in tmp and "s3Secret" not in tmp:
+            if (
+                "s3.accessKey" in tmp
+                and "s3.secretKey" in tmp
+                and "s3Secret" not in tmp
+            ):
                 s3secret = (
                     f"s3.accessKey: {tmp['s3.accessKey']}\n"
                     f"s3.secretKey: {tmp['s3.secretKey']}"
                 )
                 s3secretb64 = base64.b64encode(s3secret.encode())
                 secrets[secret]["s3Secret"] = s3secretb64.decode("utf-8")
-
 
     def get_secrets_vault_paths(self, keyname):
         """
@@ -139,7 +151,9 @@ class LoadSecretsV1:
             # We are in the presence of either 'secrets.region-one' or 'files.cluster1' top-level keys
             tmp = key.split(".", 1)
             if len(tmp) != 2:
-                self.module.fail_json(f"values-secrets.yaml key is non-conformant: {key}")
+                self.module.fail_json(
+                    f"values-secrets.yaml key is non-conformant: {key}"
+                )
 
             keys_paths.append((key, tmp[1]))
 
@@ -187,7 +201,6 @@ class LoadSecretsV1:
                 run_command(cmd, attempts=3)
                 counter += 1
         return counter
-
 
     def check_for_missing_secrets(self):
         with open(self.values_secret_template, "r", encoding="utf-8") as file:

@@ -23,6 +23,7 @@ import time
 import yaml
 from collections.abc import MutableMapping
 
+
 def parse_values(values_file):
     """
     Parses a values-secrets.yaml file (usually placed in ~)
@@ -115,5 +116,3 @@ def flatten(dictionary, parent_key=False, separator="."):
             if value is not None:
                 items.append((new_key, value))
     return dict(items)
-
-

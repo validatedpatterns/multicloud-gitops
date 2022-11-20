@@ -21,9 +21,11 @@ Module that implements V2 of the values-secret.yaml spec
 import base64
 import os
 
+
 class LoadSecretsV2:
-    def __init__():
+    def __init__(self):
         return
+
 
 def sanitize_values(module, syaml):
     """
@@ -43,6 +45,7 @@ def sanitize_values(module, syaml):
         module.fail_json(f"Version expected is 2.0 but got: {version}")
 
     return syaml
+
 
 def get_secrets_vault_paths(module, syaml, keyname):
     return

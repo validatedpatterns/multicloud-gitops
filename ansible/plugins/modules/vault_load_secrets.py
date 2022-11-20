@@ -122,7 +122,6 @@ EXAMPLES = """
 """
 
 
-
 def run(module):
     """Main ansible module entry point"""
     results = dict(changed=False)
