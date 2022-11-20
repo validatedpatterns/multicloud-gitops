@@ -19,13 +19,9 @@ Module that implements V1 of the values-secret.yaml spec
 
 import base64
 import os
+
 import yaml
-from ansible.module_utils.load_secrets_common import (
-    parse_values,
-    get_version,
-    run_command,
-    flatten,
-)
+from ansible.module_utils.load_secrets_common import flatten, parse_values, run_command
 
 
 class LoadSecretsV1:
@@ -78,7 +74,7 @@ class LoadSecretsV1:
             files = {}
         if len(secrets) == 0 and len(files) == 0:
             self.module.fail_json(
-                f"Neither 'secrets' nor 'files have any secrets to be parsed"
+                "Neither 'secrets' nor 'files have any secrets to be parsed"
             )
 
         if isinstance(secrets, list) or isinstance(files, list):

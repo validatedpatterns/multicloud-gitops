@@ -18,8 +18,14 @@ Module that implements V2 of the values-secret.yaml spec
 """
 
 
-import base64
-import os
+# import base64
+# import os
+
+# from ansible.module_utils.load_secrets_common import (
+#     parse_values,
+#     run_command,
+#     flatten,
+# )
 
 
 class LoadSecretsV2:
@@ -40,9 +46,6 @@ def sanitize_values(module, syaml):
     Returns:
         syaml(obj): The parsed yaml object sanitized
     """
-    version = get_version(syaml)
-    if version != "2.0":
-        module.fail_json(f"Version expected is 2.0 but got: {version}")
 
     return syaml
 

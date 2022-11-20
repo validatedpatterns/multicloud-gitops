@@ -20,8 +20,9 @@ Module that implements some common functions
 import os
 import subprocess
 import time
-import yaml
 from collections.abc import MutableMapping
+
+import yaml
 
 
 def parse_values(values_file):
