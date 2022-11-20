@@ -58,8 +58,6 @@ from collections.abc import MutableMapping
 import yaml
 from ansible.module_utils.basic import AnsibleModule
 
-from .load_secrets_v1 import sanitize_values, get_secrets_vault_paths
-
 
 ANSIBLE_METADATA = {
     "metadata_version": "1.1",
@@ -218,27 +216,6 @@ def flatten(dictionary, parent_key=False, separator="."):
     return dict(items)
 
 
-def sanitize_values_v2(module, syaml):
-    """
-    Sanitizes the secrets YAML object version 2.0
-    ..TODO..
-
-    Parameters:
-        module(AnsibleModule): The current AnsibleModule being used
-
-        syaml(obj): The parsed yaml object representing the secrets
-
-    Returns:
-        syaml(obj): The parsed yaml object sanitized
-    """
-    version = get_version(syaml)
-    if version != "2.0":
-        module.fail_json(f"Version expected is 2.0 but got: {version}")
-
-
-    return syaml
-
-
 
 # NOTE(bandini): we shell out to oc exec it because of
 # https://github.com/ansible-collections/kubernetes.core/issues/506 and
@@ -340,20 +317,13 @@ def run(module):
     syaml = parse_values(values_secrets)
     version = get_version(syaml)
 
-    if version not in ["1.0", "2.0"]:
+    if version == "2.0":
+        from ansible.module_utils.load_secrets_v2 import sanitize_values, get_secrets_vault_paths
+    elif version == "1.0":
+        from ansible.module_utils.load_secrets_v1 import sanitize_values, get_secrets_vault_paths
+    else:
         module.fail_json(f"Version {version} is currently not supported")
 
-    if version == "2.0":
-        # In the future we can use the version field to manage different formats if needed
-        secrets = sanitize_values_v2(module, syaml)
-
-        #nr_secrets = inject_secrets(module, secrets, namespace, pod, basepath)
-        results["failed"] = False
-        results["changed"] = True
-        results["msg"] = f"{nr_secrets} secrets injected"
-        module.exit_json(**results)
-
-    # Default version 1.0
     # In the future we can use the version field to manage different formats if needed
     secrets = sanitize_values(module, syaml)
 
