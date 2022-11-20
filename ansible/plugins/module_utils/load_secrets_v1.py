@@ -21,7 +21,7 @@ import base64
 import os
 
 import yaml
-from ansible.module_utils.load_secrets_common import flatten, parse_values, run_command
+from ansible.module_utils.load_secrets_common import get_version, flatten, parse_values, run_command
 
 
 class LoadSecretsV1:
@@ -57,6 +57,10 @@ class LoadSecretsV1:
         Returns:
             Nothing: Updates self.syaml(obj)
         """
+        v = get_version(self.syaml)
+        if v != "1.0":
+            self.module.fail_json(f"Version is not 1.0: {v}")
+
         if not ("secrets" in self.syaml or "files" in self.syaml):
             self.module.fail_json(
                 f"Values secrets file does not contain 'secrets' or"
