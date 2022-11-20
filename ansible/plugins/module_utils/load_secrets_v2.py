@@ -56,11 +56,11 @@ class LoadSecretsV2:
 
         on_missing_value = self._get_field_on_missing_value(f)
         value = self._get_field_value(f)
-        if on_missing_value in ["error"] and value == None:
+        if on_missing_value in ["error"] and (value == None or len(value) < 1):
             return (False, "Secret has onMissingValue set to 'error' and has no value set")
 
         if on_missing_value in ["generate", "prompt"] and value != None:
-            return (False, "Secret has onMissingValue set to 'generate' or 'prompt' and has a value set")
+            return (False, "Secret has onMissingValue set to 'generate' or 'prompt' but has a value set")
 
         vault_policy = f.get("vaultPolicy", None)
         if vault_policy != None and vault_policy not in self._get_vault_policies():

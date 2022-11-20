@@ -177,7 +177,7 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert (ret["args"][1] == "Secret has onMissingValue set to 'generate' or 'prompt' and has a value set")
+        assert (ret["args"][1] == "Secret has onMissingValue set to 'generate' or 'prompt' but has a value set")
 
     def test_ensure_error_wrong_vaultpolicy(self):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
