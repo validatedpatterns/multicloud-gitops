@@ -23,12 +23,16 @@ import os
 import yaml
 from ansible.module_utils.load_secrets_common import get_version, flatten, parse_values, run_command
 
+def lol(msg):
+    import datetime
+    with open('/tmp/lol.txt', 'a+', encoding='utf-8') as f:
+        f.write('[LOL] %s %s\n' % (str(datetime.datetime.now()), msg))
+
 class LoadSecretsV2:
     def __init__(
-        self, module, values_secrets, basepath, namespace, pod, values_secret_template
+        self, module, values_secrets, namespace, pod, values_secret_template
     ):
         self.module = module
-        self.basepath = basepath
         self.namespace = namespace
         self.pod = pod
         self.values_secret_template = values_secret_template
@@ -36,6 +40,64 @@ class LoadSecretsV2:
 
     def _get_vault_policies(self):
         return self.syaml.get("vaultPolicies", {})
+
+    def _get_secrets(self):
+        return self.syaml.get("secrets", {})
+
+    def _get_field_on_missing_value(self, f):
+        # By default if 'onMissingValue' is missing we assume we need to
+        # error out whenever the value is missing
+        return f.get("onMissingValue", "error")
+
+    def _get_field_value(self, f):
+        return f.get("value", None)
+
+    def _validate_field(self, f):
+        # These fields are mandatory
+        try:
+            name = f["name"]
+        except KeyError:
+            return (False, f"Field {f} is missing name")
+
+        on_missing_value = self._get_field_on_missing_value(f)
+        value = self._get_field_value(f)
+        lol(on_missing_value)
+        lol(value)
+        if on_missing_value in ["error"] and value == None:
+            return (False, f"Secret has onMissingValue set to 'error' and has no value set")
+
+        if on_missing_value in ["generate", "prompt"] and value != None:
+            return (False, f"Secret has onMissingValue set to 'generate' or 'prompt' and has a value set")
+
+        return (True, '')
+
+    def _validate_file(self, f):
+        return (True, '')
+
+    def _validate_secrets(self):
+        secrets = self._get_secrets()
+        if len(secrets) == 0:
+            self.module.fail_json(f"No secrets found")
+
+        for s in secrets:
+            # These fields are mandatory
+            for i in ["name", "vaultPrefixes"]:
+                try:
+                    tmp = s[i]
+                except KeyError:
+                    return (False, f"Secret {s} is missing {i}")
+
+            fields = s.get("fields", [])
+            file = s.get("file", [])
+            if len(fields) == 0 and len(file) == 0:
+                return (False, f"Secret {s} does not have either fields nor file")
+
+            for i in fields:
+                (ret, msg) = self._validate_field(i)
+                if ret == False:
+                    return (False, msg)
+
+        return (True, '')
 
 
     def inject_vault_policies(self):
@@ -62,7 +124,7 @@ class LoadSecretsV2:
         if v != "2.0":
             self.module.fail_json(f"Version is not 2.0: {v}")
 
-        # Check if they are sane somehow?
+        # Check if the vault_policies are sane somehow?
         vault_policies = self._get_vault_policies()
 
 
@@ -70,7 +132,12 @@ class LoadSecretsV2:
         return
 
     def inject_secrets(self):
+        (ret, msg) = self._validate_secrets()
+        if not ret:
+            self.module.fail_json(msg)
+
         # This must come first as some passwords might depend on vault policies to exist.
         # It is a noop when no policies are defined
         self.inject_vault_policies()
+
         return

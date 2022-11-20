@@ -164,5 +164,35 @@ class TestMyModule(unittest.TestCase):
         ]
         mock_run_command.assert_has_calls(calls)
 
+    def test_ensure_error_wrong_onmissing_value(self):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2, "values-secret-v2-wrong-onmissingvalue.yaml"
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert (ret["args"][1] == "Secret has onMissingValue set to 'generate' or 'prompt' and has a value set")
+
+    def test_ensure_error_wrong_vaultpolicy(self):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2, "values-secret-v2-wrong-vaultpolicy.yaml"
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert (ret["args"][1] == "Secret has onMissingValue set to 'generate' or 'prompt' and has a value set")
+
 if __name__ == "__main__":
     unittest.main()

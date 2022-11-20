@@ -92,7 +92,8 @@ options:
     default: vault-0
   basepath:
     description:
-      - Vault's kv initial part of the path
+      - Vault's kv initial part of the path. This is only supported on version 1.0 of the
+        secret format
     required: false
     type: str
     default: secret
@@ -148,7 +149,7 @@ def run(module):
 
     if version == "2.0":
         secret_obj = LoadSecretsV2(
-            module, values_secrets, basepath, namespace, pod, values_secret_template
+            module, values_secrets, namespace, pod, values_secret_template
         )
     elif version == "1.0":
         secret_obj = LoadSecretsV1(
