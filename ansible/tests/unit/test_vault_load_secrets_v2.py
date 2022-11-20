@@ -192,7 +192,7 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert (ret["args"][1] == "Secret has onMissingValue set to 'generate' or 'prompt' and has a value set")
+        assert (ret["args"][1] == "Secret has vaultPolicy set to nonExisting but no such policy exists")
 
 if __name__ == "__main__":
     unittest.main()

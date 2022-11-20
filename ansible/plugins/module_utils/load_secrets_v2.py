@@ -23,11 +23,6 @@ import os
 import yaml
 from ansible.module_utils.load_secrets_common import get_version, flatten, parse_values, run_command
 
-def lol(msg):
-    import datetime
-    with open('/tmp/lol.txt', 'a+', encoding='utf-8') as f:
-        f.write('[LOL] %s %s\n' % (str(datetime.datetime.now()), msg))
-
 class LoadSecretsV2:
     def __init__(
         self, module, values_secrets, namespace, pod, values_secret_template
@@ -61,13 +56,15 @@ class LoadSecretsV2:
 
         on_missing_value = self._get_field_on_missing_value(f)
         value = self._get_field_value(f)
-        lol(on_missing_value)
-        lol(value)
         if on_missing_value in ["error"] and value == None:
-            return (False, f"Secret has onMissingValue set to 'error' and has no value set")
+            return (False, "Secret has onMissingValue set to 'error' and has no value set")
 
         if on_missing_value in ["generate", "prompt"] and value != None:
-            return (False, f"Secret has onMissingValue set to 'generate' or 'prompt' and has a value set")
+            return (False, "Secret has onMissingValue set to 'generate' or 'prompt' and has a value set")
+
+        vault_policy = f.get("vaultPolicy", None)
+        if vault_policy != None and vault_policy not in self._get_vault_policies():
+            return (False, f"Secret has vaultPolicy set to {vault_policy} but no such policy exists")
 
         return (True, '')
 
