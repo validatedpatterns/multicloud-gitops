@@ -52,7 +52,7 @@ def get_version(syaml):
     Returns:
         ret(str): The version value in of the top-level 'version:' key
     """
-    return syaml.get("version", "1.0")
+    return str(syaml.get("version", "1.0"))
 
 
 def run_command(command, attempts=1, sleep=3):
