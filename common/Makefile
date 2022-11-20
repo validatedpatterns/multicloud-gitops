@@ -32,12 +32,12 @@ help: ## This help message
 show: ## show the starting template without installing it
 	helm template common/install/ --name-template $(NAME) $(HELM_OPTS)
 
-CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | sed -e 's/.\///')
+CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | grep -v examples | sed -e 's/.\///')
 test: ## run helm tests
-	@for t in $(CHARTS); do common/scripts/test.sh $$t all "$(TEST_OPTS) $(PATTERN_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
+	@for t in $(CHARTS); do common/scripts/test.sh $$t all "$(TEST_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
 
 helmlint: ## run helm lint
-	@for t in $(CHARTS); do helm lint $(TEST_OPTS) $(PATTERN_OPTS) $$t; if [ $$? != 0 ]; then exit 1; fi; done
+	@for t in $(CHARTS); do common/scripts/lint.sh $$t $(TEST_OPTS); if [ $$? != 0 ]; then exit 1; fi; done
 
 API_URL ?= https://raw.githubusercontent.com/hybrid-cloud-patterns/ocp-schemas/main/openshift/4.10/
 KUBECONFORM_SKIP ?= -skip 'CustomResourceDefinition'
