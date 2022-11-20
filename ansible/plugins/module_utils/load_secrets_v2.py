@@ -105,6 +105,7 @@ class LoadSecretsV2:
         if on_missing_value in ["prompt"]:
             # FIXME: implement proper prompting
             path = "/tmp/ca.crt"
+
         if not os.path.isfile(os.path.expanduser(path)):
             return (False, f"{name} has non-existing path: {path}")
 
@@ -165,16 +166,12 @@ class LoadSecretsV2:
         # Check if the vault_policies are sane somehow?
         # vault_policies = self._get_vault_policies()
 
-    def get_secrets_vault_paths(self, keyname):
-        return
-
-    def inject_secrets(self):
         (ret, msg) = self._validate_secrets()
         if not ret:
             self.module.fail_json(msg)
 
+    def inject_secrets(self):
         # This must come first as some passwords might depend on vault policies to exist.
         # It is a noop when no policies are defined
         self.inject_vault_policies()
-
-        return
+        return 0

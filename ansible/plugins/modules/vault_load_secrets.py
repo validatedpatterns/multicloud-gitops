@@ -151,19 +151,19 @@ def run(module):
         secret_obj = LoadSecretsV2(
             module, values_secrets, namespace, pod, values_secret_template
         )
+        secret_obj.sanitize_values()
     elif version == "1.0":
         secret_obj = LoadSecretsV1(
             module, values_secrets, basepath, namespace, pod, values_secret_template
         )
+        secret_obj.sanitize_values()
+        # If the user specified check_for_missing_secrets then we read values_secret_template
+        # and check if there are any missing secrets. Makes sense only for v1.0
+        if check_missing_secrets:
+            secret_obj.check_for_missing_secrets()
+
     else:
         module.fail_json(f"Version {version} is currently not supported")
-
-    secret_obj.sanitize_values()
-
-    # If the user specified check_for_missing_secrets then we read values_secret_template
-    # and check if there are any missing secrets
-    if check_missing_secrets:
-        secret_obj.check_for_missing_secrets()
 
     nr_secrets = secret_obj.inject_secrets()
     results["failed"] = False
