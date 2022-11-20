@@ -21,7 +21,12 @@ import base64
 import os
 
 import yaml
-from ansible.module_utils.load_secrets_common import get_version, flatten, parse_values, run_command
+from ansible.module_utils.load_secrets_common import (
+    flatten,
+    get_version,
+    parse_values,
+    run_command,
+)
 
 
 class LoadSecretsV1:

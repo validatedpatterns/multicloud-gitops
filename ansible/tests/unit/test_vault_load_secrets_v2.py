@@ -40,6 +40,7 @@ sys.modules["ansible.module_utils.load_secrets_v1"] = load_secrets_v1
 sys.modules["ansible.module_utils.load_secrets_v2"] = load_secrets_v2
 import vault_load_secrets  # noqa: E402
 
+
 def set_module_args(args):
     """prepare arguments so that they will be picked up during module creation"""
     args = json.dumps({"ANSIBLE_MODULE_ARGS": args})
@@ -154,13 +155,13 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                "echo 'length=10\nrule \"charset\" { charset = \"abcdefghijklmnopqrstuvwxyz\" min-chars = 1 }\nrule \"charset\" { charset = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" min-chars = 1 }\nrule \"charset\" { charset = \"0123456789\" min-chars = 1 }\n' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/basicPolicy.hcl';oc exec -n vault vault-0 -i -- sh -c 'vault write sys/policies/password/basicPolicy  policy=@/tmp/basicPolicy.hcl'",  # noqa: E501
+                'echo \'length=10\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/basicPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/basicPolicy  policy=@/tmp/basicPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
-                "echo 'length=20\nrule \"charset\" { charset = \"abcdefghijklmnopqrstuvwxyz\" min-chars = 1 }\nrule \"charset\" { charset = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" min-chars = 1 }\nrule \"charset\" { charset = \"0123456789\" min-chars = 1 }\nrule \"charset\" { charset = \"!@#$%^&*\" min-chars = 1 }\n' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/advancedPolicy.hcl';oc exec -n vault vault-0 -i -- sh -c 'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl'",  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
                 attempts=3,
-            )
+            ),
         ]
         mock_run_command.assert_has_calls(calls)
 
@@ -177,7 +178,10 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert (ret["args"][1] == "Secret has onMissingValue set to 'generate' or 'prompt' but has a value set")
+        assert (
+            ret["args"][1]
+            == "Secret has onMissingValue set to 'generate' or 'prompt' but has a value set"
+        )
 
     def test_ensure_error_wrong_vaultpolicy(self):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
@@ -192,14 +196,18 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert (ret["args"][1] == "Secret has vaultPolicy set to nonExisting but no such policy exists")
+        assert (
+            ret["args"][1]
+            == "Secret has vaultPolicy set to nonExisting but no such policy exists"
+        )
 
     def test_ensure_error_file_wrong_onmissing_value(self):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
                     "values_secrets": os.path.join(
-                        self.testdir_v2, "values-secret-v2-files-wrong-onmissingvalue.yaml"
+                        self.testdir_v2,
+                        "values-secret-v2-files-wrong-onmissingvalue.yaml",
                     ),
                 }
             )
@@ -207,7 +215,7 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert (ret["args"][1] == "onMissingValue: generate is invalid")
+        assert ret["args"][1] == "onMissingValue: generate is invalid"
 
     def test_ensure_error_file_emptypath(self):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
@@ -222,7 +230,7 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert (ret["args"][1] == "ca_crt has unset path")
+        assert ret["args"][1] == "ca_crt has unset path"
 
     def test_ensure_error_file_wrongpath(self):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
@@ -237,7 +245,8 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert (ret["args"][1] == "ca_crt has non-existing path: /tmp/nonexisting")
+        assert ret["args"][1] == "ca_crt has non-existing path: /tmp/nonexisting"
+
 
 if __name__ == "__main__":
     unittest.main()
