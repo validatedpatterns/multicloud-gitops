@@ -147,7 +147,9 @@ def run(module):
     version = get_version(syaml)
 
     if version == "2.0":
-        secret_obj = LoadSecretsV2()
+        secret_obj = LoadSecretsV2(
+            module, values_secrets, basepath, namespace, pod, values_secret_template
+        )
     elif version == "1.0":
         secret_obj = LoadSecretsV1(
             module, values_secrets, basepath, namespace, pod, values_secret_template
