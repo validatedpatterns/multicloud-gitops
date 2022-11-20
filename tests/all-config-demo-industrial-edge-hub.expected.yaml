@@ -1,0 +1,303 @@
+---
+# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: config-demo
+  name: acm-policy-updater
+---
+# Source: config-demo/templates/config-demo-cm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-demo-configmap
+  labels:
+    app.kubernetes.io/instance: config-demo
+data:
+  "index.html": |-
+    <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8">
+            <title>Config Demo</title>
+        </head>
+          <body>
+            <h1>
+            Hub Cluster domain is 'apps.hub.example.com' <br>
+            Pod is running on Local Cluster Domain 'apps.region.example.com' <br>
+            </h1>
+            <h2>
+            The secret is <a href="/secret/secret">secret</a>
+            </h2>
+          </body>
+      </html>
+---
+# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: config-demo
+  name: acm-policy-updater-role
+rules:
+- apiGroups:
+  - "policy.open-cluster-management.io"
+  resources:
+  - policies
+  verbs:
+  - 'patch'
+  - 'get'
+  - 'list'
+---
+# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: config-demo
+  name: acm-policy-updater-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: acm-policy-updater
+  namespace: config-demo
+roleRef:
+  kind: Role
+  name: acm-policy-updater-role
+  apiGroup: ""
+---
+# Source: config-demo/templates/config-demo-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: config-demo
+  name: config-demo
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: config-demo
+    deploymentconfig: config-demo
+  sessionAffinity: None
+  type: ClusterIP
+---
+# Source: config-demo/templates/config-demo-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    application: config-demo
+  name: config-demo
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      deploymentconfig: config-demo
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: config-demo
+        deploymentconfig: config-demo
+      name: config-demo
+    spec:
+      containers:
+      - name: apache
+        image: registry.access.redhat.com/ubi8/httpd-24:1-226
+        #imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: config-demo-configmap
+        - mountPath: /var/www/html/secret
+          readOnly: true
+          name: config-demo-secret
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        livenessProbe:
+          httpGet:
+            path: /index.html
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /index.html
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+      volumes:
+      - name: config-demo-configmap
+        configMap:
+          defaultMode: 438
+          name: config-demo-configmap
+      - name: config-demo-secret
+        secret:
+          secretName: config-demo-secret
+---
+# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: update-acm-secret-policy
+  namespace: config-demo
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Allow
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: acm-policy-updater
+          containers:
+          - name: update-acm-secret-policy-container
+            image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+            command:
+            - /bin/bash
+            - -c
+            - >
+              oc patch policy -n config-demo configdemo-region-secret-policy --type json -p "[{'op': 'replace',
+              'path': '/spec/policy-templates/0/objectDefinition/metadata/annotations/policy.open-cluster-management.io~1trigger-update',
+              'value': '"$(date +%s)"'}]"
+          restartPolicy: OnFailure
+---
+# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
+# This is a workaround to update the configdemo-region-secret-policy every five minutes with
+# a random timestamp (policy.open-cluster-management.io/trigger-update annotation).
+# That way the hub + lookup/fromSecret functions will be retriggered every five minutes
+# This won't be needed anymore once https://issues.redhat.com/browse/ACM-1208 lands in ACM
+---
+# Source: config-demo/templates/config-demo-secret.yaml
+# The policy needs to be added to the ACM HUB and then it will be pushed on all clusters
+# except the HUB (see placementrule on the bottom)
+---
+# Source: config-demo/templates/config-demo-external-secret.yaml
+apiVersion: "external-secrets.io/v1beta1"
+kind: ExternalSecret
+metadata:
+  name: config-demo-secret
+  namespace: config-demo
+spec:
+  refreshInterval: 15s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: config-demo-secret
+    template:
+      type: Opaque
+  dataFrom:
+  - extract:
+      key: secret/data/hub/config-demo
+---
+# Source: config-demo/templates/config-demo-is.yaml
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: config-demo
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+  - name: registry.access.redhat.com/ubi8/httpd-24
+    importPolicy: {}
+    referencePolicy:
+      type: Local
+---
+# Source: config-demo/templates/config-demo-secret.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: configdemo-region-secret-placement-binding
+placementRef:
+  name: configdemo-region-secret-placement
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: configdemo-region-secret-policy
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+# Source: config-demo/templates/config-demo-secret.yaml
+# We need to run this on any managed cluster but not on the HUB
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: configdemo-region-secret-placement
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: NotIn
+        values:
+          - 'true'
+---
+# Source: config-demo/templates/config-demo-secret.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: configdemo-region-secret-policy
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: SkipPrune
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: config-demo-secret
+          annotations:
+            apps.open-cluster-management.io/deployables: "secret"
+        spec:
+          remediationAction: enforce
+          severity: medium
+          namespaceSelector:
+            include:
+              - default
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Secret
+                type: Opaque
+                metadata:
+                  name: config-demo-secret
+                  namespace: config-demo
+                apiVersion: v1
+                data:
+                  secret: '{{hub fromSecret "config-demo" "config-demo-secret" "secret" hub}}'
+---
+# Source: config-demo/templates/config-demo-route.yaml
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: config-demo
+  name: config-demo
+spec:
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: config-demo
+    weight: 100
+  wildcardPolicy: None
