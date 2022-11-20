@@ -80,7 +80,10 @@ class LoadSecretsV2:
             )
 
         if on_missing_value in ["generate"] and vault_policy is None:
-            return (False, f"Secret has no vaultPolicy but onMissingValue is set to 'generate'")
+            return (
+                False,
+                "Secret has no vaultPolicy but onMissingValue is set to 'generate'",
+            )
 
         return (True, "")
 
