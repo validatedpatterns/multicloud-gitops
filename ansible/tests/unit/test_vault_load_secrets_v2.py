@@ -74,7 +74,7 @@ def fail_json(*args, **kwargs):
     raise AnsibleFailJson(kwargs)
 
 
-@mock.patch('getpass.getpass')
+@mock.patch("getpass.getpass")
 class TestMyModule(unittest.TestCase):
     def setUp(self):
         self.mock_module_helper = patch.multiple(
@@ -136,10 +136,18 @@ class TestMyModule(unittest.TestCase):
             assert mock_run_command.call_count == 4
 
         calls = [
-            call('vault kv put -mount=secret secret/region-one/config-demo secret=value123'),
-            call('vault kv put -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret=value123'),
-            call('vault kv patch -mount=secret secret/region-one/config-demo secret2=foo'),
-            call('vault kv patch -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret2=foo'),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv put -mount=secret secret/region-one/config-demo secret=value123"'  # noqa: E501
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv put -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret=value123"'  # noqa: E501
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv patch -mount=secret secret/region-one/config-demo secret2=foo"'  # noqa: E501
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv patch -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret2=foo"'  # noqa: E501
+            ),
         ]
         mock_run_command.assert_has_calls(calls)
 
@@ -303,12 +311,21 @@ class TestMyModule(unittest.TestCase):
                 'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
-            call('vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo region-one/config-demo secret=-'),  # noqa: E501
-            call('vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret=-'),  # noqa: E501
-            call('vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo region-one/config-demo secret2=-'),  # noqa: E501
-            call('vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret2=-'),  # noqa: E501
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo region-one/config-demo secret=-"'  # noqa: E501
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret=-"'  # noqa: E501
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo region-one/config-demo secret2=-"'  # noqa: E501
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret2=-"'  # noqa: E501
+            ),
         ]
         mock_run_command.assert_has_calls(calls)
+
 
 if __name__ == "__main__":
     unittest.main()

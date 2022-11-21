@@ -196,7 +196,10 @@ class LoadSecretsV2:
             vault_policy = f.get("vaultPolicy")
             gen_cmd = f"vault read -field=password sys/policies/password/{vault_policy}/generate"
             for prefix in prefixes:
-                cmd = f"{gen_cmd} | vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=-"
+                cmd = (
+                    f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
+                    f"\"{gen_cmd} | vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=-\""
+                )
                 run_command(cmd)
             return
 
@@ -204,7 +207,10 @@ class LoadSecretsV2:
         # or we are prompting the user for it
         secret = self._get_secret_value(secret_name, f)
         for prefix in prefixes:
-            cmd = f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}={secret}"
+            cmd = (
+                f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
+                f"\"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}={secret}\""
+            )
             run_command(cmd)
 
     def _inject_file(self, secret_name, f, mount, prefixes, first=False):
