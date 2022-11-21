@@ -185,7 +185,15 @@ class LoadSecretsV2:
         if on_missing_value == "error":
             return field.get("value")
         elif on_missing_value == "prompt":
-            return getpass.getpass(f"Type secret for {name}/{field['name']} : ")
+            return getpass.getpass(f"Type secret for {name}/{field['name']}: ")
+        return None
+
+    def _get_file_path(self, name, file):
+        on_missing_value = self._get_field_on_missing_value(file)
+        if on_missing_value == "error":
+            return file.get("path")
+        elif on_missing_value == "prompt":
+            return input(f"Type path for file {name}/{file['name']}: ")
         return None
 
     def _inject_field(self, secret_name, f, mount, prefixes, first=False):
@@ -214,7 +222,25 @@ class LoadSecretsV2:
             run_command(cmd)
 
     def _inject_file(self, secret_name, f, mount, prefixes, first=False):
-        return
+        on_missing_value = self._get_field_on_missing_value(f)
+        # If we're generating the password then we just push the secret in the vault directly
+        verb = "put" if first else "patch"
+        tries = 2
+        while tries > 0:
+            path = self._get_file_path(secret_name, f)
+            if os.path.isfile(os.path.expanduser(path)):
+                break
+            tries -= 1
+
+        for prefix in prefixes:
+            cmd = (
+                f"cat '{path}' | oc exec -n {self.namespace} {self.pod} -i -- sh -c "
+                f"'cat - > /tmp/vcontent'; "
+                f"oc exec -n {self.namespace} {self.pod} -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | "
+                f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=-; "
+                f"rm /tmp/vcontent'"
+            )
+            run_command(cmd)
 
     # This assumes that self.sanitize_values() has already been called
     # so we do a lot less validation as it has already happened
