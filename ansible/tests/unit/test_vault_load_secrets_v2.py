@@ -247,6 +247,21 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(ret["failed"], True)
         assert ret["args"][1] == "ca_crt has non-existing path: /tmp/nonexisting"
 
+    def test_ensure_error_empty_vaultprefix(self):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2, "values-secret-v2-novaultprefix.yaml"
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert ret["args"][1] == "Secret config-demo has empty vaultPrefixes"
+
 
 if __name__ == "__main__":
     unittest.main()

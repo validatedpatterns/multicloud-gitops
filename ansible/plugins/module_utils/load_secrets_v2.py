@@ -125,7 +125,11 @@ class LoadSecretsV2:
                 try:
                     _ = s[i]
                 except KeyError:
-                    return (False, f"Secret {s} is missing {i}")
+                    return (False, f"Secret {s['name']} is missing {i}")
+
+            vault_prefixes = s.get("vaultPrefixes", [])
+            if vault_prefixes is None or len(vault_prefixes) == 0:
+                return (False, f"Secret {s['name']} has empty vaultPrefixes")
 
             fields = s.get("fields", [])
             files = s.get("files", [])
@@ -173,8 +177,14 @@ class LoadSecretsV2:
         if not ret:
             self.module.fail_json(msg)
 
+    # This assumes that self.sanitize_values() has already been called
+    # so we do a lot less validation as it has already happened
     def inject_secrets(self):
         # This must come first as some passwords might depend on vault policies to exist.
         # It is a noop when no policies are defined
         self.inject_vault_policies()
+        secrets = self._get_secrets()
+
+        #for s in secrets:
+
         return 0
