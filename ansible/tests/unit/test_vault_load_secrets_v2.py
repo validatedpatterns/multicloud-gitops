@@ -21,6 +21,7 @@ import json
 import os
 import sys
 import unittest
+from unittest import mock
 from unittest.mock import call, patch
 
 from ansible.module_utils import basic
@@ -73,6 +74,7 @@ def fail_json(*args, **kwargs):
     raise AnsibleFailJson(kwargs)
 
 
+@mock.patch('getpass.getpass')
 class TestMyModule(unittest.TestCase):
     def setUp(self):
         self.mock_module_helper = patch.multiple(
@@ -90,12 +92,12 @@ class TestMyModule(unittest.TestCase):
         except OSError:
             pass
 
-    def test_module_fail_when_required_args_missing(self):
+    def test_module_fail_when_required_args_missing(self, getpass):
         with self.assertRaises(AnsibleFailJson):
             set_module_args({})
             vault_load_secrets.main()
 
-    def test_module_fail_when_values_secret_not_existing(self):
+    def test_module_fail_when_values_secret_not_existing(self, getpass):
         with self.assertRaises(AnsibleExitJson) as ansible_err:
             set_module_args(
                 {
@@ -111,7 +113,7 @@ class TestMyModule(unittest.TestCase):
             ret["msg"], "Values secrets file does not exist: /tmp/nonexisting"
         )
 
-    def test_ensure_no_vault_policies_is_ok(self):
+    def test_ensure_no_vault_policies_is_ok(self, getpass):
         set_module_args(
             {
                 "values_secrets": os.path.join(
@@ -119,6 +121,7 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
+        getpass.return_value = "foo"
         with patch.object(load_secrets_v2, "run_command") as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
@@ -130,9 +133,17 @@ class TestMyModule(unittest.TestCase):
             self.assertTrue(
                 result.exception.args[0]["changed"]
             )  # ensure result is changed
-            assert mock_run_command.call_count == 0
+            assert mock_run_command.call_count == 4
 
-    def test_ensure_policies_are_injected(self):
+        calls = [
+            call('vault kv put -mount=secret secret/region-one/config-demo secret=value123'),
+            call('vault kv put -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret=value123'),
+            call('vault kv patch -mount=secret secret/region-one/config-demo secret2=foo'),
+            call('vault kv patch -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret2=foo'),
+        ]
+        mock_run_command.assert_has_calls(calls)
+
+    def test_ensure_policies_are_injected(self, getpass):
         set_module_args(
             {
                 "values_secrets": os.path.join(
@@ -151,7 +162,7 @@ class TestMyModule(unittest.TestCase):
             self.assertTrue(
                 result.exception.args[0]["changed"]
             )  # ensure result is changed
-            assert mock_run_command.call_count == 2
+            assert mock_run_command.call_count == 6
 
         calls = [
             call(
@@ -163,9 +174,9 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
         ]
-        mock_run_command.assert_has_calls(calls)
+        mock_run_command.assert_has_calls(calls, getpass)
 
-    def test_ensure_error_wrong_onmissing_value(self):
+    def test_ensure_error_wrong_onmissing_value(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -183,7 +194,7 @@ class TestMyModule(unittest.TestCase):
             == "Secret has onMissingValue set to 'generate' or 'prompt' but has a value set"
         )
 
-    def test_ensure_error_wrong_vaultpolicy(self):
+    def test_ensure_error_wrong_vaultpolicy(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -201,7 +212,7 @@ class TestMyModule(unittest.TestCase):
             == "Secret has vaultPolicy set to nonExisting but no such policy exists"
         )
 
-    def test_ensure_error_file_wrong_onmissing_value(self):
+    def test_ensure_error_file_wrong_onmissing_value(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -217,7 +228,7 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(ret["failed"], True)
         assert ret["args"][1] == "onMissingValue: generate is invalid"
 
-    def test_ensure_error_file_emptypath(self):
+    def test_ensure_error_file_emptypath(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -232,7 +243,7 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(ret["failed"], True)
         assert ret["args"][1] == "ca_crt has unset path"
 
-    def test_ensure_error_file_wrongpath(self):
+    def test_ensure_error_file_wrongpath(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -247,7 +258,7 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(ret["failed"], True)
         assert ret["args"][1] == "ca_crt has non-existing path: /tmp/nonexisting"
 
-    def test_ensure_error_empty_vaultprefix(self):
+    def test_ensure_error_empty_vaultprefix(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -262,6 +273,42 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(ret["failed"], True)
         assert ret["args"][1] == "Secret config-demo has empty vaultPrefixes"
 
+    def test_ensure_only_generate_passwords_works(self, getpass):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    self.testdir_v2, "values-secret-v2-onlygenerate.yaml"
+                ),
+            }
+        )
+        with patch.object(load_secrets_v2, "run_command") as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 6
+
+        calls = [
+            call(
+                'echo \'length=10\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/basicPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/basicPolicy  policy=@/tmp/basicPolicy.hcl\'',  # noqa: E501
+                attempts=3,
+            ),
+            call(
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
+                attempts=3,
+            ),
+            call('vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo region-one/config-demo secret=-'),  # noqa: E501
+            call('vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret=-'),  # noqa: E501
+            call('vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo region-one/config-demo secret2=-'),  # noqa: E501
+            call('vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret2=-'),  # noqa: E501
+        ]
+        mock_run_command.assert_has_calls(calls)
 
 if __name__ == "__main__":
     unittest.main()

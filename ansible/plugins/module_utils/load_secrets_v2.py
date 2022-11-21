@@ -17,6 +17,7 @@
 Module that implements V2 of the values-secret.yaml spec
 """
 
+import getpass
 import os
 
 from ansible.module_utils.load_secrets_common import (
@@ -177,6 +178,38 @@ class LoadSecretsV2:
         if not ret:
             self.module.fail_json(msg)
 
+    def _get_secret_value(self, name, field):
+        on_missing_value = self._get_field_on_missing_value(field)
+        # We cannot use match + case as RHEL8 has python 3.9 (it needs 3.10)
+        # We checked for errors in _validate_secrets() already
+        if on_missing_value == "error":
+            return field.get("value")
+        elif on_missing_value == "prompt":
+            return getpass.getpass(f"Type secret for {name}/{field['name']} : ")
+        return None
+
+    def _inject_field(self, secret_name, f, mount, prefixes, first=False):
+        on_missing_value = self._get_field_on_missing_value(f)
+        # If we're generating the password then we just push the secret in the vault directly
+        verb = "put" if first else "patch"
+        if on_missing_value == "generate":
+            vault_policy = f.get("vaultPolicy")
+            gen_cmd = f"vault read -field=password sys/policies/password/{vault_policy}/generate"
+            for prefix in prefixes:
+                cmd = f"{gen_cmd} | vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=-"
+                run_command(cmd)
+            return
+
+        # If we're not generating the secret inside the vault directly we either read it from the file ("error")
+        # or we are prompting the user for it
+        secret = self._get_secret_value(secret_name, f)
+        for prefix in prefixes:
+            cmd = f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}={secret}"
+            run_command(cmd)
+
+    def _inject_file(self, secret_name, f, mount, prefixes, first=False):
+        return
+
     # This assumes that self.sanitize_values() has already been called
     # so we do a lot less validation as it has already happened
     def inject_secrets(self):
@@ -185,6 +218,19 @@ class LoadSecretsV2:
         self.inject_vault_policies()
         secrets = self._get_secrets()
 
-        #for s in secrets:
+        counter = 0
+        for s in secrets:
+            sname = s.get("name")
+            fields = s.get("fields", [])
+            files = s.get("files", [])
+            mount = s.get("vaultMount", "secret")
+            vault_prefixes = s.get("vaultPrefixes", [])
+            for i in fields:
+                self._inject_field(sname, i, mount, vault_prefixes, counter == 0)
+                counter += 1
 
-        return 0
+            for i in files:
+                self._inject_file(sname, i, mount, vault_prefixes, counter == 0)
+                counter += 1
+
+        return counter
