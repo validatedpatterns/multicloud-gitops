@@ -193,8 +193,14 @@ class LoadSecretsV2:
         if on_missing_value == "error":
             return file.get("path")
         elif on_missing_value == "prompt":
-            return input(f"Type path for file {name}/{file['name']}: ")
-        return None
+            tries = 2
+            while tries > 0:
+                path = input(f"Type path for file {name}/{file['name']}: ")
+                if os.path.isfile(os.path.expanduser(path)):
+                    break
+                tries -= 1
+            return path
+        self.module.fail_json("File with wrong onMissingValue")
 
     def _inject_field(self, secret_name, f, mount, prefixes, first=False):
         on_missing_value = self._get_field_on_missing_value(f)
@@ -222,16 +228,9 @@ class LoadSecretsV2:
             run_command(cmd)
 
     def _inject_file(self, secret_name, f, mount, prefixes, first=False):
-        on_missing_value = self._get_field_on_missing_value(f)
         # If we're generating the password then we just push the secret in the vault directly
         verb = "put" if first else "patch"
-        tries = 2
-        while tries > 0:
-            path = self._get_file_path(secret_name, f)
-            if os.path.isfile(os.path.expanduser(path)):
-                break
-            tries -= 1
-
+        path = self._get_file_path(secret_name, f)
         for prefix in prefixes:
             cmd = (
                 f"cat '{path}' | oc exec -n {self.namespace} {self.pod} -i -- sh -c "
