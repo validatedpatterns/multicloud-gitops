@@ -16,3 +16,7 @@ do it manually by doing the following:
 git remote add -f upstream-common https://github.com/hybrid-cloud-patterns/common.git
 git merge -s subtree -Xtheirs -Xsubtree=common upstream-common/ha-vault
 ```
+
+## Secrets
+
+There are two different secret formats parsed by the ansible bits. Both are documented [here](https://github.com/hybrid-cloud-patterns/common/tree/main/examples/secrets)

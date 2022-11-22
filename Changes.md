@@ -1,5 +1,9 @@
 # Changes
 
+## November 22, 2022
+
+* Implemented a new format for the values-secret.yaml. Example can be found in examples/ folder
+
 ## November 6, 2022
 
 * Add support for /values-<CloudPlatform>-<clusterGroup>.yaml (e.g. /values-AWS-group-one.yaml)
