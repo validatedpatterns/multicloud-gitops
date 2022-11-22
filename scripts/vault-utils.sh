@@ -22,10 +22,11 @@ fi
 
 TASK="${1}"
 OUTFILE=${2:-"$COMMONPATH"/pattern-vault.init}
+PATTERN_NAME=${3:-$(basename "`pwd`")}
 
 if [ -z ${TASK} ]; then
 	echo "Task is unset"
 	exit 1
 fi
 
-ansible-playbook -t "${TASK}" -e pattern_dir="${PATTERNPATH}" -e output_file="${OUTFILE}" "${PLAYBOOKPATH}/vault/vault.yaml"
+ansible-playbook -t "${TASK}" -e pattern_name="${PATTERN_NAME}" -e pattern_dir="${PATTERNPATH}" -e output_file="${OUTFILE}" "${PLAYBOOKPATH}/vault/vault.yaml"
