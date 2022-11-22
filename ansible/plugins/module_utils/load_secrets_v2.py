@@ -243,6 +243,10 @@ class LoadSecretsV2:
             prompt = self._get_field_description(field)
             if prompt is None:
                 prompt = f"Type secret for {name}/{field['name']}: "
+            value = self._get_field_value(field)
+            if value is not None:
+                prompt += f" [{value}]"
+            prompt += ": "
             return getpass.getpass(prompt)
         return None
 
