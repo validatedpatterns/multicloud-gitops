@@ -25,6 +25,26 @@ from collections.abc import MutableMapping
 import yaml
 
 
+def find_dupes(l):
+    """
+    Returns duplicate items in a list
+
+    Parameters:
+        l(list): Array to check for duplicate entries
+
+    Returns:
+        dupes(list): Array containing all the duplicates and [] is there are none
+    """
+    seen = set()
+    dupes = []
+    for x in l:
+        if x in seen:
+            dupes.append(x)
+        else:
+            seen.add(x)
+    return dupes
+
+
 def parse_values(values_file):
     """
     Parses a values-secrets.yaml file (usually placed in ~)

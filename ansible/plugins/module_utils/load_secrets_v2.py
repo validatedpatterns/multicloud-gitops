@@ -22,6 +22,7 @@ import getpass
 import os
 
 from ansible.module_utils.load_secrets_common import (
+    find_dupes,
     get_version,
     parse_values,
     run_command,
@@ -143,6 +144,7 @@ class LoadSecretsV2:
         if len(secrets) == 0:
             self.module.fail_json("No secrets found")
 
+        names = []
         for s in secrets:
             # These fields are mandatory
             for i in ["name", "vaultPrefixes"]:
@@ -150,6 +152,7 @@ class LoadSecretsV2:
                     _ = s[i]
                 except KeyError:
                     return (False, f"Secret {s['name']} is missing {i}")
+            names.append(s["name"])
 
             vault_prefixes = s.get("vaultPrefixes", [])
             if vault_prefixes is None or len(vault_prefixes) == 0:
@@ -159,11 +162,19 @@ class LoadSecretsV2:
             if len(fields) == 0:
                 return (False, f"Secret {s['name']} does not have any fields")
 
+            field_names = []
             for i in fields:
                 (ret, msg) = self._validate_field(i)
                 if not ret:
                     return (False, msg)
+                field_names.append(i['name'])
+            field_dupes = find_dupes(field_names)
+            if len(field_dupes) > 0:
+                return (False, f"You cannot have duplicate field names: {field_dupes}")
 
+        dupes = find_dupes(names)
+        if len(dupes) > 0:
+            return (False, f"You cannot have duplicate secret names: {dupes}")
         return (True, "")
 
     def inject_vault_policies(self):

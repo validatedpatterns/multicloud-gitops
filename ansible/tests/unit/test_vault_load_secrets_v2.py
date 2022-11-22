@@ -393,6 +393,41 @@ class TestMyModule(unittest.TestCase):
         ]
         mock_run_command.assert_has_calls(calls)
 
+    def test_ensure_error_secrets_same_name(self, getpass):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2, "values-secret-v2-same-secret-names.yaml"
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert (
+            ret["args"][1]
+            == "You cannot have duplicate secret names: ['config-demo']"
+        )
+
+    def test_ensure_error_fields_same_name(self, getpass):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2, "values-secret-v2-same-field-names.yaml"
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert (
+            ret["args"][1]
+            == "You cannot have duplicate field names: ['secret']"
+        )
 
 if __name__ == "__main__":
     unittest.main()
