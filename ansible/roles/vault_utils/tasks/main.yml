@@ -1,20 +1,20 @@
 ---
 - name: Delete vault
-  import_tasks: vault_delete.yaml
+  ansible.builtin.import_tasks: vault_delete.yaml
   tags: vault_delete
 
 - name: Run vault init tasks
-  import_tasks: vault_init.yaml
+  ansible.builtin.import_tasks: vault_init.yaml
   tags: vault_init
 
 - name: Unseal vault
-  import_tasks: vault_unseal.yaml
+  ansible.builtin.import_tasks: vault_unseal.yaml
   tags: vault_unseal
 
 - name: Vault secrets init
-  import_tasks: vault_secrets_init.yaml
+  ansible.builtin.import_tasks: vault_secrets_init.yaml
   tags: vault_secrets_init
 
 - name: Load secrets
-  import_tasks: push_secrets.yaml
+  ansible.builtin.import_tasks: push_secrets.yaml
   tags: push_secrets

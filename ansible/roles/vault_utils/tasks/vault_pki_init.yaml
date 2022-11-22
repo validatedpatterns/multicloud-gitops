@@ -1,6 +1,7 @@
 # NOTE: This task is currently not used
 ---
-- include_tasks: pre_check.yaml
+- name: Vault pre checks
+  ansible.builtin.include_tasks: pre_check.yaml
 
 - name: Fetch Ingress object
   kubernetes.core.k8s_info:
