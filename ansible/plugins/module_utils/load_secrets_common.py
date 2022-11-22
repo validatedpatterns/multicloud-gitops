@@ -17,15 +17,12 @@
 Module that implements some common functions
 """
 
-import os
-import subprocess
-import time
 from collections.abc import MutableMapping
 
 import yaml
 
 
-def find_dupes(l):
+def find_dupes(array):
     """
     Returns duplicate items in a list
 
@@ -37,7 +34,7 @@ def find_dupes(l):
     """
     seen = set()
     dupes = []
-    for x in l:
+    for x in array:
         if x in seen:
             dupes.append(x)
         else:
@@ -73,38 +70,6 @@ def get_version(syaml):
         ret(str): The version value in of the top-level 'version:' key
     """
     return str(syaml.get("version", "1.0"))
-
-
-def run_command(command, attempts=1, sleep=3):
-    """
-    Runs a command on the host ansible is running on. A failing command
-    will raise an exception in this function directly (due to check=True)
-
-    Parameters:
-        command(str): The command to be run.
-        attempts(int): Number of times to retry in case of Error (defaults to 1)
-        sleep(int): Number of seconds to wait in between retry attempts (defaults to 3s)
-
-    Returns:
-        ret(subprocess.CompletedProcess): The return value from run()
-    """
-    for attempt in range(attempts):
-        try:
-            ret = subprocess.run(
-                command,
-                shell=True,
-                env=os.environ.copy(),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                universal_newlines=True,
-                check=True,
-            )
-            return ret
-        except subprocess.CalledProcessError as e:
-            # We reached maximum nr of retries. Re-raise the last error
-            if attempt >= attempts - 1:
-                raise e
-            time.sleep(sleep)
 
 
 def flatten(dictionary, parent_key=False, separator="."):

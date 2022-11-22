@@ -19,14 +19,10 @@ Module that implements V1 of the values-secret.yaml spec
 
 import base64
 import os
+import time
 
 import yaml
-from ansible.module_utils.load_secrets_common import (
-    flatten,
-    get_version,
-    parse_values,
-    run_command,
-)
+from ansible.module_utils.load_secrets_common import flatten, get_version, parse_values
 
 
 class LoadSecretsV1:
@@ -39,6 +35,32 @@ class LoadSecretsV1:
         self.pod = pod
         self.values_secret_template = values_secret_template
         self.syaml = parse_values(values_secrets)
+
+    def _run_command(self, command, attempts=1, sleep=3):
+        """
+        Runs a command on the host ansible is running on. A failing command
+        will raise an exception in this function directly (due to check=True)
+
+        Parameters:
+            command(str): The command to be run.
+            attempts(int): Number of times to retry in case of Error (defaults to 1)
+            sleep(int): Number of seconds to wait in between retry attempts (defaults to 3s)
+
+        Returns:
+            ret(subprocess.CompletedProcess): The return value from run()
+        """
+        for attempt in range(attempts):
+            ret = self.module.run_command(
+                command,
+                check_rc=True,
+                use_unsafe_shell=True,
+                environ_update=os.environ.copy(),
+            )
+            if ret[0] == 0:
+                return ret
+            if attempt >= attempts - 1:
+                return ret
+            time.sleep(sleep)
 
     def sanitize_values(self):
         """
@@ -189,7 +211,7 @@ class LoadSecretsV1:
                     f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
                     f"\"vault kv put '{path}/{secret}' {properties}\""
                 )
-                run_command(cmd, attempts=3)
+                self._run_command(cmd, attempts=3)
                 counter += 1
 
         for i in self.get_secrets_vault_paths("files"):
@@ -203,7 +225,7 @@ class LoadSecretsV1:
                     f"vault kv put {path}/{filekey} b64content=- content=@/tmp/vcontent; "
                     f"rm /tmp/vcontent'"
                 )
-                run_command(cmd, attempts=3)
+                self._run_command(cmd, attempts=3)
                 counter += 1
         return counter
 

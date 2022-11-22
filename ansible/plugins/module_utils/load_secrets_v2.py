@@ -20,12 +20,12 @@ Module that implements V2 of the values-secret.yaml spec
 import base64
 import getpass
 import os
+import time
 
 from ansible.module_utils.load_secrets_common import (
     find_dupes,
     get_version,
     parse_values,
-    run_command,
 )
 
 
@@ -36,6 +36,32 @@ class LoadSecretsV2:
         self.pod = pod
         self.values_secret_template = values_secret_template
         self.syaml = parse_values(values_secrets)
+
+    def _run_command(self, command, attempts=1, sleep=3):
+        """
+        Runs a command on the host ansible is running on. A failing command
+        will raise an exception in this function directly (due to check=True)
+
+        Parameters:
+            command(str): The command to be run.
+            attempts(int): Number of times to retry in case of Error (defaults to 1)
+            sleep(int): Number of seconds to wait in between retry attempts (defaults to 3s)
+
+        Returns:
+            ret(subprocess.CompletedProcess): The return value from run()
+        """
+        for attempt in range(attempts):
+            ret = self.module.run_command(
+                command,
+                check_rc=True,
+                use_unsafe_shell=True,
+                environ_update=os.environ.copy(),
+            )
+            if ret[0] == 0:
+                return ret
+            if attempt >= attempts - 1:
+                return ret
+            time.sleep(sleep)
 
     def _get_vault_policies(self):
         return self.syaml.get("vaultPolicies", {})
@@ -167,7 +193,7 @@ class LoadSecretsV2:
                 (ret, msg) = self._validate_field(i)
                 if not ret:
                     return (False, msg)
-                field_names.append(i['name'])
+                field_names.append(i["name"])
             field_dupes = find_dupes(field_names)
             if len(field_dupes) > 0:
                 return (False, f"You cannot have duplicate field names: {field_dupes}")
@@ -185,7 +211,7 @@ class LoadSecretsV2:
                 f"oc exec -n {self.namespace} {self.pod} -i -- sh -c 'vault write sys/policies/password/{name} "
                 f" policy=@/tmp/{name}.hcl'"
             )
-            run_command(cmd, attempts=3)
+            self._run_command(cmd, attempts=3)
 
     def sanitize_values(self):
         """
@@ -266,7 +292,7 @@ class LoadSecretsV2:
                         f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
                         f"\"{gen_cmd} | vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=-\""
                     )
-                    run_command(cmd)
+                    self._run_command(cmd)
                 return
 
             # If we're not generating the secret inside the vault directly we either read it from the file ("error")
@@ -279,7 +305,7 @@ class LoadSecretsV2:
                     f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
                     f"\"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}={secret}\""
                 )
-                run_command(cmd)
+                self._run_command(cmd)
 
         else:  # path. we upload files
             # If we're generating the password then we just push the secret in the vault directly
@@ -297,7 +323,7 @@ class LoadSecretsV2:
                     f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=/tmp/vcontent; "
                     f"rm /tmp/vcontent'"
                 )
-                run_command(cmd)
+                self._run_command(cmd)
 
     # This assumes that self.sanitize_values() has already been called
     # so we do a lot less validation as it has already happened

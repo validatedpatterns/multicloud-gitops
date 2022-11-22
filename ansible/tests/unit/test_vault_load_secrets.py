@@ -121,7 +121,9 @@ class TestMyModule(unittest.TestCase):
             }
         )
 
-        with patch.object(load_secrets_v1, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -169,7 +171,9 @@ class TestMyModule(unittest.TestCase):
             }
         )
 
-        with patch.object(load_secrets_v1, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -195,7 +199,9 @@ class TestMyModule(unittest.TestCase):
             {"values_secrets": os.path.join(self.testdir_v1, "values-secret-good.yaml")}
         )
 
-        with patch.object(load_secrets_v1, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -260,7 +266,9 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
-        with patch.object(load_secrets_v1, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -293,7 +301,9 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
-        with patch.object(load_secrets_v1, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -314,7 +324,9 @@ class TestMyModule(unittest.TestCase):
             {"values_secrets": os.path.join(self.testdir_v1, "values-secret-fqdn.yaml")}
         )
 
-        with patch.object(load_secrets_v1, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0

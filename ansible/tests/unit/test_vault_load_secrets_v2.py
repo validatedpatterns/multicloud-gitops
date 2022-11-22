@@ -122,7 +122,9 @@ class TestMyModule(unittest.TestCase):
             }
         )
         getpass.return_value = "foo"
-        with patch.object(load_secrets_v2, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v2.LoadSecretsV2, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -161,7 +163,9 @@ class TestMyModule(unittest.TestCase):
         )
         # this will be used for both a secret and a file path
         getpass.return_value = "/tmp/ca.crt"
-        with patch.object(load_secrets_v2, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v2.LoadSecretsV2, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -321,7 +325,9 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
-        with patch.object(load_secrets_v2, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v2.LoadSecretsV2, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -366,7 +372,9 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
-        with patch.object(load_secrets_v2, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v2.LoadSecretsV2, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -407,8 +415,7 @@ class TestMyModule(unittest.TestCase):
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
         assert (
-            ret["args"][1]
-            == "You cannot have duplicate secret names: ['config-demo']"
+            ret["args"][1] == "You cannot have duplicate secret names: ['config-demo']"
         )
 
     def test_ensure_error_fields_same_name(self, getpass):
@@ -424,10 +431,8 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert (
-            ret["args"][1]
-            == "You cannot have duplicate field names: ['secret']"
-        )
+        assert ret["args"][1] == "You cannot have duplicate field names: ['secret']"
+
 
 if __name__ == "__main__":
     unittest.main()
