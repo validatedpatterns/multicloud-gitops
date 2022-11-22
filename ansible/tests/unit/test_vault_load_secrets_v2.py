@@ -151,7 +151,7 @@ class TestMyModule(unittest.TestCase):
                 'oc exec -n vault vault-0 -i -- sh -c "vault kv patch -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret2=bar"'  # noqa: E501
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret secret/region-one/config-demo-file ca_crt=-; rm /tmp/vcontent'"  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret secret/region-two/config-demo-file ca_crt=-; rm /tmp/vcontent'"  # noqa: E501
             ),
             call(
                 "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo-file ca_crt=-; rm /tmp/vcontent'"  # noqa: E501
@@ -207,7 +207,7 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(ret["failed"], True)
         assert (
             ret["args"][1]
-            == "Secret has onMissingValue set to 'generate' or 'prompt' but has a value set"
+            == "Secret has vaultPolicy set to nonExisting but no such policy exists"
         )
 
     def test_ensure_error_wrong_vaultpolicy(self, getpass, pathinput):
@@ -242,7 +242,7 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert ret["args"][1] == "onMissingValue: generate is invalid"
+        assert ret["args"][1] == "Secret has onMissingValue set to 'generate' but has a path set"
 
     def test_ensure_error_file_emptypath(self, getpass, pathinput):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
@@ -257,7 +257,7 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert ret["args"][1] == "ca_crt has unset path"
+        assert ret["args"][1] == "Secret has onMissingValue set to 'error' and has neither value nor path set"
 
     def test_ensure_error_file_wrongpath(self, getpass, pathinput):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
@@ -272,7 +272,7 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert ret["args"][1] == "ca_crt has non-existing path: /tmp/nonexisting"
+        assert ret["args"][1] == "Field has non-existing path: /tmp/nonexisting"
 
     def test_ensure_error_empty_vaultprefix(self, getpass, pathinput):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
@@ -334,6 +334,41 @@ class TestMyModule(unittest.TestCase):
         ]
         mock_run_command.assert_has_calls(calls)
 
+    def test_generate_password_base64_works(self, getpass, pathinput):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    self.testdir_v2, "values-secret-v2-generate-base64.yaml"
+                ),
+            }
+        )
+        with patch.object(load_secrets_v2, "run_command") as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 3
+
+        calls = [
+
+            call(
+                'echo \'length=10\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/basicPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/basicPolicy  policy=@/tmp/basicPolicy.hcl\'',  # noqa: E501
+                attempts=3,
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | base64 --wrap=0 | vault kv put -mount=secret region-one/config-demo secret=-"'
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | base64 --wrap=0 | vault kv put -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret=-"'
+            ),
+        ]
+        mock_run_command.assert_has_calls(calls)
 
 if __name__ == "__main__":
     unittest.main()
