@@ -6,6 +6,9 @@
 * Now the order of values-secret file lookup is the following:
   1. ~/values-secret-<patternname>.yaml
   2. ~/values-secret.yaml
+* Add support for ansible vault encrypted values-secret files. You can now encrypt your values-secret file
+  with `ansible-vault encrypt ~/values-secret.yaml`. The load-secrets mechanism will detect that and prompt
+  for the password to decrypt it
 
 ## November 6, 2022
 

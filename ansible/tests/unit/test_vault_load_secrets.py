@@ -106,7 +106,7 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        self.assertEqual(ret["error"], "Missing values-secrets.yaml file")
+        self.assertEqual(ret["error"], "Missing /tmp/nonexisting file")
         self.assertEqual(
             ret["msg"], "Values secrets file does not exist: /tmp/nonexisting"
         )

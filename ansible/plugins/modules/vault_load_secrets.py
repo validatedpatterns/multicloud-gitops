@@ -54,7 +54,7 @@ import os
 
 import yaml
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.load_secrets_common import get_version, parse_values
+from ansible.module_utils.load_secrets_common import get_version
 from ansible.module_utils.load_secrets_v1 import LoadSecretsV1
 from ansible.module_utils.load_secrets_v2 import LoadSecretsV2
 
@@ -75,8 +75,17 @@ description:
 options:
   values_secrets:
     description:
-      - Path to the values-secrets file
-    required: true
+      - Path to the values-secrets file (only one of values_secrets and
+        values_secrets_plaintext can be passed)
+    required: false
+    default: ''
+    type: str
+  values_secrets_plaintext:
+    description:
+      - The content of the values-secrets file (only one of values_secrets and
+        values_secrets_plaintext can be passed)
+    required: false
+    default: ''
     type: str
   namespace:
     description:
@@ -127,6 +136,10 @@ def run(module):
     results = dict(changed=False)
 
     args = module.params
+    values_secrets = os.path.expanduser(args.get("values_secrets", ""))
+    values_secrets_plaintext = args.get("values_secrets_plaintext", "")
+    if values_secrets != "" and values_secrets_plaintext != "":
+        module.fail_json("Cannot pass both values_secret and values_secret_plaintext")
     values_secrets = os.path.expanduser(args.get("values_secrets"))
     basepath = args.get("basepath")
     namespace = args.get("namespace")
@@ -138,26 +151,37 @@ def run(module):
             "No values_secret_template defined and check_missing_secrets set to True"
         )
 
-    if not os.path.exists(values_secrets):
+    if values_secrets != "" and not os.path.exists(values_secrets):
         results["failed"] = True
-        results["error"] = "Missing values-secrets.yaml file"
+        results["error"] = f"Missing {values_secrets} file"
         results["msg"] = f"Values secrets file does not exist: {values_secrets}"
         module.exit_json(**results)
 
-    syaml = parse_values(values_secrets)
-    if syaml is False:
-        module.fail_json(f"Could not parse {values_secrets} file as yaml")
+    # We were passed a filename (aka the unencrypted path)
+    if values_secrets != "":
+        with open(values_secrets, "r", encoding="utf-8") as file:
+            syaml = yaml.safe_load(file.read())
+        if syaml is None:
+            syaml = {}
+        elif isinstance(syaml, str):
+            module.fail_json(f"Could not parse {values_secrets} file as yaml")
+    elif values_secrets_plaintext != "":
+        syaml = yaml.safe_load(values_secrets_plaintext)
+        if syaml is None:
+            syaml = {}
+        elif isinstance(syaml, str):
+            module.fail_json("Could not parse values_secrets_plaintext as yaml")
+    else:
+        module.fail_json("Both values_secrets and values_secrets_plaintext are unset")
 
     version = get_version(syaml)
 
     if version == "2.0":
-        secret_obj = LoadSecretsV2(
-            module, values_secrets, namespace, pod, values_secret_template
-        )
+        secret_obj = LoadSecretsV2(module, syaml, namespace, pod)
         secret_obj.sanitize_values()
     elif version == "1.0":
         secret_obj = LoadSecretsV1(
-            module, values_secrets, basepath, namespace, pod, values_secret_template
+            module, syaml, basepath, namespace, pod, values_secret_template
         )
         secret_obj.sanitize_values()
         # If the user specified check_for_missing_secrets then we read values_secret_template

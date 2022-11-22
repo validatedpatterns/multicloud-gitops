@@ -22,22 +22,16 @@ import os
 import time
 
 import yaml
-from ansible.module_utils.load_secrets_common import flatten, get_version, parse_values
+from ansible.module_utils.load_secrets_common import flatten, get_version
 
 
 class LoadSecretsV1:
-    def __init__(
-        self, module, values_secrets, basepath, namespace, pod, values_secret_template
-    ):
+    def __init__(self, module, syaml, basepath, namespace, pod, values_secret_template):
         self.module = module
         self.basepath = basepath
         self.namespace = namespace
         self.pod = pod
         self.values_secret_template = values_secret_template
-        syaml = parse_values(values_secrets)
-        if syaml is False:
-            self.module.fail_json(f"Could not parse {values_secrets} file as yaml")
-
         self.syaml = syaml
 
     def _run_command(self, command, attempts=1, sleep=3):

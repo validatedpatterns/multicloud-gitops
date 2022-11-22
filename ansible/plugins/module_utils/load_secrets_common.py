@@ -19,8 +19,6 @@ Module that implements some common functions
 
 from collections.abc import MutableMapping
 
-import yaml
-
 
 def find_dupes(array):
     """
@@ -40,28 +38,6 @@ def find_dupes(array):
         else:
             seen.add(x)
     return dupes
-
-
-def parse_values(values_file):
-    """
-    Parses a values-secrets.yaml file (usually placed in ~)
-    and returns a Python Obect with the parsed yaml.
-
-    Parameters:
-        values_file(str): The path of the values-secrets.yaml file
-        to be parsed.
-
-    Returns:
-        secrets_yaml(obj): The python object containing the parsed yaml or False
-                           if the file could not be parsed as a yaml file
-    """
-    with open(values_file, "r", encoding="utf-8") as file:
-        secrets_yaml = yaml.safe_load(file.read())
-    if secrets_yaml is None:
-        return {}
-    if isinstance(secrets_yaml, str):
-        return False
-    return secrets_yaml
 
 
 def get_version(syaml):
