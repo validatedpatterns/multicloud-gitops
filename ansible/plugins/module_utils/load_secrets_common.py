@@ -17,12 +17,8 @@
 Module that implements some common functions
 """
 
-import contextlib
-import io
 import os
 import subprocess
-import sys
-import termios
 import time
 from collections.abc import MutableMapping
 
