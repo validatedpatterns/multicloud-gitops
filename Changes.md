@@ -3,6 +3,9 @@
 ## November 22, 2022
 
 * Implemented a new format for the values-secret.yaml. Example can be found in examples/ folder
+* Now the order of values-secret file lookup is the following:
+  1. ~/values-secret-<patternname>.yaml
+  2. ~/values-secret.yaml
 
 ## November 6, 2022
 
