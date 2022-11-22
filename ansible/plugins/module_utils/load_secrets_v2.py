@@ -17,6 +17,7 @@
 Module that implements V2 of the values-secret.yaml spec
 """
 
+import base64
 import getpass
 import os
 
@@ -250,6 +251,8 @@ class LoadSecretsV2:
             # If we're not generating the secret inside the vault directly we either read it from the file ("error")
             # or we are prompting the user for it
             secret = self._get_secret_value(secret_name, f)
+            if b64:
+                secret = base64.b64encode(secret.encode())
             for prefix in prefixes:
                 cmd = (
                     f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
@@ -262,11 +265,15 @@ class LoadSecretsV2:
             verb = "put" if first else "patch"
             path = self._get_file_path(secret_name, f)
             for prefix in prefixes:
+                if b64:
+                    b64_cmd = "base64 --wrap=0 /tmp/vcontent | "
+                else:
+                    b64_cmd = ""
                 cmd = (
                     f"cat '{path}' | oc exec -n {self.namespace} {self.pod} -i -- sh -c "
                     f"'cat - > /tmp/vcontent'; "
-                    f"oc exec -n {self.namespace} {self.pod} -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | "
-                    f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=-; "
+                    f"oc exec -n {self.namespace} {self.pod} -i -- sh -c '{b64_cmd}"
+                    f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=/tmp/vcontent; "
                     f"rm /tmp/vcontent'"
                 )
                 run_command(cmd)
