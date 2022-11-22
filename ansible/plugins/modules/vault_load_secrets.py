@@ -145,6 +145,9 @@ def run(module):
         module.exit_json(**results)
 
     syaml = parse_values(values_secrets)
+    if syaml is False:
+        module.fail_json(f"Could not parse {values_secrets} file as yaml")
+
     version = get_version(syaml)
 
     if version == "2.0":
