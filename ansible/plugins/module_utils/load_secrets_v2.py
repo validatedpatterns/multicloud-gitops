@@ -55,13 +55,18 @@ class LoadSecretsV2:
         return f.get("path", None)
 
     def _get_field_kind(self, f):
-        value = self._get_field_value(f)
-        path = self._get_field_path(f)
-        if value is not None and path is not None:
-            return (False, "Both 'value' and 'path' cannot be used")
-        if path is not None:
+        # value: null will be interpreted with None, so let's just
+        # check for the existence of the field, as we use 'value: null' to say
+        # "we want a value/secret and not a file path"
+        if "value" in f and "path" in f:
+            self.module.fail_json("Both 'value' and 'path' cannot be used")
+
+        if "value" in f:
+            return "value"
+        elif "path" in f:
             return "path"
-        return "value"
+
+        return ""
 
     def _get_field_description(self, f):
         return f.get("description", None)
@@ -121,15 +126,15 @@ class LoadSecretsV2:
                 )
 
         if on_missing_value in ["prompt"]:
-            if value is not None:
+            # When we prompt, the user needs to set one of the following:
+            # - value: null # prompt for a secret without a default value
+            # - value: 123 # prompt for a secret but use a default value
+            # - path: null # prompt for a file path without a default value
+            # - path: /tmp/ca.crt # prompt for a file path with a default value
+            if "value" not in f and "path" not in f:
                 return (
                     False,
-                    "Secret has onMissingValue set to 'prompt' but has a value set",
-                )
-            if value is None and path is not None:
-                return (
-                    False,
-                    "Secret has onMissingValue set to 'prompt' but has value set to null and path set to a value",
+                    "Secret has onMissingValue set to 'prompt' but has no value nor path fields",
                 )
 
         return (True, "")
@@ -220,11 +225,13 @@ class LoadSecretsV2:
             else:
                 text = f"{prompt} [{path}]: "
 
-            path = get_input(text)
+            newpath = get_input(text)
+            if newpath == "":  # Set the default if no string was entered
+                newpath = path
 
-            if os.path.isfile(os.path.expanduser(path)):
-                return path
-            self.module.fail_json("File not found, exiting")
+            if os.path.isfile(os.path.expanduser(newpath)):
+                return newpath
+            self.module.fail_json(f"File {newpath} not found, exiting")
 
         self.module.fail_json("File with wrong onMissingValue")
 
@@ -234,8 +241,12 @@ class LoadSecretsV2:
         # If we're generating the password then we just push the secret in the vault directly
         verb = "put" if first else "patch"
         b64 = self._get_field_base64(f)
-        if kind == "value":
+        if kind in ["value", ""]:
             if on_missing_value == "generate":
+                if kind == "path":
+                    self.module.fail_json(
+                        "You cannot have onMissingValue set to 'generate' and have 'path' too"
+                    )
                 vault_policy = f.get("vaultPolicy")
                 gen_cmd = f"vault read -field=password sys/policies/password/{vault_policy}/generate"
                 if b64:
