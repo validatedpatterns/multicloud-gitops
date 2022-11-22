@@ -39,7 +39,7 @@ external_secrets_sa: golang-external-secrets
 
 Use the local file system (output_file variable) to store the vault's unseal keys.
 If set to false they will be stored inside a secret defined by `unseal_secret`
-in the `unseal_namespace` namespace:
+in the `imperative` namespace:
 
 ```yaml
 file_unseal: true

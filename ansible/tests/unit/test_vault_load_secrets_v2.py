@@ -139,10 +139,10 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv put -mount=secret secret/region-one/config-demo secret=value123"'  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret secret/region-one/config-demo secret='value123'\""  # noqa: E501
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv put -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret=value123"'  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret='value123'\""  # noqa: E501
             ),
             call(
                 "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret secret/region-two/config-demo-file ca_crt=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
@@ -194,10 +194,10 @@ class TestMyModule(unittest.TestCase):
                 'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret=-"'  # noqa: E501
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv patch -mount=secret region-one/config-demo secret2=/tmp/ca.crt"'  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv patch -mount=secret region-one/config-demo secret2='/tmp/ca.crt'\""  # noqa: E501
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret2=/tmp/ca.crt"'  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret2='/tmp/ca.crt'\""  # noqa: E501
             ),
             call(
                 "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv patch -mount=secret region-one/config-demo ca_crt=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
@@ -432,6 +432,36 @@ class TestMyModule(unittest.TestCase):
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
         assert ret["args"][1] == "You cannot have duplicate field names: ['secret']"
+
+    def test_password_base64_secret(self, getpass):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    self.testdir_v2, "values-secret-v2-secret-base64.yaml"
+                ),
+            }
+        )
+        with patch.object(
+            load_secrets_v2.LoadSecretsV2, "_run_command"
+        ) as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 1
+
+        calls = [
+            call(
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret test/config-demo secret='Zm9v'\""  # noqa: E501
+            ),
+        ]
+        mock_run_command.assert_has_calls(calls)
 
 
 if __name__ == "__main__":
