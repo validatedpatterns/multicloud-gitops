@@ -75,7 +75,6 @@ def fail_json(*args, **kwargs):
 
 
 @mock.patch("getpass.getpass")
-@mock.patch("builtins.input")
 class TestMyModule(unittest.TestCase):
     def setUp(self):
         self.mock_module_helper = patch.multiple(
@@ -93,12 +92,12 @@ class TestMyModule(unittest.TestCase):
         except OSError:
             pass
 
-    def test_module_fail_when_required_args_missing(self, getpass, pathinput):
+    def test_module_fail_when_required_args_missing(self, getpass):
         with self.assertRaises(AnsibleFailJson):
             set_module_args({})
             vault_load_secrets.main()
 
-    def test_module_fail_when_values_secret_not_existing(self, getpass, pathinput):
+    def test_module_fail_when_values_secret_not_existing(self, getpass):
         with self.assertRaises(AnsibleExitJson) as ansible_err:
             set_module_args(
                 {
@@ -114,7 +113,7 @@ class TestMyModule(unittest.TestCase):
             ret["msg"], "Values secrets file does not exist: /tmp/nonexisting"
         )
 
-    def test_ensure_no_vault_policies_is_ok(self, getpass, pathinput):
+    def test_ensure_no_vault_policies_is_ok(self, getpass):
         set_module_args(
             {
                 "values_secrets": os.path.join(
@@ -123,7 +122,6 @@ class TestMyModule(unittest.TestCase):
             }
         )
         getpass.return_value = "foo"
-        pathinput.return_value = "bar"
         with patch.object(load_secrets_v2, "run_command") as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
@@ -153,7 +151,7 @@ class TestMyModule(unittest.TestCase):
         ]
         mock_run_command.assert_has_calls(calls)
 
-    def test_ensure_policies_are_injected(self, getpass, pathinput):
+    def test_ensure_policies_are_injected(self, getpass):
         set_module_args(
             {
                 "values_secrets": os.path.join(
@@ -161,8 +159,8 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
-        getpass.return_value = "foo"
-        pathinput.return_value = "bar"
+        # this will be used for both a secret and a file path
+        getpass.return_value = "/tmp/ca.crt"
         with patch.object(load_secrets_v2, "run_command") as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
@@ -192,10 +190,10 @@ class TestMyModule(unittest.TestCase):
                 'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret=-"'  # noqa: E501
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv patch -mount=secret region-one/config-demo secret2=bar"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv patch -mount=secret region-one/config-demo secret2=/tmp/ca.crt"'  # noqa: E501
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret2=bar"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret2=/tmp/ca.crt"'  # noqa: E501
             ),
             call(
                 "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv patch -mount=secret region-one/config-demo ca_crt=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
@@ -204,15 +202,15 @@ class TestMyModule(unittest.TestCase):
                 "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo ca_crt=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
             ),
             call(
-                "oc exec -n vault vault-0 -i -- sh -c \"vault kv patch -mount=secret region-one/config-demo ca_crt2=b'YmFy'\""  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret region-one/config-demo ca_crt2=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
             ),
             call(
-                "oc exec -n vault vault-0 -i -- sh -c \"vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo ca_crt2=b'YmFy'\""  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo ca_crt2=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
             ),
         ]
         mock_run_command.assert_has_calls(calls)
 
-    def test_ensure_error_wrong_onmissing_value(self, getpass, pathinput):
+    def test_ensure_error_wrong_onmissing_value(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -230,7 +228,7 @@ class TestMyModule(unittest.TestCase):
             == "Secret has vaultPolicy set to nonExisting but no such policy exists"
         )
 
-    def test_ensure_error_wrong_vaultpolicy(self, getpass, pathinput):
+    def test_ensure_error_wrong_vaultpolicy(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -248,7 +246,7 @@ class TestMyModule(unittest.TestCase):
             == "Secret has vaultPolicy set to nonExisting but no such policy exists"
         )
 
-    def test_ensure_error_file_wrong_onmissing_value(self, getpass, pathinput):
+    def test_ensure_error_file_wrong_onmissing_value(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -267,7 +265,7 @@ class TestMyModule(unittest.TestCase):
             == "Secret has onMissingValue set to 'generate' but has a path set"
         )
 
-    def test_ensure_error_file_emptypath(self, getpass, pathinput):
+    def test_ensure_error_file_emptypath(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -285,7 +283,7 @@ class TestMyModule(unittest.TestCase):
             == "Secret has onMissingValue set to 'error' and has neither value nor path set"
         )
 
-    def test_ensure_error_file_wrongpath(self, getpass, pathinput):
+    def test_ensure_error_file_wrongpath(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -300,7 +298,7 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(ret["failed"], True)
         assert ret["args"][1] == "Field has non-existing path: /tmp/nonexisting"
 
-    def test_ensure_error_empty_vaultprefix(self, getpass, pathinput):
+    def test_ensure_error_empty_vaultprefix(self, getpass):
         with self.assertRaises(AnsibleFailJson) as ansible_err:
             set_module_args(
                 {
@@ -315,7 +313,7 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(ret["failed"], True)
         assert ret["args"][1] == "Secret config-demo has empty vaultPrefixes"
 
-    def test_ensure_only_generate_passwords_works(self, getpass, pathinput):
+    def test_ensure_only_generate_passwords_works(self, getpass):
         set_module_args(
             {
                 "values_secrets": os.path.join(
@@ -360,7 +358,7 @@ class TestMyModule(unittest.TestCase):
         ]
         mock_run_command.assert_has_calls(calls)
 
-    def test_generate_password_base64_works(self, getpass, pathinput):
+    def test_generate_password_base64_works(self, getpass):
         set_module_args(
             {
                 "values_secrets": os.path.join(

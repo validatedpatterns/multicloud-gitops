@@ -22,7 +22,6 @@ import getpass
 import os
 
 from ansible.module_utils.load_secrets_common import (
-    get_input,
     get_version,
     parse_values,
     run_command,
@@ -225,7 +224,7 @@ class LoadSecretsV2:
             else:
                 text = f"{prompt} [{path}]: "
 
-            newpath = get_input(text)
+            newpath = getpass.getpass(text)
             if newpath == "":  # Set the default if no string was entered
                 newpath = path
 
@@ -245,7 +244,7 @@ class LoadSecretsV2:
             if on_missing_value == "generate":
                 if kind == "path":
                     self.module.fail_json(
-                        "You cannot have onMissingValue set to 'generate' and have 'path' too"
+                        "You cannot have onMissingValue set to 'generate' with a path"
                     )
                 vault_policy = f.get("vaultPolicy")
                 gen_cmd = f"vault read -field=password sys/policies/password/{vault_policy}/generate"
