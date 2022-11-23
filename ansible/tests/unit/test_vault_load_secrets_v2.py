@@ -143,16 +143,20 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret secret/region-one/config-demo secret='value123'\""  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret secret/region-one/config-demo secret='value123'\"",  # noqa: E501
+                attempts=3,
             ),
             call(
-                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret='value123'\""  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo secret='value123'\"",  # noqa: E501
+                attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret secret/region-two/config-demo-file ca_crt=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret secret/region-two/config-demo-file ca_crt=/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo-file ca_crt=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo-file ca_crt=/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                attempts=3,
             ),
         ]
         mock_run_command.assert_has_calls(calls)
@@ -196,28 +200,36 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret region-one/config-demo secret=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret region-one/config-demo secret=-"',  # noqa: E501
+                attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret=-"',  # noqa: E501
+                attempts=3,
             ),
             call(
-                "oc exec -n vault vault-0 -i -- sh -c \"vault kv patch -mount=secret region-one/config-demo secret2='/tmp/ca.crt'\""  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv patch -mount=secret region-one/config-demo secret2='/tmp/ca.crt'\"",  # noqa: E501
+                attempts=3,
             ),
             call(
-                "oc exec -n vault vault-0 -i -- sh -c \"vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret2='/tmp/ca.crt'\""  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret2='/tmp/ca.crt'\"",  # noqa: E501
+                attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv patch -mount=secret region-one/config-demo ca_crt=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv patch -mount=secret region-one/config-demo ca_crt=/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo ca_crt=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo ca_crt=/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret region-one/config-demo ca_crt2=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret region-one/config-demo ca_crt2=/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo ca_crt2=/tmp/vcontent; rm /tmp/vcontent'"  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo ca_crt2=/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                attempts=3,
             ),
         ]
         mock_run_command.assert_has_calls(calls)
@@ -362,16 +374,20 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo region-one/config-demo secret=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo region-one/config-demo secret=-"',  # noqa: E501
+                attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret=-"',  # noqa: E501
+                attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo region-one/config-demo secret2=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo region-one/config-demo secret2=-"',  # noqa: E501
+                attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret2=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/advancedPolicy/generate | vault kv patch -mount=foo snowflake.blueprints.rhecoeng.com/config-demo secret2=-"',  # noqa: E501
+                attempts=3,
             ),
         ]
         mock_run_command.assert_has_calls(calls)
@@ -409,10 +425,12 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | base64 --wrap=0 | vault kv put -mount=secret region-one/config-demo secret=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | base64 --wrap=0 | vault kv put -mount=secret region-one/config-demo secret=-"',  # noqa: E501
+                attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | base64 --wrap=0 | vault kv put -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | base64 --wrap=0 | vault kv put -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret=-"',  # noqa: E501
+                attempts=3,
             ),
         ]
         mock_run_command.assert_has_calls(calls)
@@ -478,7 +496,8 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret test/config-demo secret='Zm9v'\""  # noqa: E501
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret test/config-demo secret='Zm9v'\"",  # noqa: E501
+                attempts=3,
             ),
         ]
         mock_run_command.assert_has_calls(calls)
@@ -535,16 +554,20 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret region-one/config-demo secret=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret region-one/config-demo secret=-"',  # noqa: E501
+                attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/basicPolicy/generate | vault kv put -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret=-"',  # noqa: E501
+                attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/validatedPatternDefaultPolicy/generate | vault kv patch -mount=secret region-one/config-demo secret2=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/validatedPatternDefaultPolicy/generate | vault kv patch -mount=secret region-one/config-demo secret2=-"',  # noqa: E501
+                attempts=3,
             ),
             call(
-                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/validatedPatternDefaultPolicy/generate | vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret2=-"'  # noqa: E501
+                'oc exec -n vault vault-0 -i -- sh -c "vault read -field=password sys/policies/password/validatedPatternDefaultPolicy/generate | vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo secret2=-"',  # noqa: E501
+                attempts=3,
             ),
         ]
         mock_run_command.assert_has_calls(calls)

@@ -320,7 +320,7 @@ class LoadSecretsV2:
                         f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
                         f"\"{gen_cmd} | vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=-\""
                     )
-                    self._run_command(cmd)
+                    self._run_command(cmd, attempts=3)
                 return
 
             # If we're not generating the secret inside the vault directly we either read it from the file ("error")
@@ -333,7 +333,7 @@ class LoadSecretsV2:
                     f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
                     f"\"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}='{secret}'\""
                 )
-                self._run_command(cmd)
+                self._run_command(cmd, attempts=3)
 
         else:  # path. we upload files
             # If we're generating the password then we just push the secret in the vault directly
@@ -351,7 +351,7 @@ class LoadSecretsV2:
                     f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=/tmp/vcontent; "
                     f"rm /tmp/vcontent'"
                 )
-                self._run_command(cmd)
+                self._run_command(cmd, attempts=3)
 
     # This assumes that self.sanitize_values() has already been called
     # so we do a lot less validation as it has already happened
