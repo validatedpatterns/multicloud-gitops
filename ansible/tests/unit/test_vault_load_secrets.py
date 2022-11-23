@@ -356,5 +356,32 @@ class TestMyModule(unittest.TestCase):
         mock_run_command.assert_has_calls(calls)
 
 
+    def test_ensure_check_missing_secrets_errors_out(self):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    self.testdir_v1, "mcg-values-secret.yaml"
+                ),
+                "check_missing_secrets": True,
+                "values_secret_template": "",
+            }
+        )
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr
+
+            with self.assertRaises(AnsibleFailJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(result.exception.args[0]["failed"])
+            # In case of failure args[1] contains the msg of the failure
+            assert (
+                result.exception.args[0]["args"][1]
+                == "No values_secret_template defined and check_missing_secrets set to True"
+            )
+            assert mock_run_command.call_count == 0
 if __name__ == "__main__":
     unittest.main()
