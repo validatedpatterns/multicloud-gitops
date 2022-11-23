@@ -7,8 +7,8 @@
   1. ~/values-secret-<patternname>.yaml
   2. ~/values-secret.yaml
 * Add support for ansible vault encrypted values-secret files. You can now encrypt your values-secret file
-  with `ansible-vault encrypt ~/values-secret.yaml`. The load-secrets mechanism will detect that and prompt
-  for the password to decrypt it
+  at rest with `ansible-vault encrypt ~/values-secret.yaml`. When running `make load-secrets` if an encrypted
+  file is encountered the user will be prompted automatically for the password to decrypt it.
 
 ## November 6, 2022
 
