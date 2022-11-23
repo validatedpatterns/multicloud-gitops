@@ -355,7 +355,6 @@ class TestMyModule(unittest.TestCase):
         ]
         mock_run_command.assert_has_calls(calls)
 
-
     def test_ensure_check_missing_secrets_errors_out(self):
         set_module_args(
             {
@@ -383,5 +382,7 @@ class TestMyModule(unittest.TestCase):
                 == "No values_secret_template defined and check_missing_secrets set to True"
             )
             assert mock_run_command.call_count == 0
+
+
 if __name__ == "__main__":
     unittest.main()

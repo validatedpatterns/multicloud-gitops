@@ -24,6 +24,16 @@ import time
 
 from ansible.module_utils.load_secrets_common import find_dupes, get_version
 
+default_vp_vault_policies = {
+    "validatedPatternDefaultPolicy": (
+        "length=20\n"
+        'rule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\n'
+        'rule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\n'
+        'rule "charset" { charset = "0123456789" min-chars = 1 }\n'
+        'rule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n'
+    )
+}
+
 
 class LoadSecretsV2:
     def __init__(self, module, syaml, namespace, pod):
@@ -68,8 +78,14 @@ class LoadSecretsV2:
         """
         return str(self.syaml.get("backingStore", "vault"))
 
-    def _get_vault_policies(self):
-        return self.syaml.get("vaultPolicies", {})
+    def _get_vault_policies(self, enable_default_vp_policies=True):
+        # We start off with the hard-coded default VP policy and add the user-defined ones
+        if enable_default_vp_policies:
+            policies = default_vp_vault_policies.copy()
+        else:
+            policies = {}
+        policies.update(self.syaml.get("vaultPolicies", {}))
+        return policies
 
     def _get_secrets(self):
         return self.syaml.get("secrets", {})
@@ -236,8 +252,6 @@ class LoadSecretsV2:
             self.module.fail_json(
                 f"Currently only the 'vault' backingStore is supported: {backing_store}"
             )
-        # Check if the vault_policies are sane somehow?
-        # vault_policies = self._get_vault_policies()
 
         (ret, msg) = self._validate_secrets()
         if not ret:
