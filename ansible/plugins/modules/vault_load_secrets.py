@@ -54,7 +54,7 @@ import os
 
 import yaml
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.load_secrets_common import get_version
+from ansible.module_utils.load_secrets_common import get_backingstore, get_version
 from ansible.module_utils.load_secrets_v1 import LoadSecretsV1
 from ansible.module_utils.load_secrets_v2 import LoadSecretsV2
 
@@ -140,6 +140,7 @@ def run(module):
     values_secrets_plaintext = args.get("values_secrets_plaintext", "")
     if values_secrets != "" and values_secrets_plaintext != "":
         module.fail_json("Cannot pass both values_secret and values_secret_plaintext")
+
     values_secrets = os.path.expanduser(args.get("values_secrets"))
     basepath = args.get("basepath")
     namespace = args.get("namespace")
@@ -175,8 +176,10 @@ def run(module):
         module.fail_json("Both values_secrets and values_secrets_plaintext are unset")
 
     version = get_version(syaml)
-
     if version == "2.0":
+        backing_store = get_backingstore(syaml)
+        if backing_store != "vault":  # we currently only support vault
+            module.fail_json("Currently only the 'vault' backingStore is supported")
         secret_obj = LoadSecretsV2(module, syaml, namespace, pod)
         secret_obj.sanitize_values()
     elif version == "1.0":

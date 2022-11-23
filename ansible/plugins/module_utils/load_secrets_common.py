@@ -51,6 +51,17 @@ def get_version(syaml):
     return str(syaml.get("version", "1.0"))
 
 
+def get_backingstore(syaml):
+    """
+    Return the backingStore: of the parsed yaml object. If it does not exist
+    return 'vault'
+
+    Returns:
+        ret(str): The value of the top-level 'backingStore:' key
+    """
+    return str(syaml.get("backingStore", "vault"))
+
+
 def flatten(dictionary, parent_key=False, separator="."):
     """
     Turn a nested dictionary into a flattened dictionary and also

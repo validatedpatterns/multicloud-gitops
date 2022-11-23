@@ -463,6 +463,22 @@ class TestMyModule(unittest.TestCase):
         ]
         mock_run_command.assert_has_calls(calls)
 
+    def test_ensure_error_on_unsupported_backingstore(self, getpass):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2,
+                        "values-secret-v2-nonexisting-backingstore.yaml",
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert ret["args"][1] == "Currently only the 'vault' backingStore is supported"
+
 
 if __name__ == "__main__":
     unittest.main()
