@@ -477,7 +477,10 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        assert ret["args"][1] == "Currently only the 'vault' backingStore is supported"
+        assert (
+            ret["args"][1]
+            == "Currently only the 'vault' backingStore is supported: nonexisting"
+        )
 
 
 if __name__ == "__main__":

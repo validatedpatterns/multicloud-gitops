@@ -54,7 +54,7 @@ import os
 
 import yaml
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.load_secrets_common import get_backingstore, get_version
+from ansible.module_utils.load_secrets_common import get_version
 from ansible.module_utils.load_secrets_v1 import LoadSecretsV1
 from ansible.module_utils.load_secrets_v2 import LoadSecretsV2
 
@@ -147,10 +147,6 @@ def run(module):
     pod = args.get("pod")
     check_missing_secrets = args.get("check_missing_secrets")
     values_secret_template = args.get("values_secret_template")
-    if check_missing_secrets and values_secret_template == "":
-        module.fail_json(
-            "No values_secret_template defined and check_missing_secrets set to True"
-        )
 
     if values_secrets != "" and not os.path.exists(values_secrets):
         results["failed"] = True
@@ -177,24 +173,22 @@ def run(module):
 
     version = get_version(syaml)
     if version == "2.0":
-        backing_store = get_backingstore(syaml)
-        if backing_store != "vault":  # we currently only support vault
-            module.fail_json("Currently only the 'vault' backingStore is supported")
         secret_obj = LoadSecretsV2(module, syaml, namespace, pod)
-        secret_obj.sanitize_values()
     elif version == "1.0":
         secret_obj = LoadSecretsV1(
-            module, syaml, basepath, namespace, pod, values_secret_template
+            module,
+            syaml,
+            basepath,
+            namespace,
+            pod,
+            values_secret_template,
+            check_missing_secrets,
         )
-        secret_obj.sanitize_values()
-        # If the user specified check_for_missing_secrets then we read values_secret_template
-        # and check if there are any missing secrets. Makes sense only for v1.0
-        if check_missing_secrets:
-            secret_obj.check_for_missing_secrets()
 
     else:
         module.fail_json(f"Version {version} is currently not supported")
 
+    secret_obj.sanitize_values()
     nr_secrets = secret_obj.inject_secrets()
     results["failed"] = False
     results["changed"] = True

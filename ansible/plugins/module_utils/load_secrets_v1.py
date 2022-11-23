@@ -26,12 +26,22 @@ from ansible.module_utils.load_secrets_common import flatten, get_version
 
 
 class LoadSecretsV1:
-    def __init__(self, module, syaml, basepath, namespace, pod, values_secret_template):
+    def __init__(
+        self,
+        module,
+        syaml,
+        basepath,
+        namespace,
+        pod,
+        values_secret_template,
+        check_missing_secrets,
+    ):
         self.module = module
         self.basepath = basepath
         self.namespace = namespace
         self.pod = pod
         self.values_secret_template = values_secret_template
+        self.check_missing_secrets = check_missing_secrets
         self.syaml = syaml
 
     def _run_command(self, command, attempts=1, sleep=3):
@@ -91,6 +101,15 @@ class LoadSecretsV1:
                 f"Values secrets file does not contain 'secrets' or"
                 f"'files' keys: {self.syaml}"
             )
+
+        if self.check_missing_secrets and self.values_secret_template == "":
+            self.module.fail_json(
+                "No values_secret_template defined and check_missing_secrets set to True"
+            )
+        # If the user specified check_for_missing_secrets then we read values_secret_template
+        # and check if there are any missing secrets. Makes sense only for v1.0
+        if self.check_missing_secrets:
+            self.check_for_missing_secrets()
 
         secrets = self.syaml.get("secrets", {})
         # We need to explicitely check for None because the file might contain the

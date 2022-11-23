@@ -58,6 +58,16 @@ class LoadSecretsV2:
                 return ret
             time.sleep(sleep)
 
+    def _get_backingstore(self):
+        """
+        Return the backingStore: of the parsed yaml object. If it does not exist
+        return 'vault'
+
+        Returns:
+            ret(str): The value of the top-level 'backingStore:' key
+        """
+        return str(self.syaml.get("backingStore", "vault"))
+
     def _get_vault_policies(self):
         return self.syaml.get("vaultPolicies", {})
 
@@ -221,6 +231,11 @@ class LoadSecretsV2:
         if v != "2.0":
             self.module.fail_json(f"Version is not 2.0: {v}")
 
+        backing_store = self._get_backingstore()
+        if backing_store != "vault":  # we currently only support vault
+            self.module.fail_json(
+                f"Currently only the 'vault' backingStore is supported: {backing_store}"
+            )
         # Check if the vault_policies are sane somehow?
         # vault_policies = self._get_vault_policies()
 
