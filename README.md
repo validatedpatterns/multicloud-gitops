@@ -19,4 +19,4 @@ git merge -s subtree -Xtheirs -Xsubtree=common upstream-common/ha-vault
 
 ## Secrets
 
-There are two different secret formats parsed by the ansible bits. Both are documented [here](https://github.com/hybrid-cloud-patterns/common/tree/main/examples/secrets)
+There are two different secret formats parsed by the ansible bits. Both are documented [here](https://github.com/hybrid-cloud-patterns/common/tree/main/ansible/roles/vault_utils/README.md)

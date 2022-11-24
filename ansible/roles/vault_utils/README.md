@@ -1,15 +1,12 @@
-Role Name
-=========
+# Role Name
 
 Bunch of utilities to manage the vault inside k8s imperatively
 
-Requirements
-------------
+## Requirements
 
 ansible-galaxy collection install kubernetes.core (formerly known as community.kubernetes)
 
-Role Variables
---------------
+## Role Variables
 
 Defaults as to where the values-secret.yaml file is and the two ways to connect to a kubernetes cluster
 (KUBERCONFIG and ~/.kube/config respectively):
@@ -50,10 +47,167 @@ unseal_secret: "vaultkeys"
 unseal_namespace: "imperative"
 ```
 
-Dependencies
-------------
+## Dependencies
 
 This relies on [kubernetes.core](https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_module.html)
+
+## Values secret file format
+
+Currently this role supports two formats: version 1.0 (which is the assumed default when not specified) and version 2.0.
+The latter is more fatureful and supports generating secrets directly into the vault and also prompting the user for a secret.
+By default, the first file that will looked up is `~/values-secret-<patternname>.yaml` and should that not exist it will look
+for `~/values-secret.yaml`.
+
+The values secret yaml files can be encrypted with `ansible-vault`. If the role detects they are encrypted, the password to
+decrypt them will be prompted when needed.
+
+### Version 1.0
+
+Here is a well-commented example of a version 1.0 file:
+
+```yaml
+---
+# By default when a top-level 'version: 1.0' is missing it is assumed to be '1.0'
+# NEVER COMMIT THESE VALUES TO GIT
+
+secrets:
+  # These secrets will be pushed in the vault at secret/hub/test The vault will
+  # have secret/hub/test with secret1 and secret2 as keys with their associated
+  # values (secrets)
+  test:
+    secret1: foo
+    secret2: bar
+
+  # This ends up as the s3Secret attribute to the path secret/hub/aws
+  aws:
+    s3Secret: test-secret
+
+  # The cluster_xxxx pattern is used for creating externalSecrets that
+  # will be used by ArgoCD to push manifests to other clusters.
+  #
+  # Create a service account with enough permissions and extract the token
+  #
+  # CLUSTER_TOKEN=$(oc describe secret -n default argocd-external-token | grep 'token:' | awk '{print$2}')
+  # CLUSTER_CA=$(oc extract -n openshift-config cm/kube-root-ca.crt --to=- --keys=ca.crt | base64 | awk '{print}' ORS='')
+  cluster_example:
+    server: https://api.example.openshiftapps.com:6443
+    bearerToken: <bearer_token>
+
+# This will create the vault key secret/hub/testfoo which will have two
+# properties 'b64content' and 'content' which will be the base64-encoded
+# content and the normal content respectively
+files:
+  testfoo: ~/ca.crt
+# These secrets will be pushed in the vault at secret/region1/test The vault will
+# have secret/region1/test with secret1 and secret2 as keys with their associated
+# values (secrets)
+secrets.region1:
+  test:
+    secret1: foo1
+    secret2: bar1
+# This will create the vault key secret/region2/testbar which will have two
+# properties 'b64content' and 'content' which will be the base64-encoded
+# content and the normal content respectively
+files.region2:
+  testbar: ~/ca.crt
+```
+
+### Version 2.0
+
+Here is a version 2.0 example file (specifying `version: 2.0` is mandatory in this case):
+
+```yaml
+# NEVER COMMIT THESE VALUES TO GIT (unless your file only uses generated
+# passwords or only points to files)
+
+# Needed to specify the new format (missing version means old version: 1.0 by default)
+version: 2.0
+
+backingStore: vault # 'vault' is the default when omitted
+
+# These are the vault policies to be created in the vault
+# these are used when we let the vault generate the passwords
+# by setting the 'onMissingValue' attribute to 'generate'
+# See https://developer.hashicorp.com/vault/docs/concepts/password-policies
+vaultPolicies:
+  basicPolicy: |
+    length=10
+    rule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }
+    rule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }
+    rule "charset" { charset = "0123456789" min-chars = 1 }
+
+  advancedPolicy: |
+    length=20
+    rule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }
+    rule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }
+    rule "charset" { charset = "0123456789" min-chars = 1 }
+    rule "charset" { charset = "!@#$%^&*" min-chars = 1 }
+
+# This is the mandatory top-level secrets entry
+secrets:
+  # This will create the following keys + attributes:
+  # - secret/region-one/config-demo:
+  #     secret: ...<generated basicPolicy secret>...
+  #     secretprompt: ...<as input by the user>...
+  #     secretprompt2: ...<as input by the user. If just enter is pressed it will be 'defaultvalue'>...
+  #     secretfile: ...<content of the file as input by user. If just enter is pressed the file will be /tmp/ca.crt...0
+  #     ca_crt: ...<content of /tmp/ca.crt>...
+  #     ca_crt_b64: ...<content of /tmp/ca.crt base64-encoded before uploading to vault>...
+  # - secret/snowflake.blueprints.rhecoeng.com:
+  #     secret: ...<generated basicPolicy secret>...
+  #     secretprompt: ...<as input by the user>...
+  #     secretprompt2: ...<as input by the user. If just enter is pressed it will be 'defaultvalue'>...
+  #     secretfile: ...<content of the file as input by user. If just enter is pressed the file will be /tmp/ca.crt...0
+  #     ca_crt: ...<content of /tmp/ca.crt>...
+  #     ca_crt_b64: ...<content of /tmp/ca.crt base64-encoded before uploading to vault>...
+  - name: config-demo
+    # This is the default and passes the -mount=secret option to the vault commands
+    vaultMount: secret
+    # These represent the paths inside the vault maint
+    vaultPrefixes:
+    - region-one
+    - snowflake.blueprints.rhecoeng.com
+    fields:
+    - name: secret
+      onMissingValue: generate # One of: error,generate,prompt (generate is only valid for normal secrets)
+      vaultPolicy: basicPolicy
+    - name: secretprompt
+      value: null
+      onMissingValue: prompt # when prompting for something you need to set either value: null or path: null as
+                             # we need to know if it is a secret plaintext or a file path
+      description: "Please specify the password for application ABC"
+    - name: secretprompt2
+      value: defaultvalue
+      onMissingValue: prompt
+      description: "Please specify the API key for XYZ"
+    - name: secretprompt3
+      onMissingValue: generate
+      vaultPolicy: validatedPatternDefaultPolicy  # This is an always-existing hard-coded policy
+    - name: secretfile
+      path: /tmp/ca.crt
+      onMissingValue: prompt
+      description: "Insert path to Certificate Authority"
+    - name: ca_crt
+      path: /tmp/ca.crt
+      onMissingValue: error # One of error, prompt (for path). generate makes no sense for file
+    - name: ca_crt_b64
+      path: /tmp/ca.crt
+      base64: true # defaults to false
+      onMissingValue: prompt # One of error, prompt (for path). generate makes no sense for file
+
+  - name: config-demo2
+    vaultPrefixes:
+    - region-one
+    - snowflake.blueprints.rhecoeng.com
+    fields:
+    - name: ca_crt2
+      path: /tmp/ca.crt # this will be the default shown when prompted
+      description: "Specify the path for ca_crt2"
+      onMissingValue: prompt # One of error, prompt (for path). generate makes no sense for file
+    - name: ca_crt
+      path: /tmp/ca.crt
+      onMissingValue: error # One of error, prompt (for path). generate makes no sense for file
+```
 
 Internals
 ---------
@@ -68,12 +222,10 @@ Here is the rough high-level algorithm used to unseal the vault:
    (file_unseal controls this)
 5. Configure the vault (should be idempotent)
 
-License
--------
+## License
 
 Apache
 
-Author Information
-------------------
+## Author Information
 
 Michele Baldessari <michele@redhat.com>
