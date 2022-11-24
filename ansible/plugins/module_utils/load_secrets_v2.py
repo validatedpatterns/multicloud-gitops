@@ -115,8 +115,8 @@ class LoadSecretsV2:
 
         return ""
 
-    def _get_field_description(self, f):
-        return f.get("description", None)
+    def _get_field_prompt(self, f):
+        return f.get("prompt", None)
 
     def _get_field_base64(self, f):
         return bool(f.get("base64", False))
@@ -264,7 +264,7 @@ class LoadSecretsV2:
         if on_missing_value == "error":
             return field.get("value")
         elif on_missing_value == "prompt":
-            prompt = self._get_field_description(field)
+            prompt = self._get_field_prompt(field)
             if prompt is None:
                 prompt = f"Type secret for {name}/{field['name']}: "
             value = self._get_field_value(field)
@@ -279,7 +279,7 @@ class LoadSecretsV2:
         if on_missing_value == "error":
             return field.get("path")
         elif on_missing_value == "prompt":
-            prompt = self._get_field_description(field)
+            prompt = self._get_field_prompt(field)
             path = self._get_field_path(field)
             if path is None:
                 path = ""
