@@ -112,4 +112,3 @@ ansible-unittest: ## run ansible unit tests
 	pytest -r a --fulltrace --color yes ansible/tests/unit/test_*.py
 
 .phony: install test
-
