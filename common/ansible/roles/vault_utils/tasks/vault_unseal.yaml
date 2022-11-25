@@ -1,6 +1,8 @@
 ---
-- include_tasks: pre_check.yaml
-- include_tasks: vault_status.yaml
+- name: Vault pre checks
+  ansible.builtin.include_tasks: pre_check.yaml
+- name: Vault status check
+  ansible.builtin.include_tasks: vault_status.yaml
 
 # If the vault is already unsealed we skip all the tasks below
 - name: Is the vault sealed?

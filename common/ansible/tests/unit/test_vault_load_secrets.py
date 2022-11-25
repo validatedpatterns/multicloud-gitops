@@ -26,7 +26,18 @@ from unittest.mock import call, patch
 from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_bytes
 
+# TODO(bandini): I could not come up with something better to force the imports to be existing
+# when we 'import vault_load_secrets'
+sys.path.insert(1, "./ansible/plugins/module_utils")
 sys.path.insert(1, "./ansible/plugins/modules")
+import load_secrets_common  # noqa: E402
+
+sys.modules["ansible.module_utils.load_secrets_common"] = load_secrets_common
+import load_secrets_v1  # noqa: E402
+import load_secrets_v2  # noqa: E402
+
+sys.modules["ansible.module_utils.load_secrets_v1"] = load_secrets_v1
+sys.modules["ansible.module_utils.load_secrets_v2"] = load_secrets_v2
 import vault_load_secrets  # noqa: E402
 
 
@@ -95,7 +106,7 @@ class TestMyModule(unittest.TestCase):
 
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
-        self.assertEqual(ret["error"], "Missing values-secrets.yaml file")
+        self.assertEqual(ret["error"], "Missing /tmp/nonexisting file")
         self.assertEqual(
             ret["msg"], "Values secrets file does not exist: /tmp/nonexisting"
         )
@@ -110,7 +121,9 @@ class TestMyModule(unittest.TestCase):
             }
         )
 
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -158,7 +171,9 @@ class TestMyModule(unittest.TestCase):
             }
         )
 
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -184,7 +199,9 @@ class TestMyModule(unittest.TestCase):
             {"values_secrets": os.path.join(self.testdir_v1, "values-secret-good.yaml")}
         )
 
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -249,7 +266,9 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -282,7 +301,9 @@ class TestMyModule(unittest.TestCase):
                 ),
             }
         )
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -303,7 +324,9 @@ class TestMyModule(unittest.TestCase):
             {"values_secrets": os.path.join(self.testdir_v1, "values-secret-fqdn.yaml")}
         )
 
-        with patch.object(vault_load_secrets, "run_command") as mock_run_command:
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
             stdout = "configuration updated"
             stderr = ""
             ret = 0
@@ -331,6 +354,34 @@ class TestMyModule(unittest.TestCase):
             ),
         ]
         mock_run_command.assert_has_calls(calls)
+
+    def test_ensure_check_missing_secrets_errors_out(self):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    self.testdir_v1, "mcg-values-secret.yaml"
+                ),
+                "check_missing_secrets": True,
+                "values_secret_template": "",
+            }
+        )
+        with patch.object(
+            load_secrets_v1.LoadSecretsV1, "_run_command"
+        ) as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr
+
+            with self.assertRaises(AnsibleFailJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(result.exception.args[0]["failed"])
+            # In case of failure args[1] contains the msg of the failure
+            assert (
+                result.exception.args[0]["args"][1]
+                == "No values_secret_template defined and check_missing_secrets set to True"
+            )
+            assert mock_run_command.call_count == 0
 
 
 if __name__ == "__main__":
