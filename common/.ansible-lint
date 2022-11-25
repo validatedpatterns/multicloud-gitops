@@ -5,3 +5,4 @@ skip_list:
   - name[template] # Allow Jinja templating inside task and play names
   - template-instead-of-copy # Templated files should use template instead of copy
   - yaml[line-length] # too long lines
+  - yaml[indentation] # Forcing lists to be always indented by 2 chars is silly IMO

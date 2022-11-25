@@ -90,7 +90,7 @@ vault-unseal: ## unseals the vault
 	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
 
 load-secrets: ## loads the secrets into the vault
-	common/scripts/vault-utils.sh push_secrets common/pattern-vault.init
+	common/scripts/vault-utils.sh push_secrets common/pattern-vault.init $(NAME)
 
 super-linter: ## Runs super linter locally
 	rm -rf .mypy_cache
@@ -112,4 +112,3 @@ ansible-unittest: ## run ansible unit tests
 	pytest -r a --fulltrace --color yes ansible/tests/unit/test_*.py
 
 .phony: install test
-
