@@ -49,4 +49,5 @@ jobs:
 
       - name: Verify json schema
         run: |
+          check-jsonschema --schemafile ./ansible/roles/vault_utils/values-secrets.v1.schema.json examples/secrets/values-secret.v1.yaml
           check-jsonschema --schemafile ./ansible/roles/vault_utils/values-secrets.v2.schema.json examples/secrets/values-secret.v2.yaml
