@@ -10,10 +10,10 @@ help:
 	make -f common/Makefile $*
 
 install: operator-deploy post-install ## installs the pattern, inits the vault and loads the secrets
-	echo "Installed"
+	@echo "Installed"
 
 legacy-install: legacy-deploy post-install ## install the pattern the old way without the operator
-	echo "Installed"
+	@echo "Installed"
 
 post-install: ## Post-install tasks - vault init and load-secrets
 	@if grep -v -e '^\s\+#' "values-hub.yaml" | grep -q -e "insecureUnsealVaultInsideCluster:\s\+true"; then \
@@ -22,7 +22,7 @@ post-install: ## Post-install tasks - vault init and load-secrets
 	  make vault-init; \
 	fi
 	make load-secrets
-	echo "Done"
+	@echo "Done"
 
 test:
 	@make -f common/Makefile PATTERN_OPTS="-f values-global.yaml -f values-hub.yaml" test
