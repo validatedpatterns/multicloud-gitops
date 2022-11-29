@@ -26,35 +26,15 @@ data:
   extraconfig-from-values.hcl: |-
     disable_mlock = true
     ui = true
-    
     listener "tcp" {
-      tls_disable = 1
       address = "[::]:8200"
       cluster_address = "[::]:8201"
-      # Enable unauthenticated metrics access (necessary for Prometheus Operator)
-      #telemetry {
-      #  unauthenticated_metrics_access = "true"
-      #}
+      tls_cert_file = "/vault/userconfig/vault-secret/tls.crt"
+      tls_key_file = "/vault/userconfig/vault-secret/tls.key"
     }
     storage "file" {
       path = "/vault/data"
     }
-    
-    # Example configuration for using auto-unseal, using Google Cloud KMS. The
-    # GKMS keys must already exist, and the cluster must have a service account
-    # that is authorized to access GCP KMS.
-    #seal "gcpckms" {
-    #   project     = "vault-helm-dev"
-    #   region      = "global"
-    #   key_ring    = "vault-helm-unseal-kr"
-    #   crypto_key  = "vault-helm-unseal-key"
-    #}
-    
-    # Example configuration for enabling Prometheus metrics in your config.
-    #telemetry {
-    #  prometheus_retention_time = "30s",
-    #  disable_hostname = true
-    #}
 ---
 # Source: hashicorp-vault/charts/vault/templates/server-clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -90,6 +70,8 @@ metadata:
     vault-internal: "true"
   annotations:
 
+
+    service.beta.openshift.io/serving-cert-secret-name: vault-secret-internal
 spec:
   clusterIP: None
   publishNotReadyAddresses: true
@@ -119,6 +101,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
   annotations:
 
+
+    service.beta.openshift.io/serving-cert-secret-name: vault-secret
 spec:
   # We want the servers to become available even if they're not ready
   # since this DNS is also used for join operations.
@@ -212,6 +196,10 @@ spec:
           configMap:
             name: hashicorp-vault-config
   
+        - name: userconfig-vault-secret
+          secret:
+            secretName: vault-secret
+            defaultMode: 420
         - name: home
           emptyDir: {}
       containers:
@@ -268,6 +256,10 @@ spec:
               value: "/home/vault"
             
             
+            - name: "VAULT_ADDR"
+              value: "https://vault.vault.svc.cluster.local:8200"
+            - name: "VAULT_CACERT"
+              value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
             
           volumeMounts:
           
@@ -281,6 +273,9 @@ spec:
             - name: config
               mountPath: /vault/config
   
+            - name: userconfig-vault-secret
+              readOnly: true
+              mountPath: /vault/userconfig/vault-secret
             - name: home
               mountPath: /home/vault
           ports:
@@ -364,7 +359,7 @@ spec:
   port:
     targetPort: 8200
   tls:
-    termination: edge
+    termination: reencrypt
 ---
 # Source: hashicorp-vault/charts/vault/templates/tests/server-test.yaml
 apiVersion: v1
@@ -384,6 +379,10 @@ spec:
         - name: VAULT_ADDR
           value: http://hashicorp-vault.default.svc:8200
         
+        - name: "VAULT_ADDR"
+          value: "https://vault.vault.svc.cluster.local:8200"
+        - name: "VAULT_CACERT"
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
       command:
         - /bin/sh
         - -c

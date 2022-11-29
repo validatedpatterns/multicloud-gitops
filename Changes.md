@@ -1,5 +1,10 @@
 # Changes
 
+## November 29, 2022
+
+* Upgraded vault-helm to 0.23.0
+* Enable vault-ssl by default
+
 ## November 22, 2022
 
 * Implemented a new format for the values-secret.yaml. Example can be found in examples/ folder

@@ -1,15 +1,15 @@
-From e8e2aafc583f494967f4a269e89323629161b5eb Mon Sep 17 00:00:00 2001
+From f62623030374c55410624a00755e9a3c07a411da Mon Sep 17 00:00:00 2001
 From: Michele Baldessari <michele@acksyn.org>
 Date: Tue, 29 Nov 2022 20:06:09 +0100
-Subject: [PATCH] WIP Allow per-service annotations
+Subject: [PATCH] Allow per-service annotations
 
 We add the 'annotations' field to the existing
 vault.service.{active,standby} dictionaries which are relevant for the
 active/standby vault ha services. We also add
-vault.service.{main,internal}.annotations in order to allow per-service
-annotations when using the non-ha variants.
+vault.service.{nonha,internal}.annotations in order to allow per-service
+annotations when using the non-ha variant.
 
-We chose 'main' as we cannot reuse the existing
+We had to choose 'nonha' as we cannot reuse the existing
 vault.service.annotations key, because that gets still applied to all
 services and we do not want to break existing installations.
 
@@ -28,7 +28,7 @@ WIP as we need to add some more docs and maybe some more tests.
  10 files changed, 150 insertions(+), 1 deletion(-)
 
 diff --git a/templates/_helpers.tpl b/templates/_helpers.tpl
-index 3897391..2a46856 100644
+index 3897391..9e98c0b 100644
 --- a/templates/_helpers.tpl
 +++ b/templates/_helpers.tpl
 @@ -683,6 +683,63 @@ Sets extra vault server Service annotations
@@ -77,17 +77,17 @@ index 3897391..2a46856 100644
 +  {{- end }}
 +{{- end -}}
 +{{/*
-+Sets extra vault server Service main annotations
-+Note: We call it 'main' as we need to differentiate the "vault.service.annotations" which are
++Sets extra vault server Service nonha annotations
++Note: We call it 'nonha' as we need to differentiate the "vault.service.annotations" which are
 +      applied to all services
 +*/}}
-+{{- define "vault.service.main.annotations" -}}
-+  {{- if .Values.server.service.main.annotations }}
-+    {{- $tp := typeOf .Values.server.service.main.annotations }}
++{{- define "vault.service.nonha.annotations" -}}
++  {{- if .Values.server.service.nonha.annotations }}
++    {{- $tp := typeOf .Values.server.service.nonha.annotations }}
 +    {{- if eq $tp "string" }}
-+      {{- tpl .Values.server.service.main.annotations . | nindent 4 }}
++      {{- tpl .Values.server.service.nonha.annotations . | nindent 4 }}
 +    {{- else }}
-+      {{- toYaml .Values.server.service.main.annotations | nindent 4 }}
++      {{- toYaml .Values.server.service.nonha.annotations | nindent 4 }}
 +    {{- end }}
 +  {{- end }}
 +{{- end -}}
@@ -135,14 +135,14 @@ index b03f491..25aaa8d 100644
    clusterIP: None
    publishNotReadyAddresses: {{ .Values.server.service.publishNotReadyAddresses }}
 diff --git a/templates/server-service.yaml b/templates/server-service.yaml
-index 913b569..362c88e 100644
+index 913b569..02a1ccd 100644
 --- a/templates/server-service.yaml
 +++ b/templates/server-service.yaml
 @@ -15,6 +15,7 @@ metadata:
      app.kubernetes.io/managed-by: {{ .Release.Service }}
    annotations:
  {{ template "vault.service.annotations" .}}
-+{{ template "vault.service.main.annotations" .}}
++{{ template "vault.service.nonha.annotations" .}}
  spec:
    {{- if .Values.server.service.type}}
    type: {{ .Values.server.service.type }}
@@ -191,7 +191,7 @@ index 6698314..6244565 100755
    cd `chart_dir`
    local actual=$(helm template \
 diff --git a/test/unit/server-service.bats b/test/unit/server-service.bats
-index 70a5445..828877d 100755
+index 70a5445..cc66987 100755
 --- a/test/unit/server-service.bats
 +++ b/test/unit/server-service.bats
 @@ -153,6 +153,16 @@ load _helpers
@@ -202,7 +202,7 @@ index 70a5445..828877d 100755
 +  cd `chart_dir`
 +  local actual=$(helm template \
 +      --show-only templates/server-service.yaml \
-+      --set 'server.service.main.annotations=vaultIsAwesome: true' \
++      --set 'server.service.nonha.annotations=vaultIsAwesome: true' \
 +      . | tee /dev/stderr |
 +      yq -r '.metadata.annotations["vaultIsAwesome"]' | tee /dev/stderr)
 +  [ "${actual}" = "true" ]
@@ -212,7 +212,7 @@ index 70a5445..828877d 100755
    cd `chart_dir`
    local actual=$(helm template \
 diff --git a/values.schema.json b/values.schema.json
-index c183957..2bddf15 100644
+index c183957..d0dca34 100644
 --- a/values.schema.json
 +++ b/values.schema.json
 @@ -854,11 +854,39 @@
@@ -241,7 +241,7 @@ index c183957..2bddf15 100644
 +                                }
 +                            }
 +                        },
-+                        "main": {
++                        "nonha": {
 +                            "type": "object",
 +                            "properties": {
 +                                "annotations": {
@@ -269,7 +269,7 @@ index c183957..2bddf15 100644
                              }
                          },
 diff --git a/values.yaml b/values.yaml
-index 2c3d9e2..97ddb16 100644
+index 2c3d9e2..32d8ea1 100644
 --- a/values.yaml
 +++ b/values.yaml
 @@ -600,10 +600,32 @@ server:
@@ -290,7 +290,7 @@ index 2c3d9e2..97ddb16 100644
 +      # to the service.
 +      annotations: {}
 +
-+    main:
++    nonha:
 +      # Extra annotations for the service definition. This can either be YAML or a
 +      # YAML-formatted multi-line templated string map of the annotations to apply
 +      # to the service.
