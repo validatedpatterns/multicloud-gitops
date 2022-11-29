@@ -170,6 +170,9 @@ secrets:
     fields:
     - name: secret
       onMissingValue: generate # One of: error,generate,prompt (generate is only valid for normal secrets)
+      # This override attribute is false by default. The attribute is only valid with 'generate'. If the secret already exists in the
+      # vault it won't be changed unless override is set to true
+      override: true
       vaultPolicy: basicPolicy
     - name: secretprompt
       value: null
