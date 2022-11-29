@@ -42,7 +42,7 @@ class LoadSecretsV2:
         self.pod = pod
         self.syaml = syaml
 
-    def _run_command(self, command, attempts=1, sleep=3):
+    def _run_command(self, command, attempts=1, sleep=3, checkrc=True):
         """
         Runs a command on the host ansible is running on. A failing command
         will raise an exception in this function directly (due to check=True)
@@ -58,7 +58,7 @@ class LoadSecretsV2:
         for attempt in range(attempts):
             ret = self.module.run_command(
                 command,
-                check_rc=True,
+                check_rc=checkrc,
                 use_unsafe_shell=True,
                 environ_update=os.environ.copy(),
             )
@@ -321,7 +321,7 @@ class LoadSecretsV2:
             f'"vault kv get -mount={mount} -field={attribute} {prefix}/{secret_name}"'
         )
         # we ignore stdout and stderr
-        (ret, _, _) = self._run_command(cmd, attempts=1)
+        (ret, _, _) = self._run_command(cmd, attempts=1, checkrc=False)
         if ret == 0:
             return True
 
