@@ -572,6 +572,74 @@ class TestMyModule(unittest.TestCase):
         ]
         mock_run_command.assert_has_calls(calls)
 
+    def test_ensure_error_on_wrong_override(self, getpass):
+        with self.assertRaises(AnsibleFailJson) as ansible_err:
+            set_module_args(
+                {
+                    "values_secrets": os.path.join(
+                        self.testdir_v2,
+                        "values-secret-v2-wrong-override.yaml",
+                    ),
+                }
+            )
+            vault_load_secrets.main()
+
+        ret = ansible_err.exception.args[0]
+        self.assertEqual(ret["failed"], True)
+        assert (
+            ret["args"][1]
+            == "'override' attribute requires 'onMissingValue' to be set to 'generate'"
+        )
+
+    def test_ensure_override_works(self, getpass):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    self.testdir_v2, "values-secret-v2-test-override.yaml"
+                ),
+            }
+        )
+        # this will be used for both a secret and a file path
+        getpass.return_value = "/tmp/ca.crt"
+        with patch.object(
+            load_secrets_v2.LoadSecretsV2, "_run_command"
+        ) as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 5
+
+        calls = [
+            call(
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                attempts=3,
+            ),
+            call(
+                'echo \'length=10\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/basicPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/basicPolicy  policy=@/tmp/basicPolicy.hcl\'',  # noqa: E501
+                attempts=3,
+            ),
+            call(
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
+                attempts=3,
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv get -mount=secret -field=secret region-one/config-demo"',  # noqa: E501
+                attempts=1,
+            ),
+            call(
+                'oc exec -n vault vault-0 -i -- sh -c "vault kv get -mount=secret -field=secret snowflake.blueprints.rhecoeng.com/config-demo"',  # noqa: E501
+                attempts=1,
+            ),
+        ]
+        mock_run_command.assert_has_calls(calls)
+
 
 if __name__ == "__main__":
     unittest.main()

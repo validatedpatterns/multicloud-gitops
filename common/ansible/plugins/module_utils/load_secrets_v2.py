@@ -121,6 +121,9 @@ class LoadSecretsV2:
     def _get_field_base64(self, f):
         return bool(f.get("base64", False))
 
+    def _get_field_override(self, f):
+        return bool(f.get("override", False))
+
     def _validate_field(self, f):
         # These fields are mandatory
         try:
@@ -136,8 +139,9 @@ class LoadSecretsV2:
         path = self._get_field_path(f)
         _ = self._get_field_kind(f)
 
-        # Test is base64 is a correct boolean (defaults to False)
+        # Test if base64 is a correct boolean (defaults to False)
         _ = self._get_field_base64(f)
+        _ = self._get_field_override(f)
 
         vault_policy = f.get("vaultPolicy", None)
         if vault_policy is not None and vault_policy not in self._get_vault_policies():
@@ -154,6 +158,12 @@ class LoadSecretsV2:
                 )
             if path is not None and not os.path.isfile(os.path.expanduser(path)):
                 return (False, f"Field has non-existing path: {path}")
+
+            if "override" in f:
+                return (
+                    False,
+                    "'override' attribute requires 'onMissingValue' to be set to 'generate'",
+                )
 
         if on_missing_value in ["generate"]:
             if value is not None:
@@ -182,6 +192,12 @@ class LoadSecretsV2:
                 return (
                     False,
                     "Secret has onMissingValue set to 'prompt' but has no value nor path fields",
+                )
+
+            if "override" in f:
+                return (
+                    False,
+                    "'override' attribute requires 'onMissingValue' to be set to 'generate'",
                 )
 
         return (True, "")
@@ -299,8 +315,21 @@ class LoadSecretsV2:
 
         self.module.fail_json("File with wrong onMissingValue")
 
+    def _vault_secret_attr_exists(self, mount, prefix, secret_name, attribute):
+        cmd = (
+            f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
+            f'"vault kv get -mount={mount} -field={attribute} {prefix}/{secret_name}"'
+        )
+        # we ignore stdout and stderr
+        (ret, _, _) = self._run_command(cmd, attempts=1)
+        if ret == 0:
+            return True
+
+        return False
+
     def _inject_field(self, secret_name, f, mount, prefixes, first=False):
         on_missing_value = self._get_field_on_missing_value(f)
+        override = self._get_field_override(f)
         kind = self._get_field_kind(f)
         # If we're generating the password then we just push the secret in the vault directly
         verb = "put" if first else "patch"
@@ -316,6 +345,12 @@ class LoadSecretsV2:
                 if b64:
                     gen_cmd += " | base64 --wrap=0"
                 for prefix in prefixes:
+                    # if the override field is False and the secret attribute exists at the prefix then we just
+                    # skip, as we do not want to overwrite the existing secret
+                    if not override and self._vault_secret_attr_exists(
+                        mount, prefix, secret_name, f["name"]
+                    ):
+                        continue
                     cmd = (
                         f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
                         f"\"{gen_cmd} | vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=-\""
