@@ -632,10 +632,12 @@ class TestMyModule(unittest.TestCase):
             call(
                 'oc exec -n vault vault-0 -i -- sh -c "vault kv get -mount=secret -field=secret region-one/config-demo"',  # noqa: E501
                 attempts=1,
+                checkrc=False,
             ),
             call(
                 'oc exec -n vault vault-0 -i -- sh -c "vault kv get -mount=secret -field=secret snowflake.blueprints.rhecoeng.com/config-demo"',  # noqa: E501
                 attempts=1,
+                checkrc=False,
             ),
         ]
         mock_run_command.assert_has_calls(calls)
