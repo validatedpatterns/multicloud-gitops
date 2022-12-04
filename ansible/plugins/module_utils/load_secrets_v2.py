@@ -396,8 +396,9 @@ class LoadSecretsV2:
         self.inject_vault_policies()
         secrets = self._get_secrets()
 
-        counter = 0
+        total_secrets = 0  # Counter for all the secrets uploaded
         for s in secrets:
+            counter = 0  # This counter is to use kv put on first secret and kv patch on latter
             sname = s.get("name")
             fields = s.get("fields", [])
             mount = s.get("vaultMount", "secret")
@@ -405,5 +406,6 @@ class LoadSecretsV2:
             for i in fields:
                 self._inject_field(sname, i, mount, vault_prefixes, counter == 0)
                 counter += 1
+                total_secrets += 1
 
-        return counter
+        return total_secrets
