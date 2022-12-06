@@ -194,6 +194,12 @@
             "type": "string"
           }
         },
+        "operatorgroupExcludes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "subscriptions": {
           "anyOf": [
             {
