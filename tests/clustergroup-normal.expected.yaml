@@ -164,6 +164,7 @@ data:
         pipelines:
           csv: redhat-openshift-pipelines.v1.5.2
           name: openshift-pipelines-operator-rh
+      targetCluster: in-cluster
     enabled: all
     global:
       clusterDomain: region.example.com
@@ -182,11 +183,15 @@ data:
         useCSV: false
       pattern: mypattern
       repoURL: https://github.com/pattern-clone/mypattern
+      targetRevision: main
     main:
       clusterGroupName: example
       git:
         repoURL: https://github.com/pattern-clone/mypattern
         revision: main
+    secretStore:
+      kind: ClusterSecretStore
+      name: vault-backend
 ---
 # Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -320,7 +325,7 @@ spec:
               command:
               - 'sh'
               - '-c'
-              - "mkdir /git/{repo,home};git clone --single-branch --branch  --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
+              - "mkdir /git/{repo,home};git clone --single-branch --branch main --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
               volumeMounts:
               - name: git
                 mountPath: "/git"
@@ -394,7 +399,7 @@ spec:
               command:
               - 'sh'
               - '-c'
-              - "mkdir /git/{repo,home};git clone --single-branch --branch  --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
+              - "mkdir /git/{repo,home};git clone --single-branch --branch main --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
               volumeMounts:
               - name: git
                 mountPath: "/git"
@@ -497,12 +502,12 @@ metadata:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
   destination:
-    name: 
+    name: in-cluster
     namespace: open-cluster-management
   project: datacenter
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/acm
     helm:
       ignoreMissingValueFiles: true
@@ -552,12 +557,12 @@ metadata:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
   destination:
-    name: 
+    name: in-cluster
     namespace: application-ci
   project: datacenter
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: charts/datacenter/pipelines
     helm:
       ignoreMissingValueFiles: true
@@ -600,7 +605,7 @@ spec:
   project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/clustergroup
     helm:
       ignoreMissingValueFiles: true
@@ -662,7 +667,7 @@ spec:
   project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/clustergroup
     helm:
       ignoreMissingValueFiles: true
@@ -724,7 +729,7 @@ spec:
   project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/clustergroup
     helm:
       ignoreMissingValueFiles: true
@@ -786,7 +791,7 @@ spec:
   project: argo-edge
   source:
     repoURL: https://github.com/pattern-clone/mypattern
-    targetRevision: 
+    targetRevision: main
     path: common/clustergroup
     helm:
       ignoreMissingValueFiles: true
