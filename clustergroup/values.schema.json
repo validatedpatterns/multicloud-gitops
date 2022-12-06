@@ -331,7 +331,6 @@
       },
       "required": [
         "name",
-        "namespace",
         "path",
         "project"
       ],
