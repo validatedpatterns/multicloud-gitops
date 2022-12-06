@@ -473,6 +473,10 @@
             "$ref": "#/definitions/ClusterPools"
           }
         },
+        "clusterSelector": {
+          "type": "object",
+          "additionalProperties": true
+        },
         "helmOverrides": {
           "type": "array",
           "items": {
