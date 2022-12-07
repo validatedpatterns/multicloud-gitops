@@ -435,6 +435,16 @@
         "timeout": {
           "type": ["integer", "string"]
         },
+        "image": {
+          "type": "string",
+          "default": "registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest"
+        },
+        "tags": {
+          "type": "string"
+        },
+        "extravars": {
+          "type": "array"
+        },
         "verbosity": {
           "type": "string"
         }
