@@ -408,7 +408,7 @@
           "type": "string"
         },
         "clusterRoleYaml": {
-          "type": "string"
+          "type": ["string", "array"]
         },
         "roleName": {
           "type": "string"
@@ -433,7 +433,7 @@
           "type": "string"
         },
         "timeout": {
-          "type": "integer"
+          "type": ["integer", "string"]
         },
         "verbosity": {
           "type": "string"
