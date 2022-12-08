@@ -42,7 +42,7 @@
           "default": "vault-backend"
         },
         "kind": {
-          "type": "string"
+          "type": "string",
           "description": "Type of the external secret backend",
           "default": "ClusterSecretStore"
         }
@@ -136,23 +136,6 @@
         "email"
       ],
       "title": "GlobalGit"
-    },
-    "GitSecrets": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "token": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "username",
-        "token"
-      ],
-      "title": "GitSecrets"
     },
     "Options": {
       "type": "object",
