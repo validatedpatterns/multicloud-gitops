@@ -98,9 +98,6 @@
       "type": "object",
       "additionalProperties": true,
       "properties": {
-        "useCSV": {
-          "type": "boolean"
-        },
         "pattern": {
           "type": "string"
         },
