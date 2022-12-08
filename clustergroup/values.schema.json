@@ -55,22 +55,42 @@
     },
     "Main": {
       "type": "object",
-      "additionalProperties": true,
+      "additionalProperties": false,
+      "required": [
+        "clusterGroupName"
+      ],
+      "title": "Main",
+      "description": "This section contains the 'main' variables which are used by the install chart only and are passed to helm via the Makefile",
       "properties": {
         "clusterGroupName": {
           "type": "string"
         },
-        "hubClusterDomain": {
-          "type": "string"
+        "git": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repoURL",
+            "revision"
+          ],
+          "properties": {
+            "repoURL": {
+              "type": "string"
+            },
+            "revision": {
+              "type": "string"
+            }
+          }
         },
-        "localClusterDomain": {
-          "type": "string"
+        "gitops": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "channel": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "required": [
-        "clusterGroupName"
-      ],
-      "title": "Main"
+      }
     },
     "Global": {
       "type": "object",
