@@ -74,10 +74,12 @@
           ],
           "properties": {
             "repoURL": {
-              "type": "string"
+              "type": "string",
+              "description": "URL of the pattern's git repository"
             },
             "revision": {
-              "type": "string"
+              "type": "string",
+              "description": "revision (branch/commit/ref) to use on the pattern's git repository"
             }
           }
         },
