@@ -8,7 +8,6 @@
       "properties": {
         "enabled": {
           "type": "string",
-          "description": "",
           "enum": [
             "all",
             "core",
@@ -38,10 +37,14 @@
       "additionalProperties": false,
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the external secret backend",
+          "default": "vault-backend"
         },
         "kind": {
           "type": "string"
+          "description": "Type of the external secret backend",
+          "default": "ClusterSecretStore"
         }
       },
       "required": [
