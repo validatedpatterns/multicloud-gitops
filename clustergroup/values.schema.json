@@ -53,47 +53,6 @@
       ],
       "title": "SecretsStore"
     },
-    "GlobalGit": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "hostname": {
-          "type": "string"
-        },
-        "account": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "dev_revision": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "hostname",
-        "account",
-        "email"
-      ],
-      "title": "GlobalGit"
-    },
-    "GitSecrets": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "token": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "username",
-        "token"
-      ],
-      "title": "GitSecrets"
-    },
     "Main": {
       "type": "object",
       "additionalProperties": true,
@@ -153,6 +112,47 @@
         "pattern"
       ],
       "title": "Global"
+    },
+    "GlobalGit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hostname": {
+          "type": "string"
+        },
+        "account": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "dev_revision": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "hostname",
+        "account",
+        "email"
+      ],
+      "title": "GlobalGit"
+    },
+    "GitSecrets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "username",
+        "token"
+      ],
+      "title": "GitSecrets"
     },
     "Options": {
       "type": "object",
