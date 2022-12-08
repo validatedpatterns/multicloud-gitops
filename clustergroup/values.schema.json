@@ -88,7 +88,9 @@
           "additionalProperties": false,
           "properties": {
             "channel": {
-              "type": "string"
+              "type": "string",
+              "description": "The channel from which to install the gitops operator",
+              "default": "stable"
             }
           }
         }
