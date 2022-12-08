@@ -265,8 +265,7 @@
         "managedClusterGroups",
         "name",
         "namespaces",
-        "projects",
-        "subscriptions"
+        "projects"
       ],
       "title": "ClusterGroup"
     },
