@@ -151,18 +151,24 @@
     "GlobalGit": {
       "type": "object",
       "additionalProperties": false,
+      "description": "The git configuration used to support Tekton pipeline tasks.",
       "properties": {
         "hostname": {
-          "type": "string"
+          "type": "string",
+          "description": "The hostname for the Git provider being used.  e.g. github.com or gitlab.com"
         },
         "account": {
-          "type": "string"
+          "type": "string",
+          "description": "The account for the Git provider. Accounts allow you to organize and control access to that code. There are three types of accounts on GitHub.  Personal accounts Organization accounts Enterprise accounts e.g. hybrid-cloud-patterns or claudiol"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The contact email for the Git account. e.g. account@gmail.com"
         },
         "dev_revision": {
-          "type": "string"
+          "type": "string",
+          "deprecated": true,
+          "description": "This is used by the pipelines as the branch for the development repository. e.g. v2.0. This is marked as deprecated"
         }
       },
       "required": [
@@ -181,10 +187,13 @@
           "deprecated": true
         },
         "syncPolicy": {
-          "type": "string"
+          "type": "string",
+          "description": "This is the sync policy for the ArgoCD applications. When set to Automatic ArgoCD will automatically sync an application when it detects differences between the desired manifests in Git."
         },
         "installPlanApproval": {
-          "type": "string"
+          "type": "string",
+          "deprecated": true,
+          "description": "This is used to approval strategy for the subscriptions of OpenShift Operators being installed. You can choose Automatic or Manual updates. NOTE: This setting is now available in the subcriptions description in the values file."
         }
       },
       "required": [
@@ -199,25 +208,30 @@
       "additionalProperties": false,
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "The name of the cluster group."
         },
         "targetCluster": {
           "type": "string"
         },
         "isHubCluster": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If set to true the values is used to identify whether this is the hub cluster or an edge/spoke cluster configuration."
         },
         "insecureUnsealVaultInsideCluster": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If set to true the value is used stores the vault unseal keys inside a cluster secret.  This is fundamentally insecure."
         },
         "namespaces": {
           "type": "array",
+          "description": "This is the array of namespaces that the VP framework will create.  In addition, operator groups will also be created for each namespace.",
           "items": {
             "type": "string"
           }
         },
         "operatorgroupExcludes": {
           "type": "array",
+          "description": "List of namespaces to exclude the creation of operator groups.",
           "items": {
             "type": "string"
           }
@@ -231,12 +245,14 @@
               "type": "object"
             }
           ],
+          "description": "Description of the subscriptions that the VP Framework will install in the cluster.  Two ways of defining subscriptions: Using a list or using a dictionary.",
           "items": {
             "$ref": "#/definitions/Subscription"
           }
         },
         "projects": {
           "type": "array",
+          "description": "The list of projects that will be created in the ArgoCD instances.",
           "items": {
             "type": "string"
           }
@@ -250,6 +266,7 @@
               "type": "object"
             }
           ],
+          "description": "Description of the applications that will be created in the ArgoCD instances. Two ways of defining applications: Using a list or using a dictionary.",
           "items": {
             "$ref": "#/definitions/Applications"
           }
@@ -266,6 +283,7 @@
               "type": "object"
             }
           ],
+          "description": "Description of the managed clusters that ACM will be able to manage. Two ways of defining managed clusters: Using a list or using a dictionary.",
           "items": {
             "$ref": "#/definitions/ManagedClusterGroup"
           }
@@ -287,67 +305,87 @@
     },
     "Applications": {
       "type": "object",
+      "description": "Description of the applications that will be created in the ArgoCD instances. The Application CRD is the Kubernetes resource object representing a deployed application instance in an environment. Two ways of defining applications: Using a list or using a dictionary.",
       "additionalProperties": true,
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the application in ArgoCD."
         },
         "repoURL": {
-          "type": "string"
+          "type": "string",
+          "description": "RepoURL is the URL to the repository (Git or Helm) that contains the application manifests."
         },
         "targetRevision": {
-          "type": "string"
+          "type": "string",
+          "description": "TargetRevision defines the revision of the source to sync the application to. In case of Git, this can be commit, tag, or branch. If omitted, will equal to HEAD.  In case of Helm, this is a semver tag for the Chart's version."
         },
         "chart": {
           "type": "string"
+          "description": "Chart is a Helm chart name, and must be specified for applications sourced from a Helm repo."
         },
         "kustomize": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If set to true it will tell ArgoCD to use kustomize to deploy the application."
         },
         "plugin": {
-          "type": "object"
+          "type": "object",
+          "description": "Plugin holds config management plugin specific options"
         },
         "extraValueFiles": {
-          "type": "array"
+          "type": "array",
+          "description": "List of extra values files that will be passed to ArgoCD."
         },
         "extraHubClusterDomainFields": {
-          "type": "array"
+          "type": "array",
+          "description": "List of extra fields that will be passed to ArgoCD."
         },
         "extraLocalClusterDomainFields": {
-          "type": "array"
+          "type": "array",
+          "description": "List of extra fields that will be passed to ArgoCD."
         },
         "extraRepoURLFields": {
-          "type": "array"
+          "type": "array",
+          "description": "List of extra fields that will be passed to ArgoCD."
         },
         "extraTargetRevisionFields": {
-          "type": "array"
+          "type": "array",
+          "description": "List of extra fields that will be passed to ArgoCD."
         },
         "extraNamespaceFields": {
-          "type": "array"
+          "type": "array",
+          "description": "List of extra fields that will be passed to ArgoCD."
         },
         "extraPatternNameFields": {
-          "type": "array"
+          "type": "array",
+          "description": "List of extra fields that will be passed to ArgoCD."
         },
         "overrides": {
           "type": "object"
         },
         "fileParameters": {
-          "type": "array"
+          "type": "array",
+          "description": "FileParameters are file parameters to the helm template"
         },
         "ignoreDifferences": {
-          "type": "array"
+          "type": "array",
+          "description": "IgnoreDifferences is a list of resources and their fields which should be ignored during comparison"
         },
         "syncPolicy": {
-          "type": "object"
+          "type": "object",
+          "description": "SyncPolicy controls when and how a sync will be performed"
         },
         "namespace": {
-          "type": "string"
+          "type": "string",
+          "description": "Namespace specifies the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace"
         },
         "project": {
-          "type": "string"
+          "type": "string",
+          "description": "Project is a reference to the project this application belongs to. The empty string means that application belongs to the 'default' project."
         },
         "path": {
-          "type": "string"
+          "type": "string",
+          "description": "Path is a directory path within the Git repository, and is only valid for applications sourced from Git."
         }
       },
       "required": [
