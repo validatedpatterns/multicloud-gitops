@@ -15,7 +15,9 @@ spec:
   name: {{ $subs.name }}
   source: {{ default "redhat-operators" $subs.source }}
   sourceNamespace: {{ default "openshift-marketplace" $subs.sourceNamespace }}
-  channel: {{ default "stable" $subs.channel }}
+  {{- if $subs.channel }}
+  channel: {{ $subs.channel }}
+  {{- end }}
   installPlanApproval: {{ coalesce $installPlanValue $.Values.global.options.installPlanApproval }}
   {{- if $subs.config }}
   {{- if $subs.config.env }}
@@ -45,7 +47,9 @@ spec:
   name: {{ $subs.name }}
   source: {{ default "redhat-operators" $subs.source }}
   sourceNamespace: {{ default "openshift-marketplace" $subs.sourceNamespace }}
-  channel: {{ default "stable" $subs.channel }}
+  {{- if $subs.channel }}
+  channel: {{ $subs.channel }}
+  {{- end }}
   installPlanApproval: {{ coalesce  $installPlanValue $.Values.global.options.installPlanApproval }}
   {{- if $subs.config }}
   {{- if $subs.config.env }}
