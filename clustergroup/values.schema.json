@@ -89,8 +89,7 @@
           "properties": {
             "channel": {
               "type": "string",
-              "description": "The channel from which to install the gitops operator",
-              "default": "stable"
+              "description": "The channel from which to install the gitops operator"
             }
           }
         }
@@ -321,7 +320,7 @@
           "description": "TargetRevision defines the revision of the source to sync the application to. In case of Git, this can be commit, tag, or branch. If omitted, will equal to HEAD.  In case of Helm, this is a semver tag for the Chart's version."
         },
         "chart": {
-          "type": "string"
+          "type": "string",
           "description": "Chart is a Helm chart name, and must be specified for applications sourced from a Helm repo."
         },
         "kustomize": {
