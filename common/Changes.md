@@ -1,5 +1,11 @@
 # Changes
 
+## December 8, 2022
+
+* Removed the legacy installation targets:
+  `deploy upgrade legacy-deploy legacy-upgrade`
+  Patterns must now use the operator-based installation
+
 ## November 29, 2022
 
 * Upgraded vault-helm to 0.23.0

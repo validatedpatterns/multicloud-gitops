@@ -1012,6 +1012,5 @@ spec:
   name: openshift-pipelines-operator-rh
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  channel: stable
   installPlanApproval: Automatic
   startingCSV: redhat-openshift-pipelines.v1.5.2

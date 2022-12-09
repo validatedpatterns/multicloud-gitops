@@ -1513,7 +1513,6 @@ spec:
   name: opendatahub-operator
   source: community-operators
   sourceNamespace: openshift-marketplace
-  channel: stable
   installPlanApproval: Automatic
   startingCSV:
 ---
