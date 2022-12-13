@@ -224,7 +224,6 @@ data:
         serviceAccountName: imperative-sa
         valuesConfigMap: helm-values-configmap
         verbosity: ""
-      insecureUnsealVaultInsideCluster: true
       isHubCluster: true
       managedClusterGroups:
         factory:
@@ -544,8 +543,6 @@ spec:
                 - ansible-playbook
                 - -e
                 - "@/values/values.yaml"
-                - -e
-                - '{"file_unseal": false}'
                 - -t
                 - 'vault_init,vault_unseal,vault_secrets_init'
                 - "common/ansible/playbooks/vault/vault.yaml"
