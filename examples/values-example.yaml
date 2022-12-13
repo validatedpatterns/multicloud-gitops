@@ -9,7 +9,7 @@ global:
 
 clusterGroup:
   name: example
-  insecureUnsealVaultInsideCluster: false
+  #insecureUnsealVaultInsideCluster: false
   isHubCluster: true
 
   namespaces:

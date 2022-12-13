@@ -217,10 +217,6 @@
           "type": "boolean",
           "description": "If set to true the values is used to identify whether this is the hub cluster or an edge/spoke cluster configuration."
         },
-        "insecureUnsealVaultInsideCluster": {
-          "type": "boolean",
-          "description": "If set to true the value is used stores the vault unseal keys inside a cluster secret.  This is fundamentally insecure."
-        },
         "namespaces": {
           "type": "array",
           "description": "This is the array of namespaces that the VP framework will create.  In addition, operator groups will also be created for each namespace.",
@@ -293,7 +289,6 @@
       },
       "required": [
         "applications",
-        "insecureUnsealVaultInsideCluster",
         "isHubCluster",
         "managedClusterGroups",
         "name",
