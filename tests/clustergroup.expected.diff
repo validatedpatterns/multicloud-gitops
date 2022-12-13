@@ -1,6 +1,6 @@
 --- tests/clustergroup-naked.expected.yaml
 +++ tests/clustergroup-normal.expected.yaml
-@@ -1,17 +1,227 @@
+@@ -1,11 +1,29 @@
  ---
 +# Source: pattern-clustergroup/templates/core/namespaces.yaml
 +apiVersion: v1
@@ -20,17 +20,18 @@
 +  name: application-ci
 +spec:
 +---
-+# Source: pattern-clustergroup/templates/imperative/namespace.yaml
-+apiVersion: v1
-+kind: Namespace
-+metadata:
-+  labels:
-+    name: imperative
-+    argocd.argoproj.io/managed-by: mypattern-example
-+  name: imperative
-+---
- # Source: pattern-clustergroup/templates/plumbing/gitops-namespace.yaml
+ # Source: pattern-clustergroup/templates/imperative/namespace.yaml
  apiVersion: v1
+ kind: Namespace
+ metadata:
+   labels:
+     name: imperative
+-    argocd.argoproj.io/managed-by: common-example
++    argocd.argoproj.io/managed-by: mypattern-example
+   name: imperative
+ ---
+ # Source: pattern-clustergroup/templates/plumbing/gitops-namespace.yaml
+@@ -13,12 +31,12 @@
  kind: Namespace
  metadata:
    labels:
@@ -44,22 +45,11 @@
 +  name: mypattern-example
  spec: {}
  ---
-+# Source: pattern-clustergroup/templates/imperative/serviceaccount.yaml
-+apiVersion: v1
-+kind: ServiceAccount
-+metadata:
-+  name: imperative-sa
-+  namespace: imperative
-+---
-+# Source: pattern-clustergroup/templates/imperative/configmap.yaml
-+apiVersion: v1
-+kind: ConfigMap
-+metadata:
-+  name: helm-values-configmap-example
-+  namespace: imperative
-+data:
-+  values.yaml: |
-+    clusterGroup:
+ # Source: pattern-clustergroup/templates/imperative/serviceaccount.yaml
+@@ -37,6 +55,22 @@
+ data:
+   values.yaml: |
+     clusterGroup:
 +      applications:
 +        acm:
 +          ignoreDifferences:
@@ -76,28 +66,24 @@
 +          namespace: application-ci
 +          path: charts/datacenter/pipelines
 +          project: datacenter
-+      imperative:
-+        activeDeadlineSeconds: 3600
-+        clusterRoleName: imperative-cluster-role
-+        clusterRoleYaml: ""
-+        cronJobName: imperative-cronjob
-+        image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
-+        imagePullPolicy: Always
-+        insecureUnsealVaultInsideClusterSchedule: '*/5 * * * *'
-+        jobName: imperative-job
+       imperative:
+         activeDeadlineSeconds: 3600
+         clusterRoleName: imperative-cluster-role
+@@ -46,7 +80,9 @@
+         imagePullPolicy: Always
+         insecureUnsealVaultInsideClusterSchedule: '*/5 * * * *'
+         jobName: imperative-job
+-        jobs: []
 +        jobs:
 +        - name: test
 +          playbook: ansible/test.yml
-+        namespace: imperative
-+        roleName: imperative-role
-+        roleYaml: ""
-+        schedule: '*/10 * * * *'
-+        serviceAccountCreate: true
-+        serviceAccountName: imperative-sa
-+        valuesConfigMap: helm-values-configmap
-+        verbosity: ""
-+      insecureUnsealVaultInsideCluster: true
-+      isHubCluster: true
+         namespace: imperative
+         roleName: imperative-role
+         roleYaml: ""
+@@ -57,16 +93,100 @@
+         verbosity: ""
+       insecureUnsealVaultInsideCluster: true
+       isHubCluster: true
 +      managedClusterGroups:
 +      - acmlabels:
 +        - name: clusterGroup
@@ -148,7 +134,7 @@
 +        - domain: syd.beekhof.net
 +          name: sydney
 +        name: argo-edge
-+      name: example
+       name: example
 +      namespaces:
 +      - open-cluster-management
 +      - application-ci
@@ -168,9 +154,9 @@
 +        pipelines:
 +          csv: redhat-openshift-pipelines.v1.5.2
 +          name: openshift-pipelines-operator-rh
-+      targetCluster: in-cluster
-+    enabled: all
-+    global:
+       targetCluster: in-cluster
+     enabled: all
+     global:
 +      clusterDomain: region.example.com
 +      git:
 +        account: hybrid-cloud-patterns
@@ -180,57 +166,24 @@
 +      hubClusterDomain: apps.hub.example.com
 +      localClusterDomain: apps.region.example.com
 +      namespace: pattern-namespace
-+      options:
-+        installPlanApproval: Automatic
-+        syncPolicy: Automatic
+       options:
+         installPlanApproval: Automatic
+         syncPolicy: Automatic
+-        useCSV: true
+-      pattern: common
 +        useCSV: false
 +      pattern: mypattern
 +      repoURL: https://github.com/pattern-clone/mypattern
-+      targetRevision: main
+       targetRevision: main
 +    main:
 +      clusterGroupName: example
 +      git:
 +        repoURL: https://github.com/pattern-clone/mypattern
 +        revision: main
-+    secretStore:
-+      kind: ClusterSecretStore
-+      name: vault-backend
-+    secretsBase:
-+      key: secret/data/hub
-+---
-+# Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
-+apiVersion: rbac.authorization.k8s.io/v1
-+kind: ClusterRole
-+metadata:
-+  name: imperative-cluster-role
-+rules:
-+  - apiGroups:
-+    - '*'
-+    resources:
-+    - '*'
-+    verbs:
-+    - get
-+    - list
-+    - watch
-+---
-+# Source: pattern-clustergroup/templates/imperative/rbac.yaml
-+apiVersion: rbac.authorization.k8s.io/v1
-+kind: ClusterRoleBinding
-+metadata:
-+  name: imperative-cluster-admin-rolebinding
-+roleRef:
-+  apiGroup: rbac.authorization.k8s.io
-+  kind: ClusterRole
-+  name: imperative-cluster-role
-+subjects:
-+  - kind: ServiceAccount
-+    name: imperative-sa
-+    namespace: imperative
-+---
- # Source: pattern-clustergroup/templates/plumbing/argocd-super-role.yaml
- # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
- apiVersion: rbac.authorization.k8s.io/v1
-@@ -36,7 +246,7 @@
+     secretStore:
+       kind: ClusterSecretStore
+       name: vault-backend
+@@ -126,7 +246,7 @@
  apiVersion: rbac.authorization.k8s.io/v1
  kind: ClusterRoleBinding
  metadata:
@@ -239,7 +192,7 @@
  roleRef:
    apiGroup: rbac.authorization.k8s.io
    kind: ClusterRole
-@@ -45,16 +255,591 @@
+@@ -135,16 +255,16 @@
    - kind: ServiceAccount
      # This is the {ArgoCD.name}-argocd-application-controller
      name: example-gitops-argocd-application-controller
@@ -256,36 +209,13 @@
      name: example-gitops-argocd-dex-server
 -    namespace: common-example
 +    namespace: mypattern-example
-+---
-+# Source: pattern-clustergroup/templates/imperative/role.yaml
-+apiVersion: rbac.authorization.k8s.io/v1
-+kind: Role
-+metadata:
-+  name: imperative-role
-+  namespace: imperative
-+rules:
-+  - apiGroups:
-+    - '*'
-+    resources:
-+    - '*'
-+    verbs:
-+    - '*'
-+---
-+# Source: pattern-clustergroup/templates/imperative/rbac.yaml
-+apiVersion: rbac.authorization.k8s.io/v1
-+kind: RoleBinding
-+metadata:
-+  name: imperative-admin-rolebinding
-+  namespace: imperative
-+roleRef:
-+  apiGroup: rbac.authorization.k8s.io
-+  kind: Role
-+  name: imperative-role
-+subjects:
-+  - kind: ServiceAccount
-+    name: imperative-sa
-+    namespace: imperative
-+---
+ ---
+ # Source: pattern-clustergroup/templates/imperative/role.yaml
+ apiVersion: rbac.authorization.k8s.io/v1
+@@ -175,6 +295,80 @@
+     name: imperative-sa
+     namespace: imperative
+ ---
 +# Source: pattern-clustergroup/templates/imperative/job.yaml
 +apiVersion: batch/v1
 +kind: CronJob
@@ -360,84 +290,22 @@
 +              name: helm-values-configmap-example
 +          restartPolicy: Never
 +---
-+# Source: pattern-clustergroup/templates/imperative/unsealjob.yaml
-+apiVersion: batch/v1
-+kind: CronJob
-+metadata:
-+  name: unsealvault-cronjob
-+  namespace: imperative
-+spec:
-+  schedule: "*/5 * * * *"
-+  # if previous Job is still running, skip execution of a new Job
-+  concurrencyPolicy: Forbid
-+  jobTemplate:
-+    spec:
-+      activeDeadlineSeconds: 3600
-+      template:
-+        metadata:
-+          name: unsealvault-job
-+        spec:
-+          serviceAccountName: imperative-sa
-+          initContainers:
-+            # git init happens in /git/repo so that we can set the folder to 0770 permissions
-+            # reason for that is ansible refuses to create temporary folders in there            
-+            - name: git-init
-+              image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
-+              imagePullPolicy: Always
-+              env:
-+                - name: HOME
-+                  value: /git/home
-+              command:
-+              - 'sh'
-+              - '-c'
+ # Source: pattern-clustergroup/templates/imperative/unsealjob.yaml
+ apiVersion: batch/v1
+ kind: CronJob
+@@ -205,7 +399,7 @@
+               command:
+               - 'sh'
+               - '-c'
+-              - "mkdir /git/{repo,home};git clone --single-branch --branch main --depth 1 --  /git/repo;chmod 0770 /git/{repo,home}"
 +              - "mkdir /git/{repo,home};git clone --single-branch --branch main --depth 1 -- https://github.com/pattern-clone/mypattern /git/repo;chmod 0770 /git/{repo,home}"
-+              volumeMounts:
-+              - name: git
-+                mountPath: "/git"
-+            - name: unseal-playbook
-+              image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
-+              imagePullPolicy: Always
-+              env:
-+                - name: HOME
-+                  value: /git/home
-+              workingDir: /git/repo
-+              # We have a default timeout of 600s for each playbook. Can be overridden
-+              # on a per-job basis
-+              command:
-+                - timeout
-+                - "600"
-+                - ansible-playbook
-+                - -e
-+                - "@/values/values.yaml"
-+                - -e
-+                - '{"file_unseal": false}'
-+                - -t
-+                - 'vault_init,vault_unseal,vault_secrets_init'
-+                - "common/ansible/playbooks/vault/vault.yaml"
-+              volumeMounts:                
-+                - name: git
-+                  mountPath: "/git"
-+                - name: values-volume
-+                  mountPath: /values/values.yaml
-+                  subPath: values.yaml
-+          containers:            
-+            - name: "done"
-+              image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
-+              imagePullPolicy: Always
-+              command:
-+                - 'sh'
-+                - '-c'
-+                - 'echo'
-+                - 'done'
-+                - '\n'
-+          volumes:
-+          - name: git
-+            emptyDir: {}
-+          - name: values-volume
-+            configMap:
-+              name: helm-values-configmap-example
-+          restartPolicy: Never
-+---
+               volumeMounts:
+               - name: git
+                 mountPath: "/git"
+@@ -253,6 +447,400 @@
+               name: helm-values-configmap-example
+           restartPolicy: Never
+ ---
 +# Source: pattern-clustergroup/templates/core/subscriptions.yaml
 +---
 +---
@@ -831,10 +699,11 @@
 +    kind: Route
 +    jsonPointers:
 +    - /status
- ---
++---
  # Source: pattern-clustergroup/templates/plumbing/argocd.yaml
  apiVersion: argoproj.io/v1alpha1
-@@ -65,7 +850,7 @@
+ kind: ArgoCD
+@@ -262,7 +850,7 @@
    # Changing the name affects the ClusterRoleBinding, the generated secret,
    # route URL, and argocd.argoproj.io/managed-by annotations
    name: example-gitops
@@ -843,7 +712,7 @@
    annotations:
      argocd.argoproj.io/compare-options: IgnoreExtraneous
  spec:
-@@ -94,10 +879,10 @@
+@@ -291,10 +879,10 @@
              --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
              --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
              --set global.namespace=$ARGOCD_APP_NAMESPACE
@@ -858,7 +727,7 @@
              --set clusterGroup.name=example
              --post-renderer ./kustomize"]
    applicationSet:
-@@ -174,11 +959,59 @@
+@@ -371,11 +959,59 @@
  kind: ConsoleLink
  metadata:
    name: example-gitops-link

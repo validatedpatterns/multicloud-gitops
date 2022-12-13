@@ -1,7 +1,5 @@
 {{- if not (eq .Values.enabled "plumbing") }}
-{{/* Define this if needed (jobs defined or insecure unseal configured) */}}
-{{- if or (gt (len $.Values.clusterGroup.imperative.jobs) 0)
-    (and $.Values.clusterGroup.insecureUnsealVaultInsideCluster $.Values.clusterGroup.isHubCluster) -}}
+{{/* This is always defined as we always unseal the cluster with an imperative job */}}
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -9,5 +7,4 @@ metadata:
     name: {{ $.Values.clusterGroup.imperative.namespace }}
     argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
   name: {{ $.Values.clusterGroup.imperative.namespace }}
-{{- end }}
 {{- end }}

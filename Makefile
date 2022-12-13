@@ -49,16 +49,6 @@ uninstall: ## runs helm uninstall
 	helm uninstall $(NAME)
 	@oc delete csv -n openshift-operators $(CSV)
 
-.PHONY: vault-init
-vault-init: ## inits, unseals and configured the vault
-	common/scripts/vault-utils.sh vault_init common/pattern-vault.init
-	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
-	common/scripts/vault-utils.sh vault_secrets_init common/pattern-vault.init
-
-.PHONY: vault-unseal
-vault-unseal: ## unseals the vault
-	common/scripts/vault-utils.sh vault_unseal common/pattern-vault.init
-
 .PHONY: load-secrets
 load-secrets: ## loads the secrets into the vault
 	common/scripts/vault-utils.sh push_secrets common/pattern-vault.init $(NAME)
@@ -68,8 +58,7 @@ CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | grep 
 TEST_OPTS= -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" \
 	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.pattern="mypattern" \
 	--set global.namespace="pattern-namespace" --set global.hubClusterDomain=apps.hub.example.com --set global.localClusterDomain=apps.region.example.com --set global.clusterDomain=region.example.com\
-	--set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml" \
-	--set clusterGroup.insecureUnsealVaultInsideCluster=true
+	--set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml"
 PATTERN_OPTS=-f common/examples/values-example.yaml
 EXECUTABLES=git helm oc ansible
 
