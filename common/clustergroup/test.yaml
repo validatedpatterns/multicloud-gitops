@@ -1,9 +1,6 @@
 clusterGroup:
   name: hub
   isHubCluster: true
-  # Note: setting this to true stores the vault unseal keys inside a cluster secret and
-  # is fundamentally insecure
-  insecureUnsealVaultInsideCluster: false
 
   namespaces:
   - open-cluster-management
