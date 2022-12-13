@@ -103,7 +103,6 @@ data:
         serviceAccountName: imperative-sa
         valuesConfigMap: helm-values-configmap
         verbosity: ""
-      insecureUnsealVaultInsideCluster: true
       isHubCluster: false
       managedClusterGroups: []
       name: factory

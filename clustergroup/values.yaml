@@ -13,9 +13,6 @@ clusterGroup:
   name: example
   isHubCluster: true
   targetCluster: in-cluster
-  # Note: setting this to true stores the vault unseal keys inside a cluster secret and
-  # is fundamentally insecure
-  insecureUnsealVaultInsideCluster: false
 
   imperative:
     jobs: []

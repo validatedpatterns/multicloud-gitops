@@ -1,5 +1,17 @@
 # Changes
 
+## December 9, 2022
+
+* Dropped insecureUnsealVaultInsideCluster (and file_unseal) entirely. Now
+  vault is always unsealed via a cronjob in the cluster. It is recommended to
+  store the imperative/vaultkeys secret offline securely and then delete it.
+
+## December 8, 2022
+
+* Removed the legacy installation targets:
+  `deploy upgrade legacy-deploy legacy-upgrade`
+  Patterns must now use the operator-based installation
+
 ## November 29, 2022
 
 * Upgraded vault-helm to 0.23.0

@@ -1,7 +1,5 @@
 {{- if not (eq .Values.enabled "plumbing") }}
-{{/* Define this if needed (jobs defined or insecure unseal configured) */}}
-{{- if or (gt (len $.Values.clusterGroup.imperative.jobs) 0)
-    (and $.Values.clusterGroup.insecureUnsealVaultInsideCluster $.Values.clusterGroup.isHubCluster) -}}
+{{/* This is always defined as we always unseal the cluster with an imperative job */}}
 {{- $valuesyaml := toYaml $.Values -}}
 apiVersion: v1
 kind: ConfigMap
@@ -11,5 +9,4 @@ metadata:
 data:
   values.yaml: |
 {{ tpl $valuesyaml . | indent 4 }}
-{{- end }}
 {{- end }}
