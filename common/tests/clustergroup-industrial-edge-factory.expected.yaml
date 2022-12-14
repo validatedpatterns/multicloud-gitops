@@ -104,6 +104,7 @@ data:
         valuesConfigMap: helm-values-configmap
         verbosity: ""
       isHubCluster: false
+      managedClusterGroups: []
       name: factory
       namespaces:
       - manuela-stormshift-line-dashboard
@@ -158,8 +159,6 @@ data:
     secretStore:
       kind: ClusterSecretStore
       name: vault-backend
-    secretsBase:
-      key: secret/data/hub
 ---
 # Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1

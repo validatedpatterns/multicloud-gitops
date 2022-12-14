@@ -41,17 +41,8 @@ clusterGroup:
     clusterRoleYaml: ""
     roleName: imperative-role
     roleYaml: ""
-
-secretStore:
-  name: vault-backend
-  kind: ClusterSecretStore
-
-# Depends on the value of 'vault_hub' ansible variable used 
-# during the installation
-secretsBase:
-  key: secret/data/hub
-
-#  managedClusterGroups:
+  managedClusterGroups: []
+  namespaces: []
 #  - name: factory
 #    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
 #    # Location of values-global.yaml, values-{name}.yaml, values-{app}.yaml
@@ -67,21 +58,30 @@ secretsBase:
 #        values:
 #          - OpenShift
 #
-#  namespaces:
 #  - open-cluster-management
 #
-#  subscriptions:
+  subscriptions: []
 #  - name: advanced-cluster-management
 #    namespace: open-cluster-management
 #    source: redhat-operators
 #    channel: release-2.3
 #    csv: v2.3.2
 #
-#  projects:
+  projects: []
 #  - datacenter
 #
-#  applications:
+  applications: []
 #  - name: acm
 #    namespace: default
 #    project: datacenter
 #    path: applications/acm
+
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore
+
+# Depends on the value of 'vault_hub' ansible variable used 
+# during the installation
+#secretsBase:
+#  key: secret/data/hub
+
