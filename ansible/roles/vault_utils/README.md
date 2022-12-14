@@ -32,16 +32,6 @@ vault_hub_ttl: "15m"
 vault_pki_max_lease_ttl: "8760h"
 external_secrets_ns: golang-external-secrets
 external_secrets_sa: golang-external-secrets
-```
-
-Use the local file system (output_file variable) to store the vault's unseal keys.
-If set to false they will be stored inside a secret defined by `unseal_secret`
-in the `imperative` namespace:
-
-```yaml
-# token inside a secret in the cluster.
-# *Note* that this is fundamentally unsafe
-output_file: "common/pattern-vault.init"
 unseal_secret: "vaultkeys"
 unseal_namespace: "imperative"
 ```
