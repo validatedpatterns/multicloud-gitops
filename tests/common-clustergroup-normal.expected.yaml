@@ -83,6 +83,7 @@ data:
         jobs:
         - name: test
           playbook: ansible/test.yml
+          timeout: 234
         namespace: imperative
         roleName: imperative-role
         roleYaml: ""
@@ -168,6 +169,7 @@ data:
       clusterDomain: region.example.com
       hubClusterDomain: apps.hub.example.com
       localClusterDomain: apps.region.example.com
+      multiClusterTarget: all
       namespace: pattern-namespace
       options:
         installPlanApproval: Automatic
@@ -184,8 +186,6 @@ data:
     secretStore:
       kind: ClusterSecretStore
       name: vault-backend
-    secretsBase:
-      key: secret/data/hub
 ---
 # Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -334,7 +334,7 @@ spec:
               # on a per-job basis
               command:
                 - timeout
-                - "600"
+                - "234"
                 - ansible-playbook
                 - -e
                 - "@/values/values.yaml"

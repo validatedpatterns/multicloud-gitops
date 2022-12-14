@@ -37,6 +37,7 @@ metadata:
 data:
   values.yaml: |
     clusterGroup:
+      applications: []
       imperative:
         activeDeadlineSeconds: 3600
         clusterRoleName: imperative-cluster-role
@@ -56,7 +57,11 @@ data:
         valuesConfigMap: helm-values-configmap
         verbosity: ""
       isHubCluster: true
+      managedClusterGroups: []
       name: example
+      namespaces: []
+      projects: []
+      subscriptions: []
       targetCluster: in-cluster
     enabled: all
     global:
@@ -69,8 +74,6 @@ data:
     secretStore:
       kind: ClusterSecretStore
       name: vault-backend
-    secretsBase:
-      key: secret/data/hub
 ---
 # Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
