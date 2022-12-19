@@ -51,7 +51,7 @@ uninstall: ## runs helm uninstall
 
 .PHONY: load-secrets
 load-secrets: ## loads the secrets into the vault
-	common/scripts/vault-utils.sh push_secrets common/pattern-vault.init $(NAME)
+	common/scripts/vault-utils.sh push_secrets $(NAME)
 
 CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | grep -v examples | sed -e 's/.\///')
 # Section related to tests and linting
