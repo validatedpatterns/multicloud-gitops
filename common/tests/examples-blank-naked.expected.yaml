@@ -1,6 +1,0 @@
----
-# Source: blank/templates/manifest.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: example

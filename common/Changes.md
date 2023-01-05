@@ -1,5 +1,33 @@
 # Changes
 
+## December 9, 2022
+
+* Dropped insecureUnsealVaultInsideCluster (and file_unseal) entirely. Now
+  vault is always unsealed via a cronjob in the cluster. It is recommended to
+  store the imperative/vaultkeys secret offline securely and then delete it.
+
+## December 8, 2022
+
+* Removed the legacy installation targets:
+  `deploy upgrade legacy-deploy legacy-upgrade`
+  Patterns must now use the operator-based installation
+
+## November 29, 2022
+
+* Upgraded vault-helm to 0.23.0
+* Enable vault-ssl by default
+
+## November 22, 2022
+
+* Implemented a new format for the values-secret.yaml. Example can be found in examples/ folder
+* Now the order of values-secret file lookup is the following:
+  1. ~/values-secret-<patternname>.yaml
+  2. ~/values-secret.yaml
+  3. <patterngitrepo>/values-secret.yaml.template
+* Add support for ansible vault encrypted values-secret files. You can now encrypt your values-secret file
+  at rest with `ansible-vault encrypt ~/values-secret.yaml`. When running `make load-secrets` if an encrypted
+  file is encountered the user will be prompted automatically for the password to decrypt it.
+
 ## November 6, 2022
 
 * Add support for /values-<CloudPlatform>-<clusterGroup>.yaml (e.g. /values-AWS-group-one.yaml)

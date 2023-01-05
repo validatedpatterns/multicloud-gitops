@@ -20,7 +20,7 @@ rm -rf "${NAME}"
 tar xfz "${TAR}"
 pushd "${NAME}"
 for i in ../../local-patches/*.patch; do
-	patch -p1 < "${i}"
+	filterdiff "${i}" -p1 -x 'test/*' | patch -p1
 done
 popd
 tar cvfz "${TAR}" "${NAME}"

@@ -3,9 +3,14 @@ global:
     useCSV: False
     syncPolicy: Automatic
     installPlanApproval: Automatic
+  multiClusterTarget: all
+
+#enabled: all
 
 clusterGroup:
   name: example
+  #insecureUnsealVaultInsideCluster: false
+  isHubCluster: true
 
   namespaces:
   - open-cluster-management
@@ -47,6 +52,22 @@ clusterGroup:
       namespace: application-ci
       project: datacenter
       path: charts/datacenter/pipelines
+
+  imperative:
+    namespace: imperative
+    # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
+    # The default schedule is every 10 minutes: imperative.schedule
+    # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
+    # imagePullPolicy is set to always: imperative.imagePullPolicy
+    # For additional overrides that apply to the jobs, please refer to
+    # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
+    jobs:
+    - name: regional-ca
+      # ansible playbook to be run
+      playbook: ansible/playbooks/on-hub-get-regional-ca.yml
+      # per playbook timeout in seconds
+      timeout: 234
+      # verbosity: "-v"
 
   managedClusterGroups:
   - name: acm-edge
