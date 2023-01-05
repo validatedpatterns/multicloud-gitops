@@ -17,12 +17,12 @@
     name: "{{ unseal_secret }}"
     api_version: v1
   register: vault_init_data
-  when:
-    - vault_sealed
+  when: vault_sealed
 
 - name: Does the vaultkeys secret exist?
   ansible.builtin.set_fact:
     vaultkeys_exists: "{{ vault_init_data.resources | length > 0 }}"
+  when: vault_sealed
 
 - name: Vaultkeys does not exist and the vault is sealed, so exit
   ansible.builtin.meta: end_play
