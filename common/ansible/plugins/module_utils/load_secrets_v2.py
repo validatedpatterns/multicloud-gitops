@@ -210,14 +210,15 @@ class LoadSecretsV2:
         names = []
         for s in secrets:
             # These fields are mandatory
-            for i in ["name", "vaultPrefixes"]:
+            for i in ["name"]:
                 try:
                     _ = s[i]
                 except KeyError:
                     return (False, f"Secret {s['name']} is missing {i}")
             names.append(s["name"])
 
-            vault_prefixes = s.get("vaultPrefixes", [])
+            vault_prefixes = s.get("vaultPrefixes", ["hub"])
+            # This checks for the case when vaultPrefixes: is specified but empty
             if vault_prefixes is None or len(vault_prefixes) == 0:
                 return (False, f"Secret {s['name']} has empty vaultPrefixes")
 
@@ -293,7 +294,7 @@ class LoadSecretsV2:
     def _get_file_path(self, name, field):
         on_missing_value = self._get_field_on_missing_value(field)
         if on_missing_value == "error":
-            return field.get("path")
+            return os.path.expanduser(field.get("path"))
         elif on_missing_value == "prompt":
             prompt = self._get_field_prompt(field)
             path = self._get_field_path(field)
@@ -383,7 +384,7 @@ class LoadSecretsV2:
                     f"cat '{path}' | oc exec -n {self.namespace} {self.pod} -i -- sh -c "
                     f"'cat - > /tmp/vcontent'; "
                     f"oc exec -n {self.namespace} {self.pod} -i -- sh -c '{b64_cmd}"
-                    f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=/tmp/vcontent; "
+                    f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=@/tmp/vcontent; "
                     f"rm /tmp/vcontent'"
                 )
                 self._run_command(cmd, attempts=3)
@@ -402,7 +403,7 @@ class LoadSecretsV2:
             sname = s.get("name")
             fields = s.get("fields", [])
             mount = s.get("vaultMount", "secret")
-            vault_prefixes = s.get("vaultPrefixes", [])
+            vault_prefixes = s.get("vaultPrefixes", ["hub"])
             for i in fields:
                 self._inject_field(sname, i, mount, vault_prefixes, counter == 0)
                 counter += 1
