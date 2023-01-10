@@ -210,14 +210,15 @@ class LoadSecretsV2:
         names = []
         for s in secrets:
             # These fields are mandatory
-            for i in ["name", "vaultPrefixes"]:
+            for i in ["name"]:
                 try:
                     _ = s[i]
                 except KeyError:
                     return (False, f"Secret {s['name']} is missing {i}")
             names.append(s["name"])
 
-            vault_prefixes = s.get("vaultPrefixes", [])
+            vault_prefixes = s.get("vaultPrefixes", ["hub"])
+            # This checks for the case when vaultPrefixes: is specified but empty
             if vault_prefixes is None or len(vault_prefixes) == 0:
                 return (False, f"Secret {s['name']} has empty vaultPrefixes")
 
@@ -402,7 +403,7 @@ class LoadSecretsV2:
             sname = s.get("name")
             fields = s.get("fields", [])
             mount = s.get("vaultMount", "secret")
-            vault_prefixes = s.get("vaultPrefixes", [])
+            vault_prefixes = s.get("vaultPrefixes", ["hub"])
             for i in fields:
                 self._inject_field(sname, i, mount, vault_prefixes, counter == 0)
                 counter += 1
