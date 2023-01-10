@@ -26,6 +26,7 @@ metadata:
   name: 'one-acm-provision-edge'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
     clusterClaimName: one-acm-provision-edge
@@ -40,6 +41,7 @@ metadata:
   name: 'two-acm-provision-edge'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
     clusterClaimName: two-acm-provision-edge
@@ -54,6 +56,7 @@ metadata:
   name: 'three-acm-provision-edge'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
     clusterClaimName: three-acm-provision-edge
@@ -68,6 +71,7 @@ metadata:
   name: "aws-ap-acm-provision-edge"
   annotations:
     argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   labels:
     cloud: aws
     region: 'ap-southeast-2'
@@ -97,6 +101,7 @@ metadata:
   name: "azure-us-acm-provision-edge"
   annotations:
     argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   labels:
     cloud: azure
     region: 'eastus'
@@ -377,6 +382,7 @@ kind: ManagedClusterSet
 metadata:
   annotations:
     cluster.open-cluster-management.io/submariner-broker-ns: acm-provision-edge-broker
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   name: acm-provision-edge
 spec:
   clusterSelector:
