@@ -327,15 +327,49 @@ class TestMyModule(unittest.TestCase):
             set_module_args(
                 {
                     "values_secrets": os.path.join(
-                        self.testdir_v2, "values-secret-v2-novaultprefix.yaml"
+                        self.testdir_v2, "values-secret-v2-emptyvaultprefix.yaml"
                     ),
                 }
             )
             vault_load_secrets.main()
-
         ret = ansible_err.exception.args[0]
         self.assertEqual(ret["failed"], True)
         assert ret["args"][1] == "Secret config-demo has empty vaultPrefixes"
+
+    def test_ensure_default_no_vaultprefix(self, getpass):
+        set_module_args(
+            {
+                "values_secrets": os.path.join(
+                    self.testdir_v2, "values-secret-v2-novaultprefix.yaml"
+                ),
+            }
+        )
+        with patch.object(
+            load_secrets_v2.LoadSecretsV2, "_run_command"
+        ) as mock_run_command:
+            stdout = "configuration updated"
+            stderr = ""
+            ret = 0
+            mock_run_command.return_value = ret, stdout, stderr  # successful execution
+
+            with self.assertRaises(AnsibleExitJson) as result:
+                vault_load_secrets.main()
+            self.assertTrue(
+                result.exception.args[0]["changed"]
+            )  # ensure result is changed
+            assert mock_run_command.call_count == 2
+
+        calls = [
+            call(
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                attempts=3,
+            ),
+            call(
+                "oc exec -n vault vault-0 -i -- sh -c \"vault kv put -mount=secret hub/config-demo secret='value123'\"",  # noqa: E501
+                attempts=3,
+            ),
+        ]
+        mock_run_command.assert_has_calls(calls)
 
     def test_ensure_only_generate_passwords_works(self, getpass):
         set_module_args(

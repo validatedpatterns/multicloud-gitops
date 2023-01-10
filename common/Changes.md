@@ -1,5 +1,9 @@
 # Changes
 
+## January 10, 2023
+
+* vaultPrefixes is now optional in the v2 secret spec and defaults to ["hub"]
+
 ## December 9, 2022
 
 * Dropped insecureUnsealVaultInsideCluster (and file_unseal) entirely. Now
