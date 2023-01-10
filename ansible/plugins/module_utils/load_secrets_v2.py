@@ -294,7 +294,7 @@ class LoadSecretsV2:
     def _get_file_path(self, name, field):
         on_missing_value = self._get_field_on_missing_value(field)
         if on_missing_value == "error":
-            return field.get("path")
+            return os.path.expanduser(field.get("path"))
         elif on_missing_value == "prompt":
             prompt = self._get_field_prompt(field)
             path = self._get_field_path(field)
@@ -384,7 +384,7 @@ class LoadSecretsV2:
                     f"cat '{path}' | oc exec -n {self.namespace} {self.pod} -i -- sh -c "
                     f"'cat - > /tmp/vcontent'; "
                     f"oc exec -n {self.namespace} {self.pod} -i -- sh -c '{b64_cmd}"
-                    f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=/tmp/vcontent; "
+                    f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=@/tmp/vcontent; "
                     f"rm /tmp/vcontent'"
                 )
                 self._run_command(cmd, attempts=3)
