@@ -200,6 +200,18 @@ secrets:
     - name: ca_crt
       path: /tmp/ca.crt
       onMissingValue: error # One of error, prompt (for path). generate makes no sense for file
+
+  # The following will read the ini-file at ~/.aws/credentials and place the ini_key "[default]/aws_access_key_id"
+  # in the aws_access_key_id_test vault attribute in the secret/hub/awsexample path
+  - name: awsexample
+    fields:
+    - name: aws_access_key_id_test
+      ini_file: ~/.aws/credentials
+      ini_section: default
+      ini_key: aws_access_key_id
+    - name: aws_secret_access_key_test
+      ini_file: ~/.aws/credentials
+      ini_key: aws_secret_access_key
 ```
 
 Internals
