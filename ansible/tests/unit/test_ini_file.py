@@ -17,15 +17,9 @@
 Simple module to test ini parsing function
 """
 
-import json
 import os
 import sys
 import unittest
-from unittest import mock
-from unittest.mock import call, patch
-
-from ansible.module_utils import basic
-from ansible.module_utils.common.text.converters import to_bytes
 
 # TODO(bandini): I could not come up with something better to force the imports to be existing
 # when we 'import vault_load_secrets'
@@ -33,15 +27,17 @@ sys.path.insert(1, "./ansible/plugins/module_utils")
 sys.path.insert(1, "./ansible/plugins/modules")
 import load_secrets_common  # noqa: E402
 
+
 class TestMyModule(unittest.TestCase):
     def setUp(self):
         self.testdir_v2 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "v2")
 
-
     def test_ensure_ini_file_parsed_correctly(self):
         f = os.path.join(self.testdir_v2, "aws-example.ini")
         key_id = load_secrets_common.get_ini_value(f, "default", "aws_access_key_id")
-        access_key = load_secrets_common.get_ini_value(f, "default", "aws_secret_access_key")
+        access_key = load_secrets_common.get_ini_value(
+            f, "default", "aws_secret_access_key"
+        )
         self.assertEqual(key_id, "A123456789012345678A")
         self.assertEqual(access_key, "A12345678901234567890123456789012345678A")
 

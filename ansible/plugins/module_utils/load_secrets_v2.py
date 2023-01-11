@@ -22,7 +22,11 @@ import getpass
 import os
 import time
 
-from ansible.module_utils.load_secrets_common import find_dupes, get_version
+from ansible.module_utils.load_secrets_common import (
+    find_dupes,
+    get_ini_value,
+    get_version,
+)
 
 default_vp_vault_policies = {
     "validatedPatternDefaultPolicy": (
@@ -101,19 +105,24 @@ class LoadSecretsV2:
     def _get_field_path(self, f):
         return f.get("path", None)
 
+    def _get_field_ini_file(self, f):
+        return f.get("ini_file", None)
+
     def _get_field_kind(self, f):
         # value: null will be interpreted with None, so let's just
         # check for the existence of the field, as we use 'value: null' to say
         # "we want a value/secret and not a file path"
-        if "value" in f and "path" in f:
-            self.module.fail_json("Both 'value' and 'path' cannot be used")
+        found = []
+        for i in ["value", "path", "ini_file"]:
+            if i in f:
+                found.append(i)
 
-        if "value" in f:
-            return "value"
-        elif "path" in f:
-            return "path"
+        if len(found) > 1:  # you can only have one of value, path and ini_file
+            self.module.fail_json(f"Both '{found[0]}' and '{found[1]}' cannot be used")
 
-        return ""
+        if len(found) == 0:
+            return ""
+        return found[0]
 
     def _get_field_prompt(self, f):
         return f.get("prompt", None)
@@ -124,6 +133,8 @@ class LoadSecretsV2:
     def _get_field_override(self, f):
         return bool(f.get("override", False))
 
+    # This function could use some rewriting and it should call a specific validation function
+    # for each type (value, path, ini_file)
     def _validate_field(self, f):
         # These fields are mandatory
         try:
@@ -137,7 +148,17 @@ class LoadSecretsV2:
 
         value = self._get_field_value(f)
         path = self._get_field_path(f)
-        _ = self._get_field_kind(f)
+        ini_file = self._get_field_ini_file(f)
+        kind = self._get_field_kind(f)
+        if kind == "ini_file":
+            # if we are using ini_file then at least ini_key needs to be defined
+            # ini_section defaults to 'default' when omitted
+            ini_key = f.get("ini_key", None)
+            if ini_key is None:
+                return (
+                    False,
+                    "ini_file requires at least ini_key to be defined",
+                )
 
         # Test if base64 is a correct boolean (defaults to False)
         _ = self._get_field_base64(f)
@@ -151,13 +172,22 @@ class LoadSecretsV2:
             )
 
         if on_missing_value in ["error"]:
-            if (value is None or len(value) < 1) and (path is None or len(path) < 1):
+            if (
+                (value is None or len(value) < 1)
+                and (path is None or len(path) < 1)
+                and (ini_file is None or len(ini_file) < 1)
+            ):
                 return (
                     False,
-                    "Secret has onMissingValue set to 'error' and has neither value nor path set",
+                    "Secret has onMissingValue set to 'error' and has neither value nor path nor ini_file set",
                 )
             if path is not None and not os.path.isfile(os.path.expanduser(path)):
                 return (False, f"Field has non-existing path: {path}")
+
+            if ini_file is not None and not os.path.isfile(
+                os.path.expanduser(ini_file)
+            ):
+                return (False, f"Field has non-existing ini_file: {ini_file}")
 
             if "override" in f:
                 return (
@@ -371,7 +401,7 @@ class LoadSecretsV2:
                 )
                 self._run_command(cmd, attempts=3)
 
-        else:  # path. we upload files
+        elif kind == "path":  # path. we upload files
             # If we're generating the password then we just push the secret in the vault directly
             verb = "put" if first else "patch"
             path = self._get_file_path(secret_name, f)
@@ -386,6 +416,20 @@ class LoadSecretsV2:
                     f"oc exec -n {self.namespace} {self.pod} -i -- sh -c '{b64_cmd}"
                     f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=@/tmp/vcontent; "
                     f"rm /tmp/vcontent'"
+                )
+                self._run_command(cmd, attempts=3)
+        elif kind == "ini_file":  # ini_file. we parse an ini_file
+            verb = "put" if first else "patch"
+            ini_file = os.path.expanduser(f.get("ini_file"))
+            ini_section = f.get("ini_section", "default")
+            ini_key = f.get("ini_key")
+            secret = get_ini_value(ini_file, ini_section, ini_key)
+            if b64:
+                secret = base64.b64encode(secret.encode()).decode("utf-8")
+            for prefix in prefixes:
+                cmd = (
+                    f"oc exec -n {self.namespace} {self.pod} -i -- sh -c "
+                    f"\"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}='{secret}'\""
                 )
                 self._run_command(cmd, attempts=3)
 
