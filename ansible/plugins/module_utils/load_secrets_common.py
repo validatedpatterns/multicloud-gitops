@@ -17,6 +17,7 @@
 Module that implements some common functions
 """
 
+import configparser
 from collections.abc import MutableMapping
 
 
@@ -81,3 +82,23 @@ def flatten(dictionary, parent_key=False, separator="."):
             if value is not None:
                 items.append((new_key, value))
     return dict(items)
+
+
+def get_ini_value(inifile, inisection, inikey):
+    """
+    Return a value from an ini-file or 'None' if it does not exist
+
+    Parameters:
+        inifile(str): The path to the ini-file
+
+        inisection(str): The section in the ini-file to look for the key
+
+        inikey(str): The key to look up inside the ini-file's section
+
+    Returns:
+
+        obj: The value of the key or None if it does not exist
+    """
+    config = configparser.ConfigParser()
+    config.read(inifile)
+    return config.get(inisection, inikey, None)
