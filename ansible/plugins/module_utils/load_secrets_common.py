@@ -101,4 +101,4 @@ def get_ini_value(inifile, inisection, inikey):
     """
     config = configparser.ConfigParser()
     config.read(inifile)
-    return config.get(inisection, inikey, None)
+    return config.get(inisection, inikey, fallback=None)
