@@ -168,11 +168,11 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put -mount=secret secret/region-two/config-demo-file ca_crt=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - | base64 --wrap=0 > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv put -mount=secret secret/region-two/config-demo-file ca_crt=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv put -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo-file ca_crt=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - | base64 --wrap=0 > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv put -mount=secret secret/snowflake.blueprints.rhecoeng.com/config-demo-file ca_crt=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
         ]
@@ -241,11 +241,11 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret region-one/config-demo ca_crt2=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - | base64 --wrap=0 > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv patch -mount=secret region-one/config-demo ca_crt2=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
             call(
-                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'base64 --wrap=0 /tmp/vcontent | vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo ca_crt2=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
+                "cat '/tmp/ca.crt' | oc exec -n vault vault-0 -i -- sh -c 'cat - | base64 --wrap=0 > /tmp/vcontent'; oc exec -n vault vault-0 -i -- sh -c 'vault kv patch -mount=secret snowflake.blueprints.rhecoeng.com/config-demo ca_crt2=@/tmp/vcontent; rm /tmp/vcontent'",  # noqa: E501
                 attempts=3,
             ),
         ]
