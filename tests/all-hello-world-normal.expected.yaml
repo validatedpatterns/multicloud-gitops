@@ -1,0 +1,120 @@
+---
+# Source: hello-world/templates/hello-world-cm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-world-configmap
+  labels:
+    app.kubernetes.io/instance: hello-world
+data:
+  "index.html": |-
+    <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8">
+          <title>Hello World</title>
+        </head>
+          <body>
+            <h1>Hello World!</h1>
+            <br/>
+            <h2>
+            Hub Cluster domain is 'apps.hub.example.com' <br>
+            Pod is running on Local Cluster Domain 'apps.region.example.com' <br>
+            </h2>
+          </body>
+      </html>
+---
+# Source: hello-world/templates/hello-world-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hello-world
+  name: hello-world
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: hello-world
+    deploymentconfig: hello-world
+  sessionAffinity: None
+  type: ClusterIP
+---
+# Source: hello-world/templates/hello-world-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    application: hello-world
+  name: hello-world
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      deploymentconfig: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+        deploymentconfig: hello-world
+      name: hello-world
+    spec:
+      containers:
+      - name: apache
+        image: registry.access.redhat.com/ubi8/httpd-24:1-226
+        #imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: hello-world-configmap
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        livenessProbe:
+          httpGet:
+            path: /index.html
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /index.html
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+      volumes:
+      - name: hello-world-configmap
+        configMap:
+          defaultMode: 438
+          name: hello-world-configmap
+---
+# Source: hello-world/templates/hello-world-route.yaml
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: hello-world
+  name: hello-world
+spec:
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: hello-world
+    weight: 100
+  wildcardPolicy: None
