@@ -231,6 +231,12 @@
             "type": "string"
           }
         },
+        "hostedSite": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/HostedSite"
+          }
+        },
         "subscriptions": {
           "anyOf": [
             {
@@ -388,6 +394,23 @@
         "project"
       ],
       "title": "Applications"
+    },
+    "HostedSite": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bearerKeyPath": {
+          "type": "string"
+        },
+        "caKeyPath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "bearerKeyPath",
+        "caKeyPath"
+      ],
+      "title": "HostedSite"
     },
     "Imperative": {
       "type": "object",
