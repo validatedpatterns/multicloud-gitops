@@ -116,10 +116,12 @@ clusterGroup:
     hostedArgoSites:
     - name: perth
       domain: perth1.beekhof.net
-      bearerKeyPath: secret/data/hub/cluster_perth
-      caKeyPath: secret/data/hub/cluster_perth_ca
+      # The default is secret/data/hub/cluster_<name>
+      #secretsPath: secret/data/hub/cluster_perth
     - name: sydney
       domain: syd.beekhof.net
+      # The default is secret/data/hub/cluster_<name>
+      #secretsPath: secret/data/hub/cluster_sydney
     helmOverrides:
     - name: clusterGroup.isHubCluster
       value: "false"

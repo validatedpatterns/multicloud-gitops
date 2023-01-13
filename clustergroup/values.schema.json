@@ -399,16 +399,13 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "bearerKeyPath": {
-          "type": "string"
-        },
-        "caKeyPath": {
-          "type": "string"
+        "secretsPath": {
+          "type": "string",
+          "description": "It represents the path in the vault that is supposed to contain two fields: 'bearerToken' representing the token to use to authenticate to the remote cluster and 'caCert' which is the base64-encoded Certificate Authority cert of the remote cluster."
         }
       },
       "required": [
-        "bearerKeyPath",
-        "caKeyPath"
+        "secretsPath"
       ],
       "title": "HostedSite"
     },
