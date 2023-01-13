@@ -136,9 +136,7 @@ data:
         - name: clusterGroup.isHubCluster
           value: "false"
         hostedArgoSites:
-        - bearerKeyPath: secret/data/hub/cluster_perth
-          caKeyPath: secret/data/hub/cluster_perth_ca
-          domain: perth1.beekhof.net
+        - domain: perth1.beekhof.net
           name: perth
         - domain: syd.beekhof.net
           name: sydney
@@ -630,10 +628,8 @@ spec:
         value: argo-edge
       - name: clusterGroup.targetCluster
         value: perth
-      - name: clusterGroup.hostedSite.bearerKeyPath
+      - name: clusterGroup.hostedSite.secretsPath
         value: secret/data/hub/cluster_perth
-      - name: clusterGroup.hostedSite.caKeyPath
-        value: secret/data/hub/cluster_perth_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
@@ -692,10 +688,8 @@ spec:
         value: argo-edge
       - name: clusterGroup.targetCluster
         value: perth
-      - name: clusterGroup.hostedSite.bearerKeyPath
+      - name: clusterGroup.hostedSite.secretsPath
         value: secret/data/hub/cluster_perth
-      - name: clusterGroup.hostedSite.caKeyPath
-        value: secret/data/hub/cluster_perth_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
@@ -754,10 +748,8 @@ spec:
         value: argo-edge
       - name: clusterGroup.targetCluster
         value: sydney
-      - name: clusterGroup.hostedSite.bearerKeyPath
+      - name: clusterGroup.hostedSite.secretsPath
         value: secret/data/hub/cluster_sydney
-      - name: clusterGroup.hostedSite.caKeyPath
-        value: secret/data/hub/cluster_sydney_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
@@ -816,10 +808,8 @@ spec:
         value: argo-edge
       - name: clusterGroup.targetCluster
         value: sydney
-      - name: clusterGroup.hostedSite.bearerKeyPath
+      - name: clusterGroup.hostedSite.secretsPath
         value: secret/data/hub/cluster_sydney
-      - name: clusterGroup.hostedSite.caKeyPath
-        value: secret/data/hub/cluster_sydney_ca
       - name: clusterGroup.isHubCluster
         value: "false"
   destination:
