@@ -27,9 +27,9 @@ from base64 import b64decode
 #   apps.open-cluster-management.io/cluster-name: local-cluster
 #   apps.open-cluster-management.io/cluster-server: api.mcg-hub.blueprints.rhecoeng.com
 #   apps.open-cluster-management.io/secret-type: acm-cluster
-def get_cluster_name(d):
-    if "metadata" in d and "labels" in d["metadata"]:
-        return d["metadata"]["labels"].get(
+def get_cluster_name(secret):
+    if "metadata" in secret and "labels" in secret["metadata"]:
+        return secret["metadata"]["labels"].get(
             "apps.open-cluster-management.io/cluster-name", None
         )
     return None
@@ -41,12 +41,13 @@ def is_cluster_a_hub(name):
     return False
 
 
-def get_cluster_fqdn(d):
-    if "metadata" in d and "labels" in d["metadata"]:
-        server = d["metadata"]["labels"].get(
+def get_cluster_fqdn(secret):
+    if "metadata" in secret and "labels" in secret["metadata"]:
+        server = secret["metadata"]["labels"].get(
             "apps.open-cluster-management.io/cluster-server", None
         )
-        # It is rather hard to override this in an OCP deployment so we are okay in just dropping 'api.'
+        # It is rather hard to override this in an OCP deployment so we are
+        # okay in just dropping 'api.'
         return server.removeprefix("api.")
     return None
 
@@ -77,6 +78,6 @@ def parse_acm_secrets(secrets):
     return ret
 
 
-class FilterModule(object):
+class FilterModule:
     def filters(self):
         return {"parse_acm_secrets": parse_acm_secrets}
