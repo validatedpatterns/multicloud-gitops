@@ -16,6 +16,7 @@
 #  server_api: https://api.<cluster_fqdn>:6443
 #  bearerToken: <bearerToken to access remote cluster>
 #  tlsClientConfig: <tlsClientConfig in ACM config field>
+#  vault_path: "hub" when it is the ACM hub or <fqdn-without-api-prefix> in the other cases
 
 import json
 from base64 import b64decode
@@ -32,6 +33,12 @@ def get_cluster_name(d):
             "apps.open-cluster-management.io/cluster-name", None
         )
     return None
+
+
+def is_cluster_a_hub(name):
+    if name == "local-cluster":
+        return True
+    return False
 
 
 def get_cluster_fqdn(d):
@@ -52,9 +59,15 @@ def parse_acm_secrets(secrets):
             continue
 
         ret[cluster] = {}
-        ret[cluster]["name"] = b64decode(secret["data"]["name"])
+        name = b64decode(secret["data"]["name"])
+        ret[cluster]["name"] = name
         ret[cluster]["server_api"] = b64decode(secret["data"]["server"])
-        ret[cluster]["cluster_fqdn"] = get_cluster_fqdn(secret)
+        fqdn = get_cluster_fqdn(secret)
+        ret[cluster]["cluster_fqdn"] = fqdn
+        if is_cluster_a_hub(name):
+            ret[cluster]["vault_path"] = "hub"
+        else:
+            ret[cluster]["vault_path"] = fqdn
 
         config = b64decode(secret["data"]["config"])
         parsed_config = json.loads(config)
