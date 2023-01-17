@@ -4,7 +4,7 @@
   "definitions": {
     "ValidatedPatterns": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "enabled": {
           "type": "string",
