@@ -4,6 +4,12 @@ mountRole: "hub-role"
 
 global:
   hubClusterDomain: hub.example.com
+  clusterDomain: foo.example.com
+
+clusterGroup:
+  isHubCluster: true
+
+
 
 external-secrets:
   image:

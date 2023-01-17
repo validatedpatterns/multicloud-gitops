@@ -1,5 +1,9 @@
 # Changes
 
+## January 23, 2023
+
+* Add initial support for running ESO on ACM-imported clusters
+
 ## January 18, 2023
 
 * Add validate-schema target
