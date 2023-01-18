@@ -1,5 +1,9 @@
 # Changes
 
+## January 18, 2023
+
+* Add validate-schema target to default deploy
+
 ## January 13, 2023
 
 * Simplify the secrets paths when using argo hosted sites
