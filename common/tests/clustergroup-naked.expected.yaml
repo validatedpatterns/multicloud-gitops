@@ -37,7 +37,7 @@ metadata:
 data:
   values.yaml: |
     clusterGroup:
-      applications: []
+      applications: {}
       imperative:
         activeDeadlineSeconds: 3600
         clusterRoleName: imperative-cluster-role
@@ -57,11 +57,11 @@ data:
         valuesConfigMap: helm-values-configmap
         verbosity: ""
       isHubCluster: true
-      managedClusterGroups: []
+      managedClusterGroups: {}
       name: example
       namespaces: []
       projects: []
-      subscriptions: []
+      subscriptions: {}
       targetCluster: in-cluster
     enabled: all
     global:
