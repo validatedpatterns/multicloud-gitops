@@ -35,8 +35,15 @@ validate-origin: ## verify the git origin is available
 		echo "Running inside a container: Skipping git ssh checks";\
 	fi
 
+.PHONY: validate-schema
+validate-schema: ## validates values files against schema in common/clustergroup
+	$(eval VAL_PARAMS := $(shell for i in ./values-*.yaml; do echo -n "$${i} "; done))
+	@echo -n "Validating clustergroup schema of: "
+	@set -e; for i in $(VAL_PARAMS); do echo -n " $$i"; helm template common/clustergroup $(HELM_OPTS) -f "$${i}" >/dev/null; done
+	@echo
+
 .PHONY: operator-deploy operator-upgrade
-operator-deploy operator-upgrade: validate-origin ## runs helm install
+operator-deploy operator-upgrade: validate-origin validate-schema ## runs helm install
 	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
 
 .PHONY: deploy upgrade legacy-deploy legacy-upgrade
