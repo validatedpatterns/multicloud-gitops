@@ -104,7 +104,7 @@ data:
         valuesConfigMap: helm-values-configmap
         verbosity: ""
       isHubCluster: false
-      managedClusterGroups: []
+      managedClusterGroups: {}
       name: factory
       namespaces:
       - manuela-stormshift-line-dashboard
