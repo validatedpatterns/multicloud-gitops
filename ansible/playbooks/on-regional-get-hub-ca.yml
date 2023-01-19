@@ -17,17 +17,7 @@
 
     - name: Do nothing when no managed clusters are found
       ansible.builtin.meta: end_play
-      when: hub_cluster.resources | length == 0 or hub_cluster.failed or not hub_cluster.api_found
-
-    - name: Set resource fact
-      ansible.builtin.set_fact:
-        resource: "{{ hub_cluster['resources'][0] }}"
-
-    - name: Do nothing when no kubeconfig is not present yet
-      ansible.builtin.meta: end_play
-      when:
-        - "'data' not in resource"
-        - "'kubeconfig' not in resource.data"
+      when: hub_cluster['resources'][0]['data']['kubeconfig'] is not defined
 
     # FIXME(bandini) The assumption here is that there is a single hub cluster for each managed cluster
     #
@@ -41,7 +31,7 @@
     - name: Get hub cluster facts
       ansible.builtin.set_fact:
         # kubeconfig is just a b64-econded yaml
-        hub_cluster_kubeconfig: "{{ resource.data.kubeconfig | b64decode | from_yaml }}"
+        hub_cluster_kubeconfig: "{{ hub_cluster['resources'][0]['data']['kubeconfig'] | b64decode | from_yaml }}"
 
     - name: Set CA fact
       ansible.builtin.set_fact:
