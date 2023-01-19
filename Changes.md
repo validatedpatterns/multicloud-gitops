@@ -2,7 +2,7 @@
 
 ## January 18, 2023
 
-* Add validate-schema target to default deploy
+* Add validate-schema target
 
 ## January 13, 2023
 

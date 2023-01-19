@@ -43,7 +43,7 @@ validate-schema: ## validates values files against schema in common/clustergroup
 	@echo
 
 .PHONY: operator-deploy operator-upgrade
-operator-deploy operator-upgrade: validate-origin validate-schema ## runs helm install
+operator-deploy operator-upgrade: validate-origin ## runs helm install
 	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
 
 .PHONY: deploy upgrade legacy-deploy legacy-upgrade
