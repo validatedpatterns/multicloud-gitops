@@ -47,11 +47,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install check-jsonschema
 
-      - name: Verify secrets json schema
-        run: |
-          check-jsonschema --schemafile ./ansible/roles/vault_utils/values-secrets.v1.schema.json examples/secrets/values-secret.v1.yaml
-          check-jsonschema --schemafile ./ansible/roles/vault_utils/values-secrets.v2.schema.json examples/secrets/values-secret.v2.yaml
+      - name: Install yq
+        uses: chrisdickinson/setup-yq@latest
+        with:
+          yq-version: v4.30.7
 
-      - name: Verify ClusterGroup values.schema.json
+      - name: Verify secrets json schema against templates
         run: |
-          set -e; for i in examples/*yaml; do echo "$i"; check-jsonschema --schemafile ./clustergroup/values.schema.json "$i"; done
+          # check-jsonschema needs .yaml as an extension
+          cp ./values-secret.yaml.template ./values-secret.yaml
+          check-jsonschema --schemafile ./common/ansible/roles/vault_utils/values-secrets.v2.schema.json values-secret.yaml
+          rm -f ./values-secret.yaml
+
+      - name: Verify ClusterGroup values.schema.json against values-*yaml files
+        run: |
+          set -e; for i in values-hub.yaml values-group-one.yaml; do
+            echo "$i"
+            # disable shellcheck of single quotes in yq
+            # shellcheck disable=2016
+            yq eval-all '. as $item ireduce ({}; . * $item )' values-global.yaml "$i" > tmp.yaml
+            check-jsonschema --schemafile ./common/clustergroup/values.schema.json tmp.yaml
+            rm -f tmp.yaml
+          done
+
