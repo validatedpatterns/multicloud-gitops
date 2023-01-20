@@ -296,7 +296,6 @@
       "required": [
         "applications",
         "isHubCluster",
-        "managedClusterGroups",
         "name",
         "namespaces",
         "projects"
