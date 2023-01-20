@@ -1,0 +1,72 @@
+---
+name: Verify json schema
+
+#
+# Documentation:
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions
+#
+
+#############################
+# Start the job on all push #
+#############################
+on: [push, pull_request]
+
+###############
+# Set the Job #
+###############
+jobs:
+  jsonschema_tests:
+    # Name the Job
+    name: Json Schema tests
+    strategy:
+      matrix:
+        python-version: [3.11.1]
+    # Set the agent to run on
+    runs-on: ubuntu-latest
+
+    ##################
+    # Load all steps #
+    ##################
+    steps:
+      ##########################
+      # Checkout the code base #
+      ##########################
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install check-jsonschema
+
+      - name: Install yq
+        uses: chrisdickinson/setup-yq@latest
+        with:
+          yq-version: v4.30.7
+
+      - name: Verify secrets json schema against templates
+        run: |
+          # check-jsonschema needs .yaml as an extension
+          cp ./values-secret.yaml.template ./values-secret.yaml
+          check-jsonschema --schemafile ./common/ansible/roles/vault_utils/values-secrets.v2.schema.json values-secret.yaml
+          rm -f ./values-secret.yaml
+
+      - name: Verify ClusterGroup values.schema.json against values-*yaml files
+        run: |
+          set -e; for i in values-hub.yaml values-group-one.yaml; do
+            echo "$i"
+            # disable shellcheck of single quotes in yq
+            # shellcheck disable=2016
+            yq eval-all '. as $item ireduce ({}; . * $item )' values-global.yaml "$i" > tmp.yaml
+            check-jsonschema --schemafile ./common/clustergroup/values.schema.json tmp.yaml
+            rm -f tmp.yaml
+          done
+
