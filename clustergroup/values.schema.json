@@ -239,6 +239,9 @@
         "subscriptions": {
           "anyOf": [
             {
+              "type": "null"
+            },
+            {
               "type": "array"
             },
             {
