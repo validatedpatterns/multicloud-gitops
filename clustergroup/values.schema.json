@@ -142,8 +142,7 @@
         }
       },
       "required": [
-        "options",
-        "pattern"
+        "options"
       ],
       "title": "Global"
     },
