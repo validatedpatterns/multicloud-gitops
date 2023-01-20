@@ -101,37 +101,37 @@
       "properties": {
         "pattern": {
           "type": "string",
-          "readOnly": "true",
+          "readOnly": true,
           "description": "The name of the pattern being installed. The default is the name of the repository's folder and is automatically set by the Makefile"
         },
         "clusterDomain": {
           "type": "string",
-          "readOnly": "true",
+          "readOnly": true,
           "description": "The FQDN domain of the cluster without the 'apps.' component. For example: mcg-hub.blueprints.rhecoeng.com. Gets set automatically by the framework"
         },
         "localClusterDomain": {
           "type": "string",
-          "readOnly": "true",
+          "readOnly": true,
           "description": "The FQDN domain of the cluster including the 'apps.' component. For example: apps.mcg-hub.blueprints.rhecoeng.com. Gets set automatically by the framework"
         },
         "targetRevision": {
           "type": "string",
-          "readOnly": "true",
+          "readOnly": true,
           "description": "revision (branch/commit/ref) to use on the pattern's git repository, it is set automatically by the pattern's operator"
         },
         "repoURL": {
           "type": "string",
-          "readOnly": "true",
+          "readOnly": true,
           "description": "URL of the pattern's git repository, it is set automatically by the pattern's operator"
         },
         "hubClusterDomain": {
           "type": "string",
-          "readOnly": "true",
+          "readOnly": true,
           "description": "The FQDN domain of the hub cluster including the 'apps.' component. For example: apps.mcg-hub.blueprints.rhecoeng.com. Gets set automatically by the framework. Only makes sense when using ACM"
         },
         "namespace": {
           "type": "string",
-          "readOnly": "true",
+          "readOnly": true,
           "description": "The namespace in which the ArgoCD instance is running. Automatically set to either 'openshift-operators' or '$ARGOCD_APP_NAMESPACE'"
         },
         "git": {
