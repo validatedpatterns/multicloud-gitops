@@ -47,7 +47,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install check-jsonschema
 
-      - name: Verify json schema
+      - name: Verify secrets json schema
         run: |
           check-jsonschema --schemafile ./ansible/roles/vault_utils/values-secrets.v1.schema.json examples/secrets/values-secret.v1.yaml
           check-jsonschema --schemafile ./ansible/roles/vault_utils/values-secrets.v2.schema.json examples/secrets/values-secret.v2.yaml
+
+      - name: Verify ClusterGroup values.schema.json
+        run: |
+          set -e; for i in examples/*yaml; do echo "$i"; check-jsonschema --schemafile ./clustergroup/values.schema.json "$i"; done
