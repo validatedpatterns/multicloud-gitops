@@ -87,10 +87,10 @@ kubeconform: ## run helm kubeconform
 .PHONY: validate-prereq
 validate-prereq: ## verify pre-requisites
 	@for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done
-	@echo "Prerequisites checked '$(EXECUTABLES)': OK"
-	@ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1\
-		&& echo "Python kubernetes module: OK" ||\
-		(echo "Python kubernetes module: NOT FOUND"; exit 1);
+	@echo "Check for '$(EXECUTABLES)': OK"
+	@echo -n "Check for python-kubernetes: "
+	@if ! ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1; then echo "Not found"; exit 1; fi
+	@echo "OK"
 	@echo -n "Check for kubernetes.core collection: "
 	@if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi
 	@echo "OK"
