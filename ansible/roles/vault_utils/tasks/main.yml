@@ -1,8 +1,4 @@
 ---
-- name: Delete vault
-  ansible.builtin.import_tasks: vault_delete.yaml
-  tags: vault_delete
-
 - name: Run vault init tasks
   ansible.builtin.import_tasks: vault_init.yaml
   tags: vault_init
