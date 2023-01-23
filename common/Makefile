@@ -26,11 +26,12 @@ show: ## show the starting template without installing it
 # as getting ssh auth working inside a container seems a bit brittle
 .PHONY: validate-origin
 validate-origin: ## verify the git origin is available
-	@echo Checking repo $(TARGET_REPO) - branch $(TARGET_BRANCH)
+	@echo "Checking repository:"
+	@echo -n "  $(TARGET_REPO) - branch $(TARGET_BRANCH): "
 	@if [ ! -f /run/.containerenv ]; then\
 		git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null &&\
-				echo "$(TARGET_REPO) - $(TARGET_BRANCH) exists" ||\
-				(echo "$(TARGET_BRANCH) not found in $(TARGET_REPO)"; exit 1);\
+				echo "OK" ||\
+				(echo "NOT FOUND"; exit 1);\
 	else\
 		echo "Running inside a container: Skipping git ssh checks";\
 	fi
@@ -43,7 +44,8 @@ validate-schema: ## validates values files against schema in common/clustergroup
 	@echo
 
 .PHONY: operator-deploy operator-upgrade
-operator-deploy operator-upgrade: validate-origin ## runs helm install
+operator-deploy operator-upgrade: validate-prereq validate-origin ## runs helm install
+	@echo "Running helm:"
 	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
 
 .PHONY: deploy upgrade legacy-deploy legacy-upgrade
@@ -86,11 +88,13 @@ kubeconform: ## run helm kubeconform
 
 .PHONY: validate-prereq
 validate-prereq: ## verify pre-requisites
+	@echo "Checking prerequisites:"
 	@for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done
-	@echo "Prerequisites checked '$(EXECUTABLES)': OK"
-	@ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1
-	@echo "Python kubernetes module: OK"
-	@echo -n "Check for kubernetes.core collection: "
+	@echo "  Check for '$(EXECUTABLES)': OK"
+	@echo -n "  Check for python-kubernetes: "
+	@if ! ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1; then echo "Not found"; exit 1; fi
+	@echo "OK"
+	@echo -n "  Check for kubernetes.core collection: "
 	@if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi
 	@echo "OK"
 
