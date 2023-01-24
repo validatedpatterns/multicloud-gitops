@@ -4,7 +4,7 @@ secretStore:
   kind: ClusterSecretStore
 
 configdemosecret:
-  key: secret/data/hub/config-demo
+  key: secret/data/global/config-demo
 
 global:
   hubClusterDomain: hub.example.com

@@ -128,7 +128,7 @@ spec:
       type: Opaque
   dataFrom:
   - extract:
-      key: secret/data/hub/config-demo
+      key: secret/data/global/config-demo
 ---
 # Source: config-demo/templates/config-demo-is.yaml
 apiVersion: image.openshift.io/v1
