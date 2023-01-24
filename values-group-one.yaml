@@ -10,13 +10,21 @@ clusterGroup:
 
   namespaces:
     - config-demo
+    - golang-external-secrets
 
   subscriptions:
 
   projects:
+    - eso
     - config-demo
 
   applications:
+    golang-external-secrets:
+      name: golang-external-secrets
+      namespace: golang-external-secrets
+      project: eso
+      path: common/golang-external-secrets
+
     config-demo:
       name: config-demo
       namespace: config-demo
@@ -24,12 +32,13 @@ clusterGroup:
       path: charts/all/config-demo
 
 
-  imperative:
-    # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
-    jobs:
-    - name: get-hub
-      playbook: ansible/playbooks/on-regional-get-hub-ca.yml
-      timeout: 123
+  # imperative:
+  #   # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
+  #   schedule: "*/3,7 * * * *"
+  #   jobs:
+  #   - name: get-hub
+  #     playbook: ansible/playbooks/on-regional-get-hub-ca.yml
+  #     timeout: 123
 
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
