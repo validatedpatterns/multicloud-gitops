@@ -111,15 +111,24 @@ spec:
         secret:
           secretName: config-demo-secret
 ---
-# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
-# This is a workaround to update the configdemo-region-secret-policy every five minutes with
-# a random timestamp (policy.open-cluster-management.io/trigger-update annotation).
-# That way the hub + lookup/fromSecret functions will be retriggered every five minutes
-# This won't be needed anymore once https://issues.redhat.com/browse/ACM-1208 lands in ACM
----
-# Source: config-demo/templates/config-demo-secret.yaml
-# The policy needs to be added to the ACM HUB and then it will be pushed on all clusters
-# except the HUB (see placementrule on the bottom)
+# Source: config-demo/templates/config-demo-external-secret.yaml
+apiVersion: "external-secrets.io/v1beta1"
+kind: ExternalSecret
+metadata:
+  name: config-demo-secret
+  namespace: config-demo
+spec:
+  refreshInterval: 15s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: config-demo-secret
+    template:
+      type: Opaque
+  dataFrom:
+  - extract:
+      key: secret/data/hub/config-demo
 ---
 # Source: config-demo/templates/config-demo-is.yaml
 apiVersion: image.openshift.io/v1

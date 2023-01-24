@@ -1,11 +1,4 @@
 ---
-# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  namespace: config-demo
-  name: acm-policy-updater
----
 # Source: config-demo/templates/config-demo-cm.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -31,37 +24,6 @@ data:
             </h2>
           </body>
       </html>
----
-# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  namespace: config-demo
-  name: acm-policy-updater-role
-rules:
-- apiGroups:
-  - "policy.open-cluster-management.io"
-  resources:
-  - policies
-  verbs:
-  - 'patch'
-  - 'get'
-  - 'list'
----
-# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  namespace: config-demo
-  name: acm-policy-updater-rolebinding
-subjects:
-- kind: ServiceAccount
-  name: acm-policy-updater
-  namespace: config-demo
-roleRef:
-  kind: Role
-  name: acm-policy-updater-role
-  apiGroup: ""
 ---
 # Source: config-demo/templates/config-demo-svc.yaml
 apiVersion: v1
@@ -149,42 +111,6 @@ spec:
         secret:
           secretName: config-demo-secret
 ---
-# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: update-acm-secret-policy
-  namespace: config-demo
-spec:
-  schedule: "*/5 * * * *"
-  concurrencyPolicy: Allow
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          serviceAccountName: acm-policy-updater
-          containers:
-          - name: update-acm-secret-policy-container
-            image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
-            command:
-            - /bin/bash
-            - -c
-            - >
-              oc patch policy -n config-demo configdemo-region-secret-policy --type json -p "[{'op': 'replace',
-              'path': '/spec/policy-templates/0/objectDefinition/metadata/annotations/policy.open-cluster-management.io~1trigger-update',
-              'value': '"$(date +%s)"'}]"
-          restartPolicy: OnFailure
----
-# Source: config-demo/templates/config-demo-secret-hub-cronjob.yaml
-# This is a workaround to update the configdemo-region-secret-policy every five minutes with
-# a random timestamp (policy.open-cluster-management.io/trigger-update annotation).
-# That way the hub + lookup/fromSecret functions will be retriggered every five minutes
-# This won't be needed anymore once https://issues.redhat.com/browse/ACM-1208 lands in ACM
----
-# Source: config-demo/templates/config-demo-secret.yaml
-# The policy needs to be added to the ACM HUB and then it will be pushed on all clusters
-# except the HUB (see placementrule on the bottom)
----
 # Source: config-demo/templates/config-demo-external-secret.yaml
 apiVersion: "external-secrets.io/v1beta1"
 kind: ExternalSecret
@@ -217,74 +143,6 @@ spec:
     importPolicy: {}
     referencePolicy:
       type: Local
----
-# Source: config-demo/templates/config-demo-secret.yaml
-apiVersion: policy.open-cluster-management.io/v1
-kind: PlacementBinding
-metadata:
-  name: configdemo-region-secret-placement-binding
-placementRef:
-  name: configdemo-region-secret-placement
-  kind: PlacementRule
-  apiGroup: apps.open-cluster-management.io
-subjects:
-  - name: configdemo-region-secret-policy
-    kind: Policy
-    apiGroup: policy.open-cluster-management.io
----
-# Source: config-demo/templates/config-demo-secret.yaml
-# We need to run this on any managed cluster but not on the HUB
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
-metadata:
-  name: configdemo-region-secret-placement
-spec:
-  clusterConditions:
-    - status: 'True'
-      type: ManagedClusterConditionAvailable
-  clusterSelector:
-    matchExpressions:
-      - key: local-cluster
-        operator: NotIn
-        values:
-          - 'true'
----
-# Source: config-demo/templates/config-demo-secret.yaml
-apiVersion: policy.open-cluster-management.io/v1
-kind: Policy
-metadata:
-  name: configdemo-region-secret-policy
-  annotations:
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
-    argocd.argoproj.io/sync-options: SkipPrune
-spec:
-  remediationAction: enforce
-  disabled: false
-  policy-templates:
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: config-demo-secret
-          annotations:
-            apps.open-cluster-management.io/deployables: "secret"
-        spec:
-          remediationAction: enforce
-          severity: medium
-          namespaceSelector:
-            include:
-              - default
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                kind: Secret
-                type: Opaque
-                metadata:
-                  name: config-demo-secret
-                  namespace: config-demo
-                apiVersion: v1
-                data:
-                  secret: '{{hub fromSecret "config-demo" "config-demo-secret" "secret" hub}}'
 ---
 # Source: config-demo/templates/config-demo-route.yaml
 apiVersion: route.openshift.io/v1
