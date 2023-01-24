@@ -13,6 +13,8 @@ vault_hub_capabilities: '[\\\"read\\\"]'
 vault_base_path: "secret"
 vault_path: "{{ vault_base_path }}/{{ vault_hub }}"
 vault_hub_ttl: "15m"
+vault_spoke_capabilities: '[\\\"read\\\"]'
+vault_spoke_ttl: "15m"
 vault_global_policy: global
 vault_global_capabilities: '[\\\"read\\\"]'
 external_secrets_ns: golang-external-secrets
