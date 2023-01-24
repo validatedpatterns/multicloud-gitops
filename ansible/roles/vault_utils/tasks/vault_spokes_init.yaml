@@ -175,7 +175,7 @@
       vault write auth/"{{ item.value['vault_path'] }}"/role/"{{ item.value['vault_path'] }}"-role
         bound_service_account_names="{{ external_secrets_ns }}"
         bound_service_account_namespaces="{{ external_secrets_sa }}"
-        policies="default,{{ item.value['vault_path'] }}-secret" ttl="{{ vault_hub_ttl }}"
+        policies="default,{{ vault_global_policy }}-secret,{{ item.value['vault_path'] }}-secret" ttl="{{ vault_hub_ttl }}"
   loop: "{{ clusters_info | dict2items }}"
   when:
     - item.value['esoToken'] is defined
