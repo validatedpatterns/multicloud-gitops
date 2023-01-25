@@ -41,7 +41,7 @@ clusterGroup:
     clusterRoleYaml: ""
     roleName: imperative-role
     roleYaml: ""
-  managedClusterGroups: []
+  managedClusterGroups: {}
   namespaces: []
 #  - name: factory
 #    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
@@ -60,7 +60,7 @@ clusterGroup:
 #
 #  - open-cluster-management
 #
-  subscriptions: []
+  subscriptions: {}
 #  - name: advanced-cluster-management
 #    namespace: open-cluster-management
 #    source: redhat-operators
@@ -70,7 +70,7 @@ clusterGroup:
   projects: []
 #  - datacenter
 #
-  applications: []
+  applications: {}
 #  - name: acm
 #    namespace: default
 #    project: datacenter

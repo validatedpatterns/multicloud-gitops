@@ -407,13 +407,13 @@ class LoadSecretsV2:
             path = self._get_file_path(secret_name, f)
             for prefix in prefixes:
                 if b64:
-                    b64_cmd = "base64 --wrap=0 /tmp/vcontent | "
+                    b64_cmd = "| base64 --wrap=0 "
                 else:
                     b64_cmd = ""
                 cmd = (
                     f"cat '{path}' | oc exec -n {self.namespace} {self.pod} -i -- sh -c "
-                    f"'cat - > /tmp/vcontent'; "
-                    f"oc exec -n {self.namespace} {self.pod} -i -- sh -c '{b64_cmd}"
+                    f"'cat - {b64_cmd}> /tmp/vcontent'; "
+                    f"oc exec -n {self.namespace} {self.pod} -i -- sh -c '"
                     f"vault kv {verb} -mount={mount} {prefix}/{secret_name} {f['name']}=@/tmp/vcontent; "
                     f"rm /tmp/vcontent'"
                 )

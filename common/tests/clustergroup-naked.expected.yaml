@@ -37,7 +37,7 @@ metadata:
 data:
   values.yaml: |
     clusterGroup:
-      applications: []
+      applications: {}
       imperative:
         activeDeadlineSeconds: 3600
         clusterRoleName: imperative-cluster-role
@@ -57,11 +57,11 @@ data:
         valuesConfigMap: helm-values-configmap
         verbosity: ""
       isHubCluster: true
-      managedClusterGroups: []
+      managedClusterGroups: {}
       name: example
       namespaces: []
       projects: []
-      subscriptions: []
+      subscriptions: {}
       targetCluster: in-cluster
     enabled: all
     global:
@@ -227,7 +227,7 @@ spec:
                 - -e
                 - "@/values/values.yaml"
                 - -t
-                - 'vault_init,vault_unseal,vault_secrets_init'
+                - 'vault_init,vault_unseal,vault_secrets_init,vault_spokes_init'
                 - "common/ansible/playbooks/vault/vault.yaml"
               volumeMounts:                
                 - name: git

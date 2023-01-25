@@ -1,8 +1,4 @@
 ---
-- name: Delete vault
-  ansible.builtin.import_tasks: vault_delete.yaml
-  tags: vault_delete
-
 - name: Run vault init tasks
   ansible.builtin.import_tasks: vault_init.yaml
   tags: vault_init
@@ -14,6 +10,10 @@
 - name: Vault secrets init
   ansible.builtin.import_tasks: vault_secrets_init.yaml
   tags: vault_secrets_init
+
+- name: Vault spoke backend init
+  ansible.builtin.import_tasks: vault_spokes_init.yaml
+  tags: vault_spokes_init
 
 - name: Load secrets
   ansible.builtin.import_tasks: push_secrets.yaml

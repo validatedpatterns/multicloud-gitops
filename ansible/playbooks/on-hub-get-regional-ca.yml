@@ -1,7 +1,8 @@
 # This playbook fetches the managed cluster's CAbundle from ACM's objects
 # and puts it in a secret inside the imperative namespace. One secret per cluster
 ---
-- hosts: localhost
+- name: Fetch CA from regional cluster
+  hosts: localhost
   connection: local
   gather_facts: false
   become: false

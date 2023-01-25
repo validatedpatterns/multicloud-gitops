@@ -1,5 +1,17 @@
 # Changes
 
+## January 23, 2023
+
+* Add initial support for running ESO on ACM-imported clusters
+
+## January 18, 2023
+
+* Add validate-schema target
+
+## January 13, 2023
+
+* Simplify the secrets paths when using argo hosted sites
+
 ## January 10, 2023
 
 * vaultPrefixes is now optional in the v2 secret spec and defaults to ["hub"]

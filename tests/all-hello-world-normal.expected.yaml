@@ -1,37 +1,36 @@
 ---
-# Source: config-demo/templates/config-demo-cm.yaml
+# Source: hello-world/templates/hello-world-cm.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: config-demo-configmap
+  name: hello-world-configmap
   labels:
-    app.kubernetes.io/instance: config-demo
+    app.kubernetes.io/instance: hello-world
 data:
   "index.html": |-
     <!DOCTYPE html>
       <html lang="en">
         <head>
           <meta charset="utf-8">
-            <title>Config Demo</title>
+          <title>Hello World</title>
         </head>
           <body>
-            <h1>
+            <h1>Hello World!</h1>
+            <br/>
+            <h2>
             Hub Cluster domain is 'apps.hub.example.com' <br>
             Pod is running on Local Cluster Domain 'apps.region.example.com' <br>
-            </h1>
-            <h2>
-            The secret is <a href="/secret/secret">secret</a>
             </h2>
           </body>
       </html>
 ---
-# Source: config-demo/templates/config-demo-svc.yaml
+# Source: hello-world/templates/hello-world-svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: config-demo
-  name: config-demo
+    app: hello-world
+  name: hello-world
 spec:
   ports:
   - name: 8080-tcp
@@ -39,31 +38,30 @@ spec:
     protocol: TCP
     targetPort: 8080
   selector:
-    app: config-demo
-    deploymentconfig: config-demo
+    app: hello-world
+    deploymentconfig: hello-world
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: config-demo/templates/config-demo-deployment.yaml
+# Source: hello-world/templates/hello-world-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    application: config-demo
-  name: config-demo
+    application: hello-world
+  name: hello-world
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      deploymentconfig: config-demo
+      deploymentconfig: hello-world
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        app: config-demo
-        deploymentconfig: config-demo
-      name: config-demo
+        app: hello-world
+        deploymentconfig: hello-world
+      name: hello-world
     spec:
       containers:
       - name: apache
@@ -75,10 +73,7 @@ spec:
           protocol: TCP
         volumeMounts:
         - mountPath: /var/www/html
-          name: config-demo-configmap
-        - mountPath: /var/www/html/secret
-          readOnly: true
-          name: config-demo-secret
+          name: hello-world-configmap
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
@@ -103,59 +98,23 @@ spec:
           successThreshold: 1
           failureThreshold: 3
       volumes:
-      - name: config-demo-configmap
+      - name: hello-world-configmap
         configMap:
           defaultMode: 438
-          name: config-demo-configmap
-      - name: config-demo-secret
-        secret:
-          secretName: config-demo-secret
+          name: hello-world-configmap
 ---
-# Source: config-demo/templates/config-demo-external-secret.yaml
-apiVersion: "external-secrets.io/v1beta1"
-kind: ExternalSecret
-metadata:
-  name: config-demo-secret
-  namespace: config-demo
-spec:
-  refreshInterval: 15s
-  secretStoreRef:
-    name: vault-backend
-    kind: ClusterSecretStore
-  target:
-    name: config-demo-secret
-    template:
-      type: Opaque
-  dataFrom:
-  - extract:
-      key: secret/data/global/config-demo
----
-# Source: config-demo/templates/config-demo-is.yaml
-apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  name: config-demo
-spec:
-  lookupPolicy:
-    local: true
-  tags:
-  - name: registry.access.redhat.com/ubi8/httpd-24
-    importPolicy: {}
-    referencePolicy:
-      type: Local
----
-# Source: config-demo/templates/config-demo-route.yaml
+# Source: hello-world/templates/hello-world-route.yaml
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   labels:
-    app: config-demo
-  name: config-demo
+    app: hello-world
+  name: hello-world
 spec:
   port:
     targetPort: 8080-tcp
   to:
     kind: Service
-    name: config-demo
+    name: hello-world
     weight: 100
   wildcardPolicy: None
