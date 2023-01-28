@@ -18,7 +18,7 @@
 
 - name: Loop over returned ACM managedclusters
   ansible.builtin.set_fact:
-    clusters: "{{ clusters|default({}) | combine( { item.metadata.name: { 'caBundle': item.spec.managedClusterClientConfigs[0].caBundle | b64decode } } ) }}"
+    clusters: "{{ clusters | default({}) | combine({item.metadata.name: {'caBundle': item.spec.managedClusterClientConfigs[0].caBundle | b64decode}}) }}"
   loop: "{{ resources }}"
   when: item.spec.managedClusterClientConfigs[0].caBundle is defined
   loop_control:
@@ -26,7 +26,7 @@
 
 - name: Extract ClusterGroup
   ansible.builtin.set_fact:
-    clusters: "{{ clusters|default({}) | combine( { item.metadata.name: { 'clusterGroup': item.metadata.labels.clusterGroup } }, recursive=True ) }}"
+    clusters: "{{ clusters | default({}) | combine({item.metadata.name: {'clusterGroup': item.metadata.labels.clusterGroup}}, recursive=True) }}"
   when: "'clusterGroup' in item.metadata.labels"
   loop: "{{ resources }}"
   loop_control:
@@ -47,10 +47,11 @@
   ansible.builtin.set_fact:
     clusters_info: "{{ clusters | combine(cleaned_acm_secrets, recursive=True) }}"
 
-- name: write out CAs
+- name: Write out CAs
   ansible.builtin.copy:
     content: "{{ item.value['caBundle'] }}"
     dest: "/tmp/{{ item.key }}.ca"
+    mode: "0640"
   loop: "{{ clusters_info | dict2items }}"
   when: item.value['caBundle'] is defined
   loop_control:
@@ -59,7 +60,7 @@
 - name: Fetch remote ansible to remote cluster
   kubernetes.core.k8s_info:
     api_key: "{{ item.value['bearerToken'] }}"
-    ca_cert: /tmp/{{ item.key}}.ca
+    ca_cert: /tmp/{{ item.key }}.ca
     host: "{{ item.value['server_api'] }}"
     kind: Secret
     namespace: "{{ external_secrets_ns }}"
@@ -78,7 +79,7 @@
 # app configured and running
 - name: Loop over returned ESO tokens
   ansible.builtin.set_fact:
-    clusters_info: "{{ clusters_info | default({}) | combine({ item['item']['key']: { 'esoToken': item['resources'][0]['data']['token'] | b64decode}}, recursive=True) }}"
+    clusters_info: "{{ clusters_info | default({}) | combine({item['item']['key']: {'esoToken': item['resources'][0]['data']['token'] | b64decode}}, recursive=True) }}"
   loop: "{{ remote_external_secrets_sa.results }}"
   when: item['resources'][0]['data']['token'] is defined
   loop_control:
