@@ -1,5 +1,10 @@
 # Changes
 
+## January 29, 2023
+
+* Stop extracting the HUB's CA via an imperative job running on the imported cluster.
+  Just use ACM to push the HUB's CA out to the managed clusters.
+
 ## January 23, 2023
 
 * Add initial support for running ESO on ACM-imported clusters
