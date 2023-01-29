@@ -1,4 +1,7 @@
 ---
+# Source: acm/templates/policies/acm-hub-ca-policy.yaml
+# This pushes out the HUB's Certificate Authorities on to the imported clusters
+---
 # Source: acm/templates/policies/application-policies.yaml
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
 ---
