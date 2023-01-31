@@ -25,6 +25,7 @@ podman run -it \
 	${KUBECONF_ENV} \
 	${SSH_SOCK_MOUNTS} \
 	-v ${HOME}:${HOME} \
+	-v ${HOME}:/pattern-home \
 	-v ${HOME}:/root \
 	-w $(pwd) \
 	"$PATTERN_UTILITY_CONTAINER" \
