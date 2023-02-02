@@ -26,8 +26,8 @@ help: ## This help message
 show: ## show the starting template without installing it
 	helm template common/operator-install/ --name-template $(NAME) $(HELM_OPTS)
 
-.PHONY: operator-deploy operator-upgrade
-operator-deploy operator-upgrade: validate-prereq validate-origin ## runs helm install
+.PHONY: operator-deploy
+operator-deploy: validate-prereq validate-origin ## runs helm install
 	@echo "Running helm:"
 	helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS)
 
