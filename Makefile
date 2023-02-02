@@ -124,6 +124,6 @@ ansible-unittest: ## run ansible unit tests
 	pytest -r a --fulltrace --color yes ansible/tests/unit/test_*.py
 
 .PHONY: deploy upgrade legacy-deploy legacy-upgrade
-deploy upgrade legacy-deploy legacy-upgrade: ## does nothing anymore. use operator-deploy
+deploy upgrade legacy-deploy legacy-upgrade:
 	@echo "UNSUPPORTED TARGET: please switch to 'operator-deploy'"; exit 1
 
