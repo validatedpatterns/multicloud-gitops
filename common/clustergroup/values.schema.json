@@ -148,7 +148,7 @@
     },
     "GlobalGit": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "description": "The git configuration used to support Tekton pipeline tasks.",
       "properties": {
         "hostname": {
