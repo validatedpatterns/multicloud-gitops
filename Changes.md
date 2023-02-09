@@ -1,5 +1,9 @@
 # Changes
 
+## February 9, 2023
+
+* Add support for /values-<platform>.yaml and for /values-<platform>-<clusterversion>.yaml
+
 ## January 29, 2023
 
 * Stop extracting the HUB's CA via an imperative job running on the imported cluster.
