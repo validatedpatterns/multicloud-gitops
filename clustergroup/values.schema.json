@@ -223,6 +223,13 @@
             "type": "string"
           }
         },
+        "indexImages": {
+          "type": "array",
+          "description": "List of index images for overriding default catalog sources.",
+          "items": {
+            "$ref": "#/definitions/IndexImages"
+          }
+        },
         "operatorgroupExcludes": {
           "type": "array",
           "description": "List of namespaces to exclude the creation of operator groups.",
@@ -395,6 +402,21 @@
         "project"
       ],
       "title": "Applications"
+    },
+    "IndexImages": {
+      "type": "object",
+      "description": "Details for overriding default catalog sources",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name for the custom catalog source."
+        },
+        "image": {
+          "type": "string",
+          "description": "Location of the index image."
+        }
+      }
     },
     "HostedSite": {
       "type": "object",
