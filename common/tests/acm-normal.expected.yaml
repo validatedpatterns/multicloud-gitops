@@ -604,6 +604,8 @@ spec:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-acm-edge.yaml"
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}.yaml'
                       - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-edge.yaml'
                       # We cannot use $.Values.global.clusterVersion because that gets resolved to the
                       # hub's cluster version, whereas we want to include the spoke cluster version
@@ -694,6 +696,8 @@ spec:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-acm-provision-edge.yaml"
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}.yaml'
                       - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-provision-edge.yaml'
                       # We cannot use $.Values.global.clusterVersion because that gets resolved to the
                       # hub's cluster version, whereas we want to include the spoke cluster version
