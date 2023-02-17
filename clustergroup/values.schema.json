@@ -224,7 +224,14 @@
           }
         },
         "indexImages": {
-          "type": "array",
+          "anyOf": [
+            {
+              "type": "array"
+            },
+            {
+              "type": "object"
+            }
+          ],
           "description": "List of index images for overriding default catalog sources.",
           "items": {
             "$ref": "#/definitions/IndexImages"
