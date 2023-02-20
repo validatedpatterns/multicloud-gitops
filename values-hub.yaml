@@ -75,7 +75,7 @@ clusterGroup:
   managedClusterGroups:
     exampleRegion:
       name: group-one
-      labels:
+      acmlabels:
       - name: clusterGroup
         value: group-one
       helmOverrides:
