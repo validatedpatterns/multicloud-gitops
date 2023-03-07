@@ -10,8 +10,7 @@ clusterGroup:
 
   indexImages:
   - name: snr
-    image: quay.io/mshitrit/self-node-remediation-manager-index
-    version: 0.0.104
+    image: quay.io/mshitrit/self-node-remediation-manager-index:0.0.104
 
   subscriptions:
     acm:

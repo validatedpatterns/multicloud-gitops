@@ -10,3 +10,10 @@ spec:
     targetRevision: {{ .Values.main.git.revision }}
   gitOpsSpec:
     operatorChannel: {{ default "stable" .Values.main.gitops.channel }}
+{{- if .Values.main.extraParameters }}
+  extraParameters:
+{{- range .Values.main.extraParameters }}
+  - name: {{ .name }}
+    value: {{ .value }}
+{{- end }}
+{{- end }}
