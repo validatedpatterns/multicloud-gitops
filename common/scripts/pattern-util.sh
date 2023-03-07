@@ -27,11 +27,10 @@ fi
 
 podman run -it \
 	--security-opt label=disable \
-	${KUBECONF_ENV} \
-	${SSH_SOCK_MOUNTS} \
-	-v ${HOME}:${HOME} \
-	-v ${HOME}:/pattern-home \
-	-v ${HOME}:/root \
-	-w $(pwd) \
+	"${KUBECONF_ENV}" \
+	-v "${HOME}":"${HOME}" \
+	-v "${HOME}":/pattern-home \
+	-v "${HOME}":/root \
+	-w "$(pwd)" \
 	"$PATTERN_UTILITY_CONTAINER" \
 	$@
