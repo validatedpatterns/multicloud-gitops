@@ -44,8 +44,9 @@ This relies on [kubernetes.core](https://docs.ansible.com/ansible/latest/collect
 
 Currently this role supports two formats: version 1.0 (which is the assumed default when not specified) and version 2.0.
 The latter is more fatureful and supports generating secrets directly into the vault and also prompting the user for a secret.
-By default, the first file that will looked up is `~/values-secret-<patternname>.yaml` and should that not exist it will look
-for `~/values-secret.yaml`. The paths can be overridden by setting the environment variable `VALUES_SECRET` to the path of the
+By default, the first file that will looked up is `~/.config/hybrid-cloud-patterns/values-secret-<patternname>.yaml`, then
+`~/values-secret-<patternname>.yaml` and should that not exist it will look for `~/values-secret.yaml`.
+The paths can be overridden by setting the environment variable `VALUES_SECRET` to the path of the
 secret file.
 
 The values secret yaml files can be encrypted with `ansible-vault`. If the role detects they are encrypted, the password to
