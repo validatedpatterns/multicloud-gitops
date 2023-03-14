@@ -1,0 +1,202 @@
+---
+# Source: letsencrypt/templates/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-manager-operator
+spec:
+---
+# Source: letsencrypt/templates/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-manager
+spec:
+---
+# Source: letsencrypt/templates/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: letsencrypt
+spec:
+---
+# Source: letsencrypt/templates/default-routes.yaml
+apiVersion: config.openshift.io/v1
+kind: APIServer
+metadata:
+  name: cluster
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true, Validate=false, SkipDryRunOnMissingResource=true
+spec:
+  servingCerts:
+    namedCertificates:
+      - names:
+        - api.region.example.com
+        servingCertificate:
+          name: api-validated-patterns-letsencrypt-cert
+---
+# Source: letsencrypt/templates/default-routes.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCD
+metadata:
+  name: openshift-gitops
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true, Validate=false, SkipDryRunOnMissingResource=true
+spec:
+  server:
+    route:
+      enabled: true
+      tls:
+         termination: reencrypt
+---
+# Source: letsencrypt/templates/cert-manager-installation.yaml
+apiVersion: operator.openshift.io/v1alpha1
+kind: CertManager
+metadata:
+  name: cluster
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true, Validate=false, SkipDryRunOnMissingResource=true
+spec:
+  managementState: "Managed"
+  unsupportedConfigOverrides:
+    # Here's an example to supply custom DNS settings.
+    controller:
+      args:
+        - "--dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53"
+        - "--dns01-recursive-nameservers-only"
+---
+# Source: letsencrypt/templates/api-cert.yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api-validated-patterns-cert
+  namespace: openshift-config
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  secretName: api-validated-patterns-letsencrypt-cert
+  duration: 168h0m0s
+  renewBefore: 28h0m0s
+  commonName: 'api.region.example.com'
+  usages:
+    - server auth
+  dnsNames:
+  - api.region.example.com
+  issuerRef:
+    name: validated-patterns-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+    - hybrid-cloud-patterns.io
+---
+# Source: letsencrypt/templates/wildcard-cert.yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lets-encrypt-certs
+  namespace: openshift-ingress
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  secretName: lets-encrypt-wildcart-cert-tls
+  duration: 168h0m0s
+  renewBefore: 28h0m0s
+  commonName: '*.apps.region.example.com'
+  usages:
+    - server auth
+  dnsNames:
+    - '*.apps.region.example.com'
+  issuerRef:
+    name: validated-patterns-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+    - hybrid-cloud-patterns.io
+---
+# Source: letsencrypt/templates/issuer.yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: validated-patterns-issuer
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: test@example.com
+    privateKeySecretRef:
+      name: validated-patterns-issuer-account-key
+    solvers:
+    - selector: {}
+      dns01:
+        route53:
+          region: eu-central-1
+          accessKeyIDSecretRef:
+            name: cert-manager-dns-credentials
+            key: aws_access_key_id
+          secretAccessKeySecretRef:
+            name: cert-manager-dns-credentials
+            key: aws_secret_access_key
+---
+# Source: letsencrypt/templates/credentials-request.yaml
+apiVersion: cloudcredential.openshift.io/v1
+kind: CredentialsRequest
+metadata:
+  name: letsencrypt-cert-manager-dns
+  namespace: openshift-cloud-credential-operator
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  providerSpec:
+    apiVersion: cloudcredential.openshift.io/v1
+    kind: AWSProviderSpec
+    statementEntries:
+    - action:
+      - 'route53:ChangeResourceRecordSets'
+      - 'route53:GetChange'
+      - 'route53:ListHostedZonesByName'
+      - 'route53:ListHostedZones'
+      effect: Allow
+      resource: '*'
+  secretRef:
+    name: cert-manager-dns-credentials
+    namespace: cert-manager
+---
+# Source: letsencrypt/templates/default-routes.yaml
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  name: default
+  namespace: openshift-ingress-operator
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true, Validate=false, SkipDryRunOnMissingResource=true
+spec:
+  routeAdmission:
+    wildcardPolicy: WildcardsAllowed
+  defaultCertificate:
+    name: lets-encrypt-wildcart-cert-tls
+# Patch the cluster-wide argocd instance so it uses the ingress tls cert
+---
+# Source: letsencrypt/templates/cert-manager-installation.yaml
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: cert-manager-operator
+  namespace: cert-manager-operator
+spec:
+  targetNamespaces:
+  - cert-manager-operator
+---
+# Source: letsencrypt/templates/cert-manager-installation.yaml
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: openshift-cert-manager-operator
+  namespace: cert-manager-operator
+spec:
+  channel: "stable-v1"
+  installPlanApproval: Automatic
+  name: openshift-cert-manager-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace

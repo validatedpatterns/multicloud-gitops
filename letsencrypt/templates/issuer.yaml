@@ -1,0 +1,25 @@
+{{ if .Values.letsencrypt.enabled }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: validated-patterns-issuer
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  acme:
+    server: {{ .Values.letsencrypt.server }}
+    email: {{ .Values.letsencrypt.email }}
+    privateKeySecretRef:
+      name: validated-patterns-issuer-account-key
+    solvers:
+    - selector: {}
+      dns01:
+        route53:
+          region: {{ .Values.letsencrypt.region }}
+          accessKeyIDSecretRef:
+            name: cert-manager-dns-credentials
+            key: aws_access_key_id
+          secretAccessKeySecretRef:
+            name: cert-manager-dns-credentials
+            key: aws_secret_access_key
+{{- end }}
