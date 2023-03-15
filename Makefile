@@ -117,7 +117,9 @@ super-linter: ## Runs super linter locally
 					-e VALIDATE_DOCKERFILE_HADOLINT=false \
 					-e VALIDATE_TEKTON=false \
 					$(DISABLE_LINTERS) \
-					-v $(PWD):/tmp/lint:rw,z docker.io/github/super-linter:slim-v4
+					-v $(PWD):/tmp/lint:rw,z \
+					-w /tmp/lint \
+					docker.io/github/super-linter:slim-v4
 
 .PHONY: ansible-lint
 ansible-lint: ## run ansible lint on ansible/ folder
