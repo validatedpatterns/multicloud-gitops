@@ -1,5 +1,9 @@
 # Changes
 
+## March 20, 2023
+
+* Upgraded ESO to 0.8.1
+
 ## February 9, 2023
 
 * Add support for /values-<platform>.yaml and for /values-<platform>-<clusterversion>.yaml
