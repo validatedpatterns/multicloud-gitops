@@ -17,7 +17,7 @@ clusterGroup:
   imperative:
     jobs: []
     # This image contains ansible + kubernetes.core by default and is used to run the jobs
-    image: registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest
+    image: registry.redhat.io/ansible-automation-platform-23/ee-supported-rhel8:latest
     namespace: "imperative"
     # configmap name in the namespace that will contain all helm values
     valuesConfigMap: "helm-values-configmap"
