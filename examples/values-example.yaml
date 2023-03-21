@@ -13,7 +13,13 @@ clusterGroup:
   isHubCluster: true
 
   namespaces:
-  - open-cluster-management
+  - open-cluster-management:
+      labels:
+      - name: "openshift.io/node-selector"
+        value: ""
+      annotations:
+      - name: "openshift.io/cluster-monitoring"
+        value: "true"
   - application-ci
 
   subscriptions:
