@@ -3,9 +3,12 @@
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: open-cluster-management
   labels:
     argocd.argoproj.io/managed-by: mypattern-example
-  name: open-cluster-management
+    openshift.io/node-selector: ""
+  annotations:
+    openshift.io/cluster-monitoring: "true"
 spec:
 ---
 # Source: pattern-clustergroup/templates/core/namespaces.yaml
@@ -143,7 +146,13 @@ data:
         name: argo-edge
       name: example
       namespaces:
-      - open-cluster-management
+      - open-cluster-management:
+          annotations:
+          - name: openshift.io/cluster-monitoring
+            value: "true"
+          labels:
+          - name: openshift.io/node-selector
+            value: ""
       - application-ci
       projects:
       - datacenter
@@ -959,11 +968,11 @@ spec:
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  name: open-cluster-management-operator-group
-  namespace: open-cluster-management
+  name: map[open-cluster-management:map[annotations:[map[name:openshift.io/cluster-monitoring value:true]] labels:[map[name:openshift.io/node-selector value:]]]]-operator-group
+  namespace: map[open-cluster-management:map[annotations:[map[name:openshift.io/cluster-monitoring value:true]] labels:[map[name:openshift.io/node-selector value:]]]]
 spec:
   targetNamespaces:
-  - open-cluster-management
+  - map[open-cluster-management:map[annotations:[map[name:openshift.io/cluster-monitoring value:true]] labels:[map[name:openshift.io/node-selector value:]]]]
 ---
 # Source: pattern-clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
