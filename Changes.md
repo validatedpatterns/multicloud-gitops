@@ -2,6 +2,10 @@
 
 ## March 20, 2023
 
+* Added labels and annotation support to namespaces.yaml
+
+## March 20, 2023
+
 * Upgraded ESO to 0.8.1
 
 ## February 9, 2023
