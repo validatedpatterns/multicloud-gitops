@@ -1,8 +1,8 @@
 # Changes
 
-## March 20, 2023
+## March 21, 2023
 
-* Added labels and annotation support to namespaces.yaml
+* Added labels and annotation support to namespaces.yaml template
 
 ## March 20, 2023
 
