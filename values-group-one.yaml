@@ -5,7 +5,7 @@ global:
     installPlanApproval: Automatic
 
 clusterGroup:
-  name: region-one
+  name: group-one
   isHubCluster: false
 
   namespaces:
