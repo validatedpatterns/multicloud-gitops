@@ -1,7 +1,8 @@
 # Multicloud Gitops
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[Build status](https://util.hybrid-cloud-patterns.io/dashboard.php?pattern=mcgitops)
+
+[Live build status](https://util.hybrid-cloud-patterns.io/dashboard.php?pattern=mcgitops)
 
 ## Start Here
 
