@@ -156,7 +156,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -205,7 +205,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -213,7 +213,7 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -378,7 +378,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -413,7 +413,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -421,7 +421,7 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -468,7 +468,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -543,7 +543,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -597,7 +597,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -669,7 +669,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -677,7 +677,7 @@ class TestMyModule(unittest.TestCase):
                 attempts=3,
             ),
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/advancedPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/advancedPolicy  policy=@/tmp/advancedPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
@@ -733,7 +733,7 @@ class TestMyModule(unittest.TestCase):
 
         calls = [
             call(
-                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
+                'echo \'length=20\nrule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\nrule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\nrule "charset" { charset = "0123456789" min-chars = 1 }\nrule "charset" { charset = "!@#%^&*" min-chars = 1 }\n\' | oc exec -n vault vault-0 -i -- sh -c \'cat - > /tmp/validatedPatternDefaultPolicy.hcl\';oc exec -n vault vault-0 -i -- sh -c \'vault write sys/policies/password/validatedPatternDefaultPolicy  policy=@/tmp/validatedPatternDefaultPolicy.hcl\'',  # noqa: E501
                 attempts=3,
             ),
             call(
