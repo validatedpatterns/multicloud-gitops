@@ -45,7 +45,7 @@
 
 - name: Merge the two dicts together
   ansible.builtin.set_fact:
-    clusters_info: "{{ clusters | combine(cleaned_acm_secrets, recursive=True) }}"
+    clusters_info: "{{ clusters | default({}) | combine(cleaned_acm_secrets, recursive=True) }}"
 
 - name: Write out CAs
   ansible.builtin.copy:
