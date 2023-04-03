@@ -57,6 +57,13 @@
   loop_control:
     label: "{{ item.key }}"
 
+# FIXME(bandini): validate_certs is false due to an ACM bug when using
+# letsencrypt certificates with API endpoints: https://issues.redhat.com/browse/ACM-4398
+# We always verify the CA chain except when letsencrypt.api_endpoint is set to true
+- name: If we are using letsencrypt on the API endpoints we cannot use the validate_certs later
+  ansible.builtin.set_fact:
+    validate_certs_api_endpoint: "{{ not letsencrypt.api_endpoint | default(True) | bool }}"
+
 - name: Fetch remote ansible to remote cluster
   kubernetes.core.k8s_info:
     api_key: "{{ item.value['bearerToken'] }}"
@@ -66,6 +73,7 @@
     namespace: "{{ external_secrets_ns }}"
     name: "{{ external_secrets_secret }}"
     api_version: v1
+    validate_certs: "{{ validate_certs_api_endpoint }}"
   register: remote_external_secrets_sa
   when:
     - clusters_info[item.key]['bearerToken'] is defined
