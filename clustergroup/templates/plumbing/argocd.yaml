@@ -82,15 +82,17 @@ spec:
       requests:
         cpu: 500m
         memory: 2Gi
-  dex:
-    openShiftOAuth: true
-    resources:
-      limits:
-        cpu: 500m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 128Mi
+  sso:
+    provider: dex
+    dex:
+      openShiftOAuth: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 128Mi
   initialSSHKnownHosts: {}
   rbac:
     defaultPolicy: role:admin
