@@ -1,5 +1,9 @@
 # Changes
 
+## Apr 11, 2023
+
+* Apply the ACM ocp-gitops-policy everywhere but the hub
+
 ## Apr 7, 2023
 
 * Moved to gitops-1.8 channel by default (stable is unmaintained and will be dropped starting with ocp-4.13)
