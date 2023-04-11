@@ -48,6 +48,10 @@ spec:
         operator: In
         values:
           - OpenShift
+      - key: local-cluster
+        operator: NotIn
+        values:
+          - 'true'
 ---
 # Source: acm/templates/policies/ocp-gitops-policy.yaml
 apiVersion: policy.open-cluster-management.io/v1

@@ -1,3 +1,7 @@
+main:
+  gitops:
+    channel: "gitops-1.8"
+
 global:
   pattern: none
   repoURL: none
