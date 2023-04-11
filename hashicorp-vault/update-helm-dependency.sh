@@ -22,6 +22,7 @@ pushd "${NAME}"
 for i in ../../local-patches/*.patch; do
 	filterdiff "${i}" -p1 -x 'test/*' | patch -p1
 done
+find . -type f -iname '*.orig' -exec rm -f "{}" \;
 popd
 tar cvfz "${TAR}" "${NAME}"
 rm -rf "${NAME}"

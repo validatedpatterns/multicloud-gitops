@@ -6,5 +6,5 @@ name: hashicorp-vault
 version: 0.0.1
 dependencies:
   - name: vault
-    version: "0.23.0"
+    version: "0.24.0"
     repository: "https://helm.releases.hashicorp.com"
