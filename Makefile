@@ -134,7 +134,8 @@ super-linter: ## Runs super linter locally
 
 .PHONY: ansible-lint
 ansible-lint: ## run ansible lint on ansible/ folder
-	podman run -it -v $(PWD):/workspace:rw,z --workdir /workspace --entrypoint "/usr/local/bin/ansible-lint" quay.io/ansible/creator-ee:latest  "-vvv" "ansible/"
+	podman run -it -v $(PWD):/workspace:rw,z --workdir /workspace --env ANSIBLE_CONFIG=./ansible/ansible.cfg \
+		--entrypoint "/usr/local/bin/ansible-lint" quay.io/ansible/creator-ee:latest  "-vvv" "ansible/"
 
 .PHONY: ansible-unittest
 ansible-unittest: ## run ansible unit tests
