@@ -20,7 +20,7 @@ jobs:
     name: Json Schema tests
     strategy:
       matrix:
-        python-version: [3.11.2]
+        python-version: [3.11.3]
     # Set the agent to run on
     runs-on: ubuntu-latest
 
