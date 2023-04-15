@@ -2,7 +2,8 @@
 # It creates a config-map inside the imperative namespace containing
 # the helm variable "global.clusterDomain"
 ---
-- hosts: localhost
+- name: Hello World Example
+  hosts: localhost
   connection: local
   gather_facts: false
   become: false

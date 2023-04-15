@@ -1,7 +1,8 @@
 # This playbook fetches the hub cluster's CAbundle from ACM's objects
 # and puts it in a secret inside the imperative namespace
 ---
-- hosts: localhost
+- name: ACM Get Hub CA
+  hosts: localhost
   connection: local
   gather_facts: false
   become: false
