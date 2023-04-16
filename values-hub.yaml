@@ -65,9 +65,9 @@ clusterGroup:
     # For additional overrides that apply to the jobs, please refer to
     # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
     jobs:
-    - name: regional-ca
+    - name: hello-world
       # ansible playbook to be run
-      playbook: ansible/playbooks/on-hub-get-regional-ca.yml
+      playbook: common/ansible/playbooks/hello-world/hello-world.yaml
       # per playbook timeout in seconds
       timeout: 234
       # verbosity: "-v"
