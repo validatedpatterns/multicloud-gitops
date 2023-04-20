@@ -21,7 +21,7 @@ jobs:
       # Run Linter against code base #
       ################################
       - name: Lint Code Base
-        uses: github/super-linter/slim@v4
+        uses: github/super-linter/slim@v5
         env:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
@@ -30,7 +30,7 @@ jobs:
           VALIDATE_ANSIBLE: false
           VALIDATE_BASH: false
           VALIDATE_JSCPD: false
-          VALIDATE_KUBERNETES_KUBEVAL: false
+          VALIDATE_KUBERNETES_KUBECONFORM: false
           VALIDATE_YAML: false
           # VALIDATE_DOCKERFILE_HADOLINT: false
           # VALIDATE_MARKDOWN: false
