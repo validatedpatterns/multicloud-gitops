@@ -12,6 +12,8 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
+# Adding health checks to argocd to prevent pvc resources
+# that aren't bound state from blocking deployments
   resourceCustomizations: |
     PersistentVolumeClaim:
       health.lua: |
