@@ -30,7 +30,7 @@ jobs:
           VALIDATE_ANSIBLE: false
           VALIDATE_BASH: false
           VALIDATE_JSCPD: false
-          VALIDATE_KUBERNETES_KUBEVAL: false
+          VALIDATE_KUBERNETES_KUBECONFORM: false
           VALIDATE_YAML: false
           # VALIDATE_DOCKERFILE_HADOLINT: false
           # VALIDATE_MARKDOWN: false

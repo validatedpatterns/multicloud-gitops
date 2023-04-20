@@ -122,7 +122,7 @@ super-linter: ## Runs super linter locally
 	podman run -e RUN_LOCAL=true -e USE_FIND_ALGORITHM=true	\
 					-e VALIDATE_BASH=false \
 					-e VALIDATE_JSCPD=false \
-					-e VALIDATE_KUBERNETES_KUBEVAL=false \
+					-e VALIDATE_KUBERNETES_KUBECONFORM=false \
 					-e VALIDATE_YAML=false \
 					-e VALIDATE_ANSIBLE=false \
 					-e VALIDATE_DOCKERFILE_HADOLINT=false \
