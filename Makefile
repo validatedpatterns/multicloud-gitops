@@ -130,7 +130,7 @@ super-linter: ## Runs super linter locally
 					$(DISABLE_LINTERS) \
 					-v $(PWD):/tmp/lint:rw,z \
 					-w /tmp/lint \
-					docker.io/github/super-linter:slim-v4
+					docker.io/github/super-linter:slim-v5
 
 .PHONY: ansible-lint
 ansible-lint: ## run ansible lint on ansible/ folder
