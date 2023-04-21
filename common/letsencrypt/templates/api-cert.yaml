@@ -1,0 +1,28 @@
+{{ if and (.Values.letsencrypt.enabled) (.Values.letsencrypt.api_endpoint) }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: api-validated-patterns-cert
+  namespace: openshift-config
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  secretName: api-validated-patterns-letsencrypt-cert
+  duration: {{ .Values.letsencrypt.duration }}
+  renewBefore: {{ .Values.letsencrypt.renewBefore }}
+  commonName: 'api.{{ $.Values.global.localClusterDomain | replace "apps." "" }}'
+  usages:
+    {{- range .Values.letsencrypt.usages }}
+    - {{ . }}
+    {{- end }}
+  dnsNames:
+  - api.{{ $.Values.global.localClusterDomain | replace "apps." "" }}
+  issuerRef:
+    name: validated-patterns-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+    {{- range .Values.letsencrypt.organizations }}
+    - {{ . }}
+    {{- end }}
+{{- end }}
