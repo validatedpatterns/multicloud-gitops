@@ -15,11 +15,11 @@ clusterGroup:
   namespaces:
   - open-cluster-management:
       labels:
-      - name: "openshift.io/node-selector"
-        value: ""
+        openshift.io/node-selector: ""
+        kubernetes.io/os: linux
       annotations:
-      - name: "openshift.io/cluster-monitoring"
-        value: "true"
+        openshift.io/cluster-monitoring: "true"
+        owner: "namespace owner"
   - application-ci
 
   subscriptions:
