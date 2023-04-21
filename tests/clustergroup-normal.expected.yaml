@@ -6,9 +6,11 @@ metadata:
   name: open-cluster-management
   labels:
     argocd.argoproj.io/managed-by: mypattern-example
+    kubernetes.io/os: "linux"
     openshift.io/node-selector: ""
   annotations:
     openshift.io/cluster-monitoring: "true"
+    owner: "namespace owner"
 spec:
 ---
 # Source: pattern-clustergroup/templates/core/namespaces.yaml
@@ -148,11 +150,11 @@ data:
       namespaces:
       - open-cluster-management:
           annotations:
-          - name: openshift.io/cluster-monitoring
-            value: "true"
+            openshift.io/cluster-monitoring: "true"
+            owner: namespace owner
           labels:
-          - name: openshift.io/node-selector
-            value: ""
+            kubernetes.io/os: linux
+            openshift.io/node-selector: ""
       - application-ci
       projects:
       - datacenter
@@ -968,11 +970,11 @@ spec:
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  name: map[open-cluster-management:map[annotations:[map[name:openshift.io/cluster-monitoring value:true]] labels:[map[name:openshift.io/node-selector value:]]]]-operator-group
-  namespace: map[open-cluster-management:map[annotations:[map[name:openshift.io/cluster-monitoring value:true]] labels:[map[name:openshift.io/node-selector value:]]]]
+  name: map[open-cluster-management:map[annotations:map[openshift.io/cluster-monitoring:true owner:namespace owner] labels:map[kubernetes.io/os:linux openshift.io/node-selector:]]]-operator-group
+  namespace: map[open-cluster-management:map[annotations:map[openshift.io/cluster-monitoring:true owner:namespace owner] labels:map[kubernetes.io/os:linux openshift.io/node-selector:]]]
 spec:
   targetNamespaces:
-  - map[open-cluster-management:map[annotations:[map[name:openshift.io/cluster-monitoring value:true]] labels:[map[name:openshift.io/node-selector value:]]]]
+  - map[open-cluster-management:map[annotations:map[openshift.io/cluster-monitoring:true owner:namespace owner] labels:map[kubernetes.io/os:linux openshift.io/node-selector:]]]
 ---
 # Source: pattern-clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
