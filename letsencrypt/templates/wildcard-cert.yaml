@@ -1,0 +1,28 @@
+{{ if .Values.letsencrypt.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lets-encrypt-certs
+  namespace: openshift-ingress
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  secretName: lets-encrypt-wildcart-cert-tls
+  duration: {{ .Values.letsencrypt.duration }}
+  renewBefore: {{ .Values.letsencrypt.renewBefore }}
+  commonName: '*.{{ $.Values.global.localClusterDomain }}'
+  usages:
+    {{- range .Values.letsencrypt.usages }}
+    - {{ . }}
+    {{- end }}
+  dnsNames:
+    - '*.{{ $.Values.global.localClusterDomain }}'
+  issuerRef:
+    name: validated-patterns-issuer
+    kind: ClusterIssuer
+  subject:
+    organizations:
+    {{- range .Values.letsencrypt.organizations }}
+    - {{ . }}
+    {{- end }}
+{{- end }}

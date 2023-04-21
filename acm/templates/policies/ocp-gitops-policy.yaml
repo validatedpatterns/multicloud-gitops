@@ -35,7 +35,7 @@ spec:
                   labels:
                     operators.coreos.com/openshift-gitops-operator.openshift-operators: ''
                 spec:
-                  channel: stable
+                  channel: {{ default "gitops-1.8" .Values.main.gitops.channel }}
                   installPlanApproval: Automatic
                   name: openshift-gitops-operator
                   source: redhat-operators
@@ -76,3 +76,7 @@ spec:
         operator: In
         values:
           - OpenShift
+      - key: local-cluster
+        operator: NotIn
+        values:
+          - 'true'

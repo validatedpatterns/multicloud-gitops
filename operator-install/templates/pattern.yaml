@@ -9,7 +9,7 @@ spec:
     targetRepo: {{ .Values.main.git.repoURL }}
     targetRevision: {{ .Values.main.git.revision }}
   gitOpsSpec:
-    operatorChannel: {{ default "stable" .Values.main.gitops.channel }}
+    operatorChannel: {{ default "gitops-1.8" .Values.main.gitops.channel }}
 {{- if .Values.main.extraParameters }}
   extraParameters:
 {{- range .Values.main.extraParameters }}
