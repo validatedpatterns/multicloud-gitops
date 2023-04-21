@@ -24,8 +24,7 @@ spec:
               hs.status = "Healthy"
               hs.message = obj.status.phase
               return hs
-            end
-            if obj.status.phase == "Bound" then
+            elseif obj.status.phase == "Bound" then
               hs.status = "Healthy"
               hs.message = obj.status.phase
               return hs
