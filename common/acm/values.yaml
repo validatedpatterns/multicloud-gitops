@@ -7,8 +7,8 @@ global:
   repoURL: none
   targetRevision: main
 
-acm:
-  availabilityConfig: Basic
+# acm:
+#   availabilityConfig: Basic
 
 clusterGroup:
   managedClusterGroups:
