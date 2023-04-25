@@ -13,7 +13,7 @@ metadata:
   namespace: open-cluster-management
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
-spec: {}
+spec:
 ---
 # Source: acm/templates/policies/ocp-gitops-policy.yaml
 apiVersion: policy.open-cluster-management.io/v1
