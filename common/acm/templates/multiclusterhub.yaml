@@ -6,4 +6,8 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
+  {{- if .Values.acm }}
+  {{- if .Values.acm.availabilityConfig }}
   availabilityConfig: {{ default "High" .Values.acm.availabilityConfig }}
+  {{- end }}
+  {{- end }}

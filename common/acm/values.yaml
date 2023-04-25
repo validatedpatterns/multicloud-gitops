@@ -8,7 +8,8 @@ global:
   targetRevision: main
 
 # acm:
-#   availabilityConfig: Basic
+#   # Can be "High" or "Basic"    
+#   availabilityConfig: High
 
 clusterGroup:
   managedClusterGroups:
