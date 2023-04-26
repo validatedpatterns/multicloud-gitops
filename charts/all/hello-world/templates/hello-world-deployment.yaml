@@ -5,7 +5,7 @@ metadata:
     application: hello-world
   name: hello-world
 spec:
-  replicas: 1
+  replicas: 3
   revisionHistoryLimit: 3
   selector:
     matchLabels:
