@@ -5,7 +5,7 @@ metadata:
     application: config-demo
   name: config-demo
 spec:
-  replicas: 2
+  replicas: 6
   revisionHistoryLimit: 3
   selector:
     matchLabels:
