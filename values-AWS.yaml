@@ -1,0 +1,26 @@
+# The following snippet can be commented out in oroder
+# to enable letsencrypt certificates on API endpoint and default
+# ingress of the cluster
+# It is currently very experimental and unsupported.
+# PLEASE read https://github.com/hybrid-cloud-patterns/common/tree/main/letsencrypt#readme
+# for all the limitations around it
+
+
+# letsencrypt:
+#   enabled: true
+#   api_endpoint: true
+#   # FIXME: tweak this to match your region
+#   region: eu-central-1
+#   server: https://acme-v02.api.letsencrypt.org/directory
+#   # server: https://acme-staging-v02.api.letsencrypt.org/directory
+#   # FIXME: set this to your correct email
+#   email: iwashere@iwashere.com
+#
+# clusterGroup:
+#   applications:
+#     letsencrypt:
+#       name: letsencrypt
+#       namespace: letsencrypt
+#       # Using 'default' as that exists everywhere
+#       project: default
+#       path: common/letsencrypt

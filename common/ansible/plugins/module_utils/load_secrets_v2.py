@@ -34,7 +34,7 @@ default_vp_vault_policies = {
         'rule "charset" { charset = "abcdefghijklmnopqrstuvwxyz" min-chars = 1 }\n'
         'rule "charset" { charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" min-chars = 1 }\n'
         'rule "charset" { charset = "0123456789" min-chars = 1 }\n'
-        'rule "charset" { charset = "!@#$%^&*" min-chars = 1 }\n'
+        'rule "charset" { charset = "!@#%^&*" min-chars = 1 }\n'
     )
 }
 

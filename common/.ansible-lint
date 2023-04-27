@@ -6,3 +6,9 @@ skip_list:
   - template-instead-of-copy # Templated files should use template instead of copy
   - yaml[line-length] # too long lines
   - yaml[indentation] # Forcing lists to be always indented by 2 chars is silly IMO
+
+# ansible-lint gh workflow cannot find ansible.cfg hence fails to import vault_utils role
+exclude_paths:
+  - ./ansible/playbooks/vault/vault.yaml
+  - ./ansible/roles/vault_utils/tests/test.yml
+

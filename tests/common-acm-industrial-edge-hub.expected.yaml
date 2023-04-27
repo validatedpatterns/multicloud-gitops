@@ -121,6 +121,10 @@ spec:
         operator: In
         values:
           - OpenShift
+      - key: local-cluster
+        operator: NotIn
+        values:
+          - 'true'
 ---
 # Source: acm/templates/policies/acm-hub-ca-policy.yaml
 apiVersion: policy.open-cluster-management.io/v1
@@ -289,7 +293,7 @@ spec:
                   labels:
                     operators.coreos.com/openshift-gitops-operator.openshift-operators: ''
                 spec:
-                  channel: stable
+                  channel: gitops-1.8
                   installPlanApproval: Automatic
                   name: openshift-gitops-operator
                   source: redhat-operators
