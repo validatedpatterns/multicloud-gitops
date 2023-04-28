@@ -5,7 +5,6 @@ endif
 
 # INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:394248
 INDEX_IMAGES ?= 
-INDEX_OPTIONS=$(shell echo $(INDEX_IMAGES) | tr ',' '\n' | awk -F: 'match($$1,"/"){print "--set main.extraParameters."NR".name=clusterGroup.indexImages."NR".image --set main.extraParameters."NR".value="$$1":"$$2}')
 
 TARGET_ORIGIN ?= origin
 # This is to ensure that whether we start with a git@ or https:// URL, we end up with an https:// URL
@@ -15,7 +14,7 @@ TARGET_REPO=$(shell git ls-remote --get-url --symref $(TARGET_ORIGIN) | sed -e '
 TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 # --set values always take precedence over the contents of -f
-HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT) $(INDEX_OPTIONS)
+HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT)
 
 ##@ Pattern Common Tasks
 
@@ -35,7 +34,7 @@ show: ## show the starting template without installing it
 # warnings when the chart gets applied the first time, but the resources were
 # created first via the VP operator's UI
 .PHONY: operator-deploy
-operator-deploy operator-upgrade: validate-prereq validate-origin ## runs helm install
+operator-deploy operator-upgrade: validate-prereq validate-origin load-iibs ## runs helm install
 	@set -e; if ! oc get crds patterns.gitops.hybrid-cloud-patterns.io >/dev/null 2>&1; then \
 	  echo "Running helm:"; \
 	  helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS); \
@@ -54,6 +53,24 @@ uninstall: ## runs helm uninstall
 .PHONY: load-secrets
 load-secrets: ## loads the secrets into the vault
 	common/scripts/vault-utils.sh push_secrets $(NAME)
+
+b.PHONY: load-iibs
+load-iibs:
+	@set -e; if [ x$(INDEX_IMAGES) != x ]; then \
+		echo "Allowing insecure registries"; \
+		oc patch image.config.openshift.io/cluster --patch '{"spec":{"registrySources":{"insecureRegistries":["registry-proxy-stage.engineering.redhat.com", "registry-proxy.engineering.redhat.com"]}}}' --type=merge; \
+		for iib in $(shell echo $(INDEX_IMAGES) | tr ',' '\n'); do \
+			echo "Processing $$iib" \
+			export iibnum=$$(echo $$iib | sed 's/.*://'); \
+			rm -rf $$PWD/manifests-iib-* ;\
+			oc adm catalog mirror --manifests-only $$iib $$(dirname $$iib) --insecure; \
+			sed -i "s/name: iib$$/name: iib-$$iibnum/" $$PWD/manifests-iib-*/catalogSource.yaml ; \
+			echo "Applying $$iib manifests" \
+			oc apply -f $$PWD/manifests-iib-*/imageContentSourcePolicy.yaml ; \
+			oc apply -f $$PWD/manifests-iib-*/catalogSource.yaml ; \
+		done; \
+	fi
+
 
 ##@ Validation Tasks
 
