@@ -31,8 +31,20 @@ spec:
 ---
 {{- else if not (has .  $.Values.clusterGroup.operatorgroupExcludes) }}
 
-  {{- if kindIs "string" $ns }}
+  {{- if kindIs "map" $ns }}
+  {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
 
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ $k }}-operator-group
+  namespace: {{ $k }}
+spec:
+  targetNamespaces:
+  - {{ $k }}
+  {{- end }}{{- /* range $k, $v := $ns */}}
+
+  {{- else if kindIs "string" $ns }}
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -41,9 +53,8 @@ metadata:
 spec:
   targetNamespaces:
   - {{ . }}
+  {{- end }} {{- /* if kindIs "string" $ns */}}
 ---
-
-  {{- end }} {{- /* if kindIs "string" $ns */}} 
 {{- end }}
 
 {{- end }}
