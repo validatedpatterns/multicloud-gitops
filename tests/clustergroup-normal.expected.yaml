@@ -22,6 +22,15 @@ metadata:
   name: application-ci
 spec:
 ---
+# Source: pattern-clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
+  name: excludes-ci
+spec:
+---
 # Source: pattern-clustergroup/templates/imperative/namespace.yaml
 apiVersion: v1
 kind: Namespace
@@ -156,6 +165,9 @@ data:
             kubernetes.io/os: linux
             openshift.io/node-selector: ""
       - application-ci
+      - excludes-ci
+      operatorgroupExcludes:
+      - excludes-ci
       projects:
       - datacenter
       subscriptions:
@@ -987,16 +999,6 @@ spec:
   href: 'https://example-gitops-server-mypattern-example.apps.region.example.com'
   location: ApplicationMenu
   text: 'Example ArgoCD'
----
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: map[open-cluster-management:map[annotations:map[openshift.io/cluster-monitoring:true owner:namespace owner] labels:map[kubernetes.io/os:linux openshift.io/node-selector:]]]-operator-group
-  namespace: map[open-cluster-management:map[annotations:map[openshift.io/cluster-monitoring:true owner:namespace owner] labels:map[kubernetes.io/os:linux openshift.io/node-selector:]]]
-spec:
-  targetNamespaces:
-  - map[open-cluster-management:map[annotations:map[openshift.io/cluster-monitoring:true owner:namespace owner] labels:map[kubernetes.io/os:linux openshift.io/node-selector:]]]
 ---
 # Source: pattern-clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
