@@ -21,6 +21,11 @@ clusterGroup:
         openshift.io/cluster-monitoring: "true"
         owner: "namespace owner"
   - application-ci
+  - excludes-ci
+
+  operatorgroupExcludes:
+  - excludes-ci
+
 
   subscriptions:
     acm:
