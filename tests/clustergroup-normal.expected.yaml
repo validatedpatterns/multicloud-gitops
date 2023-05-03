@@ -1004,6 +1004,16 @@ spec:
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
+  name: open-cluster-management-operator-group
+  namespace: open-cluster-management
+spec:
+  targetNamespaces:
+  - open-cluster-management
+---
+# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
   name: application-ci-operator-group
   namespace: application-ci
 spec:
