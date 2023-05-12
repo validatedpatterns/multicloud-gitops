@@ -1,0 +1,117 @@
+{{- $usefileSystemDrive := .Values.storage.usefileSystemDrive | default false }}
+{{- $drives := .Values.storage.drives | default "none" }}
+{{- $usedrivesAndPartitions := .Values.storage.usedrivesAndPartitions | default false }}
+{{- $maxStorageNodesPerZone := int64 .Values.storage.maxStorageNodesPerZone | int64 }}
+{{- $dataInterface := .Values.dataInterface | default "none" }}
+{{- $managementInterface := .Values.managementInterface | default "none" }}
+{{- $registrySecret := .Values.registrySecret | default "none" }}
+{{- $namespace := .Values.namespace | default "portworx" }}
+{{- $serviceAccount := .Values.serviceAccount | default "none" }}
+{{- $customRegistryURL := .Values.customRegistryURL | default "none" }}
+{{- $deleteStrategy := .Values.deleteStrategy | default "none" }}
+{{- $internalKVDB := .Values.internalKVDB | default true }}
+{{- $kvdbDrives := .Values.storage.kvdbDrives | default "none" }}
+
+apiVersion: core.libopenstorage.org/v1
+kind: StorageCluster
+metadata:
+  name: {{ template "px.clusterName" . }}
+  namespace: {{ $namespace }}
+  annotations:
+    {{- if eq $.Values.global.clusterPlatform "AWS" }}
+    portworx.io/is-eks: "true"
+    {{- end }}
+    {{- if eq $.Values.global.clusterPlatform "Azure" }}
+    portworx.io/is-aks: "true"
+    {{- end }}
+    portworx.io/is-openshift: "true"
+    portworx.com/install-source: helm-rhmcgo
+    portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}" {{end}}{{end}}
+spec:
+  {{- if not (eq $deleteStrategy "none") }}
+  deleteStrategy:
+    type: {{ $deleteStrategy }}
+  {{- end }}
+  env:
+    {{- if eq $.Values.global.clusterPlatform "Azure" }}
+    - name: AZURE_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: px-azure
+        key: AZURE_CLIENT_SECRET
+    - name: AZURE_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: px-azure
+          key: AZURE_CLIENT_ID
+    - name: AZURE_TENANT_ID
+      valueFrom:
+        secretKeyRef:
+          name: px-azure
+          key: AZURE_TENANT_ID
+    {{- end }}
+    {{- if not (eq $serviceAccount "none") }}
+    - name: PX_SERVICE_ACCOUNT
+      value: {{ $serviceAccount }}
+    {{- end }}
+    # TODO: Change this hardcoded image path to an ECR registry path with px-enterprise image (PWX-27961)
+    - name: PX_IMAGE
+      value: docker.io/portworx/px-enterprise:2.13.0
+    - name: PX_NAMESPACE
+      value: {{ $namespace }}
+  image: "{{template "px.getOCIImage" . }}"
+  imagePullPolicy: Always
+  {{- if not (eq $registrySecret "none") }}
+  imagePullSecret: {{ $registrySecret }}
+  {{- end }}
+  {{- if not (eq $customRegistryURL "none") }}
+  customImageRegistry: {{ $customRegistryURL }}
+  {{- end }}
+  kvdb:
+    internal: true
+  {{- if eq $drives "none" }}
+  storage:
+    useAllWithPartitions: {{ $usedrivesAndPartitions }}
+    forceUseDisks: {{ $usefileSystemDrive }}
+    journalDevice: auto
+    {{- if $internalKVDB }}
+    kvdbDevice: {{ $kvdbDrives }}
+    {{- end }}
+  {{- else }}
+  cloudStorage:
+    deviceSpecs:
+    {{- $driveNames := $drives | split ";" }}
+    {{- range $index, $name := $driveNames }}
+    - {{ $name }}
+    {{- end }}
+    journalDeviceSpec: auto
+    {{- if $internalKVDB}}
+    kvdbDeviceSpec: {{ $kvdbDrives }}
+    {{- end }}
+    {{- if ne $maxStorageNodesPerZone 0 }}
+    maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
+    {{- end }}
+  {{- end }}
+  {{- if ne .Values.secretType "k8s" }}
+  secretsProvider: {{ .Values.secretType }}
+  {{- end }}
+  {{- if or (ne $dataInterface "none") (ne $managementInterface "none") }}
+  network:
+    {{- if ne $dataInterface "none" }}
+    dataInterface: {{ .Values.network.dataInterface }}
+    {{- end }}
+    {{- if ne $managementInterface "none" }}
+    mgmtInterface: {{ .Values.network.managementInterface }}
+    {{- end }}
+  {{- end }}
+  secretsProvider: k8s
+  stork:
+    enabled: true
+    args:
+      webhook-controller: "true"
+    image: "{{template "px.getStorkImage" . }}"
+  autopilot:
+    enabled: true
+    image: "{{template "px.getAutopilotImage" . }}"
+  csi:
+    enabled: {{ .Values.csi  | default "true" }}

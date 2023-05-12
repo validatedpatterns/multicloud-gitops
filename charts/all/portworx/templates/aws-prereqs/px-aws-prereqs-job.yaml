@@ -1,0 +1,36 @@
+{{- if eq $.Values.global.clusterPlatform "AWS" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  name: px-aws-prereqs
+  namespace: {{ .Values.namespace }}
+spec:
+  parallelism: 1
+  completions: 1
+  activeDeadlineSeconds: 120
+  backoffLimit: 1
+  template:
+    spec:
+      serviceAccountName: portworx-prereq-sa
+      containers:
+        - name: px-aws-prereqs-utility
+          image: quay.io/hybridcloudpatterns/utility-container
+          command: ['sh', '-c', 'sh /pattern-home/scripts/px_aws_pre-reqs.sh']
+          volumeMounts:
+            - name: pattern-home-prereqs
+              mountPath: "/pattern-home/scripts"
+            - name: credentials
+              mountPath: "/pattern-home/credentials"
+      volumes:
+        - name: pattern-home-prereqs
+          configMap:
+            name: px-aws-prereqs-configmap
+            defaultMode: 0755
+        - name: credentials
+          emptyDir:
+            sizeLimit: 1Mi
+      restartPolicy: Never
+---
+{{- end }}

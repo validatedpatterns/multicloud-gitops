@@ -1,0 +1,47 @@
+global:
+  clusterPlatform: AWS
+
+cloudProvider:
+  storageClass: default-rwo
+
+namespace: portworx              # Recommended namespace for install is 'portworx', change to desired namespace if default is unacceptable
+
+storage:
+  usefileSystemDrive: false         # true/false Instructs PX to use an unmounted Drive even if it has a filesystem.
+  usedrivesAndPartitions: false     # Defaults to false. Change to true and PX will use unmounted drives and partitions.
+  drives: "type=gp2,size=20"        # NOTE: This is a ";" seperated list of drives. For eg: "/dev/sda;/dev/sdb;/dev/sdc"
+                                    # Defaults to use -A switch.
+                                    # To have drives automatically created specify the drive spec. For Eg: "type=gp2,size=150" or "type=io1,size=100,iops=2000"
+  journalDevice:
+  maxStorageNodesPerZone:
+  kvdbDrives: "type=gp2,size=150"
+
+network:
+  dataInterface: none               # Name of the interface <ethX>
+  managementInterface: none         # Name of the interface <ethX>
+
+secretType: k8s                     # Defaults to k8s, but can be aws-kms/k8s/none
+envVars: none                       # NOTE: This is a ";" seperated list of environment variables. For eg: MYENV1=myvalue1;MYENV2=myvalue2
+
+csi: true                          # Enable CSI
+
+internalKVDB: true                  # internal KVDB
+
+customRegistryURL: 
+registrySecret:
+
+serviceAccount:
+
+repo:
+  enterprise: docker.io/portworx
+  dr: docker.io/portworx
+
+deleteStrategy: UninstallAndWipe    # Options are Uninstall and UninstallAndWipe
+
+# You can determine the correct versions at the following URL: https://install.portworx.com/$PXVER/version?kbver=$KBVER
+versions:
+  #operator: "1.10.4"  # unless a specific operator from OperatorHub is necessary, leave this commented
+  enterprise: "2.13.4" # This will be the "version" string
+  ociMon: "2.13.4" # This will be the "version" string
+  autoPilot: "1.3.7" # This will be the "portworx/autopilot" version string
+  stork: "23.4.0" # This will be the "openstorage/stork" version string

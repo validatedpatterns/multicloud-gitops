@@ -1,0 +1,196 @@
+{{- if eq $.Values.global.clusterPlatform "AWS" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  name: px-aws-prereqs-configmap
+  namespace: {{ .Values.namespace }}
+data:
+  px_aws_pre-reqs.sh: |	
+    #!/bin/bash
+
+    export AWS_CONFIG_FILE=/pattern-home/credentials/.aws/config
+    export AWS_SHARED_CREDENTIALS_FILE=/pattern-home/credentials/.aws/credentials
+
+    mkdir /pattern-home/credentials/.aws
+
+    # Ensure we can access the secret for AWS credentials
+    oc get secret aws-creds -n kube-system -o json
+    if [ $? != 0 ];
+    then
+      echo "Cannot access aws-creds secret in kube-system namespace, please check rbac for portworx-prereq-sa serviceAccount."
+    else
+      echo "Found AWS credential secret, building credentials file."
+      AWS_ACCESS_KEY=$(curl -sSk -H "Authorization: Bearer $(cat /run/secrets/kubernetes.io/serviceaccount/token)" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/kube-system/secrets/aws-creds | jq -r '.data.aws_access_key_id' | base64 -d)
+      AWS_SECRET_KEY=$(curl -sSk -H "Authorization: Bearer $(cat /run/secrets/kubernetes.io/serviceaccount/token)" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/kube-system/secrets/aws-creds | jq -r '.data.aws_secret_access_key' | base64 -d)
+
+    cat << EOF >> /pattern-home/credentials/.aws/credentials
+    [default]
+    aws_access_key_id = $AWS_ACCESS_KEY
+    aws_secret_access_key = $AWS_SECRET_KEY
+    EOF
+
+    cat << EOF >> /pattern-home/credentials/.aws/config
+    [default]
+    region = us-east-1
+    output = json
+    EOF
+
+    fi
+
+
+    # Ensure we have AWS credentials to use
+    echo "Checking for AWS credentials."
+    aws sts get-caller-identity
+
+    if [ $? != 0 ];
+    then
+      echo "AWS credentials not found, exiting."
+      exit 1
+    else
+      echo "Found AWS credentials."
+    fi
+
+    # Ensure oc is functional and we can get node info from OCP cluster via serviceAccount
+    oc get node
+    if [ $? != 0 ];
+    then
+      echo "Cannot list nodes, please check rbac for portworx-prereq-sa serviceAccount."
+      exit 1
+    else
+      echo "Configuring for Portworx/Red Hat Multicloud GitOps Pattern."
+    fi
+
+    # Get the list of worker nodes in the cluster
+    WORKERS=$(oc get node -l 'node-role.kubernetes.io/worker=' -o name)
+
+    # Modify the SG created by OpenShift Installer to allow ports necessary for Portworx
+    for NODE in $WORKERS; do
+      unset AWS_INSTANCE
+      unset AWS_REGION
+      unset AWS_SG
+      AWS_INSTANCE=$(oc get $NODE -o jsonpath='{.spec.providerID}' | sed 's|.*/||')
+      AWS_REGION=$(oc get $NODE -o jsonpath='{.metadata.labels.topology\.kubernetes\.io/region}')
+      AWS_SG=$(aws ec2 describe-instances --instance-id $AWS_INSTANCE --region=$AWS_REGION --query "Reservations[].Instances[].SecurityGroups[].GroupId[]" --output text)
+      for GROUP in $AWS_SG; do
+        OCP_SG=$(aws ec2 describe-security-groups --group-ids $GROUP --query SecurityGroups[*].Description | grep -w "Created By OpenShift Installer" | wc -l)
+        if [ $OCP_SG -eq 1 ];
+        then
+          echo "Found OpenShift created security group assigned to $AWS_INSTANCE, opening Portworx ports."
+
+          # Check to see if security group already allows TCP 17001-17022
+          RULE_EXISTS_SG=$(aws ec2 describe-security-groups --region $AWS_REGION --filters Name=ip-permission.from-port,Values=17001 Name=ip-permission.to-port,Values=17022 Name=ip-permission.group-id,Values=$AWS_SG  --output text)
+          if [ -z "$RULE_EXISTS_SG" ]
+          then
+            unset RULE_EXISTS_SG
+            echo "Adding rule for TCP 17001-17022"
+            aws ec2 authorize-security-group-ingress --group-id $GROUP --protocol tcp --port 17001-17022 --region $AWS_REGION --source-group $GROUP
+          else
+            unset RULE_EXISTS_SG
+            echo "Ports TCP 17001-17022 already allowed in security group $AWS_SG for $AWS_INSTANCE."
+          fi
+
+           # Check to see if security group already allows TCP 20048
+          RULE_EXISTS_SG=$(aws ec2 describe-security-groups --region $AWS_REGION --filters Name=ip-permission.from-port,Values=20048 Name=ip-permission.to-port,Values=20048 Name=ip-permission.group-id,Values=$AWS_SG  --output text)
+          if [ -z "$RULE_EXISTS_SG" ]
+          then
+            unset RULE_EXISTS_SG
+            echo "Adding rule for TCP 20048"
+            aws ec2 authorize-security-group-ingress --group-id $GROUP --protocol tcp --port 20048 --region $AWS_REGION --source-group $GROUP
+          else
+            unset RULE_EXISTS_SG
+            echo "Port TCP 20048 already allowed in security group $AWS_SG for $AWS_INSTANCE."
+          fi
+
+           # Check to see if security group already allows TCP 111
+          RULE_EXISTS_SG=$(aws ec2 describe-security-groups --region $AWS_REGION --filters Name=ip-permission.from-port,Values=111 Name=ip-permission.to-port,Values=111 Name=ip-permission.group-id,Values=$AWS_SG  --output text)
+          if [ -z "$RULE_EXISTS_SG" ]
+          then
+            unset RULE_EXISTS_SG
+            echo "Adding rule for TCP 111"
+            aws ec2 authorize-security-group-ingress --group-id $GROUP --protocol tcp --port 111 --region $AWS_REGION --source-group $GROUP
+          else
+            unset RULE_EXISTS_SG
+            echo "Port TCP 111 already allowed in security group $AWS_SG for $AWS_INSTANCE."
+          fi
+
+           # Check to see if security group already allows UDP 17002
+          RULE_EXISTS_SG=$(aws ec2 describe-security-groups --region $AWS_REGION --filters Name=ip-permission.from-port,Values=17002 Name=ip-permission.to-port,Values=111 Name=ip-permission.group-id,Values=$AWS_SG  --output text)
+          if [ -z "$RULE_EXISTS_SG" ]
+          then
+            unset RULE_EXISTS_SG
+            echo "Adding rule for UDP 17002"
+            aws ec2 authorize-security-group-ingress --group-id $GROUP --protocol udp --port 17002 --region $AWS_REGION --source-group $GROUP
+          else
+            unset RULE_EXISTS_SG
+            echo "Port UDP 17002 already allowed in security group $AWS_SG for $AWS_INSTANCE."
+          fi
+
+           # Check to see if security group already allows TCP 2049
+          RULE_EXISTS_SG=$(aws ec2 describe-security-groups --region $AWS_REGION --filters Name=ip-permission.from-port,Values=2049 Name=ip-permission.to-port,Values=2049 Name=ip-permission.group-id,Values=$AWS_SG  --output text)
+          if [ -z "$RULE_EXISTS_SG" ]
+          then
+            unset RULE_EXISTS_SG
+            echo "Adding rule for TCP 2049"
+            aws ec2 authorize-security-group-ingress --group-id $GROUP --protocol tcp --port 2049 --region $AWS_REGION --source-group $GROUP
+          else
+            unset RULE_EXISTS_SG
+            echo "Port UDP 2049 already allowed in security group $AWS_SG for $AWS_INSTANCE."
+          fi
+
+        else
+          echo "Could not find security group created by OpenShift installer, exiting."
+          exit 1
+        fi
+      echo ""
+      done
+
+      # Get the IAM instance profile for the next step
+      AWS_IAM_IP=$(aws ec2 describe-instances --instance-id $AWS_INSTANCE --region $AWS_REGION --query "Reservations[].Instances[].IamInstanceProfile[].Arn" --output text | sed 's|.*/||')
+    done
+
+    # Create the JSON for the necessary IAM permissions for Cloud Drives
+    cat << EOF >> /pattern-home/credentials/px-clouddrives.json
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "",
+                "Effect": "Allow",
+                "Action": [
+                  "ec2:AttachVolume",
+                  "ec2:ModifyVolume",
+                  "ec2:DetachVolume",
+                  "ec2:CreateTags",
+                  "ec2:CreateVolume",
+                  "ec2:DeleteTags",
+                  "ec2:DeleteVolume",
+                  "ec2:DescribeTags",
+                  "ec2:DescribeVolumeAttribute",
+                  "ec2:DescribeVolumesModifications",
+                  "ec2:DescribeVolumeStatus",
+                  "ec2:DescribeVolumes",
+                  "ec2:DescribeInstances",
+                  "autoscaling:DescribeAutoScalingGroups"
+                ],
+                "Resource": [
+                  "*"
+                ]
+            }
+        ]
+    }
+    EOF
+
+    # Get the IAM role being used
+    AWS_IAM_ROLE=$(aws iam get-instance-profile --instance-profile-name $AWS_IAM_IP --region $AWS_REGION --query "InstanceProfile.Roles[].RoleName" --output text)
+
+    echo "Creating inline policy within IAM role $AWS_IAM_ROLE for Portworx CloudDrive permissions."
+
+    # Attach the cloud drive permission policy to the IAM role
+    aws iam put-role-policy --region $AWS_REGION --role-name $AWS_IAM_ROLE --policy-name Portworx-CloudDrive --policy-document file:///pattern-home/credentials/px-clouddrives.json
+    rm /pattern-home/credentials/px-clouddrives.json
+
+    echo "Portworx pre-reqs for AWS complete."
+---
+{{- end }}
