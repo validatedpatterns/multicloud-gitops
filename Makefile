@@ -1,4 +1,4 @@
-NAME=$(shell basename "`pwd`")
+NAME ?= $(shell basename "`pwd`")
 ifneq ($(origin TARGET_SITE), undefined)
   TARGET_SITE_OPT=--set main.clusterGroupName=$(TARGET_SITE)
 endif
@@ -20,6 +20,7 @@ HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set ma
 
 .PHONY: help
 help: ## This help message
+	@echo "Pattern: $(NAME)"
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^(\s|[a-zA-Z_0-9-])+:.*?##/ { printf "  \033[36m%-35s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 #  Makefiles in the individual patterns should call these targets explicitly
