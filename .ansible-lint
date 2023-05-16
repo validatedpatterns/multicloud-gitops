@@ -8,6 +8,7 @@ skip_list:
   - yaml[indentation] # Forcing lists to be always indented by 2 chars is silly IMO
   - var-naming[no-role-prefix] # This would be too much churn for very little gain
   - no-changed-when
+  - var-naming[no-role-prefix] # There are too many changes now and it would be too risky
 
 # ansible-lint gh workflow cannot find ansible.cfg hence fails to import vault_utils role
 exclude_paths:
