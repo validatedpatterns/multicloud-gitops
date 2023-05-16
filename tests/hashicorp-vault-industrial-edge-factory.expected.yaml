@@ -6,7 +6,7 @@ metadata:
   name: hashicorp-vault
   namespace: default
   labels:
-    helm.sh/chart: vault-0.24.0
+    helm.sh/chart: vault-0.24.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -18,7 +18,7 @@ metadata:
   name: hashicorp-vault-config
   namespace: default
   labels:
-    helm.sh/chart: vault-0.24.0
+    helm.sh/chart: vault-0.24.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -42,7 +42,7 @@ kind: ClusterRoleBinding
 metadata:
   name: hashicorp-vault-server-binding
   labels:
-    helm.sh/chart: vault-0.24.0
+    helm.sh/chart: vault-0.24.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -63,7 +63,7 @@ metadata:
   name: hashicorp-vault-internal
   namespace: default
   labels:
-    helm.sh/chart: vault-0.24.0
+    helm.sh/chart: vault-0.24.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -95,7 +95,7 @@ metadata:
   name: hashicorp-vault
   namespace: default
   labels:
-    helm.sh/chart: vault-0.24.0
+    helm.sh/chart: vault-0.24.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -126,7 +126,7 @@ metadata:
   name: hashicorp-vault-ui
   namespace: default
   labels:
-    helm.sh/chart: vault-0.24.0
+    helm.sh/chart: vault-0.24.1
     app.kubernetes.io/name: vault-ui
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -168,7 +168,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: vault-0.24.0
+        helm.sh/chart: vault-0.24.1
         app.kubernetes.io/name: vault
         app.kubernetes.io/instance: hashicorp-vault
         component: server
@@ -346,7 +346,7 @@ metadata:
   name: hashicorp-vault
   namespace: default
   labels:
-    helm.sh/chart: vault-0.24.0
+    helm.sh/chart: vault-0.24.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
