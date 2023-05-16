@@ -1,5 +1,9 @@
 # Changes
 
+## April 21, 2023
+
+* Added labels and annotation support to namespaces.yaml template
+
 ## Apr 11, 2023
 
 * Apply the ACM ocp-gitops-policy everywhere but the hub
