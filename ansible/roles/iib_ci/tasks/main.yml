@@ -1,4 +1,4 @@
-- name: Check that IIB env variable is set
+- name: Check that INDEX_IMAGE env variable is set
   ansible.builtin.fail:
     msg: "IIB: '{{ iib }}' is not set"
   failed_when:

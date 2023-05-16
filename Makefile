@@ -39,7 +39,7 @@ show: ## show the starting template without installing it
 # warnings when the chart gets applied the first time, but the resources were
 # created first via the VP operator's UI
 .PHONY: operator-deploy
-operator-deploy operator-upgrade: validate-prereq validate-origin load-iibs ## runs helm install
+operator-deploy operator-upgrade: validate-prereq validate-origin load-iib ## runs helm install
 	@set -e; if ! oc get crds patterns.gitops.hybrid-cloud-patterns.io >/dev/null 2>&1; then \
 	  echo "Running helm:"; \
 	  helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS); \
@@ -59,21 +59,10 @@ uninstall: ## runs helm uninstall
 load-secrets: ## loads the secrets into the vault
 	common/scripts/vault-utils.sh push_secrets $(NAME)
 
-b.PHONY: load-iibs
-load-iibs:
-	@set -e; if [ x$(INDEX_IMAGES) != x ]; then \
-		echo "Allowing insecure registries"; \
-		oc patch image.config.openshift.io/cluster --patch '{"spec":{"registrySources":{"insecureRegistries":["registry-proxy-stage.engineering.redhat.com", "registry-proxy.engineering.redhat.com"]}}}' --type=merge; \
-		for iib in $(shell echo $(INDEX_IMAGES) | tr ',' '\n'); do \
-			echo "Processing $$iib" \
-			export iibnum=$$(echo $$iib | sed 's/.*://'); \
-			rm -rf $$PWD/manifests-iib-* ;\
-			oc adm catalog mirror --manifests-only $$iib $$(dirname $$iib) --insecure; \
-			sed -i "s/name: iib$$/name: iib-$$iibnum/" $$PWD/manifests-iib-*/catalogSource.yaml ; \
-			echo "Applying $$iib manifests" \
-			oc apply -f $$PWD/manifests-iib-*/imageContentSourcePolicy.yaml ; \
-			oc apply -f $$PWD/manifests-iib-*/catalogSource.yaml ; \
-		done; \
+.PHONY: load-iib
+load-iib:
+	@set -e; if [ x$(INDEX_IMAGE) != x ]; then \
+		ansible-playbook common/ansible/playbooks/iib-ci/iib-ci.yaml; \
 	fi
 
 
