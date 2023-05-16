@@ -13,8 +13,19 @@ clusterGroup:
   isHubCluster: true
 
   namespaces:
-  - open-cluster-management
+  - open-cluster-management:
+      labels:
+        openshift.io/node-selector: ""
+        kubernetes.io/os: linux
+      annotations:
+        openshift.io/cluster-monitoring: "true"
+        owner: "namespace owner"
   - application-ci
+  - excludes-ci
+
+  operatorgroupExcludes:
+  - excludes-ci
+
 
   subscriptions:
     acm:
