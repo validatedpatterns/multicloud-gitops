@@ -1,0 +1,3 @@
+{% for item in image_urls.values() %}
+{{ item.source }}={{ item.mirrordest_nosha }}:{{ item.mirrordest_tag }}
+{% endfor %}
