@@ -182,20 +182,20 @@
     oc get mcp/worker -o jsonpath='{.status.observedGeneration}'
   register: worker_observed_generation_raw
 
-- name: Fetch MCP readyMachineCount worker
+- name: Fetch MCP machineCount worker
   ansible.builtin.shell:
-    oc get mcp/worker -o jsonpath='{.status.readyMachineCount}'
-  register: worker_ready_machinecount_raw
+    oc get mcp/worker -o jsonpath='{.status.machineCount}'
+  register: worker_machinecount_raw
 
 - name: Fetch MCP observedGeneration master
   ansible.builtin.shell:
     oc get mcp/master -o jsonpath='{.status.observedGeneration}'
   register: master_observed_generation_raw
 
-- name: Fetch MCP readyMachineCount master
+- name: Fetch MCP machineCount master
   ansible.builtin.shell:
-    oc get mcp/master -o jsonpath='{.status.readyMachineCount}'
-  register: master_ready_machinecount_raw
+    oc get mcp/master -o jsonpath='{.status.machineCount}'
+  register: master_machinecount_raw
 
 - name: Will the imageMirror trigger any changes
   ansible.builtin.command:
@@ -240,7 +240,7 @@
       register: worker_current_ready_machinecount_raw
       retries: 30
       delay: 10
-      until: worker_current_ready_machinecount_raw.stdout == worker_ready_machinecount_raw.stdout
+      until: worker_current_ready_machinecount_raw.stdout == worker_machinecount_raw.stdout
 
     - name: Wait for MCP readyMachineCount to be the same as before applying the digest (master)
       ansible.builtin.shell:
@@ -248,4 +248,4 @@
       register: master_current_ready_machinecount_raw
       retries: 30
       delay: 10
-      until: master_current_ready_machinecount_raw.stdout == master_ready_machinecount_raw.stdout
+      until: master_current_ready_machinecount_raw.stdout == master_machinecount_raw.stdout
