@@ -64,8 +64,8 @@ load-secrets: ## loads the secrets into the vault
 .PHONY: load-iib
 load-iib: ## CI target to install Index Image Bundles
 	@set -e; if [ x$(INDEX_IMAGES) != x ]; then \
-		for iib in $(shell echo $(INDEX_IMAGES) | tr ',' '\n'); do \
-			INDEX_IMAGE="${iib}" ansible-playbook common/ansible/playbooks/iib-ci/iib-ci.yaml; \
+		for IIB in $(shell echo $(INDEX_IMAGES) | tr ',' '\n'); do \
+			INDEX_IMAGE="$${IIB}" ansible-playbook common/ansible/playbooks/iib-ci/iib-ci.yaml; \
 		done; \
 	fi
 
