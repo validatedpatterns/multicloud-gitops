@@ -22,7 +22,7 @@
     related_images: "{{ related_images_raw.stdout }}"
 
 - name: Fetch all operator bundles from mapping.txt
-  ansible.builtin.shell:
+  ansible.builtin.shell: |
     set -o pipefail
     grep -e "^registry-proxy.*bundle" "{{ iib_local_folder }}/mapping.txt" | cut -f1 -d=
   register: operator_bundles_raw
@@ -175,7 +175,7 @@
 # NOTE(bandini): mirror.map *must* have a tag (we use the IIB number) on the image on the right side
 # otherwise, the image will be uplaoded and will exist in S3 but it won't exist in the registry's catalog!!
 - name: Mirror all the needed images
-  ansible.builtin.shell:
+  ansible.builtin.shell: |
     set -o pipefail
     oc image mirror -a "{{ pull_secrets_tempfolder.path }}/.dockerconfigjson" -f mirror.map --insecure --keep-manifest-list 2>&1 | tee -a image-mirror.log
   args:
