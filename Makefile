@@ -66,7 +66,7 @@ load-iib: ## CI target to install Index Image Bundles
 	@set -e; if [ x$(INDEX_IMAGES) != x ]; then \
 		for iib in $(shell echo $(INDEX_IMAGES) | tr ',' '\n'); do \
 			export INDEX_IMAGE="${iib}"; \
-			@echo "Working on IIB: ${INDEX_IMAGE}"; \
+			echo "Working on IIB: ${INDEX_IMAGE}"; \
 			ansible-playbook common/ansible/playbooks/iib-ci/iib-ci.yaml; \
 		done; \
 	fi
