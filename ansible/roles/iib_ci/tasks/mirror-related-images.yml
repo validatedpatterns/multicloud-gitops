@@ -27,6 +27,10 @@
     grep -e "^registry-proxy.*bundle" "{{ iib_local_folder }}/mapping.txt" | cut -f1 -d=
   register: operator_bundles_raw
 
+- name: Print found operator bundle
+  ansible.builtin.debug:
+    msg: "{{ operator_bundles_raw.stdout_lines }}"
+
 # all_images will be a list as follows:
 # [ "registry.redhat.io/rh-sso-7/sso75-openshift-rhel8@sha256:d5829e880db4b82a50a4962d61ea148522a93644174931b256d7ad866eadcf40",
 #   "registry.redhat.io/openshift-gitops-1/gitops-rhel8@sha256:5ff915a399c1cc12d4f932652b410bf7399850934833e755267bdd409f4ce11b",
@@ -40,6 +44,10 @@
 - name: Set all images fact (related images + operator bundles)
   ansible.builtin.set_fact:
     all_images: "{{ related_images + operator_bundles_raw.stdout_lines }}"
+
+- name: Print all_images
+  ansible.builtin.debug:
+    msg: "{{ all_images }}"
 
 # A mapping.txt file will have lines like the following. Note how the image to the right of '='
 # does have a shortened hash! :
