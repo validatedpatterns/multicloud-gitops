@@ -1,8 +1,16 @@
 - name: Check that INDEX_IMAGE env variable is set
   ansible.builtin.fail:
-    msg: "IIB: '{{ iib }}' is not set"
+    msg: "INDEX_IMAGE: '{{ iib_image }}' is not set"
   failed_when:
-    (iib is not defined or iib | length == 0)
+    (iib_image is not defined or iib_image | length == 0)
+
+- name: Set IIB fact
+  ansible.builtin.set_fact:
+    iib: "{{ iib_image.split(':')[1] }}"
+
+- name: Set IIB local folder fact
+  ansible.builtin.set_fact:
+    iib_local_folder: "/tmp/manifest-{{ iib }}"
 
 - name: Get cluster version
   # E.g. 4.13.0-rc.6 or 4.12.16

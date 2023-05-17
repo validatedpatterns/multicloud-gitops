@@ -1,8 +1,5 @@
 rh_internal_registry: registry-proxy.engineering.redhat.com
 iib_image: "{{ lookup('env', 'INDEX_IMAGE') }}"
-iib: "{{ iib_image.split(':')[1] }}"
-iib_local_folder: "/tmp/manifest-{{ iib }}"
-
 
 external_registry: "{{ lookup('env', 'REGISTRY') }}"
 external_registry_token: "{{ lookup('env', 'REGISTRY_TOKEN') }}"
