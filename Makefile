@@ -8,7 +8,9 @@ endif
 EXTRA_HELM_OPTS ?=
 
 # INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:394248
-INDEX_IMAGES ?= 
+# or
+# INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:394248,registry-proxy.engineering.redhat.com/rh-osbs/iib:394249
+INDEX_IMAGES ?=
 
 TARGET_ORIGIN ?= origin
 # This is to ensure that whether we start with a git@ or https:// URL, we end up with an https:// URL
@@ -39,7 +41,7 @@ show: ## show the starting template without installing it
 # warnings when the chart gets applied the first time, but the resources were
 # created first via the VP operator's UI
 .PHONY: operator-deploy
-operator-deploy operator-upgrade: validate-prereq validate-origin load-iib ## runs helm install
+operator-deploy operator-upgrade: validate-prereq validate-origin ## runs helm install
 	@set -e; if ! oc get crds patterns.gitops.hybrid-cloud-patterns.io >/dev/null 2>&1; then \
 	  echo "Running helm:"; \
 	  helm upgrade --install $(NAME) common/operator-install/ $(HELM_OPTS); \
@@ -61,8 +63,11 @@ load-secrets: ## loads the secrets into the vault
 
 .PHONY: load-iib
 load-iib:
-	@set -e; if [ x$(INDEX_IMAGE) != x ]; then \
-		ansible-playbook common/ansible/playbooks/iib-ci/iib-ci.yaml; \
+	@set -e; if [ x$(INDEX_IMAGES) != x ]; then \
+		for iib in $(shell echo $(INDEX_IMAGES) | tr ',' '\n'); do \
+			export INDEX_IMAGE="${iib}"; \
+			ansible-playbook common/ansible/playbooks/iib-ci/iib-ci.yaml; \
+		done; \
 	fi
 
 
