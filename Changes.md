@@ -1,5 +1,9 @@
 # Changes
 
+## May 18, 2023
+
+* Introduce a EXTRA_HELM_OPTS env variable that will be passed to the helm invocations
+
 ## April 21, 2023
 
 * Added labels and annotation support to namespaces.yaml template
