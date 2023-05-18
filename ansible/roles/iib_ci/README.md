@@ -35,7 +35,7 @@ export KUBEADMINPASS="11111-22222-33333-44444"
 
 make load-iib
 export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-499623" --field-selector 'metadata.name=advanced-cluster-management' -o jsonpath='{.items[0].status.defaultChannel}')
-make EXTRA_HELM_OPTS="--set clusterGroup.subscriptions.acm.source=iib-499623 --set clusterGroup.subscriptions.acm.channel=${CHANNEL}" install
+make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscriptions.acm.source --set main.extraParameters[0].value=iib-499623 --set main.extraParameters[1].name=clusterGroup.subscriptions.acm.channel --set main.extraParameters[1].value=${CHANNEL}" install 2>&1 | tee /tmp/acm-install.log
 ```
 
 *Note*: This needs VP operator version >= 0.0.14
