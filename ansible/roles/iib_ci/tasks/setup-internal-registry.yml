@@ -4,7 +4,7 @@
   failed_when: kubeadminpass is not defined or kubeadminpass | length == 0
 
 - name: Get kubeadmin api endpoint
-  ansible.builtin.shell:
+  ansible.builtin.command:
     oc whoami --show-server=true
   register: kubeadminapi_raw
 
