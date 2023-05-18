@@ -7,7 +7,7 @@
 
 - name: Login via kubeadmin
   ansible.builtin.command: |
-    oc login -u kubeadmin -p "{{ kubeadminpass }}" "{{ kubeadminapi }}"
+    oc login -u kubeadmin -p "{{ kubeadminpass }}" "{{ kubeadminapi }}"  --insecure-skip-tls-verify=true
 
 - name: Get kubeadmin token
   ansible.builtin.command: |
