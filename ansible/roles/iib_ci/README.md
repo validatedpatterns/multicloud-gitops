@@ -18,7 +18,6 @@ For example, to install openshift-gitops from an IIB on OCP 4.13 you would do th
 ```sh
 export KUBECONFIG=/tmp/foo/kubeconfig
 export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:iib-492329 
-export KUBEADMINAPI=https://api.mcg-hub.blueprints.rhecoeng.com:6443
 export KUBEADMINPASS="11111-22222-33333-44444"
 # This will push the IIB and all the needed images for the default openshift-gitops-operator into the cluster
 make load-iib
@@ -35,7 +34,6 @@ Since 4.13 supports an internal registry that can cope with v2 docker manifests,
 use that. Run `make iib` with the following environment variables set:
 
 * `INDEX_IMAGE=registry-proxy.engineering.redhat.com/rh-osbs/iib:492329`
-* `KUBEADMINAPI=https://api.mcg-hub.blueprints.rhecoeng.com:6443`
 * `KUBEADMINPASS="11111-22222-33333-44444"`
 
 ### OCP 4.12 and previous versions
