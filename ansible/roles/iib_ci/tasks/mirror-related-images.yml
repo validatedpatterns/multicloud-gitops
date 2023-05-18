@@ -21,15 +21,20 @@
   ansible.builtin.set_fact:
     related_images: "{{ related_images_raw.stdout }}"
 
-- name: Fetch all operator bundles from mapping.txt
+- name: Add the gitops operator bundle from mapping.txt when the operator is openshift-gitops-operator
   ansible.builtin.shell: |
     set -o pipefail
-    grep -e "^registry-proxy.*bundle" "{{ iib_local_folder }}/mapping.txt" | cut -f1 -d=
-  register: operator_bundles_raw
+    grep -e "^registry-proxy.*gitops-operator-bundle" "{{ iib_local_folder }}/mapping.txt" | cut -f1 -d=
+  register: gitops_operator_bundles_raw
+  when: operator == "openshift-gitops-operator"
 
-- name: Print found operator bundle
+- name: Set gitops operator array
+  ansible.builtin.set_fact:
+    gitops_operator_bundle: "{{ gitops_operator_bundles_raw.stdout_lines | default([]) }}"
+
+- name: Print found gitops operator bundle
   ansible.builtin.debug:
-    msg: "{{ operator_bundles_raw.stdout_lines }}"
+    msg: "{{ gitops_operator_bundle }}"
 
 # all_images will be a list as follows:
 # [ "registry.redhat.io/rh-sso-7/sso75-openshift-rhel8@sha256:d5829e880db4b82a50a4962d61ea148522a93644174931b256d7ad866eadcf40",
@@ -43,7 +48,7 @@
 #   "registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-gitops-operator-bundle@sha256:e463314596098a4e774e0dda..." ]
 - name: Set all images fact (related images + operator bundles)
   ansible.builtin.set_fact:
-    all_images: "{{ related_images + operator_bundles_raw.stdout_lines }}"
+    all_images: "{{ related_images + gitops_operator_bundle }}"
 
 - name: Print all_images
   ansible.builtin.debug:

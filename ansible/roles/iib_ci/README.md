@@ -23,7 +23,19 @@ export KUBEADMINPASS="11111-22222-33333-44444"
 make load-iib
 # This will install the pattern using the gitops operator from the IIB
 export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-492329" --field-selector 'metadata.name=openshift-gitops-operator' -o jsonpath='{.items[0].status.defaultChannel}')
-make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-492329 --set main.gitops.channel=${CHANNEL}" install 2>&1 | tee /tmp/install.log
+make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-492329 --set main.gitops.channel=${CHANNEL}" install
+```
+
+To install ACM from an IIB we can run the following:
+```sh
+export OPERATOR=advanced-cluster-management
+export KUBECONFIG=/tmp/foo/kubeconfig
+export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:iib-499623
+export KUBEADMINPASS="11111-22222-33333-44444"
+
+make load-iib
+export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-499623" --field-selector 'metadata.name=advanced-cluster-management' -o jsonpath='{.items[0].status.defaultChannel}')
+make EXTRA_HELM_OPTS="--set clusterGroup.subscriptions.acm.source=iib-499623 --set clusterGroup.subscriptions.acm.channel=${CHANNEL}" install
 ```
 
 *Note*: This needs VP operator version >= 0.0.14
