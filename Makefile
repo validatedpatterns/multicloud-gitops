@@ -3,6 +3,10 @@ ifneq ($(origin TARGET_SITE), undefined)
   TARGET_SITE_OPT=--set main.clusterGroupName=$(TARGET_SITE)
 endif
 
+# This variable can be set in order to pass additional helm arguments from the
+# the command line. I.e. we can set things without having to tweak values files
+EXTRA_HELM_OPTS ?=
+
 # INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:394248
 INDEX_IMAGES ?= 
 
@@ -14,7 +18,7 @@ TARGET_REPO=$(shell git ls-remote --get-url --symref $(TARGET_ORIGIN) | sed -e '
 TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 # --set values always take precedence over the contents of -f
-HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT)
+HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT) $(EXTRA_HELM_OPTS)
 
 ##@ Pattern Common Tasks
 
