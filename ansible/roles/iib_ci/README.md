@@ -13,6 +13,20 @@ that the images used are the ones pointing to the internal cluster.
 ## Usage
 
 By default the operator to be installed from the IIB is `openshift-gitops-operator`. You can override this through the `OPERATOR` env variable.
+For example, to install openshift-gitops from an IIB on OCP 4.13 you would do the following:
+
+```sh
+export KUBECONFIG=/tmp/foo/kubeconfig
+export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:iib-492329 
+export KUBEADMINAPI=https://api.mcg-hub.blueprints.rhecoeng.com:6443
+export KUBEADMINPASS="11111-22222-33333-44444"
+# This will push the IIB and all the needed images for the default openshift-gitops-operator into the cluster
+make load-iib
+# This will install the pattern using the gitops operator from the IIB
+make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-492329 --set main.gitops.channel=latest" install 2>&1 | tee /tmp/install.log
+```
+
+*Note*: This needs VP operator version >= 0.0.14
 
 ### OCP 4.13 and onwards
 
