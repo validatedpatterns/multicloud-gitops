@@ -38,7 +38,7 @@
 
 - name: Set registry allowedRegistries
   ansible.builtin.shell: >
-    oc patch image.config.openshift.io/cluster --patch "{\"spec\":{\"registrySources\":{\"allowedRegistries\":[ \"quay.io\", \"registry.redhat.io\",
+    oc patch image.config.openshift.io/cluster --patch "{\"spec\":{\"registrySources\":{\"allowedRegistries\":[ \"gchr.io\", \"quay.io\", \"registry.redhat.io\",
     \"registry-proxy.engineering.redhat.com\", \"image-registry.openshift-image-registry.svc:5000\", \"{{ registry_route }}\"]}}}" --type=merge
 
 - name: Set registry insecureRegistries
