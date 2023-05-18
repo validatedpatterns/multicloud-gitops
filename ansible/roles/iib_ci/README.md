@@ -23,7 +23,8 @@ export KUBEADMINPASS="11111-22222-33333-44444"
 # This will push the IIB and all the needed images for the default openshift-gitops-operator into the cluster
 make load-iib
 # This will install the pattern using the gitops operator from the IIB
-make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-492329 --set main.gitops.channel=latest" install 2>&1 | tee /tmp/install.log
+export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-492329" --field-selector 'metadata.name=openshift-gitops-operator' -o jsonpath='{.items[0].status.defaultChannel}')
+make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-492329 --set main.gitops.channel=${CHANNEL}" install 2>&1 | tee /tmp/install.log
 ```
 
 *Note*: This needs VP operator version >= 0.0.14
