@@ -15,7 +15,7 @@
   ansible.builtin.set_fact:
     default_channel: "{{ default_channel_raw.stdout }}"
 
-- name: Get all related images in the IIB for "{{ operator }}"
+- name: Get all related images in the IIB for "{{ item }}"
   ansible.builtin.shell: |
     oc get packagemanifests -l "catalog=iib-{{ iib }}" --field-selector "metadata.name={{ item }}" \
       -o jsonpath="{.items[0].status.channels[?(@.name==\"{{ default_channel }}\")].currentCSVDesc.relatedImages}"
