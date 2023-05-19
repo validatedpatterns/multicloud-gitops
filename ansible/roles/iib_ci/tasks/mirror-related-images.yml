@@ -2,7 +2,7 @@
 # install a second operator "multicluster-engine"
 - name: Set operators list
   ansible.builtin.set_fact:
-    operator_list: "{{ [operator] + (operator == 'advanced-cluster-management')  | ternary(['multicluster-engine'], []) }}"
+    operator_list: "{{ [operator] + (operator == 'advanced-cluster-management') | ternary(['multicluster-engine'], []) }}"
 
 - name: Set all images to empty list
   ansible.builtin.set_fact:
