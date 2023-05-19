@@ -27,6 +27,7 @@ make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-492329 --set main.git
 ```
 
 To install ACM from an IIB we can run the following:
+
 ```sh
 export OPERATOR=advanced-cluster-management
 export KUBECONFIG=/tmp/foo/kubeconfig
