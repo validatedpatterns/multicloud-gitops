@@ -10,6 +10,7 @@ spec:
     targetRevision: {{ .Values.main.git.revision }}
   gitOpsSpec:
     operatorChannel: {{ default "gitops-1.8" .Values.main.gitops.channel }}
+    operatorSource: {{ default "redhat-operators" .Values.main.gitops.operatorSource }}
 {{- if .Values.main.extraParameters }}
   extraParameters:
 {{- range .Values.main.extraParameters }}
