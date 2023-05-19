@@ -1,0 +1,17 @@
+rh_internal_registry: registry-proxy.engineering.redhat.com
+iib_image: "{{ lookup('env', 'INDEX_IMAGE') }}"
+
+external_registry: "{{ lookup('env', 'REGISTRY') }}"
+external_registry_token: "{{ lookup('env', 'REGISTRY_TOKEN') }}"
+external_registry_email: noemail@localhost
+
+kubeadminpass: "{{ lookup('env', 'KUBEADMINPASS') }}"
+
+internal_registry_ns: openshift-marketplace
+internal_registry_email: noemail@localhost
+internal_registry_user: registry-custom-user
+internal_registry_pass: "{{ lookup('env', 'INTERNAL_REGISTRY_USER') }}"
+
+# We can use default(, true) below because OPERATOR is a string and not
+# a boolean
+operator: "{{ lookup('env', 'OPERATOR') | default('openshift-gitops-operator', true) }}"

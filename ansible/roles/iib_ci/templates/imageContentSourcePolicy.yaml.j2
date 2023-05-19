@@ -1,0 +1,19 @@
+---
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  labels:
+    operators.openshift.org/catalog: "true"
+  name: iib-{{ iib }}
+spec:
+  repositoryDigestMirrors:
+{% for item in image_urls.values() %}
+    - mirrors:
+        - {{ item.mirrordest_nosha }}
+      source: {{ item.source_nosha }}
+      mirrorSourcePolicy: NeverContactSource
+    - mirrors:
+        - {{ item.mirrordest_nosha }}
+      source: {{ item.image_nosha }}
+      mirrorSourcePolicy: NeverContactSource
+{% endfor %}
