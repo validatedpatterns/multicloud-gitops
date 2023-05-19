@@ -10,12 +10,6 @@ jobs:
       # Important: This sets up your GITHUB_WORKSPACE environment variable
       - uses: actions/checkout@v3
 
-      - name: Lint Ansible Playbook (common)
-        uses: ansible/ansible-lint-action@v6
-        # Let's point it to the path
-        with:
-          path: "common/ansible/"
-
       - name: Lint Ansible Playbook
         uses: ansible/ansible-lint-action@v6
         # Let's point it to the path
