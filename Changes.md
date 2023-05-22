@@ -1,5 +1,9 @@
 # Changes
 
+## May 22, 2023
+
+* Upgraded ESO to 0.8.2
+
 ## May 18, 2023
 
 * Introduce a EXTRA_HELM_OPTS env variable that will be passed to the helm invocations
