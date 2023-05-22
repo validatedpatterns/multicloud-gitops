@@ -1,5 +1,10 @@
 # Changes
 
+## May 22, 2023
+
+* Upgraded ESO to 0.8.2
+* *Important* we now use the newly blessed sso config for argo. This means that gitops < 1.8 are *unsupported*
+
 ## May 18, 2023
 
 * Introduce a EXTRA_HELM_OPTS env variable that will be passed to the helm invocations
