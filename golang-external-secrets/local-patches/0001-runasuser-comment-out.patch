@@ -1,0 +1,30 @@
+diff --color -urN external-secrets.orig/values.yaml external-secrets/values.yaml
+--- external-secrets.orig/values.yaml	2023-05-22 12:42:54.000000000 +0200
++++ external-secrets/values.yaml	2023-05-22 16:20:02.748621794 +0200
+@@ -117,7 +117,7 @@
+       - ALL
+   readOnlyRootFilesystem: true
+   runAsNonRoot: true
+-  runAsUser: 1000
++  # runAsUser: 1000
+   seccompProfile:
+     type: RuntimeDefault
+ 
+@@ -331,7 +331,7 @@
+         - ALL
+     readOnlyRootFilesystem: true
+     runAsNonRoot: true
+-    runAsUser: 1000
++    # runAsUser: 1000
+     seccompProfile:
+       type: RuntimeDefault
+ 
+@@ -453,7 +453,7 @@
+         - ALL
+     readOnlyRootFilesystem: true
+     runAsNonRoot: true
+-    runAsUser: 1000
++    # runAsUser: 1000
+     seccompProfile:
+       type: RuntimeDefault
+ 

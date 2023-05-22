@@ -9,8 +9,6 @@ global:
 clusterGroup:
   isHubCluster: true
 
-
-
 external-secrets:
   image:
     tag: v0.8.2-ubi
