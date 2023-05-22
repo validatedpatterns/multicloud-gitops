@@ -9,14 +9,12 @@ global:
 clusterGroup:
   isHubCluster: true
 
-
-
 external-secrets:
   image:
-    tag: v0.8.1-ubi
+    tag: v0.8.2-ubi
   webhook:
     image:
-      tag: v0.8.1-ubi
+      tag: v0.8.2-ubi
   certController:
     image:
-      tag: v0.8.1-ubi
+      tag: v0.8.2-ubi
