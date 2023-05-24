@@ -58,6 +58,8 @@ registry. Run `make iib` with the following environment variables set:
 * `REGISTRY=quay.io/rhn_support_mbaldess/iib`
 * `REGISTRY_TOKEN=<username>:<token>`
 
+*Note*: For the REGISTRY_TOKEN go to your quay repository, add a robot with "Write" permissions. The robot created will have a "username" and "password" fields. Set the REGISTRY_TOKEN environment variable to that value.
+
 ## Useful commands
 
 * List all images uploaded to the internal registry:

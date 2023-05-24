@@ -97,7 +97,7 @@
 
 - name: Login the internal registry with podman
   ansible.builtin.command:
-    podman login --tls-verify=false --username unused --password "{{ kubeadmin_token }}" "https://{{ registry_route }}"
+    podman login --tls-verify=false --username unused --password "{{ kubeadmin_token }}" "{{ registry_route }}"
 
 - name: Set Mirror URL fact for internal mirror IIB
   ansible.builtin.set_fact:
