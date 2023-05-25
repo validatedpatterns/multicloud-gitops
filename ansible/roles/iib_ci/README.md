@@ -46,7 +46,7 @@ make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscripti
 Since 4.13 supports an internal registry that can cope with v2 docker manifests, we
 use that. Run `make iib` with the following environment variables set:
 
-* `INDEX_IMAGE=registry-proxy.engineering.redhat.com/rh-osbs/iib:492329`
+* `INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:492329`
 * `KUBEADMINPASS="11111-22222-33333-44444"`
 
 ### OCP 4.12 and previous versions
@@ -54,7 +54,7 @@ use that. Run `make iib` with the following environment variables set:
 Due to the lack of v2 manifest support on the internal registry, we use an external
 registry. Run `make iib` with the following environment variables set:
 
-* `INDEX_IMAGE=registry-proxy.engineering.redhat.com/rh-osbs/iib:492329`
+* `INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:492329`
 * `REGISTRY=quay.io/rhn_support_mbaldess/iib`
 * `REGISTRY_TOKEN=<username>:<token>`
 
