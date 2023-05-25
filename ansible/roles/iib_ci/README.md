@@ -13,30 +13,33 @@ that the images used are the ones pointing to the internal cluster.
 ## Usage
 
 By default the operator to be installed from the IIB is `openshift-gitops-operator`. You can override this through the `OPERATOR` env variable.
-For example, to install openshift-gitops from an IIB on OCP 4.13 you would do the following:
+For example, to mirror an operator into an existing cluster you would do the following:
 
 ```sh
 export KUBECONFIG=/tmp/foo/kubeconfig
-export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:iib-492329 
+export OPERATOR=openshift-gitops-operator
+export IIB=492329
+export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:iib-${IIB}
 export KUBEADMINPASS="11111-22222-33333-44444"
 # This will push the IIB and all the needed images for the default openshift-gitops-operator into the cluster
 make load-iib
 # This will install the pattern using the gitops operator from the IIB
-export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-492329" --field-selector 'metadata.name=openshift-gitops-operator' -o jsonpath='{.items[0].status.defaultChannel}')
-make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-492329 --set main.gitops.channel=${CHANNEL}" install
 ```
 
-To install ACM from an IIB we can run the following:
+Then in case of the `openshift-gitops-operator` we would install with:
 
 ```sh
-export OPERATOR=advanced-cluster-management
-export KUBECONFIG=/tmp/foo/kubeconfig
-export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:iib-499623
-export KUBEADMINPASS="11111-22222-33333-44444"
+export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-${IIB}" --field-selector "metadata.name=${OPERATOR}" -o jsonpath='{.items[0].status.defaultChannel}')
+make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-${IIB} --set main.gitops.channel=${CHANNEL}" install
+```
 
-make load-iib
-export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-499623" --field-selector 'metadata.name=advanced-cluster-management' -o jsonpath='{.items[0].status.defaultChannel}')
-make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscriptions.acm.source --set main.extraParameters[0].value=iib-499623 --set main.extraParameters[1].name=clusterGroup.subscriptions.acm.channel --set main.extraParameters[1].value=${CHANNEL}" install 2>&1 | tee /tmp/acm-install.log
+To install ACM (`export OPERATOR=advanced-cluster-management`) or any other
+operator (except the gitops one) from an IIB we would call the following as a
+final step:
+
+```sh
+export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-${IIB}" --field-selector "metadata.name=${OPERATOR}" -o jsonpath='{.items[0].status.defaultChannel}')
+make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscriptions.acm.source --set main.extraParameters[0].value=iib-${IIB} --set main.extraParameters[1].name=clusterGroup.subscriptions.acm.channel --set main.extraParameters[1].value=${CHANNEL}" install
 ```
 
 *Note*: This needs VP operator version >= 0.0.14
