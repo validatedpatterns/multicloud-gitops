@@ -9,6 +9,9 @@ global:
 
 
 clusterGroup:
+  subscriptions:
+    acm:
+      source: redhat-operators
   managedClusterGroups:
 #    testRegion:
 #      name: region-one
