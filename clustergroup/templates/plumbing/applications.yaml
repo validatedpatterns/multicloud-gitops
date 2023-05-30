@@ -111,6 +111,10 @@ spec:
             - name: {{ . }}
               value: {{ $.Values.global.pattern }}
         {{- end }}
+        {{- range $k, $v := $.Values.extraParametersNested }}
+            - name: {{ $k }}
+              value: {{ $v }}
+        {{- end }}
         {{- range .overrides }}
             - name: {{ .name  }}
               value: {{ .value | quote  }}
@@ -207,6 +211,10 @@ spec:
         {{- range .extraPatternNameFields }}
         - name: {{ . }}
           value: {{ $.Values.global.pattern }}
+        {{- end }}
+        {{- range $k, $v := $.Values.extraParametersNested }}
+        - name: {{ $k }}
+          value: {{ $v }}
         {{- end }}
         {{- range .overrides }}
         - name: {{ .name }}
