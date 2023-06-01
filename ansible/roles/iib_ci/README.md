@@ -65,6 +65,19 @@ registry. Run `make iib` with the following environment variables set:
 
 ## Useful commands
 
+* List IIBs for an operator:
+
+```sh
+ansible-playbook common/ansible/playbooks/iib-ci/lookup.yml
+...
+ok: [localhost] => (item=v4.13) => {
+    "msg": "v4.13 -> {'indeximage': 'registry-proxy.engineering.redhat.com/rh-osbs/iib:509435', 'bundleimage': 'registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-gitops-operator-bundle:v99.9.0-106'}"
+}
+...
+```
+
+Override the `operator` value with the desired bundle name to figure out the last IIBs for it.
+
 * List all images uploaded to the internal registry:
 
 ```sh
