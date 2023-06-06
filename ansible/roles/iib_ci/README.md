@@ -19,7 +19,7 @@ For example, to mirror an operator into an existing cluster you would do the fol
 export KUBECONFIG=/tmp/foo/kubeconfig
 export OPERATOR=openshift-gitops-operator
 export IIB=492329
-export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:iib-${IIB}
+export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:${IIB}
 export KUBEADMINPASS="11111-22222-33333-44444"
 # This will push the IIB and all the needed images for the default openshift-gitops-operator into the cluster
 make load-iib
