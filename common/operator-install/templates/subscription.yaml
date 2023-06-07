@@ -6,8 +6,8 @@ metadata:
   labels:
     operators.coreos.com/patterns-operator.openshift-operators: ""
 spec:
-  channel: fast
+  channel: {{ .Values.main.patternsOperator.channel }}
   installPlanApproval: Automatic
   name: patterns-operator
-  source: community-operators
+  source: {{ .Values.main.patternsOperator.source }}
   sourceNamespace: openshift-marketplace
