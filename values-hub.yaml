@@ -29,7 +29,7 @@ clusterGroup:
       sources:
       - repoURL: 'https://charts.hybrid-cloud-patterns.io/'
         targetRevision: 0.0.1
-        chart: vp/acm
+        chart: acm
       - repoURL: 'https://github.com/claudiol/multicloud-gitops'
         targetRevision: multisource-test
       ignoreDifferences:
