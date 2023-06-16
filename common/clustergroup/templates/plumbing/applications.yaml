@@ -111,6 +111,10 @@ spec:
             - name: {{ . }}
               value: {{ $.Values.global.pattern }}
         {{- end }}
+        {{- range $k, $v := $.Values.extraParametersNested }}
+            - name: {{ $k }}
+              value: {{ $v }}
+        {{- end }}
         {{- range .overrides }}
             - name: {{ .name  }}
               value: {{ .value | quote  }}
@@ -135,6 +139,108 @@ spec:
     name: {{ $.Values.clusterGroup.targetCluster }}
     namespace: {{ default $namespace .namespace }}
   project: {{ .project }}
+
+  {{- if .sources }}
+  sources:
+  {{- range .sources }}
+  - repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+    targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
+    {{- if .chart }}
+    chart: {{ .chart }}
+    {{- else if .path }}
+    path: {{ .path }}
+    {{- else }}
+    ref: gitref
+    {{- end }}
+    {{- if and (not .kustomize) (.chart) }}
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+      - "$gitref/values-global.yaml"
+      - "$gitref/values-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- if $.Values.global.clusterPlatform }}
+      - "$gitref/values-{{ $.Values.global.clusterPlatform }}.yaml"
+        {{- if $.Values.global.clusterVersion }}
+      - "$gitref/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml"
+        {{- end }}
+      - "$gitref/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- end }}
+      {{- if $.Values.global.clusterVersion }}
+      - "$gitref/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+      {{- end }}
+      {{- range $valueFile := .extraValueFiles }}
+      - {{ $valueFile | quote }}
+      {{- end }}
+      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
+      parameters:
+        - name: global.repoURL
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        - name: global.targetRevision
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        - name: global.namespace
+          value: $ARGOCD_APP_NAMESPACE
+        - name: global.pattern
+          value: {{ $.Values.global.pattern }}
+        - name: global.clusterDomain
+          value: {{ $.Values.global.clusterDomain }}
+        - name: global.clusterVersion
+          value: "{{ $.Values.global.clusterVersion }}"
+        - name: global.clusterPlatform
+          value: "{{ $.Values.global.clusterPlatform }}"
+        - name: global.hubClusterDomain
+          value: {{ $.Values.global.hubClusterDomain }}
+        - name: global.localClusterDomain
+          value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
+        {{- range .extraHubClusterDomainFields }}
+        - name: {{ . }}
+          value: {{ $.Values.global.hubClusterDomain }}
+        {{- end }}
+        {{- range .extraLocalClusterDomainFields }}
+        - name: {{ . }}
+          value: {{ $.Values.global.localClusterDomain }}
+        {{- end }}
+        {{- range .extraRepoURLFields }}
+        - name: {{ . }}
+          value: $ARGOCD_APP_SOURCE_REPO_URL
+        {{- end }}
+        {{- range .extraTargetRevisionFields }}
+        - name: {{ . }}
+          value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+        {{- end }}
+        {{- range .extraNamespaceFields }}
+        - name: {{ . }}
+          value: $ARGOCD_APP_NAMESPACE
+        {{- end }}
+        {{- range .extraPatternNameFields }}
+        - name: {{ . }}
+          value: {{ $.Values.global.pattern }}
+        {{- end }}
+        {{- range $k, $v := $.Values.extraParametersNested }}
+        - name: {{ $k }}
+          value: {{ $v }}
+        {{- end }}
+        {{- range .overrides }}
+        - name: {{ .name }}
+          value: {{ .value | quote }}
+        {{- if .forceString }}
+          forceString: true
+        {{- end }}
+        {{- end }}
+      {{- if .fileParameters }}
+      fileParameters:
+      {{- range .fileParameters }}
+        - name: {{ .name }}
+          path: {{ .path }}
+      {{- end }}{{- /* END RANGE */}}
+      {{- end }} {{- /* END FILEPARAMETERS */}}
+    {{- end }} {{- /* IF NOT PLUGIN-ELSE */}}
+
+
+
+
+  {{- end }}  
+  {{- else }}
+  
   source:
     repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
@@ -208,6 +314,10 @@ spec:
         - name: {{ . }}
           value: {{ $.Values.global.pattern }}
         {{- end }}
+        {{- range $k, $v := $.Values.extraParametersNested }}
+        - name: {{ $k }}
+          value: {{ $v }}
+        {{- end }}
         {{- range .overrides }}
         - name: {{ .name }}
           value: {{ .value | quote }}
@@ -220,9 +330,10 @@ spec:
       {{- range .fileParameters }}
         - name: {{ .name }}
           path: {{ .path }}
-      {{- end }}
-      {{- end }}
-    {{- end }}
+      {{- end }}{{- /* END RANGE */}}
+      {{- end }} {{- /* END FILEPARAMETERS */}}
+    {{- end }} {{- /* IF NOT PLUGIN-ELSE */}}
+  {{- end }} {{- /* IF ELSE SOURCES */}}
   {{- if .ignoreDifferences }}
   ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
   {{- end }}

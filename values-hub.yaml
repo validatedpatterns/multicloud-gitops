@@ -26,7 +26,12 @@ clusterGroup:
       name: acm
       namespace: open-cluster-management
       project: hub
-      path: common/acm
+      sources:
+      - repoURL: 'https://charts.hybrid-cloud-patterns.io/'
+        targetRevision: 0.0.1
+        chart: acm
+      - repoURL: 'https://github.com/claudiol/multicloud-gitops'
+        targetRevision: multisource-test
       ignoreDifferences:
       - group: internal.open-cluster-management.io
         kind: ManagedClusterInfo
