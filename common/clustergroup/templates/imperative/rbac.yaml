@@ -1,0 +1,30 @@
+{{- if not (eq .Values.enabled "plumbing") }}
+{{/* This is always defined as we always unseal the cluster with an imperative job */}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $.Values.clusterGroup.imperative.namespace }}-cluster-admin-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ $.Values.clusterGroup.imperative.clusterRoleName }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $.Values.clusterGroup.imperative.serviceAccountName }}
+    namespace: {{ $.Values.clusterGroup.imperative.namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $.Values.clusterGroup.imperative.namespace }}-admin-rolebinding
+  namespace: {{ $.Values.clusterGroup.imperative.namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $.Values.clusterGroup.imperative.roleName }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $.Values.clusterGroup.imperative.serviceAccountName }}
+    namespace: {{ $.Values.clusterGroup.imperative.namespace }}
+{{- end }}

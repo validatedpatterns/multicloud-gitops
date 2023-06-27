@@ -1,0 +1,32 @@
+{{- if not (eq .Values.enabled "plumbing") }}
+{{- range $ns := .Values.clusterGroup.namespaces }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  {{- if kindIs "map" $ns }}
+  {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
+  name: {{ $k }}
+  labels:
+    argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
+    {{- if $v.labels }}
+    {{- range $key, $value := $v.labels }} {{- /* We loop here even though the map has always just one key */}}
+    {{ $key }}: {{ $value | default "" | quote }}
+    {{- end }}
+    {{- end }}
+  {{- if $v.annotations }}
+  annotations:
+    {{- range $key, $value := $v.annotations }} {{- /* We loop through the map to get key/value pairs */}}
+    {{ $key }}: {{ $value | default "" | quote }}
+    {{- end }}
+  {{- end }}{{- /* if $v.annotations */}}
+  {{- end }}{{- /* range $k, $v := $ns */}}
+
+  {{- else if kindIs "string" $ns }}
+  labels:
+    argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
+  name: {{ $ns }}
+  {{- end }} {{- /* if kindIs "string" $ns */}}
+spec:
+---
+{{- end }}
+{{- end }}

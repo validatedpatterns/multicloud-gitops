@@ -1,0 +1,87 @@
+global:
+  pattern: common
+  targetRevision: main
+  options:
+    useCSV: True
+    syncPolicy: Automatic
+    installPlanApproval: Automatic
+
+enabled: "all"
+
+# Note that sometimes changing helm values might require a hard refresh (https://github.com/helm/helm/issues/3486)
+clusterGroup:
+  name: example
+  isHubCluster: true
+  targetCluster: in-cluster
+
+  imperative:
+    jobs: []
+    # This image contains ansible + kubernetes.core by default and is used to run the jobs
+    image: registry.redhat.io/ansible-automation-platform-23/ee-supported-rhel8:latest
+    namespace: "imperative"
+    # configmap name in the namespace that will contain all helm values
+    valuesConfigMap: "helm-values-configmap"
+    cronJobName: "imperative-cronjob"
+    jobName: "imperative-job"
+    imagePullPolicy: Always
+    # This is the maximum timeout of all the jobs (1h)
+    activeDeadlineSeconds: 3600
+    # By default we run this every 10minutes
+    schedule: "*/10 * * * *"
+    # Schedule used to trigger the vault unsealing (if explicitely enabled)
+    # Set to run every 5 minutes in order for load-secrets to succeed within
+    # a reasonable amount of time (it waits up to 15 mins)
+    insecureUnsealVaultInsideClusterSchedule: "*/5 * * * *"
+    # Increase ansible verbosity with '-v' or '-vv..'
+    verbosity: ""
+    serviceAccountCreate: true
+    # service account to be used to run the cron pods
+    serviceAccountName: imperative-sa
+    clusterRoleName: imperative-cluster-role
+    clusterRoleYaml: ""
+    roleName: imperative-role
+    roleYaml: ""
+  managedClusterGroups: {}
+  namespaces: []
+#  - name: factory
+#    # repoURL: https://github.com/dagger-refuse-cool/manuela-factory.git
+#    # Location of values-global.yaml, values-{name}.yaml, values-{app}.yaml
+#    targetRevision: main
+#    path: applications/factory
+#    helmOverrides:
+#    - name: clusterGroup.isHubCluster
+#      value: false
+#    clusterSelector:
+#      matchExpressions:
+#      - key: vendor
+#        operator: In
+#        values:
+#          - OpenShift
+#
+#  - open-cluster-management
+#
+  subscriptions: {}
+#  - name: advanced-cluster-management
+#    namespace: open-cluster-management
+#    source: redhat-operators
+#    channel: release-2.3
+#    csv: v2.3.2
+#
+  projects: []
+#  - datacenter
+#
+  applications: {}
+#  - name: acm
+#    namespace: default
+#    project: datacenter
+#    path: applications/acm
+
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore
+
+# Depends on the value of 'vault_hub' ansible variable used 
+# during the installation
+#secretsBase:
+#  key: secret/data/hub
+

@@ -1,0 +1,226 @@
+# This is needed because some operators like "advanced-cluster-management"
+# install a second operator "multicluster-engine"
+- name: Set operators list
+  ansible.builtin.set_fact:
+    operator_list: "{{ [operator] + (operator == 'advanced-cluster-management') | ternary(['multicluster-engine'], []) }}"
+
+- name: Set all images to empty list
+  ansible.builtin.set_fact:
+    all_images: []
+
+- name: Fetch operator images tasks
+  ansible.builtin.include_tasks: fetch-operator-images.yml
+  loop: "{{ operator_list }}"
+
+- name: Print all_images
+  ansible.builtin.debug:
+    msg: "{{ all_images }}"
+
+# A mapping.txt file will have lines like the following. Note how the image to the right of '='
+# does have a shortened hash! :
+# registry.redhat.io/openshift-gitops-1/gitops-rhel8@sha256:5ff...=registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-gitops-rhel8:8256cca6
+# registry.redhat.io/openshift4/ose-haproxy-router@sha256:edf..=registry-proxy.engineering.redhat.com/rh-osbs/openshift4-ose-haproxy-router:a636cbea
+#
+# Now what we are doing here is the following:
+# 1. For every image we get from the bundle (contained in all_images var) we check if it exists. If it does great, skip to the next image
+# 2. If the image was not found above, we take the corresponding URL on the right hand side of the '=' sign in mapping.txt
+#    except that we drop the hash that exists on the right hand-side and just use the one we were given with the image.
+#    If the image is found, great. If not we need to error out because we have no idea where we can fetch it from
+- name: Find out which images really exist by consulting mapping.txt
+  ansible.builtin.shell: |
+    set -o pipefail
+    left_sha=$(echo "{{ image }}" | sed -e 's/^.*@//')
+    right=$(grep "{{ image }}" "{{ iib_local_folder }}/mapping.txt" | cut -f2 -d=)
+    right_base=$(echo $right | sed -e 's/:.*$//' -e 's/@.*$//')
+    right_log=$(echo "${right_base}@${left_sha}" | sed -e 's/\//-/g')
+    if skopeo inspect --authfile "{{ pull_secrets_tempfolder.path }}/.dockerconfigjson" --no-tags docker://"{{ image }}" &> /tmp/skopeo-"{{ image | regex_replace('/', '-') }}".log; then
+      echo "{{ image }}"
+    elif skopeo inspect --authfile "{{ pull_secrets_tempfolder.path }}/.dockerconfigjson" --no-tags docker://"${right_base}@${left_sha}" &> "/tmp/skopeo-${right_log}.log"; then
+      echo "${right_base}@${left_sha}"
+    else
+      echo "ERROR: both {{ image }} and echo ${right_base}@${left_sha} could not be found"
+      exit 1
+    fi
+  register: all_existing_images
+  with_items: "{{ all_images }}"
+  loop_control:
+    loop_var: image
+
+# The dictionary below will be in the following form:
+# {
+#   "registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-gitops-operator-bundle@sha256:e463314596098a4e774e0ddaed0009bfdad4d79b664e28fef219c796679ee6a0": {
+#     "source": "registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-gitops-operator-bundle@sha256:e463314596098a4e774e0ddaed0009bfdad4d79b664e28fef219c796679ee6a0"
+#   },
+#   "registry.redhat.io/openshift-gitops-1/argocd-rhel8@sha256:81e0574159c6aaabe7125d27782a5e6e5e72383a4a0ba76b44d465f3a3098759": {
+#       "source": "registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-argocd-rhel8@sha256:81e0574159c6aaabe7125d27782a5e6e5e72383a4a0ba76b44d465f3a3098759"
+#   },
+#   "registry.redhat.io/openshift-gitops-1/dex-rhel8@sha256:6a3eaee6a4f8cb9a35363bf4c7f83a7fa2042ae62bdaa700ecd0893dd52276f5": {
+#       "source": "registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-dex-rhel8@sha256:6a3eaee6a4f8cb9a35363bf4c7f83a7fa2042ae62bdaa700ecd0893dd52276f5"
+#   },
+#   "registry.redhat.io/openshift-gitops-1/gitops-rhel8-operator@sha256:efbfb010f24894f715a50832a4b3d2cdc221f283cbbdca05e388850586e9d792": {
+#       "source": "registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-gitops-rhel8-operator@sha256:efbfb010f24894f715a50832a4b3d2cdc221f283cbbdca05e388850586e9d792"
+#   },
+#   "registry.redhat.io/openshift-gitops-1/gitops-rhel8@sha256:5ff915a399c1cc12d4f932652b410bf7399850934833e755267bdd409f4ce11b": {
+#       "source": "registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-gitops-rhel8@sha256:5ff915a399c1cc12d4f932652b410bf7399850934833e755267bdd409f4ce11b"
+#   },
+#   "registry.redhat.io/openshift-gitops-1/kam-delivery-rhel8@sha256:10c5a1b6a0858a812117e6fb2b28d37617d9eb83da5e4fb647059ff740a14461": {
+#       "source": "registry-proxy.engineering.redhat.com/rh-osbs/openshift-gitops-1-kam-delivery-rhel8@sha256:10c5a1b6a0858a812117e6fb2b28d37617d9eb83da5e4fb647059ff740a14461"
+#   },
+#   "registry.redhat.io/openshift4/ose-haproxy-router@sha256:edf7ce748b703e195220b7bd7b42fa2caa4cdfd96840445e096036a0d85f1ff2": {
+#       "source": "registry.redhat.io/openshift4/ose-haproxy-router@sha256:edf7ce748b703e195220b7bd7b42fa2caa4cdfd96840445e096036a0d85f1ff2"
+#   },
+#   "registry.redhat.io/rh-sso-7/sso75-openshift-rhel8@sha256:d5829e880db4b82a50a4962d61ea148522a93644174931b256d7ad866eadcf40": {
+#       "source": "registry.redhat.io/rh-sso-7/sso75-openshift-rhel8@sha256:d5829e880db4b82a50a4962d61ea148522a93644174931b256d7ad866eadcf40"
+#   },
+#   "registry.redhat.io/rhel8/redis-6@sha256:53598a6effeb90e4f1b005b2521beffd2fa2b0c52d0e7f2347ee2abd2577cab3": {
+#       "source": "registry.redhat.io/rhel8/redis-6@sha256:53598a6effeb90e4f1b005b2521beffd2fa2b0c52d0e7f2347ee2abd2577cab3"
+#   }
+# }
+- name: Create dict with full image name+sha -> url where we will fetch it from
+  ansible.builtin.set_fact:
+    image_urls: "{{ image_urls | default({}) | combine({item: {'source': all_existing_images.results[counter].stdout,
+      'source_nosha': all_existing_images.results[counter].stdout | regex_replace('@.*$', '')}}, recursive=true) }}"
+  loop: "{{ all_images }}"
+  loop_control:
+    index_var: counter
+
+- name: Create dict with full image name+sha -> mirror destination (OCP >= 4.13)
+  ansible.builtin.set_fact:
+    image_urls: "{{ image_urls | default({}) | combine({item:
+      {'mirrordest': mirror_dest + item | basename,
+       'mirrordest_nosha': (mirror_dest + item | basename) | regex_replace('@.*$', ''),
+       'mirrordest_tag': iib}}, recursive=true) }}"
+  loop: "{{ all_images }}"
+  when: use_internal_registry
+
+- name: Create dict with full image name+sha -> mirror destination (OCP < 4.13)
+  ansible.builtin.set_fact:
+    image_urls: "{{ image_urls | default({}) | combine({item:
+      {'mirrordest': mirror_dest + '@' + item | basename | regex_replace('^.*@', ''),
+       'mirrordest_nosha': mirror_dest,
+       'mirrordest_tag': 'tag-' + item | basename | regex_replace('^.*@sha256:', '')}}, recursive=true) }}"
+  loop: "{{ all_images }}"
+  when: not use_internal_registry
+
+- name: Create dict with full image name+sha -> image key without sha
+  ansible.builtin.set_fact:
+    image_urls: "{{ image_urls | default({}) | combine({item: {'image_nosha': item | regex_replace('@.*$', '')}}, recursive=true) }}"
+  loop: "{{ all_images }}"
+
+# At this point the dictionary looks as follows:
+# "registry.redhat.io/rhel8/redis-6@sha256:53598a6effeb90e4f1b005b2521beffd2fa2b0c52d0e7f2347ee2abd2577cab3": {
+#   "mirrordest": "default-route-openshift-image-registry.apps.mcg-hub.blueprints.rhecoeng.com/openshift-marketplace/redis-6@sha256:535...
+#   "mirrordest_nosha": "default-route-openshift-image-registry.apps.mcg-hub.blueprints.rhecoeng.com/openshift-marketplace/redis-6",
+#   "source": "registry.redhat.io/rhel8/redis-6@sha256:53598a6effeb90e4f1b005b2521beffd2fa2b0c52d0e7f2347ee2abd2577cab3",
+#   "source_nosha": "registry.redhat.io/rhel8/redis-6"
+# }
+- name: Print dict with full images
+  ansible.builtin.debug:
+    msg: "{{ image_urls }}"
+
+# OCP 4.13 uses the new fangled "ImageDigestMirrorSet", older OCPs use "ImageContentSourcePolicy"
+- name: Template out imageMirror.yaml (OCP >= 4.13)
+  ansible.builtin.template:
+    src: ./templates/imageDigestMirror.yaml.j2
+    dest: "{{ iib_local_folder }}/imageMirror.yaml"
+    mode: "0644"
+  when: use_internal_registry
+
+- name: Template out imageMirror.yaml (OCP < 4.13)
+  ansible.builtin.template:
+    src: ./templates/imageContentSourcePolicy.yaml.j2
+    dest: "{{ iib_local_folder }}/imageMirror.yaml"
+    mode: "0644"
+  when: not use_internal_registry
+
+- name: Template out mirror.map
+  ansible.builtin.template:
+    src: ./templates/mirror.map.j2
+    dest: "{{ iib_local_folder }}/mirror.map"
+    mode: "0644"
+
+# NOTE(bandini): mirror.map *must* have a tag (we use the IIB number) on the image on the right side
+# otherwise, the image will be uplaoded and will exist in S3 but it won't exist in the registry's catalog!!
+- name: Mirror all the needed images
+  ansible.builtin.shell: |
+    set -o pipefail
+    oc image mirror -a "{{ pull_secrets_tempfolder.path }}/.dockerconfigjson" -f mirror.map --insecure --keep-manifest-list 2>&1 | tee -a image-mirror.log
+  args:
+    chdir: "{{ iib_local_folder }}"
+  retries: 5
+  delay: 2
+  register: oc_mirror
+  until: oc_mirror is not failed
+
+- name: Fetch MCP observedGeneration worker
+  ansible.builtin.shell:
+    oc get mcp/worker -o jsonpath='{.status.observedGeneration}'
+  register: worker_observed_generation_raw
+
+- name: Fetch MCP machineCount worker
+  ansible.builtin.shell:
+    oc get mcp/worker -o jsonpath='{.status.machineCount}'
+  register: worker_machinecount_raw
+
+- name: Fetch MCP observedGeneration master
+  ansible.builtin.shell:
+    oc get mcp/master -o jsonpath='{.status.observedGeneration}'
+  register: master_observed_generation_raw
+
+- name: Fetch MCP machineCount master
+  ansible.builtin.shell:
+    oc get mcp/master -o jsonpath='{.status.machineCount}'
+  register: master_machinecount_raw
+
+- name: Will the imageMirror trigger any changes
+  ansible.builtin.command:
+    oc diff -f "{{ iib_local_folder }}/imageMirror.yaml"
+  failed_when: false
+  register: oc_mirror_diff
+
+# We only run this piece if there is an actual change in the mirror digest for images
+# cannot use 'is failed' as that is always false when setting failed_when: false above
+- name: Apply imageMirror and wait for MCP to complete
+  when: oc_mirror_diff.rc != 0
+  block:
+    - name: Apply imageMirror
+      ansible.builtin.command:
+        oc apply -f "{{ iib_local_folder }}/imageMirror.yaml"
+
+    # NOTE(bandini): The reason to not fail on these two observedGeneration waiting
+    # tasks, is to make this idempotent: If the 'oc apply' above does *not* trigger
+    # any changes, the observed generation tasks will just timeout. And then we still
+    # wait to make sure that the readyworker count is correct.
+    - name: Wait for MCP new observedGeneration worker
+      ansible.builtin.shell:
+        oc get mcp/worker -o jsonpath='{.status.observedGeneration}'
+      register: worker_current_observed_generation_raw
+      retries: 10
+      delay: 20
+      until: worker_current_observed_generation_raw.stdout != worker_observed_generation_raw.stdout
+      failed_when: false
+
+    - name: Wait for MCP new observedGeneration master
+      ansible.builtin.shell:
+        oc get mcp/master -o jsonpath='{.status.observedGeneration}'
+      register: master_current_observed_generation_raw
+      retries: 10
+      delay: 20
+      until: master_current_observed_generation_raw.stdout != master_observed_generation_raw.stdout
+      failed_when: false
+
+    - name: Wait for MCP readyMachineCount to be the same as before applying the digest (worker)
+      ansible.builtin.shell:
+        oc get mcp/worker -o jsonpath='{.status.readyMachineCount}'
+      register: worker_current_ready_machinecount_raw
+      retries: 30
+      delay: 10
+      until: worker_current_ready_machinecount_raw.stdout == worker_machinecount_raw.stdout
+
+    - name: Wait for MCP readyMachineCount to be the same as before applying the digest (master)
+      ansible.builtin.shell:
+        oc get mcp/master -o jsonpath='{.status.readyMachineCount}'
+      register: master_current_ready_machinecount_raw
+      retries: 30
+      delay: 10
+      until: master_current_ready_machinecount_raw.stdout == master_machinecount_raw.stdout

@@ -1,0 +1,100 @@
+clusterGroup:
+  name: hub
+  isHubCluster: true
+
+  namespaces:
+  - open-cluster-management
+  - vault
+  - golang-external-secrets
+  - config-demo
+
+  indexImages:
+  - name: snr
+    image: quay.io/mshitrit/self-node-remediation-manager-index:0.0.104
+
+  subscriptions:
+    acm:
+      name: advanced-cluster-management
+      namespace: open-cluster-management
+      channel: release-2.5
+      csv: advanced-cluster-management.v2.5.0
+
+  projects:
+  - hub
+  - config-demo
+
+  applications:
+    acm:
+      name: acm
+      namespace: open-cluster-management
+      project: hub
+      path: common/acm
+      ignoreDifferences:
+      - group: internal.open-cluster-management.io
+        kind: ManagedClusterInfo
+        jsonPointers:
+          - /spec/loggingCA
+
+    vault:
+      name: vault
+      namespace: vault
+      project: hub
+      chart: vault
+      repoURL: https://helm.releases.hashicorp.com
+      targetRevision: v0.21.0
+      overrides:
+      - name: global.openshift
+        value: "true"
+      - name: injector.enabled
+        value: "false"
+      - name: ui.enabled
+        value: "true"
+      - name: ui.serviceType
+        value: LoadBalancer
+      - name: server.route.enabled
+        value: "true"
+      - name: server.route.host
+        value: null
+      - name: server.route.tls.termination
+        value: edge
+      - name: server.image.repository
+        value: "registry.connect.redhat.com/hashicorp/vault"
+      - name: server.image.tag
+        value: "1.11.2-ubi"
+
+    golang-external-secrets:
+      name: golang-external-secrets
+      namespace: golang-external-secrets
+      project: hub
+      path: common/golang-external-secrets
+
+    config-demo:
+      name: config-demo
+      namespace: config-demo
+      project: config-demo
+      path: charts/all/config-demo
+
+  imperative:
+    # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
+    # The default schedule is every 10 minutes: imperative.schedule
+    # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
+    # imagePullPolicy is set to always: imperative.imagePullPolicy
+    # For additional overrides that apply to the jobs, please refer to
+    # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
+    jobs:
+    - name: regional-ca
+      # ansible playbook to be run
+      playbook: ansible/playbooks/on-hub-get-regional-ca.yml
+      # per playbook timeout in seconds
+      timeout: 234
+      # verbosity: "-v"
+
+  managedClusterGroups:
+    region-one:
+      name: region-one
+      hostedArgoSites:
+      - perth
+      - sydney
+      helmOverrides:
+      - name: clusterGroup.isHubCluster
+        value: false

@@ -1,0 +1,152 @@
+# TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
+{{- range .Values.clusterGroup.managedClusterGroups }}
+{{- $group := . }}
+{{- if not .hostedArgoSites }}
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: {{ .name }}-clustergroup-policy
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: {{ .name }}-clustergroup-config
+        spec:
+          remediationAction: enforce
+          severity: medium
+          namespaceSelector:
+            include:
+              - default
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: argoproj.io/v1alpha1
+                kind: Application
+                metadata:
+                  name: {{ $.Values.global.pattern }}-{{ .name }}
+                  namespace: openshift-gitops
+                  finalizers:
+                  - resources-finalizer.argocd.argoproj.io/foreground
+                spec:
+                  project: default
+                  source:
+                    repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+                    targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
+                    path: {{ default "common/clustergroup" .path }}
+                    helm:
+                      ignoreMissingValueFiles: true
+                      valueFiles:
+                      - "/values-global.yaml"
+                      - "/values-{{ .name }}.yaml"
+                      - '/values-{{ `{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}` }}.yaml'
+                      - '/values-{{ `{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}` }}-{{ `{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}` }}.yaml'
+                      - '/values-{{ `{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}` }}-{{ .name }}.yaml'
+                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                      # hub's cluster version, whereas we want to include the spoke cluster version
+                      - '/values-{{ `{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}` }}-{{ .name }}.yaml'
+                      {{- range $valueFile := .extraValueFiles }}
+                      - {{ $valueFile | quote }}
+                      {{- end }}
+                      parameters:
+                      - name: global.repoURL
+                        value: $ARGOCD_APP_SOURCE_REPO_URL
+                      - name: global.targetRevision
+                        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+                      - name: global.namespace
+                        value: $ARGOCD_APP_NAMESPACE
+                      - name: global.pattern
+                        value: {{ $.Values.global.pattern }}
+                      - name: global.hubClusterDomain
+                        value: {{ $.Values.global.hubClusterDomain }}
+                      - name: global.localClusterDomain
+                        value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}` }}'
+                      # Requires ACM 2.6 or higher
+                      - name: global.clusterDomain
+                        value: '{{ `{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}` }}'
+                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
+                      - name: global.clusterVersion
+                        value: '{{ `{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}` }}'
+                      - name: global.clusterPlatform
+                        value: {{ $.Values.global.clusterPlatform }}
+                      - name: clusterGroup.name
+                        value: {{ $group.name }}
+                     {{- range .helmOverrides }}
+                      - name: {{ .name }}
+                        value: {{ .value | quote }}
+                     {{- end }}
+                     {{- if .fileParameters }}
+                      fileParameters:
+                      {{- range .fileParameters }}
+                      - name: {{ .name }}
+                        path: {{ .path }}
+                      {{- end }}
+                     {{- end }}
+                  destination:
+                    server: https://kubernetes.default.svc
+                    namespace: {{ $.Values.global.pattern }}-{{ .name }}
+                  syncPolicy:
+                    automated:
+                      prune: false
+                      selfHeal: true
+                  ignoreDifferences:
+                  - group: apps
+                    kind: Deployment
+                    jsonPointers:
+                    - /spec/replicas
+                  - group: route.openshift.io
+                    kind: Route
+                    jsonPointers:
+                    - /status
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: {{ .name }}-placement-binding
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+placementRef:
+  name: {{ .name }}-placement
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: {{ .name }}-clustergroup-policy
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: {{ .name }}-placement
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  {{- if .clusterSelector }}
+  clusterSelector: {{ .clusterSelector | toPrettyJson }}
+  {{- else if (not $group.acmlabels) }}
+  clusterSelector:
+    matchLabels:
+      clusterGroup: {{ $group.name }}
+  {{- else if eq (len $group.acmlabels) 0 }}
+  clusterSelector:
+    matchLabels:
+      clusterGroup: {{ $group.name }}
+  {{- else }}
+  clusterSelector:
+    matchLabels:
+    {{- range .acmlabels }}
+      {{ .name }}: {{ .value }}
+    {{- end }}
+  {{- end }}
+---
+{{- end }}
+{{- end }}

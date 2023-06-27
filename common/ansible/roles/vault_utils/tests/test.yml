@@ -1,0 +1,6 @@
+---
+- name: Test Play
+  hosts: localhost
+  remote_user: root
+  roles:
+    - vault_utils

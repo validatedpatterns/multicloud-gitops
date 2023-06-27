@@ -1,0 +1,69 @@
+{{- if not (eq .Values.enabled "plumbing") }}
+{{/* Define this if needed (jobs defined */}}
+{{- if (gt (len $.Values.clusterGroup.imperative.jobs) 0) -}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $.Values.clusterGroup.imperative.cronJobName }}
+  namespace: {{ $.Values.clusterGroup.imperative.namespace}}
+spec:
+  schedule: {{ $.Values.clusterGroup.imperative.schedule | quote }}
+  # if previous Job is still running, skip execution of a new Job
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: {{ $.Values.clusterGroup.imperative.activeDeadlineSeconds }}
+      template:
+        metadata:
+          name: {{ $.Values.clusterGroup.imperative.jobName }}
+        spec:
+          serviceAccountName: {{ $.Values.clusterGroup.imperative.serviceAccountName }}
+          initContainers:
+            # git init happens in /git/repo so that we can set the folder to 0770 permissions
+            # reason for that is ansible refuses to create temporary folders in there
+            {{- include  "imperative.initcontainers.gitinit" . | indent 12 }}
+    {{- range $.Values.clusterGroup.imperative.jobs }}
+      {{- if ne (.disabled | default "false" | toString | lower ) "true" }}
+            - name: {{ .name }}
+              image: {{ .image | default $.Values.clusterGroup.imperative.image }}
+              imagePullPolicy: {{ $.Values.clusterGroup.imperative.imagePullPolicy }}
+              env:
+                - name: HOME
+                  value: /git/home
+              workingDir: /git/repo
+              # We have a default timeout of 600s for each playbook. Can be overridden
+              # on a per-job basis
+              command:
+                - timeout
+                - {{ .timeout | default "600" | quote }}
+                - ansible-playbook
+                {{- if .verbosity }}
+                - {{ .verbosity }}
+                {{- end }}
+                {{- if .tags }}
+                - -t
+                - {{ .tags }}
+                {{- end }}
+                - -e
+                - "@/values/values.yaml"
+                {{- range .extravars }}
+                - -e
+                - {{ . | quote }}
+                {{- end }}
+                - {{ .playbook }}
+              volumeMounts:
+                {{- include "imperative.volumemounts" . | indent 16 }}
+      {{- end }}
+    {{- end }}
+          containers:
+          {{- include "imperative.containers.done" . | indent 12 }}
+          volumes:
+          - name: git
+            emptyDir: {}
+          - name: values-volume
+            configMap:
+              name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}-{{ $.Values.clusterGroup.name }}
+          restartPolicy: Never
+{{- end }}
+{{- end }}

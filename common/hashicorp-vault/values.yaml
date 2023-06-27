@@ -1,0 +1,52 @@
+---
+global:
+  openshift: true
+  localClusterDomain: apps.foo.cluster.com
+
+vault:
+  injector:
+    enabled: false
+  ui:
+    enabled: true
+    serviceType: "LoadBalancer"
+  server:
+    extraEnvironmentVars:
+      VAULT_CACERT: /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+      VAULT_ADDR: https://vault.vault.svc.cluster.local:8200
+    standalone:
+      config: |
+        ui = true
+        listener "tcp" {
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+          tls_cert_file = "/vault/userconfig/vault-secret/tls.crt"
+          tls_key_file = "/vault/userconfig/vault-secret/tls.key"
+        }
+        storage "file" {
+          path = "/vault/data"
+        }
+
+    # These are automatically mounted in /vault/userconfig/<name>
+    extraVolumes:
+    - type: secret
+      name: vault-secret
+
+    service:
+      enabled: true
+      nonha:
+        annotations:
+          service.beta.openshift.io/serving-cert-secret-name: vault-secret
+      internal:
+        annotations:
+          service.beta.openshift.io/serving-cert-secret-name: vault-secret-internal
+    route:
+      host: null
+      enabled: true
+      tls:
+        # We cannot use passthrough because you'd be talking to
+        # https://vault-vault.apps.mcg-hub.blueprints.rhecoeng.com but you'd
+        # get vault.vault.svc/vault.vault.svc.cluster.local
+        termination: "reencrypt"
+    image:
+      repository: "registry.connect.redhat.com/hashicorp/vault"
+      tag: "1.13.1-ubi"

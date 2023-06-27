@@ -1,0 +1,60 @@
+# NOTE: This is currently an experimental/unsupported chart!
+# Default values for the experimental letsencrypt chart
+# Generate the README.md sections using https://github.com/bitnami-labs/readme-generator-for-helm
+#
+## @section global parameters
+## @descriptionStart This section contains the global parameters consumed by this chart
+## @descriptionEnd
+global:
+  ## @param global.localClusterDomain String containing the domain including the apps. prefix. Gets set by the Validated Pattern framework
+  localClusterDomain: "apps.example.com"
+
+## @section letsencrypt parameters
+## @descriptionStart This section contains all the parameters for the letsencrypt
+## chart in order to request CA signed certificates in a Validated Pattern
+## @descriptionEnd
+letsencrypt:
+  # By default if you include this chart you enable the letsencrypt charts
+  # on both the *.apps.<domain> ingress and on the API endpoint
+  ## @param letsencrypt.enabled Boolean to enable this feature and request a wildcard cert for the default Infress (*.apps.domain) (defaults to True)
+  enabled: true
+  ## @param letsencrypt.api_endpoint Boolean to enable letsencrypt certs on the API endpoint too (defaults to True)
+  api_endpoint: true
+
+  # These two lines need tweaking for every deployment. @example.com emails
+  # will be rejected by letsencrypt
+  ## @param letsencrypt.region String that defines the region used by the route53/dns01 resolver in cert-manager (required)
+  region: eu-central-1
+  ## @param letsencrypt.email String containing the email used when requesting certificates to letsencrypt (required)
+  email: test@example.com
+
+  # By default we use the staging URL to avoid any ratelimiting while testing
+  # To switch to the production certificates signed by a recognized CA, please
+  # switch the comments around in the two following lines
+  ## @param letsencrypt.server String containing the letsencrypt ACME URL (Defaults to the staging server)
+  server: https://acme-staging-v02.api.letsencrypt.org/directory
+  # server: https://acme-v02.api.letsencrypt.org/directory
+
+  # These are only for metadata in the certificates
+  ## @param letsencrypt.organizations List of organization names to be put in a certificate (Defaults to [hybrid-cloud-patterns.io])
+  organizations:
+    - hybrid-cloud-patterns.io
+  ## @param letsencrypt.usages List of certificate uses. See API cert-manager.io/v1.KeyUsage (Defaults to [server auth])
+  usages:
+    - server auth
+
+  ## @param letsencrypt.duration Duration of the requested letsencrypt certificates (Defaults to 168h0m0s)
+  duration: "168h0m0s"
+  ## @param letsencrypt.renewBefore How long before expiration date should the certs be renewed (Defaults to 28h0m0s)
+  renewBefore: "28h0m0s"
+
+  # These two are needed because the DNS01 ACME solver needs outside DNS
+  # servers and won't really work with openshift's internal split-view DNS servers
+  # https://cert-manager.io/docs/configuration/acme/dns01/#setting-nameservers-for-dns01-self-check
+  ## @param letsencrypt.nameservers List of DNS server (ip:port strings) to be used when doing DNS01 challenges (Defaults to [8.8.8.8:53, 1.1.1.1:53])
+  nameservers:
+    - 8.8.8.8:53
+    - 1.1.1.1:53
+
+  ## @param letsencrypt.certmanagerChannel String the channel to install cert-manager from (Defaults to "stable-v1")
+  certmanagerChannel: "stable-v1"
