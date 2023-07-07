@@ -66,6 +66,7 @@ data:
     enabled: all
     global:
       options:
+        applicationRetryLimit: 20
         installPlanApproval: Automatic
         syncPolicy: Automatic
         useCSV: true
