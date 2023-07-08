@@ -10,6 +10,7 @@ metadata:
   namespace: open-cluster-management
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
+    installer.open-cluster-management.io/mce-subscription-spec: '{"source": "redhat-operators" }'
 spec: {}
 ---
 # Source: acm/templates/policies/acm-hub-ca-policy.yaml
@@ -236,6 +237,8 @@ spec:
                     automated:
                       prune: false
                       selfHeal: true
+                    retry:
+                      limit: 20
                   ignoreDifferences:
                   - group: apps
                     kind: Deployment

@@ -5,5 +5,10 @@ main:
 
   gitops:
     channel: "gitops-1.8"
+    operatorSource: redhat-operators
+
+  patternsOperator:
+    channel: fast
+    source: community-operators
 
   clusterGroupName: default

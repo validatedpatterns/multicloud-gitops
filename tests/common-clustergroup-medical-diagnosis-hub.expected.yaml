@@ -288,6 +288,7 @@ data:
       localClusterDomain: apps.region.example.com
       namespace: pattern-namespace
       options:
+        applicationRetryLimit: 20
         installPlanApproval: Automatic
         syncPolicy: Automatic
         useCSV: false
@@ -644,6 +645,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -690,6 +693,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -736,6 +741,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -782,6 +789,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -828,6 +837,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -874,6 +885,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -920,6 +933,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -984,6 +999,8 @@ spec:
           value: "1.10.3-ubi"
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -1030,6 +1047,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -1076,6 +1095,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -1131,6 +1152,8 @@ spec:
 ]
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -1186,6 +1209,8 @@ spec:
 ]
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
@@ -1232,6 +1257,8 @@ spec:
           value: apps.region.example.com
   syncPolicy:
     automated: {}
+    retry:
+      limit: 20
     #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/argocd.yaml
@@ -1247,6 +1274,28 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
+# Adding health checks to argocd to prevent pvc resources
+# that aren't bound state from blocking deployments
+  resourceCustomizations: |
+    PersistentVolumeClaim:
+      health.lua: |
+        hs = {}
+        if obj.status ~= nil then
+          if obj.status.phase ~= nil then
+            if obj.status.phase == "Pending" then
+              hs.status = "Healthy"
+              hs.message = obj.status.phase
+              return hs
+            elseif obj.status.phase == "Bound" then
+              hs.status = "Healthy"
+              hs.message = obj.status.phase
+              return hs
+            end
+          end
+        end
+        hs.status = "Progressing"
+        hs.message = "Waiting for PVC"
+        return hs
   applicationInstanceLabelKey: argocd.argoproj.io/instance
   # Not the greatest way to pass git/quay info to sub-applications, but it will do until
   # we can support helmChart with kustomize
@@ -1295,15 +1344,17 @@ spec:
       requests:
         cpu: 500m
         memory: 2Gi
-  dex:
-    openShiftOAuth: true
-    resources:
-      limits:
-        cpu: 500m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 128Mi
+  sso:
+    provider: dex
+    dex:
+      openShiftOAuth: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 128Mi
   initialSSHKnownHosts: {}
   rbac:
     defaultPolicy: role:admin

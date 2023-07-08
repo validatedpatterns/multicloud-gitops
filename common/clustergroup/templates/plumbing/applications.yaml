@@ -35,6 +35,8 @@ spec:
       {{- else }}
       syncPolicy:
         automated: {}
+        retry:
+          limit: {{ default 20 $.Values.global.options.applicationRetryLimit }}
       {{- end }}
       {{- if .ignoreDifferences }}
       ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
@@ -110,6 +112,10 @@ spec:
         {{- range .extraPatternNameFields }}
             - name: {{ . }}
               value: {{ $.Values.global.pattern }}
+        {{- end }}
+        {{- range $k, $v := $.Values.extraParametersNested }}
+            - name: {{ $k }}
+              value: {{ $v }}
         {{- end }}
         {{- range .overrides }}
             - name: {{ .name  }}
@@ -208,6 +214,10 @@ spec:
         - name: {{ . }}
           value: {{ $.Values.global.pattern }}
         {{- end }}
+        {{- range $k, $v := $.Values.extraParametersNested }}
+        - name: {{ $k }}
+          value: {{ $v }}
+        {{- end }}
         {{- range .overrides }}
         - name: {{ .name }}
           value: {{ .value | quote }}
@@ -231,6 +241,8 @@ spec:
   {{- else }}
   syncPolicy:
     automated: {}
+    retry:
+      limit: {{ default 20 $.Values.global.applicationRetryLimit }}
     #  selfHeal: true
   {{- end }}
 ---

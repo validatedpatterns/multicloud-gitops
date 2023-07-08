@@ -1,0 +1,43 @@
+- name: Check that INDEX_IMAGE env variable is set
+  ansible.builtin.fail:
+    msg: "INDEX_IMAGE: '{{ iib_image }}' is not set"
+  failed_when:
+    (iib_image is not defined or iib_image | length == 0)
+
+- name: Set IIB fact
+  ansible.builtin.set_fact:
+    iib: "{{ iib_image.split(':')[1] }}"
+
+- name: Set IIB local folder fact
+  ansible.builtin.set_fact:
+    iib_local_folder: "/tmp/manifest-{{ iib }}"
+
+- name: Get cluster version
+  # E.g. 4.13.0-rc.6 or 4.12.16
+  ansible.builtin.shell: |
+    oc get openshiftcontrollermanager/cluster -o yaml -o jsonpath='{.status.version}'
+  register: oc_version_raw
+  changed_when: false
+
+- name: Is OCP pre OCP 4.13? (aka registry supports v2 manifests)
+  ansible.builtin.set_fact:
+    use_internal_registry: "{{ oc_version_raw.stdout is version('4.13', '>=') }}"
+
+- name: Set up internal registry (OCP >= 4.13)
+  ansible.builtin.include_tasks: setup-internal-registry.yml
+  when: use_internal_registry
+
+- name: Set up external registry (OCP < 4.13)
+  ansible.builtin.include_tasks: setup-external-registry.yml
+  when: not use_internal_registry
+
+- name: Install new IIB in cluster
+  ansible.builtin.include_tasks: install-iib-in-cluster.yml
+
+- name: Mirror all related images
+  ansible.builtin.include_tasks: mirror-related-images.yml
+
+- name: Remove pullsecrets tempfolder
+  ansible.builtin.file:
+    path: "{{ pull_secrets_tempfolder.path }}"
+    state: absent
