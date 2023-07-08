@@ -3,6 +3,7 @@ global:
     useCSV: True
     syncPolicy: Manual
     installPlanApproval: Automatic
+    applicationRetryLimit: 20
 
   git:
     hostname: github.com

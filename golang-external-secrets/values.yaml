@@ -18,33 +18,3 @@ external-secrets:
   certController:
     image:
       tag: v0.8.3-ubi
-
-rbac:
-  roles:
-    - name: view-pods
-      createRole: true
-      apiGroups:
-        - '""'
-      scope:
-        cluster: false
-        namespace: vault
-      resources:
-        - pods
-      verbs:
-        - "get"
-        - "list"
-        - "watch"
-  roleBindings:
-    - name: view-pods-rb
-      createBinding: true
-      scope:
-        cluster: false
-        namespace: vault
-      subjects:
-        kind: ServiceAccount
-        name: vault
-        namespace: vault
-        apiGroup: ""
-      roleRef:
-        kind: Role
-        name: view-pods

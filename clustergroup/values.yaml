@@ -5,6 +5,7 @@ global:
     useCSV: True
     syncPolicy: Automatic
     installPlanApproval: Automatic
+    applicationRetryLimit: 20
 
 enabled: "all"
 
