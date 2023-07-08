@@ -1,5 +1,10 @@
 # Changes
 
+## Jul 8, 2023
+
+* Introduced a default of 20 for sync failures retries in argo applications (global override via global.options.applicationRetryLimit
+  and per-app override via .syncPolicy)
+
 ## May 22, 2023
 
 * Upgraded ESO to 0.8.2
