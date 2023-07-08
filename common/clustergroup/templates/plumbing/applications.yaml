@@ -35,6 +35,8 @@ spec:
       {{- else }}
       syncPolicy:
         automated: {}
+        retry:
+          limit: {{ default 20 $.Values.global.options.applicationRetryLimit }}
       {{- end }}
       {{- if .ignoreDifferences }}
       ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
@@ -239,6 +241,8 @@ spec:
   {{- else }}
   syncPolicy:
     automated: {}
+    retry:
+      limit: {{ default 20 $.Values.global.applicationRetryLimit }}
     #  selfHeal: true
   {{- end }}
 ---
