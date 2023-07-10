@@ -57,10 +57,7 @@ spec:
         helm:
           ignoreMissingValueFiles: true
           valueFiles:
-            - "values.yaml"
-            {{- if $.Values.global.clusterVersion }}
-            - "/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
-            {{- end }}
+          {{- include "clustergroup.app.globalvalues.valuefiles" $ | nindent 12 }}
         {{- range .extraValueFiles }}
             - {{ . | quote }}
         {{- end }}
