@@ -69,24 +69,13 @@ spec:
             {{ `{{ values }}` }}
         {{- end }}
           parameters:
-            - name: global.clusterDomain
-              value: {{ $.Values.global.clusterDomain }}
-            - name: global.clusterVersion
-              value: "{{ $.Values.global.clusterVersion }}"
-            - name: global.clusterPlatform
-              value: "{{ $.Values.global.clusterPlatform }}"
-            - name: global.hubClusterDomain
-              value: {{ $.Values.global.hubClusterDomain }}
-            - name: global.localClusterDomain
-              value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
+          {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 12 }}
             - name: global.repoURL
               value: {{ $.Values.global.repoURL }}
             - name: global.targetRevision
               value: {{ $.Values.global.targetRevision }}
             - name: global.namespace
               value: {{ $.Values.global.namespace }}
-            - name: global.pattern
-              value: {{ $.Values.global.pattern }}
             - name: clusterGroup.name
               value: {{ .Values.clusterGroup.name }}
         {{- range .extraHubClusterDomainFields }}
