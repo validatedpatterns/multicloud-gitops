@@ -23,3 +23,20 @@ Default always defined top-level variables for helm charts
 {{- end }} {{/* clustergroup.globalvaluesparameters */}}
 
 
+{{/*
+Default always defined valueFiles to be included in Applications
+*/}}
+{{- define "clustergroup.app.globalvalues.valuefiles" -}}
+- "/values-global.yaml"
+- "/values-{{ $.Values.clusterGroup.name }}.yaml"
+{{- if $.Values.global.clusterPlatform }}
+- "/values-{{ $.Values.global.clusterPlatform }}.yaml"
+  {{- if $.Values.global.clusterVersion }}
+- "/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml"
+  {{- end }}
+- "/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml"
+{{- end }}
+{{- if $.Values.global.clusterVersion }}
+- "/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+{{- end }}
+{{- end }} {{/* clustergroup.app.globalvalues.valuefiles */}}
