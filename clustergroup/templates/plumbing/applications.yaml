@@ -145,7 +145,6 @@ spec:
       {{- range $valueFile := .extraValueFiles }}
       - {{ $valueFile | quote }}
       {{- end }}
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 8 }}
         {{- range .extraHubClusterDomainFields }}
@@ -201,7 +200,6 @@ spec:
     automated: {}
     retry:
       limit: {{ default 20 $.Values.global.applicationRetryLimit }}
-    #  selfHeal: true
   {{- end }}
 ---
 {{- end }}
