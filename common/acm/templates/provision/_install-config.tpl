@@ -24,7 +24,10 @@ controlPlane:
   name: controlPlane
   {{- if .controlPlane }}
   replicas: {{ default 3 .controlPlane.count }}
-  platform: {{- .controlPlane.platform | toPrettyJson }}
+  {{- if .controlPlane.platform }}
+  platform:
+    {{- toYaml .controlPlane.platform | nindent 4 }}
+  {{- end }}
   {{- else }}
   replicas: 3
   platform:
@@ -36,8 +39,11 @@ compute:
   architecture: amd64
   name: 'worker'
   {{- if .workers }}
-  replicas: {{ default 3 .workers.count }}
-  platform: {{- .workers.platform | toPrettyJson }}
+  replicas: {{ default 0 .workers.count }}
+  {{- if .workers.platform }}
+  platform:
+    {{- toYaml .workers.platform | nindent 4 }}
+  {{- end }}
   {{- else }}
   replicas: 3
   platform:
@@ -50,10 +56,11 @@ networking:
     hostPrefix: 23
   machineNetwork:
   - cidr: 10.0.0.0/16
-  networkType: OpenShiftSDN
+  networkType: OVNKubernetes
   serviceNetwork:
   - 172.30.0.0/16
-platform: {{ .platform | toPrettyJson }}
+platform:
+{{- toYaml .platform | nindent 2 }}
 pullSecret: "" # skip, hive will inject based on it's secrets
 sshKey: ""     # skip, hive will inject based on it's secrets
 {{- end -}}
