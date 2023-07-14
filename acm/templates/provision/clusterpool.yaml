@@ -19,6 +19,7 @@ spec:
 
 {{- $cloud := "None" }}
 {{- $region := "None" }}
+{{- $numClusters := 0 }}
 
 {{- if .platform.aws }}
 {{- $cloud = "aws" }}
@@ -26,6 +27,10 @@ spec:
 {{- else if .platform.azure }}
 {{- $cloud = "azure" }}
 {{- $region = .platform.azure.region }}
+{{- end }}
+
+{{- if .clusters }}
+{{- $numClusters = len .clusters }}
 {{- end }}
 
 apiVersion: hive.openshift.io/v1
@@ -44,9 +49,9 @@ spec:
   {{- if .size }}
   size: {{ .size }}
   {{- else }}
-  size: {{ len .clusters }}
+  size: {{ $numClusters }}
   {{- end }}
-  runningCount: {{ len .clusters }}
+  runningCount: {{ $numClusters }}
   baseDomain: {{ .baseDomain }}
   installConfigSecretTemplateRef:
     name: {{ $poolName }}-install-config 

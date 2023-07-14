@@ -114,8 +114,6 @@ clusterGroup:
         platform:
           aws:
             region: ap-southeast-2
-        clusters:
-        - One
       exampleAzurePool:
         name: azure-us
         openshiftVersion: 4.10.18
