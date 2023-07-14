@@ -122,8 +122,6 @@ data:
         clusterPools:
           exampleAWSPool:
             baseDomain: blueprints.rhecoeng.com
-            clusters:
-            - One
             controlPlane:
               count: 1
               platform:
