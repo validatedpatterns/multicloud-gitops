@@ -623,7 +623,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -647,7 +646,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -671,7 +669,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -695,7 +692,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -719,7 +715,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -743,7 +738,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -767,7 +761,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -791,7 +784,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -815,7 +807,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -839,7 +830,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -863,7 +853,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -887,7 +876,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -911,7 +899,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -935,7 +922,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -959,7 +945,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1001,7 +986,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -1025,7 +1009,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1049,7 +1032,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -1073,7 +1055,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1097,7 +1078,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -1121,7 +1101,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1154,7 +1133,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -1178,7 +1156,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1211,7 +1188,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -1235,7 +1211,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1259,7 +1234,6 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
 # Source: pattern-clustergroup/templates/plumbing/argocd.yaml
 apiVersion: argoproj.io/v1alpha1
