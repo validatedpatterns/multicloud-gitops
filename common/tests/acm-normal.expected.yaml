@@ -26,21 +26,6 @@ type: Opaque
 apiVersion: hive.openshift.io/v1
 kind: ClusterClaim
 metadata:
-  name: 'one-acm-provision-edge'
-  annotations:
-    argocd.argoproj.io/sync-wave: "20"
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    cluster.open-cluster-management.io/createmanagedcluster: "true"
-  labels:
-    clusterClaimName: one-acm-provision-edge
-    clusterGroup: region
-spec:
-  clusterPoolName: aws-ap
----
-# Source: acm/templates/provision/clusterpool.yaml
-apiVersion: hive.openshift.io/v1
-kind: ClusterClaim
-metadata:
   name: 'two-acm-provision-edge'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
@@ -82,7 +67,7 @@ metadata:
     cluster.open-cluster-management.io/clusterset: aws-ap
 spec:
   size: 3
-  runningCount: 1
+  runningCount: 0
   baseDomain: blueprints.rhecoeng.com
   installConfigSecretTemplateRef:
     name: aws-ap-acm-provision-edge-install-config 
