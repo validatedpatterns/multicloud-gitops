@@ -123,17 +123,24 @@ data:
           exampleAWSPool:
             baseDomain: blueprints.rhecoeng.com
             clusters:
-            - one
+            - One
+            controlPlane:
+              count: 1
+              platform:
+                aws:
+                  type: m5.xlarge
             name: aws-ap
             openshiftVersion: 4.10.18
             platform:
               aws:
                 region: ap-southeast-2
             size: 3
+            workers:
+              count: 0
           exampleAzurePool:
             baseDomain: blueprints.rhecoeng.com
             clusters:
-            - two
+            - Two
             - three
             name: azure-us
             openshiftVersion: 4.10.18

@@ -51,7 +51,7 @@ spec:
   installConfigSecretTemplateRef:
     name: {{ $poolName }}-install-config 
   imageSetRef:
-    name: img{{ .openshiftVersion }}-x86-64-appsub
+    name: img{{ .openshiftVersion }}-multi-appsub
   pullSecretRef:
     name: {{ $poolName }}-pull-secret
   skipMachinePools: true # Disable MachinePool as using custom install-config
@@ -65,13 +65,13 @@ spec:
 apiVersion: hive.openshift.io/v1
 kind: ClusterClaim
 metadata:
-  name: '{{ . }}-{{ $group.name }}'
+  name: '{{ lower . }}-{{ lower $group.name }}'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
-    clusterClaimName: {{ . }}-{{ $group.name }}
+    clusterClaimName: {{ lower . }}-{{ lower $group.name }}
   {{- if (not $group.acmlabels) }}
     clusterGroup: {{ $group.name }}
   {{- else if eq (len $group.acmlabels) 0 }}
