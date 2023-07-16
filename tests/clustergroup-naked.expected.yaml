@@ -1,5 +1,5 @@
 ---
-# Source: pattern-clustergroup/templates/imperative/namespace.yaml
+# Source: clustergroup/templates/imperative/namespace.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -8,7 +8,7 @@ metadata:
     argocd.argoproj.io/managed-by: common-example
   name: imperative
 ---
-# Source: pattern-clustergroup/templates/plumbing/gitops-namespace.yaml
+# Source: clustergroup/templates/plumbing/gitops-namespace.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -21,14 +21,14 @@ metadata:
   name: common-example
 spec: {}
 ---
-# Source: pattern-clustergroup/templates/imperative/serviceaccount.yaml
+# Source: clustergroup/templates/imperative/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: imperative-sa
   namespace: imperative
 ---
-# Source: pattern-clustergroup/templates/imperative/configmap.yaml
+# Source: clustergroup/templates/imperative/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -76,7 +76,7 @@ data:
       kind: ClusterSecretStore
       name: vault-backend
 ---
-# Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
+# Source: clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -91,7 +91,7 @@ rules:
     - list
     - watch
 ---
-# Source: pattern-clustergroup/templates/imperative/rbac.yaml
+# Source: clustergroup/templates/imperative/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -105,7 +105,7 @@ subjects:
     name: imperative-sa
     namespace: imperative
 ---
-# Source: pattern-clustergroup/templates/plumbing/argocd-super-role.yaml
+# Source: clustergroup/templates/plumbing/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -124,7 +124,7 @@ subjects:
     name: openshift-gitops-argocd-server
     namespace: openshift-gitops
 ---
-# Source: pattern-clustergroup/templates/plumbing/argocd-super-role.yaml
+# Source: clustergroup/templates/plumbing/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -149,7 +149,7 @@ subjects:
     name: example-gitops-argocd-dex-server
     namespace: common-example
 ---
-# Source: pattern-clustergroup/templates/imperative/role.yaml
+# Source: clustergroup/templates/imperative/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -163,7 +163,7 @@ rules:
     verbs:
     - '*'
 ---
-# Source: pattern-clustergroup/templates/imperative/rbac.yaml
+# Source: clustergroup/templates/imperative/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -178,7 +178,7 @@ subjects:
     name: imperative-sa
     namespace: imperative
 ---
-# Source: pattern-clustergroup/templates/imperative/unsealjob.yaml
+# Source: clustergroup/templates/imperative/unsealjob.yaml
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -254,7 +254,7 @@ spec:
               name: helm-values-configmap-example
           restartPolicy: Never
 ---
-# Source: pattern-clustergroup/templates/plumbing/argocd.yaml
+# Source: clustergroup/templates/plumbing/argocd.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
@@ -391,7 +391,7 @@ spec:
     ca: {}
 status:
 ---
-# Source: pattern-clustergroup/templates/plumbing/argocd.yaml
+# Source: clustergroup/templates/plumbing/argocd.yaml
 apiVersion: console.openshift.io/v1
 kind: ConsoleLink
 metadata:
