@@ -35,7 +35,7 @@ metadata:
     clusterClaimName: two-acm-provision-edge
     clusterGroup: region
 spec:
-  clusterPoolName: azure-us
+  clusterPoolName: azure-us-acm-provision-edge
 ---
 # Source: acm/templates/provision/clusterpool.yaml
 apiVersion: hive.openshift.io/v1
@@ -50,7 +50,7 @@ metadata:
     clusterClaimName: three-acm-provision-edge
     clusterGroup: region
 spec:
-  clusterPoolName: azure-us
+  clusterPoolName: azure-us-acm-provision-edge
 ---
 # Source: acm/templates/provision/clusterpool.yaml
 apiVersion: hive.openshift.io/v1
