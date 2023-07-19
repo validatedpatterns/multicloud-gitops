@@ -87,7 +87,7 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
-  clusterPoolName: {{ $pool.name }}
+  clusterPoolName: {{ $poolName }}
 ---
 {{- end }}{{- /* range .range clusters */}}
 {{- end }}{{- /* range .clusterPools */}}
