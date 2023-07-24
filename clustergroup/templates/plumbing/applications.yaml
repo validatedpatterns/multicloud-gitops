@@ -134,7 +134,7 @@ spec:
     chart: {{ .chart }}
     {{- else }}
     path: {{ .path }}
-    {{- end }}
+    {{- end }}{{- /* if .chart */}}
     {{- if .plugin }}
     plugin: {{ .plugin | toPrettyJson }}
     {{- else if not .kustomize }}
@@ -178,18 +178,18 @@ spec:
         {{- range .overrides }}
         - name: {{ .name }}
           value: {{ .value | quote }}
-        {{- if .forceString }}
+          {{- if .forceString }}
           forceString: true
-        {{- end }}
-        {{- end }}
+          {{- end }}
+        {{- end }}{{- /* range .overrides */}}
       {{- if .fileParameters }}
       fileParameters:
       {{- range .fileParameters }}
         - name: {{ .name }}
           path: {{ .path }}
-      {{- end }}
-      {{- end }}
-    {{- end }}
+      {{- end }}{{- /* range .fileParameters */}}
+      {{- end }}{{- /* if .fileParameters */}}
+    {{- end }}{{- /* if .plugin */}}
   {{- if .ignoreDifferences }}
   ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
   {{- end }}
