@@ -200,8 +200,8 @@ spec:
     automated: {}
     retry:
       limit: {{ default 20 $.Values.global.applicationRetryLimit }}
-  {{- end }}
+  {{- end }}{{- /* .syncPolicy */}}
 ---
-{{- end }}
-{{- end }}
-{{- end }}
+{{- end }}{{- /* if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) */}}
+{{- end }}{{- /* range .Values.clusterGroup.applications */}}
+{{- end }}{{- /* if not (eq .Values.enabled "core") */}}
