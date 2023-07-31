@@ -182,8 +182,8 @@
     pod: "{{ vault_pod }}"
     command: >
       vault write auth/"{{ item.value['vault_path'] }}"/role/"{{ item.value['vault_path'] }}"-role
-        bound_service_account_names="{{ external_secrets_ns }}"
-        bound_service_account_namespaces="{{ external_secrets_sa }}"
+        bound_service_account_names="{{ external_secrets_sa }}"
+        bound_service_account_namespaces="{{ external_secrets_ns }}"
         policies="default,{{ vault_global_policy }}-secret,{{ item.value['vault_path'] }}-secret" ttl="{{ vault_spoke_ttl }}"
   loop: "{{ clusters_info | dict2items }}"
   when:
