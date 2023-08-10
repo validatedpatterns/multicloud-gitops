@@ -20,6 +20,9 @@
     oc get packagemanifests -l "catalog=iib-{{ iib }}" --field-selector "metadata.name={{ item }}" \
       -o jsonpath="{.items[0].status.channels[?(@.name==\"{{ default_channel }}\")].currentCSVDesc.relatedImages}"
   register: related_images_raw
+  retries: 5
+  delay: 10
+  until: related_images_raw is not failed
 
 - name: Set related_images fact
   ansible.builtin.set_fact:
@@ -43,7 +46,7 @@
 - name: Read the operator bundle from the default channel
   ansible.builtin.shell: |
     set -o pipefail
-    podman run -it --rm "{{ iib_image }}" alpha list channels /configs "{{ item }}" | grep --word-regexp "{{ default_channel }}" | awk '{ print $3 }'
+    podman run -it --rm "{{ iib_image }}" alpha list channels /configs "{{ item }}" | grep -E "(\s){{ default_channel }}(\s)" | awk '{ print $3 }'
   register: bundle_channel_raw
 
 - name: Set bundle fact
