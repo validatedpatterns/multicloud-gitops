@@ -1,0 +1,61 @@
+---
+name: Split into chart repo branches
+
+on:
+  workflow_call:
+    inputs:
+      chart_name:
+        required: true
+        type: string
+      upstream_repository:
+        required: true
+        type: string
+      target_repository:
+        required: true
+        type: string
+      target_branch:
+        required: false
+        type: string
+        default: main
+      force:
+        required: false
+        type: boolean
+        default: false
+      tags:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  split_chart:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CHARTS_REPOS_TOKEN }}
+
+      - name: Run git subtree split
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHARTS_REPOS_TOKEN }}
+        run: |
+          set -e
+          N=${{ inputs.chart_name }}
+          B="${N}-main-single-chart"
+          git push origin -d "${B}" || /bin/true
+          git subtree split -P "${N}" -b "${B}"
+          git push -f -u origin "${B}"
+
+      - uses: TobKed/github-forks-sync-action@master
+        with:
+          github_token: ${{ secrets.CHARTS_REPOS_TOKEN }}
+          upstream_repository: ${{ inputs.upstream_repository }}
+          upstream_branch: "${{ inputs.chart_name }}-main-single-chart"
+          target_repository: ${{ inputs.target_repository }}
+          target_branch: ${{ inputs.target_branch }}
+          force: ${{ inputs.force }}
+          tags: ${{ inputs.tags }}
