@@ -55,9 +55,7 @@ jobs:
       contents: write
     with:
       chart_name: acm
-      upstream_repository: validatedpatterns/common
       target_repository: validatedpatterns/acm-chart
-      force: true
     secrets: inherit
 
   golang-external-secrets:
@@ -69,9 +67,7 @@ jobs:
       contents: write
     with:
       chart_name: golang-external-secrets
-      upstream_repository: validatedpatterns/common
       target_repository: validatedpatterns/golang-external-secrets-chart
-      force: true
     secrets: inherit
 
   hashicorp-vault:
@@ -83,9 +79,7 @@ jobs:
       contents: write
     with:
       chart_name: hashicorp-vault
-      upstream_repository: validatedpatterns/common
       target_repository: validatedpatterns/hashicorp-vault-chart
-      force: true
     secrets: inherit
 
   letsencrypt:
@@ -97,9 +91,7 @@ jobs:
       contents: write
     with:
       chart_name: letsencrypt
-      upstream_repository: validatedpatterns/common
       target_repository: validatedpatterns/letsencrypt-chart
-      force: true
     secrets: inherit
 
   clustergroup:
@@ -111,7 +103,5 @@ jobs:
       contents: write
     with:
       chart_name: clustergroup
-      upstream_repository: validatedpatterns/common
       target_repository: validatedpatterns/clustergroup-chart
-      force: true
     secrets: inherit
