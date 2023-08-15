@@ -1,5 +1,5 @@
 apiVersion: v2
-description: A Helm chart to configure the golang-based external-secrets
+description: A Helm chart to configure the golang-based external-secrets.
 keywords:
 - pattern
 name: golang-external-secrets

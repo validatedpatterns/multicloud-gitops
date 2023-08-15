@@ -1,5 +1,5 @@
 apiVersion: v2
-description: A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions
+description: A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 keywords:
 - pattern
 name: clustergroup
