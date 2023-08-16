@@ -6,7 +6,8 @@ global:
   pattern: none
   repoURL: none
   targetRevision: main
-
+  options:
+    applicationRetryLimit: 20
 
 clusterGroup:
   subscriptions:
