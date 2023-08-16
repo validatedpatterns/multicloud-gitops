@@ -3,6 +3,7 @@ main:
     channel: "gitops-1.8"
 
 global:
+  extraValueFiles: []
   pattern: none
   repoURL: none
   targetRevision: main
