@@ -10,7 +10,7 @@ Default always defined valueFiles to be included when pushing the cluster wide a
 # We cannot use $.Values.global.clusterVersion because that gets resolved to the
 # hub's cluster version, whereas we want to include the spoke cluster version
 - '/values-{{ `{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}` }}-{{ .name }}.yaml'
-{{- if $.Values.global.extraValueFiles }}
+{{- if and $.Values $.Values.global $.Values.global.extraValueFiles }}
 {{- range $.Values.global.extraValueFiles }}
 - {{ . | quote }}
 {{- end }} {{/* if $.Values.global.extraValueFiles */}}
