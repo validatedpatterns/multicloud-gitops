@@ -297,6 +297,7 @@ data:
     enabled: all
     global:
       clusterDomain: region.example.com
+      extraValueFiles: []
       git:
         account: hybrid-cloud-patterns
         dev_revision: main
