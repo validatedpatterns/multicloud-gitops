@@ -17,4 +17,10 @@ spec:
   - name: {{ .name }}
     value: {{ .value }}
 {{- end }}
+{{- if $.Values.global.extraValueFiles }}
+  extraValueFiles:
+{{- range $.Values.global.extraValueFiles }}
+  - {{ . | quote }}
+{{- end }}
+{{- end }}
 {{- end }}
