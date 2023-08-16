@@ -6,7 +6,7 @@
     # We cannot use .package or .dnf modules because python3 that is used comes
     # from a virtualenv
     - name: Launch the installation
-      ansible.builtin.command: make install
+      ansible.builtin.command: ./pattern.sh make install
       args:
         chdir: "{{ lookup('env', 'PWD') }}"
       register: output
