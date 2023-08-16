@@ -19,6 +19,7 @@ on:
 jobs:
   changes:
     name: Figure out per-chart changes
+    if: github.repository == 'validatedpatterns/common'
     runs-on: ubuntu-latest
     permissions: read-all
     outputs:
@@ -48,7 +49,9 @@ jobs:
 
   acm:
     needs: changes
-    if: ${{ needs.changes.outputs.acm == 'true' }}
+    if: |
+      ${{ needs.changes.outputs.acm == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
     uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
     permissions:
       actions: write
@@ -60,7 +63,9 @@ jobs:
 
   golang-external-secrets:
     needs: changes
-    if: ${{ needs.changes.outputs.golang-external-secrets == 'true' }}
+    if: |
+      ${{ needs.changes.outputs.golang-external-secrets == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
     uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
     permissions:
       actions: write
@@ -72,7 +77,9 @@ jobs:
 
   hashicorp-vault:
     needs: changes
-    if: ${{ needs.changes.outputs.hashicorp-vault == 'true' }}
+    if: |
+      ${{ needs.changes.outputs.hashicorp-vault == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
     uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
     permissions:
       actions: write
@@ -84,7 +91,9 @@ jobs:
 
   letsencrypt:
     needs: changes
-    if: ${{ needs.changes.outputs.letsencrypt == 'true' }}
+    if: |
+      ${{ needs.changes.outputs.letsencrypt == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
     uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
     permissions:
       actions: write
@@ -96,7 +105,9 @@ jobs:
 
   clustergroup:
     needs: changes
-    if: ${{ needs.changes.outputs.clustergroup == 'true' }}
+    if: |
+      ${{ needs.changes.outputs.clustergroup == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
     uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
     permissions:
       actions: write
