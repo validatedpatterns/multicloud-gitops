@@ -29,10 +29,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CHARTS_REPOS_TOKEN }}
         run: |
           set -e
-          N=${{ inputs.chart_name }}
+          N="${{ inputs.chart_name }}"
           B="${N}-main-single-chart"
           git push origin -d "${B}" || /bin/true
           git subtree split -P "${N}" -b "${B}"
           git push -f -u origin "${B}"
           #git clone https://validatedpatterns:${GITHUB_TOKEN}@github.com/validatedpatterns/common.git -b "acm-main-single-chart" --single-branch
-          git push --force https://validatedpatterns:${GITHUB_TOKEN}@github.com/${{ inputs.target_repository }}.git "${B}:main"
+          git push --force https://validatedpatterns:"${GITHUB_TOKEN}"@github.com/${{ inputs.target_repository }}.git "${B}:main"
