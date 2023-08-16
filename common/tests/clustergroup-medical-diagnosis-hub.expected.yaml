@@ -1,5 +1,5 @@
 ---
-# Source: pattern-clustergroup/templates/core/namespaces.yaml
+# Source: clustergroup/templates/core/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -8,7 +8,7 @@ metadata:
   name: open-cluster-management
 spec:
 ---
-# Source: pattern-clustergroup/templates/core/namespaces.yaml
+# Source: clustergroup/templates/core/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -17,7 +17,7 @@ metadata:
   name: openshift-serverless
 spec:
 ---
-# Source: pattern-clustergroup/templates/core/namespaces.yaml
+# Source: clustergroup/templates/core/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -26,7 +26,7 @@ metadata:
   name: opendatahub
 spec:
 ---
-# Source: pattern-clustergroup/templates/core/namespaces.yaml
+# Source: clustergroup/templates/core/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -35,7 +35,7 @@ metadata:
   name: openshift-storage
 spec:
 ---
-# Source: pattern-clustergroup/templates/core/namespaces.yaml
+# Source: clustergroup/templates/core/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -44,7 +44,7 @@ metadata:
   name: xraylab-1
 spec:
 ---
-# Source: pattern-clustergroup/templates/core/namespaces.yaml
+# Source: clustergroup/templates/core/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -53,7 +53,7 @@ metadata:
   name: knative-serving
 spec:
 ---
-# Source: pattern-clustergroup/templates/core/namespaces.yaml
+# Source: clustergroup/templates/core/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -62,7 +62,7 @@ metadata:
   name: staging
 spec:
 ---
-# Source: pattern-clustergroup/templates/core/namespaces.yaml
+# Source: clustergroup/templates/core/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -71,7 +71,7 @@ metadata:
   name: vault
 spec:
 ---
-# Source: pattern-clustergroup/templates/core/namespaces.yaml
+# Source: clustergroup/templates/core/namespaces.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -80,7 +80,7 @@ metadata:
   name: golang-external-secrets
 spec:
 ---
-# Source: pattern-clustergroup/templates/imperative/namespace.yaml
+# Source: clustergroup/templates/imperative/namespace.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -89,7 +89,7 @@ metadata:
     argocd.argoproj.io/managed-by: mypattern-hub
   name: imperative
 ---
-# Source: pattern-clustergroup/templates/plumbing/gitops-namespace.yaml
+# Source: clustergroup/templates/plumbing/gitops-namespace.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -102,14 +102,14 @@ metadata:
   name: mypattern-hub
 spec: {}
 ---
-# Source: pattern-clustergroup/templates/imperative/serviceaccount.yaml
+# Source: clustergroup/templates/imperative/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: imperative-sa
   namespace: imperative
 ---
-# Source: pattern-clustergroup/templates/imperative/configmap.yaml
+# Source: clustergroup/templates/imperative/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -309,7 +309,7 @@ data:
       kind: ClusterSecretStore
       name: vault-backend
 ---
-# Source: pattern-clustergroup/templates/imperative/clusterrole.yaml
+# Source: clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -324,7 +324,7 @@ rules:
     - list
     - watch
 ---
-# Source: pattern-clustergroup/templates/imperative/rbac.yaml
+# Source: clustergroup/templates/imperative/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -338,7 +338,7 @@ subjects:
     name: imperative-sa
     namespace: imperative
 ---
-# Source: pattern-clustergroup/templates/plumbing/argocd-super-role.yaml
+# Source: clustergroup/templates/plumbing/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -357,7 +357,7 @@ subjects:
     name: openshift-gitops-argocd-server
     namespace: openshift-gitops
 ---
-# Source: pattern-clustergroup/templates/plumbing/argocd-super-role.yaml
+# Source: clustergroup/templates/plumbing/argocd-super-role.yaml
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -382,7 +382,7 @@ subjects:
     name: hub-gitops-argocd-dex-server
     namespace: mypattern-hub
 ---
-# Source: pattern-clustergroup/templates/imperative/role.yaml
+# Source: clustergroup/templates/imperative/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -396,7 +396,7 @@ rules:
     verbs:
     - '*'
 ---
-# Source: pattern-clustergroup/templates/imperative/rbac.yaml
+# Source: clustergroup/templates/imperative/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -411,7 +411,7 @@ subjects:
     name: imperative-sa
     namespace: imperative
 ---
-# Source: pattern-clustergroup/templates/imperative/job.yaml
+# Source: clustergroup/templates/imperative/job.yaml
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -485,7 +485,7 @@ spec:
               name: helm-values-configmap-hub
           restartPolicy: Never
 ---
-# Source: pattern-clustergroup/templates/imperative/unsealjob.yaml
+# Source: clustergroup/templates/imperative/unsealjob.yaml
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -561,10 +561,10 @@ spec:
               name: helm-values-configmap-hub
           restartPolicy: Never
 ---
-# Source: pattern-clustergroup/templates/core/subscriptions.yaml
+# Source: clustergroup/templates/core/subscriptions.yaml
 ---
 ---
-# Source: pattern-clustergroup/templates/plumbing/projects.yaml
+# Source: clustergroup/templates/plumbing/projects.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -585,7 +585,7 @@ spec:
   - '*'
 status: {}
 ---
-# Source: pattern-clustergroup/templates/plumbing/projects.yaml
+# Source: clustergroup/templates/plumbing/projects.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -606,7 +606,7 @@ spec:
   - '*'
 status: {}
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -628,7 +628,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -652,9 +651,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -676,7 +674,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -700,9 +697,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -724,7 +720,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -748,9 +743,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -772,7 +766,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -796,9 +789,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -820,7 +812,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -844,9 +835,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -868,7 +858,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -892,9 +881,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -916,7 +904,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -940,9 +927,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -964,7 +950,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1006,9 +991,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -1030,7 +1014,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1054,9 +1037,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -1078,7 +1060,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1102,9 +1083,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -1126,7 +1106,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1159,9 +1138,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -1183,7 +1161,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1216,9 +1193,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/applications.yaml
+# Source: clustergroup/templates/plumbing/applications.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -1240,7 +1216,6 @@ spec:
       valueFiles:
       - "/values-global.yaml"
       - "/values-hub.yaml"
-      # Watch the progress of https://issues.redhat.com/browse/GITOPS-891 and update accordingly
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1264,9 +1239,8 @@ spec:
     automated: {}
     retry:
       limit: 20
-    #  selfHeal: true
 ---
-# Source: pattern-clustergroup/templates/plumbing/argocd.yaml
+# Source: clustergroup/templates/plumbing/argocd.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
@@ -1403,7 +1377,7 @@ spec:
     ca: {}
 status:
 ---
-# Source: pattern-clustergroup/templates/plumbing/argocd.yaml
+# Source: clustergroup/templates/plumbing/argocd.yaml
 apiVersion: console.openshift.io/v1
 kind: ConsoleLink
 metadata:
@@ -1417,7 +1391,7 @@ spec:
   location: ApplicationMenu
   text: 'Hub ArgoCD'
 ---
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+# Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1427,7 +1401,7 @@ spec:
   targetNamespaces:
   - open-cluster-management
 ---
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+# Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1437,7 +1411,7 @@ spec:
   targetNamespaces:
   - openshift-serverless
 ---
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+# Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1447,7 +1421,7 @@ spec:
   targetNamespaces:
   - opendatahub
 ---
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+# Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1457,7 +1431,7 @@ spec:
   targetNamespaces:
   - openshift-storage
 ---
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+# Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1467,7 +1441,7 @@ spec:
   targetNamespaces:
   - xraylab-1
 ---
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+# Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1477,7 +1451,7 @@ spec:
   targetNamespaces:
   - knative-serving
 ---
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+# Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1487,7 +1461,7 @@ spec:
   targetNamespaces:
   - staging
 ---
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+# Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1497,7 +1471,7 @@ spec:
   targetNamespaces:
   - vault
 ---
-# Source: pattern-clustergroup/templates/core/operatorgroup.yaml
+# Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1507,7 +1481,7 @@ spec:
   targetNamespaces:
   - golang-external-secrets
 ---
-# Source: pattern-clustergroup/templates/core/subscriptions.yaml
+# Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -1521,7 +1495,7 @@ spec:
   installPlanApproval: Automatic
   startingCSV:
 ---
-# Source: pattern-clustergroup/templates/core/subscriptions.yaml
+# Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -1535,7 +1509,7 @@ spec:
   installPlanApproval: Automatic
   startingCSV:
 ---
-# Source: pattern-clustergroup/templates/core/subscriptions.yaml
+# Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -1549,7 +1523,7 @@ spec:
   installPlanApproval: Automatic
   startingCSV:
 ---
-# Source: pattern-clustergroup/templates/core/subscriptions.yaml
+# Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -1562,7 +1536,7 @@ spec:
   installPlanApproval: Automatic
   startingCSV:
 ---
-# Source: pattern-clustergroup/templates/core/subscriptions.yaml
+# Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:

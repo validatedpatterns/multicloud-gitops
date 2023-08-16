@@ -19,6 +19,7 @@ spec:
 
 {{- $cloud := "None" }}
 {{- $region := "None" }}
+{{- $numClusters := 0 }}
 
 {{- if .platform.aws }}
 {{- $cloud = "aws" }}
@@ -26,6 +27,10 @@ spec:
 {{- else if .platform.azure }}
 {{- $cloud = "azure" }}
 {{- $region = .platform.azure.region }}
+{{- end }}
+
+{{- if .clusters }}
+{{- $numClusters = len .clusters }}
 {{- end }}
 
 apiVersion: hive.openshift.io/v1
@@ -44,14 +49,14 @@ spec:
   {{- if .size }}
   size: {{ .size }}
   {{- else }}
-  size: {{ len .clusters }}
+  size: {{ $numClusters }}
   {{- end }}
-  runningCount: {{ len .clusters }}
+  runningCount: {{ $numClusters }}
   baseDomain: {{ .baseDomain }}
   installConfigSecretTemplateRef:
     name: {{ $poolName }}-install-config 
   imageSetRef:
-    name: img{{ .openshiftVersion }}-x86-64-appsub
+    name: img{{ .openshiftVersion }}-multi-appsub
   pullSecretRef:
     name: {{ $poolName }}-pull-secret
   skipMachinePools: true # Disable MachinePool as using custom install-config
@@ -65,13 +70,13 @@ spec:
 apiVersion: hive.openshift.io/v1
 kind: ClusterClaim
 metadata:
-  name: '{{ . }}-{{ $group.name }}'
+  name: '{{ lower . }}-{{ lower $group.name }}'
   annotations:
     argocd.argoproj.io/sync-wave: "20"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     cluster.open-cluster-management.io/createmanagedcluster: "true"
   labels:
-    clusterClaimName: {{ . }}-{{ $group.name }}
+    clusterClaimName: {{ lower . }}-{{ lower $group.name }}
   {{- if (not $group.acmlabels) }}
     clusterGroup: {{ $group.name }}
   {{- else if eq (len $group.acmlabels) 0 }}
@@ -82,7 +87,7 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
-  clusterPoolName: {{ $pool.name }}
+  clusterPoolName: {{ $poolName }}
 ---
 {{- end }}{{- /* range .range clusters */}}
 {{- end }}{{- /* range .clusterPools */}}

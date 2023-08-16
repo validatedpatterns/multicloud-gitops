@@ -6,7 +6,7 @@ metadata:
   name: aws-ap-acm-provision-edge-install-config
 data:
   # Base64 encoding of install-config yaml
-  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWFwJyAKYmFzZURvbWFpbjogYmx1ZXByaW50cy5yaGVjb2VuZy5jb20KY29udHJvbFBsYW5lOgogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIG5hbWU6IGNvbnRyb2xQbGFuZQogIHJlcGxpY2FzOiAzCiAgcGxhdGZvcm06CiAgICBhd3M6CiAgICAgIHR5cGU6IG01LnhsYXJnZQpjb21wdXRlOgotIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIG5hbWU6ICd3b3JrZXInCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF3czoKICAgICAgdHlwZTogbTUueGxhcmdlCm5ldHdvcmtpbmc6CiAgY2x1c3Rlck5ldHdvcms6CiAgLSBjaWRyOiAxMC4xMjguMC4wLzE0CiAgICBob3N0UHJlZml4OiAyMwogIG1hY2hpbmVOZXR3b3JrOgogIC0gY2lkcjogMTAuMC4wLjAvMTYKICBuZXR3b3JrVHlwZTogT3BlblNoaWZ0U0ROCiAgc2VydmljZU5ldHdvcms6CiAgLSAxNzIuMzAuMC4wLzE2CnBsYXRmb3JtOiB7CiAgImF3cyI6IHsKICAgICJyZWdpb24iOiAiYXAtc291dGhlYXN0LTIiCiAgfQp9CnB1bGxTZWNyZXQ6ICIiICMgc2tpcCwgaGl2ZSB3aWxsIGluamVjdCBiYXNlZCBvbiBpdCdzIHNlY3JldHMKc3NoS2V5OiAiIiAgICAgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cw== 
+  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWFwJyAKYmFzZURvbWFpbjogYmx1ZXByaW50cy5yaGVjb2VuZy5jb20KY29udHJvbFBsYW5lOgogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIG5hbWU6IGNvbnRyb2xQbGFuZQogIHJlcGxpY2FzOiAxCiAgcGxhdGZvcm06CiAgICBhd3M6CiAgICAgIHR5cGU6IG01LnhsYXJnZQpjb21wdXRlOgotIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIG5hbWU6ICd3b3JrZXInCiAgcmVwbGljYXM6IDAKbmV0d29ya2luZzoKICBjbHVzdGVyTmV0d29yazoKICAtIGNpZHI6IDEwLjEyOC4wLjAvMTQKICAgIGhvc3RQcmVmaXg6IDIzCiAgbWFjaGluZU5ldHdvcms6CiAgLSBjaWRyOiAxMC4wLjAuMC8xNgogIG5ldHdvcmtUeXBlOiBPVk5LdWJlcm5ldGVzCiAgc2VydmljZU5ldHdvcms6CiAgLSAxNzIuMzAuMC4wLzE2CnBsYXRmb3JtOgogIGF3czoKICAgIHJlZ2lvbjogYXAtc291dGhlYXN0LTIKcHVsbFNlY3JldDogIiIgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cwpzc2hLZXk6ICIiICAgICAjIHNraXAsIGhpdmUgd2lsbCBpbmplY3QgYmFzZWQgb24gaXQncyBzZWNyZXRz 
 type: Opaque
 ---
 # Source: acm/templates/provision/secrets-common.yaml
@@ -16,26 +16,11 @@ metadata:
   name: azure-us-acm-provision-edge-install-config
 data:
   # Base64 encoding of install-config yaml
-  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXp1cmUtdXMnIApiYXNlRG9tYWluOiBibHVlcHJpbnRzLnJoZWNvZW5nLmNvbQpjb250cm9sUGxhbmU6CiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgbmFtZTogY29udHJvbFBsYW5lCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF6dXJlOgogICAgICB0eXBlOiBTdGFuZGFyZF9EOHNfdjMKY29tcHV0ZToKLSBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBuYW1lOiAnd29ya2VyJwogIHJlcGxpY2FzOiAzCiAgcGxhdGZvcm06CiAgICBhenVyZToKICAgICAgdHlwZTogU3RhbmRhcmRfRDhzX3YzCm5ldHdvcmtpbmc6CiAgY2x1c3Rlck5ldHdvcms6CiAgLSBjaWRyOiAxMC4xMjguMC4wLzE0CiAgICBob3N0UHJlZml4OiAyMwogIG1hY2hpbmVOZXR3b3JrOgogIC0gY2lkcjogMTAuMC4wLjAvMTYKICBuZXR3b3JrVHlwZTogT3BlblNoaWZ0U0ROCiAgc2VydmljZU5ldHdvcms6CiAgLSAxNzIuMzAuMC4wLzE2CnBsYXRmb3JtOiB7CiAgImF6dXJlIjogewogICAgImJhc2VEb21haW5SZXNvdXJjZUdyb3VwTmFtZSI6ICJkb2pvLWRucy16b25lcyIsCiAgICAicmVnaW9uIjogImVhc3R1cyIKICB9Cn0KcHVsbFNlY3JldDogIiIgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cwpzc2hLZXk6ICIiICAgICAjIHNraXAsIGhpdmUgd2lsbCBpbmplY3QgYmFzZWQgb24gaXQncyBzZWNyZXRz 
+  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXp1cmUtdXMnIApiYXNlRG9tYWluOiBibHVlcHJpbnRzLnJoZWNvZW5nLmNvbQpjb250cm9sUGxhbmU6CiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgbmFtZTogY29udHJvbFBsYW5lCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF6dXJlOgogICAgICB0eXBlOiBTdGFuZGFyZF9EOHNfdjMKY29tcHV0ZToKLSBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBuYW1lOiAnd29ya2VyJwogIHJlcGxpY2FzOiAzCiAgcGxhdGZvcm06CiAgICBhenVyZToKICAgICAgdHlwZTogU3RhbmRhcmRfRDhzX3YzCm5ldHdvcmtpbmc6CiAgY2x1c3Rlck5ldHdvcms6CiAgLSBjaWRyOiAxMC4xMjguMC4wLzE0CiAgICBob3N0UHJlZml4OiAyMwogIG1hY2hpbmVOZXR3b3JrOgogIC0gY2lkcjogMTAuMC4wLjAvMTYKICBuZXR3b3JrVHlwZTogT1ZOS3ViZXJuZXRlcwogIHNlcnZpY2VOZXR3b3JrOgogIC0gMTcyLjMwLjAuMC8xNgpwbGF0Zm9ybToKICBhenVyZToKICAgIGJhc2VEb21haW5SZXNvdXJjZUdyb3VwTmFtZTogZG9qby1kbnMtem9uZXMKICAgIHJlZ2lvbjogZWFzdHVzCnB1bGxTZWNyZXQ6ICIiICMgc2tpcCwgaGl2ZSB3aWxsIGluamVjdCBiYXNlZCBvbiBpdCdzIHNlY3JldHMKc3NoS2V5OiAiIiAgICAgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cw== 
 type: Opaque
 ---
 # Source: acm/templates/policies/acm-hub-ca-policy.yaml
 # This pushes out the HUB's Certificate Authorities on to the imported clusters
----
-# Source: acm/templates/provision/clusterpool.yaml
-apiVersion: hive.openshift.io/v1
-kind: ClusterClaim
-metadata:
-  name: 'one-acm-provision-edge'
-  annotations:
-    argocd.argoproj.io/sync-wave: "20"
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    cluster.open-cluster-management.io/createmanagedcluster: "true"
-  labels:
-    clusterClaimName: one-acm-provision-edge
-    clusterGroup: region
-spec:
-  clusterPoolName: aws-ap
 ---
 # Source: acm/templates/provision/clusterpool.yaml
 apiVersion: hive.openshift.io/v1
@@ -50,7 +35,7 @@ metadata:
     clusterClaimName: two-acm-provision-edge
     clusterGroup: region
 spec:
-  clusterPoolName: azure-us
+  clusterPoolName: azure-us-acm-provision-edge
 ---
 # Source: acm/templates/provision/clusterpool.yaml
 apiVersion: hive.openshift.io/v1
@@ -65,7 +50,7 @@ metadata:
     clusterClaimName: three-acm-provision-edge
     clusterGroup: region
 spec:
-  clusterPoolName: azure-us
+  clusterPoolName: azure-us-acm-provision-edge
 ---
 # Source: acm/templates/provision/clusterpool.yaml
 apiVersion: hive.openshift.io/v1
@@ -82,12 +67,12 @@ metadata:
     cluster.open-cluster-management.io/clusterset: aws-ap
 spec:
   size: 3
-  runningCount: 1
+  runningCount: 0
   baseDomain: blueprints.rhecoeng.com
   installConfigSecretTemplateRef:
     name: aws-ap-acm-provision-edge-install-config 
   imageSetRef:
-    name: img4.10.18-x86-64-appsub
+    name: img4.10.18-multi-appsub
   pullSecretRef:
     name: aws-ap-acm-provision-edge-pull-secret
   skipMachinePools: true # Disable MachinePool as using custom install-config
@@ -117,7 +102,7 @@ spec:
   installConfigSecretTemplateRef:
     name: azure-us-acm-provision-edge-install-config 
   imageSetRef:
-    name: img4.10.18-x86-64-appsub
+    name: img4.10.18-multi-appsub
   pullSecretRef:
     name: azure-us-acm-provision-edge-pull-secret
   skipMachinePools: true # Disable MachinePool as using custom install-config
@@ -615,14 +600,14 @@ spec:
                     helm:
                       ignoreMissingValueFiles: true
                       valueFiles:
-                      - "/values-global.yaml"
-                      - "/values-acm-edge.yaml"
-                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
-                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}.yaml'
-                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-edge.yaml'
-                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
-                      # hub's cluster version, whereas we want to include the spoke cluster version
-                      - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-edge.yaml'
+                        - "/values-global.yaml"
+                        - "/values-acm-edge.yaml"
+                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
+                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}.yaml'
+                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-edge.yaml'
+                        # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                        # hub's cluster version, whereas we want to include the spoke cluster version
+                        - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-edge.yaml'
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -709,14 +694,14 @@ spec:
                     helm:
                       ignoreMissingValueFiles: true
                       valueFiles:
-                      - "/values-global.yaml"
-                      - "/values-acm-provision-edge.yaml"
-                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
-                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}.yaml'
-                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-provision-edge.yaml'
-                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
-                      # hub's cluster version, whereas we want to include the spoke cluster version
-                      - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-provision-edge.yaml'
+                        - "/values-global.yaml"
+                        - "/values-acm-provision-edge.yaml"
+                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
+                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}.yaml'
+                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-provision-edge.yaml'
+                        # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                        # hub's cluster version, whereas we want to include the spoke cluster version
+                        - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-provision-edge.yaml'
                       parameters:
                       - name: global.repoURL
                         value: $ARGOCD_APP_SOURCE_REPO_URL
