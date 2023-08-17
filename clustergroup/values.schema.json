@@ -388,6 +388,10 @@
           "type": "string",
           "description": "Chart is a Helm chart name, and must be specified for applications sourced from a Helm repo."
         },
+        "chartVersion": {
+          "type": "string",
+          "description": "The version of the helm chart to be used. Can be a regex like '0.0.*'."
+        },
         "kustomize": {
           "type": "boolean",
           "description": "If set to true it will tell ArgoCD to use kustomize to deploy the application."
