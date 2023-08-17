@@ -14,8 +14,8 @@ spec:
 {{- if .Values.main.extraParameters }}
   extraParameters:
 {{- range .Values.main.extraParameters }}
-  - name: {{ .name }}
-    value: {{ .value }}
+  - name: {{ .name | quote }}
+    value: {{ .value | quote }}
 {{- end }} {{/* range .Values.main.extraParameters */}}
 {{- end }} {{/* if .Values.main.extraParameters */}}
 {{- if .Values.global.extraValueFiles }}
