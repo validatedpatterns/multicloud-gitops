@@ -14,13 +14,13 @@ spec:
 {{- if .Values.main.extraParameters }}
   extraParameters:
 {{- range .Values.main.extraParameters }}
-  - name: {{ .name }}
-    value: {{ .value }}
-{{- end }}
-{{- if $.Values.global.extraValueFiles }}
+  - name: {{ .name | quote }}
+    value: {{ .value | quote }}
+{{- end }} {{/* range .Values.main.extraParameters */}}
+{{- end }} {{/* if .Values.main.extraParameters */}}
+{{- if .Values.global.extraValueFiles }}
   extraValueFiles:
-{{- range $.Values.global.extraValueFiles }}
+{{- range .Values.global.extraValueFiles }}
   - {{ . | quote }}
-{{- end }}
-{{- end }}
-{{- end }}
+{{- end }} {{/* range .Values.global.extraValueFiles */}}
+{{- end }} {{/* if .Values.global.extraValueFiles */}}
