@@ -1,4 +1,5 @@
 global:
+  extraValueFiles: []
   pattern: common
   targetRevision: main
   options:

@@ -284,6 +284,7 @@ data:
     enabled: all
     global:
       clusterDomain: region.example.com
+      extraValueFiles: []
       git:
         account: hybrid-cloud-patterns
         dev_revision: main
@@ -627,7 +628,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -673,7 +674,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -719,7 +720,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -765,7 +766,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -811,7 +812,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -857,7 +858,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -903,7 +904,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -949,7 +950,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1013,7 +1014,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1059,7 +1060,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1105,7 +1106,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1160,7 +1161,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1215,7 +1216,7 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml"
+      - "/values-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
