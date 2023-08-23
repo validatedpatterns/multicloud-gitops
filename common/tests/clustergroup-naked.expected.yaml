@@ -65,6 +65,7 @@ data:
       targetCluster: in-cluster
     enabled: all
     global:
+      extraValueFiles: []
       options:
         applicationRetryLimit: 20
         installPlanApproval: Automatic

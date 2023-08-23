@@ -140,8 +140,7 @@ spec:
     - name: http
       port: 8200
       targetPort: 8200
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
+  type: ClusterIP
 ---
 # Source: hashicorp-vault/charts/vault/templates/server-statefulset.yaml
 # StatefulSet to run the actual vault server cluster.

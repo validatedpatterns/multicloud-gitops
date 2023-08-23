@@ -1,6 +1,6 @@
 apiVersion: v2
 name: letsencrypt
-description: A Helm chart to add letsencrypt support to Validated Patterns
+description: A Helm chart to add letsencrypt support to Validated Patterns.
 
 type: application
 

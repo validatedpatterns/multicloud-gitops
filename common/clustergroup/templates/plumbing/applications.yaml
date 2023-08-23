@@ -4,7 +4,8 @@
 {{- $namespace = "openshift-gitops" }}
 {{- end }}
 {{- range .Values.clusterGroup.applications }}
-{{- if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) }}
+{{- if .disabled }} {{- /* This allows us to null out an Application entry by specifying disabled: true in an override file */}}
+{{- else if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) }}
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
