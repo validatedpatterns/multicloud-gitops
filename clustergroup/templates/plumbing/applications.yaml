@@ -128,6 +128,72 @@ spec:
     name: {{ $.Values.clusterGroup.targetCluster }}
     namespace: {{ default $namespace .namespace }}
   project: {{ .project }}
+  {{- if and .chart .chartVersion }} {{- /* if .chartVersion is set *and* .repoURL is undefined we assume this is a multisource app */}}
+  sources:
+    - repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+      {{- /* We do not allow overriding the values with .targetRevision because when we use .targetRevision in a chart to specify the helm
+             chart, that revision (e.g. 0.0.1) won't exist in the git tree. So here we simply always take the pattern's git branch/commit */}}
+      targetRevision: {{ $.Values.global.targetRevision }}
+      ref: patternref
+    - repoURL: {{ coalesce .repoURL $.Values.global.multiSourceRepoUrl }}
+      chart: {{ .chart }}
+      targetRevision: {{ .chartVersion }}
+      {{- if .plugin }}
+      plugin: {{ .plugin | toPrettyJson }}
+      {{- else }}
+      helm:
+        ignoreMissingValueFiles: true
+        valueFiles:
+        {{- include "clustergroup.app.globalvalues.prefixedvaluefiles" $ | nindent 8 }}
+        {{- range $valueFile := .extraValueFiles }}
+        - {{ $valueFile | quote }}
+        {{- end }}
+        parameters:
+          {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 8 }}
+          {{- range .extraHubClusterDomainFields }}
+          - name: {{ . }}
+            value: {{ $.Values.global.hubClusterDomain }}
+          {{- end }}
+          {{- range .extraLocalClusterDomainFields }}
+          - name: {{ . }}
+            value: {{ $.Values.global.localClusterDomain }}
+          {{- end }}
+          {{- range .extraRepoURLFields }}
+          - name: {{ . }}
+            value: $ARGOCD_APP_SOURCE_REPO_URL
+          {{- end }}
+          {{- range .extraTargetRevisionFields }}
+          - name: {{ . }}
+            value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+          {{- end }}
+          {{- range .extraNamespaceFields }}
+          - name: {{ . }}
+            value: $ARGOCD_APP_NAMESPACE
+          {{- end }}
+          {{- range .extraPatternNameFields }}
+          - name: {{ . }}
+            value: {{ $.Values.global.pattern }}
+          {{- end }}
+          {{- range $k, $v := $.Values.extraParametersNested }}
+          - name: {{ $k }}
+            value: {{ $v }}
+          {{- end }}
+          {{- range .overrides }}
+          - name: {{ .name }}
+            value: {{ .value | quote }}
+          {{- if .forceString }}
+            forceString: true
+          {{- end }}
+          {{- end }}{{- /* range .overrides */}}
+        {{- if .fileParameters }}
+        fileParameters:
+        {{- range .fileParameters }}
+          - name: {{ .name }}
+            path: {{ .path }}
+        {{- end }}
+        {{- end }}{{- /* if .fileParameters */}}
+      {{- end }}{{- /* if .plugin */}}
+  {{- else }} {{- /* if .chartVersion */}}
   source:
     repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
     targetRevision: {{ coalesce .targetRevision $.Values.global.targetRevision }}
@@ -191,6 +257,7 @@ spec:
       {{- end }}{{- /* range .fileParameters */}}
       {{- end }}{{- /* if .fileParameters */}}
     {{- end }}{{- /* if .plugin */}}
+  {{- end }}{{- /* if .chartVersion */}}
   {{- if .ignoreDifferences }}
   ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
   {{- end }}
