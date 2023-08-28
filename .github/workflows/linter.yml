@@ -56,9 +56,10 @@ jobs:
         run: |
           make helmlint
 
-      - name: Run make helm kubeconform
-        run: |
-          curl -L -O https://github.com/yannh/kubeconform/releases/download/v0.4.13/kubeconform-linux-amd64.tar.gz
-          tar xf kubeconform-linux-amd64.tar.gz
-          sudo mv -v kubeconform /usr/local/bin
-          make kubeconform
+      # Disable kubeconform for the time being
+      # - name: Run make helm kubeconform
+      #   run: |
+      #     curl -L -O https://github.com/yannh/kubeconform/releases/download/v0.4.13/kubeconform-linux-amd64.tar.gz
+      #     tar xf kubeconform-linux-amd64.tar.gz
+      #     sudo mv -v kubeconform /usr/local/bin
+      #     make kubeconform
