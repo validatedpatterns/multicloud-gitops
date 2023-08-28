@@ -11,6 +11,8 @@ spec:
   gitOpsSpec:
     operatorChannel: {{ default "gitops-1.8" .Values.main.gitops.channel }}
     operatorSource: {{ default "redhat-operators" .Values.main.gitops.operatorSource }}
+  multiSourceConfig:
+    enabled: {{ .Values.main.multiSourceConfig.enabled }}
 {{- if .Values.main.extraParameters }}
   extraParameters:
 {{- range .Values.main.extraParameters }}
