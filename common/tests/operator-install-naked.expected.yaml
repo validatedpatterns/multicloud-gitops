@@ -13,6 +13,8 @@ spec:
   gitOpsSpec:
     operatorChannel: gitops-1.8
     operatorSource: redhat-operators
+  multiSourceConfig:
+    enabled: false
 ---
 # Source: pattern-install/templates/subscription.yaml
 apiVersion: operators.coreos.com/v1alpha1

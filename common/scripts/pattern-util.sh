@@ -36,6 +36,7 @@ fi
 # which will be confused
 podman run -it --rm \
 	--security-opt label=disable \
+	-e EXTRA_HELM_OPTS \
 	${KUBECONF_ENV} \
 	-v "${HOME}":"${HOME}" \
 	-v "${HOME}":/pattern-home \
