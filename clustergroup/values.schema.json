@@ -92,6 +92,16 @@
               "description": "The channel from which to install the gitops operator"
             }
           }
+        },
+        "multiSourceConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable the experimental support for multi source"
+            }
+          }
         }
       }
     },
