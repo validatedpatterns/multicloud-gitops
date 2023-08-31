@@ -3,7 +3,7 @@ description: A Helm chart to configure the golang-based external-secrets.
 keywords:
 - pattern
 name: golang-external-secrets
-version: 0.0.1
+version: 0.0.2
 dependencies:
   - name: external-secrets
     version: "0.9.4"
