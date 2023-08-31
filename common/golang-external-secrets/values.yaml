@@ -11,10 +11,10 @@ clusterGroup:
 
 external-secrets:
   image:
-    tag: v0.8.5-ubi
+    tag: v0.9.4-ubi
   webhook:
     image:
-      tag: v0.8.5-ubi
+      tag: v0.9.4-ubi
   certController:
     image:
-      tag: v0.8.5-ubi
+      tag: v0.9.4-ubi
