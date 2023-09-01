@@ -1,0 +1,10 @@
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: BackupSchedule
+metadata:
+  name: schedule-acm
+  namespace: open-cluster-management-backup
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  veleroSchedule: 0 */6 * * *   # Create a backup every 6 hours
+  veleroTtl: 72h                # Deletes scheduled backups after 72h

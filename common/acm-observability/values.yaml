@@ -1,0 +1,21 @@
+---
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore
+
+pullSecret:
+  key: secret/data/hub/openshiftPullSecret
+
+# Secret to set S3 bucket for thanos-object-storage
+observabilityStorage:
+  path: hub/observabilityStorage
+
+storageClass:
+  name: nfs-client
+
+global:
+  hubClusterDomain: hub.example.com
+  localClusterDomain: region-one.example.com
+
+clusterGroup:
+  isHubCluster: true

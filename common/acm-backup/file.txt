@@ -1,0 +1,1 @@
+{"auths":{"quay.ad.brycech.com:443":{"auth":"cXVheWFkbWluOnBhc3N3b3Jk"}}}

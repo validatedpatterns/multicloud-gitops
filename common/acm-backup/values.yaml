@@ -1,0 +1,22 @@
+---
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore
+
+oadp:
+  key: secret/data/hub/oadp
+
+# For applicable IAM policy for S3, see https://github.com/vmware-tanzu/velero-plugin-for-aws#set-permissions-for-velero 
+s3:
+  profile: default
+  region: ap-southeast-2
+  # url only required for an on-prem S3 provider. E.g. MinIO
+  # url: https://myOnPremiseS3Provider:9000
+  bucket: acm-backup
+
+global:
+  hubClusterDomain: hub.example.com
+  localClusterDomain: region-one.example.com
+
+clusterGroup:
+  isHubCluster: true

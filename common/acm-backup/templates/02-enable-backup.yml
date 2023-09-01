@@ -1,0 +1,81 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+    argocd.argoproj.io/sync-wave: "-3"
+  name: acm-cli-job-sa-role
+rules:
+  - apiGroups:
+      - operator.open-cluster-management.io
+    resources:
+      - multiclusterhubs
+    verbs:
+      - get
+      - list
+      - patch
+      - update
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cli-job-sa
+  namespace: open-cluster-management
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: acm-gitops-rolebinding
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: acm-cli-job-sa-role
+subjects:
+  - kind: ServiceAccount
+    name: cli-job-sa
+    namespace: open-cluster-management
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: acm-backup-setup
+  namespace: open-cluster-management
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  template:
+    spec:
+      containers:
+        - image: registry.redhat.io/openshift4/ose-cli:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              status=`oc get mch/multiclusterhub -n open-cluster-management -o yaml -o jsonpath='{.spec.overrides.components[?(@.name  == "cluster-backup")].enabled}'`
+
+              echo $status
+
+              if [ "$status" == "false" ] ; then
+                oc patch mch/multiclusterhub -n open-cluster-management --type=json -p='[{"op": "add", "path": "/spec/overrides/components/-","value":{"name":"cluster-backup","enabled":true}}]'
+                echo -e "PATCHED MCH - BACKUP ENABLED"
+              fi
+
+              if [ "$status" == "true" ] ; then
+                echo "MCH ALREADY PATCHED - BACKUP IS ENABLED"
+              fi
+
+              echo "Wait for oadp operator to be installed, sleep 2 mins"
+              sleep 120
+
+          imagePullPolicy: IfNotPresent
+          name: acm-backup-setup
+      dnsPolicy: ClusterFirst
+      restartPolicy: OnFailure
+      serviceAccount: cli-job-sa
+      serviceAccountName: cli-job-sa
+      terminationGracePeriodSeconds: 350

@@ -1,0 +1,39 @@
+apiVersion: oadp.openshift.io/v1alpha1
+kind: DataProtectionApplication
+metadata:
+  name: oadp-minio
+  namespace: open-cluster-management-backup
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  backupLocations:
+    - velero:
+        config:
+          profile: {{ .Values.s3.profile }}
+          region: {{ .Values.s3.region }}
+          s3ForcePathStyle: 'true'
+          {{- if .Values.s3.url }}
+          s3Url: {{ .Values.s3.url | quote }}
+          {{- end }}
+        credential:
+          key: cloud
+          name: cloud-credentials
+        default: true
+        objectStorage:
+          bucket: {{ .Values.s3.bucket }}
+          prefix: velero
+        provider: aws
+  configuration:
+    restic:
+      enable: true
+    velero:
+      defaultPlugins:
+        - openshift
+        - aws
+        - kubevirt
+  snapshotLocations:
+    - velero:
+        config:
+          profile: {{ .Values.s3.profile }}
+          region: {{ .Values.s3.region }}
+        provider: aws

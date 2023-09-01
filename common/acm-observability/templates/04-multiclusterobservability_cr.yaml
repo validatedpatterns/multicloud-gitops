@@ -1,0 +1,19 @@
+apiVersion: observability.open-cluster-management.io/v1beta2
+kind: MultiClusterObservability
+metadata:
+  name: observability
+spec:
+  enableDownsampling: true
+  observabilityAddonSpec:
+    enableMetrics: true
+    interval: 30
+  storageConfig:
+    alertmanagerStorageSize: 1Gi
+    compactStorageSize: 20Gi
+    metricObjectStorage:
+      key: thanos.yaml
+      name: thanos-object-storage
+    receiveStorageSize: 20Gi
+    ruleStorageSize: 1Gi
+    storageClass: {{ .Values.storageClass.name }}
+    storeStorageSize: 10Gi
