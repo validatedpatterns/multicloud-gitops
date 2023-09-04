@@ -102,6 +102,10 @@
               "description": "Enable the experimental support for multi source"
             }
           }
+        },
+        "analyticsUUID": {
+          "type": "string",
+          "description": "UUID used to generate analytics"
         }
       }
     },
