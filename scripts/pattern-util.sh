@@ -25,19 +25,12 @@ fi
 # $HOME is mounted as itself for any files that are referenced with absolute paths
 # $HOME is mounted to /root because the UID in the container is 0 and that's where SSH looks for credentials
 
-# We must pass -e KUBECONFIG *only* if it is set, otherwise we end up passing
-# KUBECONFIG="" which then will confuse ansible
-KUBECONF_ENV=""
-if [ -n "$KUBECONFIG" ]; then
-	KUBECONF_ENV="-e KUBECONFIG=${KUBECONFIG}"
-fi
-
 # Do not quote the ${KUBECONF_ENV} below, otherwise we will pass '' to podman
 # which will be confused
 podman run -it --rm \
 	--security-opt label=disable \
 	-e EXTRA_HELM_OPTS \
-	${KUBECONF_ENV} \
+	-e KUBECONFIG \
 	-v "${HOME}":"${HOME}" \
 	-v "${HOME}":/pattern-home \
 	-v "${HOME}":/root \
