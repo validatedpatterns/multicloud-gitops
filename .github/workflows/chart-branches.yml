@@ -30,7 +30,7 @@ jobs:
       clustergroup: ${{ steps.filter.outputs.clustergroup }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: dorny/paths-filter@v2
         id: filter
