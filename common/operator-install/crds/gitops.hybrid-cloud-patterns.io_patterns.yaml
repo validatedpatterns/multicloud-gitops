@@ -45,6 +45,10 @@ spec:
           spec:
             description: PatternSpec defines the desired state of Pattern
             properties:
+              analyticsUUID:
+                description: Analytics UUID. Leave empty to autogenerate a random
+                  one. Not PII information
+                type: string
               clusterGroupName:
                 type: string
               extraParameters:
