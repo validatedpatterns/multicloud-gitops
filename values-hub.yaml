@@ -71,6 +71,7 @@ clusterGroup:
       namespace: gatekeeper-system
       project: gatekeeper-constrainttemplates
       path: ./
+      kustomize: true
       repoURL: https://github.com/momoah/gitops-gatekeeper.git
       targetRevision: main
       plugin:
@@ -99,6 +100,7 @@ clusterGroup:
      namespace: prod-policies
      project: prod-policies
      path: overlays/prod/
+     kustomize: true # adding this
      repoURL: https://github.com/momoah/gitops-gatekeeper.git
      targetRevision: main
      plugin:
@@ -121,6 +123,7 @@ clusterGroup:
      namespace: prod-gatekeeper
      project: prod-gatekeeper
      path: ./overlays/prod
+     kustomize: true
      repoURL: https://github.com/momoah/gitops-gatekeeper.git
      targetRevision: main
      plugin:
@@ -136,6 +139,7 @@ clusterGroup:
      namespace: dev-gatekeeper
      project: dev-gatekeeper
      path: ./overlays/dev
+     kustomize: true
      repoURL: https://github.com/momoah/gitops-gatekeeper.git
      targetRevision: main
      plugin:
@@ -147,6 +151,7 @@ clusterGroup:
      namespace: dev-policies
      project: dev-policies
      path: overlays/dev/
+     kustomize: true
      repoURL: https://github.com/momoah/gitops-policies.git
      targetRevision: main
      plugin:
