@@ -3,7 +3,6 @@ clusterGroup:
   isHubCluster: true
 
   namespaces:
-    - open-cluster-management
     - vault
     - golang-external-secrets
     - multicluster-engine
@@ -14,28 +13,11 @@ clusterGroup:
       namespace: multicluster-engine
       channel: stable-2.3
 
-    acm:
-      name: advanced-cluster-management
-      namespace: open-cluster-management
-      channel: release-2.8
-      #csv: advanced-cluster-management.v2.6.1
-
   projects:
     - hub
     - hypershift
 
   applications:
-    acm:
-      name: acm
-      namespace: open-cluster-management
-      project: hub
-      path: common/acm
-      ignoreDifferences:
-      - group: internal.open-cluster-management.io
-        kind: ManagedClusterInfo
-        jsonPointers:
-          - /spec/loggingCA
-
     vault:
       name: vault
       namespace: vault
@@ -52,7 +34,7 @@ clusterGroup:
       name: hypershift
       namespace: multicluster-engine
       project: hypershift
-      path: charts/hub/hypershift
+      path: charts/all/hypershift
 
   imperative:
     # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
