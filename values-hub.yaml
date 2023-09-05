@@ -6,10 +6,14 @@ clusterGroup:
     - open-cluster-management
     - vault
     - golang-external-secrets
-    - config-demo
-    - hello-world
+    - multicluster-engine
 
   subscriptions:
+    mce:
+      name: multicluster-engine:
+      namespace: multicluster-engine
+      channel: stable-2.3
+
     acm:
       name: advanced-cluster-management
       namespace: open-cluster-management
@@ -18,8 +22,7 @@ clusterGroup:
 
   projects:
     - hub
-    - config-demo
-    - hello-world
+    - hypershift
 
   applications:
     acm:
@@ -45,17 +48,11 @@ clusterGroup:
       project: hub
       path: common/golang-external-secrets
 
-    config-demo:
-      name: config-demo
-      namespace: config-demo
-      project: config-demo
-      path: charts/all/config-demo
-
-    hello-world:
-      name: hello-world
-      namespace: hello-world
-      project: hello-world
-      path: charts/all/hello-world
+    hypershift:
+      name: hypershift
+      namespace: multicluster-engine
+      project: hypershift
+      path: charts/hub/hypershift
 
   imperative:
     # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
