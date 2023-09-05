@@ -20,14 +20,15 @@ TARGET_REPO=$(shell git ls-remote --get-url --symref $(TARGET_ORIGIN) | sed -e '
 TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 UUID_FILE ?= ~/.config/validated-patterns/pattern-uuid
+UUID_HELM_OPTS ?=
 
 # --set values always take precedence over the contents of -f
 ifneq ("$(wildcard $(UUID_FILE))","")
 	UUID := $(shell cat $(UUID_FILE))
-	HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT) --set main.analyticsUUID=$(UUID) $(EXTRA_HELM_OPTS)
-else
-	HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT) $(EXTRA_HELM_OPTS)
+	UUID_HELM_OPTS := --set main.analyticsUUID=$(UUID)
 endif
+
+HELM_OPTS=-f values-global.yaml --set main.git.repoURL="$(TARGET_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT) $(UUID_HELM_OPTS) $(EXTRA_HELM_OPTS)
 
 
 ##@ Pattern Common Tasks
