@@ -57,15 +57,15 @@ clusterGroup:
       project: hub
       path: common/golang-external-secrets
 
-    acm-observability:
-      name: acm-observability
-      project: hub
-      path: common/acm-observability
+      #    acm-observability:
+      #      name: acm-observability
+      #      project: hub
+      #      path: common/acm-observability
 
-    acm-backup:
-      name: acm-backup
-      project: hub
-      path: common/acm-backup
+      #    acm-backup:
+      #      name: acm-backup
+      #      project: hub
+      #      path: common/acm-backup
 
     # Contains gatekeeper constraint templates
     gatekeeper-constrainttemplates:
