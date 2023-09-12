@@ -613,6 +613,8 @@ kind: Application
 metadata:
   name: golang-external-secrets
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -659,6 +661,8 @@ kind: Application
 metadata:
   name: kafdrop
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -705,6 +709,8 @@ kind: Application
 metadata:
   name: kafka
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -751,6 +757,8 @@ kind: Application
 metadata:
   name: odh
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -797,6 +805,8 @@ kind: Application
 metadata:
   name: odf
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -843,6 +853,8 @@ kind: Application
 metadata:
   name: serverless
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -889,6 +901,8 @@ kind: Application
 metadata:
   name: xraylab-service-account
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -935,6 +949,8 @@ kind: Application
 metadata:
   name: vault
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -999,6 +1015,8 @@ kind: Application
 metadata:
   name: xraylab-database
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1045,6 +1063,8 @@ kind: Application
 metadata:
   name: xraylab-grafana-dashboards
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1091,6 +1111,8 @@ kind: Application
 metadata:
   name: xraylab-image-generator
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1146,6 +1168,8 @@ kind: Application
 metadata:
   name: xraylab-image-server
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1201,6 +1225,8 @@ kind: Application
 metadata:
   name: xraylab-init
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:

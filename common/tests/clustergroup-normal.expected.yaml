@@ -523,6 +523,8 @@ kind: Application
 metadata:
   name: acm
   namespace: mypattern-example
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -578,6 +580,8 @@ kind: Application
 metadata:
   name: pipelines
   namespace: mypattern-example
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:

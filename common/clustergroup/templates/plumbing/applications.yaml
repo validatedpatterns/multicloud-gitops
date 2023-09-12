@@ -121,6 +121,8 @@ kind: Application
 metadata:
   name: {{ .name }}
   namespace: {{ $namespace }}
+  labels:
+    validatedpatterns.io/pattern: {{ $.Values.global.pattern }}
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:

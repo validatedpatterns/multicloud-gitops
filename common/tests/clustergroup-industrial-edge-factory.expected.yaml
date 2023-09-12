@@ -368,6 +368,8 @@ kind: Application
 metadata:
   name: stormshift
   namespace: mypattern-factory
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -393,6 +395,8 @@ kind: Application
 metadata:
   name: odh
   namespace: mypattern-factory
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
