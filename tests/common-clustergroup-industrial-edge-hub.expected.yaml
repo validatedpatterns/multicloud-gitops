@@ -663,6 +663,8 @@ kind: Application
 metadata:
   name: acm
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -718,6 +720,8 @@ kind: Application
 metadata:
   name: odh
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -764,6 +768,8 @@ kind: Application
 metadata:
   name: pipelines
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -810,6 +816,8 @@ kind: Application
 metadata:
   name: production-data-lake
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -886,6 +894,8 @@ kind: Application
 metadata:
   name: external-secrets
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -932,6 +942,8 @@ kind: Application
 metadata:
   name: golang-external-secrets
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -978,6 +990,8 @@ kind: Application
 metadata:
   name: manuela-test
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1003,6 +1017,8 @@ kind: Application
 metadata:
   name: vault
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
