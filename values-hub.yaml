@@ -76,7 +76,7 @@ clusterGroup:
       repoURL: https://github.com/momoah/gitops-gatekeeper.git
       targetRevision: main
       plugin:
-        name: policy-generator
+        name: kustomize-with-policygen
 
     config-demo:
       name: config-demo
@@ -105,7 +105,7 @@ clusterGroup:
      repoURL: https://github.com/momoah/gitops-gatekeeper.git
      targetRevision: main
      plugin:
-       name: policy-generator
+       name: kustomize-with-policygen
      ignoreDifferences:
      - group: policy.open-cluster-management.io
        kind: Policy
@@ -128,7 +128,7 @@ clusterGroup:
      repoURL: https://github.com/momoah/gitops-gatekeeper.git
      targetRevision: main
      plugin:
-       name: policy-generator
+       name: kustomize-with-policygen
 
     ##
     # DEV APPS
@@ -144,7 +144,7 @@ clusterGroup:
      repoURL: https://github.com/momoah/gitops-gatekeeper.git
      targetRevision: main
      plugin:
-       name: policy-generator
+       name: kustomize-with-policygen
     
     # RHACM dev policies
     dev-acm-policies:
@@ -156,7 +156,7 @@ clusterGroup:
      repoURL: https://github.com/momoah/gitops-policies.git
      targetRevision: main
      plugin:
-       name: policy-generator
+       name: kustomize-with-policygen
      ignoreDifferences:
      - group: policy.open-cluster-management.io
        kind: Policy
