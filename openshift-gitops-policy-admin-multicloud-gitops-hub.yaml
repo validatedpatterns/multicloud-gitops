@@ -1,0 +1,61 @@
+#https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html-single/governance/index#policy-gen-install-on-multicloud-gitops-hub
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: multicloud-gitops-hub-policy-admin
+rules:
+  - verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    apiGroups:
+      - policy.open-cluster-management.io
+    resources:
+      - policies
+      - placementbindings
+  - verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    apiGroups:
+      - apps.open-cluster-management.io
+    resources:
+      - placementrules
+  - verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    apiGroups:
+      - cluster.open-cluster-management.io
+    resources:
+      - placements
+      - placements/status
+      - placementdecisions
+      - placementdecisions/status
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: multicloud-gitops-hub-policy-admin
+subjects:
+  - kind: ServiceAccount
+    name: multicloud-gitops-hub-argocd-application-controller
+    namespace: multicloud-gitops-hub
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: multicloud-gitops-hub-policy-admin
+

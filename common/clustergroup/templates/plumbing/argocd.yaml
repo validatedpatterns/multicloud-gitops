@@ -47,6 +47,10 @@ spec:
       generate:
         command: ["kustomize"]
         args: ["build", "--enable-helm"]
+    - name: kustomize-with-policygen
+      generate:
+        command: ["kustomize"]
+        args: ["build", "--enable-alpha-plugins"]
     - name: helm-with-kustomize
       init:
         command: ["/bin/sh", "-c"]
@@ -96,7 +100,29 @@ spec:
   initialSSHKnownHosts: {}
   rbac:
     defaultPolicy: role:admin
+  kustomizeBuildOptions: --enable-alpha-plugins
   repo:
+    env:
+    - name: KUSTOMIZE_PLUGIN_HOME
+      value: /etc/kustomize/plugin
+    initContainers:
+    - args:
+      - -c
+      - cp /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator/PolicyGenerator
+        /policy-generator/PolicyGenerator
+      command:
+      - /bin/bash
+      image: registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8:v2.8
+      name: policy-generator-install
+      volumeMounts:
+      - mountPath: /policy-generator
+        name: policy-generator
+    volumeMounts:
+    - mountPath: /etc/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator
+      name: policy-generator
+    volumes:
+    - emptyDir: {}
+      name: policy-generator
     resources:
       limits:
         cpu: "1"
