@@ -12,6 +12,7 @@ clusterGroup:
     - prod-policies
     - dev-gatekeeper
     - prod-gatekeeper
+    - gatekeeper-system
 
   subscriptions:
     acm:
@@ -30,6 +31,8 @@ clusterGroup:
     - prod-policies
     - dev-gatekeeper
     - prod-gatekeeper
+    - gatekeeper-system
+
 
   applications:
     acm:
