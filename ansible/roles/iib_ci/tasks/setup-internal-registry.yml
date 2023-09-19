@@ -34,7 +34,7 @@
     oc registry info --public=true
   register: registry_route_raw
   retries: 20
-  delay: 10
+  delay: 20
   until:
     - registry_route_raw is not failed
     - registry_route_raw.stdout | length > 0
