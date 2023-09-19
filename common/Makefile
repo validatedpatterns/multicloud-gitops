@@ -45,7 +45,7 @@ show: ## show the starting template without installing it
 	helm template common/operator-install/ --name-template $(NAME) $(HELM_OPTS)
 
 .PHONY: operator-deploy
-operator-deploy operator-upgrade: validate-prereq validate-origin ## runs helm install
+operator-deploy operator-upgrade: validate-prereq validate-origin validate-cluster ## runs helm install
 	@set -e -o pipefail
 	# Retry five times because the CRD might not be fully installed yet
 	for i in {1..5}; do \
@@ -89,6 +89,19 @@ validate-origin: ## verify the git origin is available
 	else\
 		echo "Running inside a container: Skipping git ssh checks";\
 	fi
+
+.PHONY: validate-cluster
+validate-cluster: ## Do some cluster validations before installing
+	@echo "Checking cluster:"
+	@echo -n "  cluster-info: "
+	@oc cluster-info >/dev/null && echo "OK" || (echo "Error"; exit 1)
+	@echo -n "  storageclass: "
+	@if [ `oc get storageclass -o go-template='{{printf "%d\n" (len .items)}}'` -eq 0 ]; then\
+		echo "None Found"; exit 1;\
+	else\
+		echo "OK";\
+	fi
+
 
 .PHONY: validate-schema
 validate-schema: ## validates values files against schema in common/clustergroup
