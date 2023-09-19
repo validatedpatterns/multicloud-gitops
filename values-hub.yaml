@@ -105,7 +105,7 @@ clusterGroup:
      project: prod-policies
      path: overlays/prod/
      kustomize: true # adding this
-     repoURL: https://github.com/momoah/gitops-gatekeeper.git
+     repoURL: https://github.com/momoah/gitops-policies.git
      targetRevision: main
      plugin:
        name: kustomize-with-policygen
