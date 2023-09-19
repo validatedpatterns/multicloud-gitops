@@ -22,6 +22,10 @@ clusterGroup:
       namespace: open-cluster-management
       channel: release-2.8
       # csv: advanced-cluster-management.v2.6.1
+    gatekeeper:
+      name: gatekeeper
+      namespace: gatekeeper-system
+      #      release: release-0.2.6
 
   projects:
     - hub
@@ -47,6 +51,12 @@ clusterGroup:
           kind: ManagedClusterInfo
           jsonPointers:
             - /spec/loggingCA
+    gatekeeper:
+      name: gatekeeper
+      namespace: gatekeeper-system
+      project: hub
+      path: common/gatekeeper
+
 
     vault:
       name: vault
