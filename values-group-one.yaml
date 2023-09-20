@@ -57,6 +57,11 @@ clusterGroup:
               #      project: hub
               #      path: common/gatekeeper
 
+    gatekeeper:
+      name: gatekeeper
+      namespace: gatekeeper-system
+      project: hub
+      path: common/gatekeeper
 
     vault:
       name: vault
