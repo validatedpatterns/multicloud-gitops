@@ -22,10 +22,10 @@ clusterGroup:
       namespace: open-cluster-management
       channel: release-2.8
       # csv: advanced-cluster-management.v2.6.1
-      #    gatekeeper:
-      #      name: gatekeeper
-      #      namespace: gatekeeper-system
-      #      release: release-0.2.6
+    gatekeeper:
+      name: gatekeeper-operator-product
+      namespace: openshift-operators
+      channel: stable
 
   projects:
     - hub
