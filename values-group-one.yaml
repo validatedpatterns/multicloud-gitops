@@ -20,7 +20,7 @@ clusterGroup:
         channel: fast
       - name: compliance-operator
         namespace: openshift-compliance
-        channel: release-0.1
+        channel: stable
 
 
   projects:
