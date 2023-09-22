@@ -21,6 +21,9 @@ clusterGroup:
       - name: compliance-operator
         namespace: openshift-compliance
         channel: stable
+      - name: gatekeeper-operator-product
+        namespace: openshift-operators
+        channel: stable
 
 
   projects:
@@ -54,7 +57,11 @@ clusterGroup:
       project: openshift-pipelines
       path: charts/region/region-one/openshift-pipelines
 
-
+    gatekeeper:
+      name: gatekeeper
+      namespace: gatekeeper-system
+      project: hub
+      path: common/gatekeeper
 
       #    acm-observability:
       #      name: acm-observability
