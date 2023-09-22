@@ -1,100 +1,40 @@
 ---
+global:
+  options:
+    useCSV: False
+    syncPolicy: Automatic
+    installPlanApproval: Automatic
+
 clusterGroup:
-  name: hub
-  isHubCluster: true
+  name: region-one
+  isHubCluster: false
 
   namespaces:
-    - open-cluster-management
-    - vault
-    - golang-external-secrets
     - config-demo
     - hello-world
-    - dev-policies
-    - prod-policies
-    - dev-gatekeeper
-    - prod-gatekeeper
-    - gatekeeper-system
-
+    - golang-external-secrets
 
   subscriptions:
-    acm:
-      name: advanced-cluster-management
-      namespace: open-cluster-management
-      channel: release-2.8
-      # csv: advanced-cluster-management.v2.6.1
-    gatekeeper:
-      name: gatekeeper-operator-product
-      namespace: openshift-operators
-      channel: stable
+      - name: web-terminal
+        namespace: openshift-operators
+        channel: fast
+      - name: compliance-operator
+        namespace: openshift-compliance
+        channel: release-0.1
+
 
   projects:
-    - hub
+    - eso
     - config-demo
     - hello-world
-    - gatekeeper-constrainttemplates
-    - prod-acm-policies
-    - dev-policies
-    - prod-policies
-    - dev-gatekeeper
-    - prod-gatekeeper
-    - gatekeeper-system
-
+    - openshift-piplines
 
   applications:
-    acm:
-      name: acm
-      namespace: open-cluster-management
-      project: hub
-      path: common/acm
-      ignoreDifferences:
-        - group: internal.open-cluster-management.io
-          kind: ManagedClusterInfo
-          jsonPointers:
-            - /spec/loggingCA
-              #    gatekeeper:
-              #      name: gatekeeper
-              #      namespace: gatekeeper-system
-              #      project: hub
-              #      path: common/gatekeeper
-
-    gatekeeper:
-      name: gatekeeper
-      namespace: gatekeeper-system
-      project: hub
-      path: common/gatekeeper
-
-    vault:
-      name: vault
-      namespace: vault
-      project: hub
-      path: common/hashicorp-vault
-
     golang-external-secrets:
       name: golang-external-secrets
       namespace: golang-external-secrets
-      project: hub
+      project: eso
       path: common/golang-external-secrets
-
-      #    acm-observability:
-      #      name: acm-observability
-      #      project: hub
-      #      path: common/acm-observability
-
-      #    acm-backup:
-      #      name: acm-backup
-      #      project: hub
-      #      path: common/acm-backup
-
-    # Contains gatekeeper constraint templates
-    gatekeeper-constrainttemplates:
-      name: gatekeeper-constrainttemplates
-      namespace: gatekeeper-system
-      project: gatekeeper-constrainttemplates
-      path: ./
-      repoURL: https://github.com/momoah/gitops-gatekeeper.git
-      targetRevision: main
-      plugin:
-        name: kustomize-with-policygen
 
     config-demo:
       name: config-demo
@@ -108,105 +48,36 @@ clusterGroup:
       project: hello-world
       path: charts/all/hello-world
 
-    ##
-    # PROD APPS
-    ##
+    openshift-pipelines:
+      name: openshift-pipelines
+      namespace: openshift-pipelines
+      project: openshift-pipelines
+      path: charts/region/region-one/openshift-pipelines
 
-    # RHACM Prod policies
-    prod-acm-policies:
-      name: prod-policies
-      namespace: prod-policies
-      project: prod-policies
-      path: overlays/prod/
-      repoURL: https://github.com/momoah/gitops-policies.git
-      targetRevision: main
-      plugin:
-        name: kustomize-with-policygen
-      ignoreDifferences:
-        - group: policy.open-cluster-management.io
-          kind: Policy
-          jsonPointers:
-            - /metadata/name
-            - /metadata/annotations
-            - /spec/policy-templates
-        - group: policy.open-cluster-management.io
-          kind: PolicySet
-          jsonPointers:
-            - /spec/policies
 
-    # Contains constraints to apply gatekeeper policies to prod environment
-    prod-gatekeeper-constraints:
-      name: prod-gatekeeper-constraints
-      namespace: prod-gatekeeper
-      project: prod-gatekeeper
-      path: ./overlays/prod
-      repoURL: https://github.com/momoah/gitops-gatekeeper.git
-      targetRevision: main
-      plugin:
-        name: kustomize-with-policygen
 
-    ##
-    # DEV APPS
-    ##
+      #    acm-observability:
+      #      name: acm-observability
+      #      project: hub
+      #      path: common/acm-observability
 
-    # Contains constraints to apply gatekeeper policies to dev environment
-    dev-gatekeeper-constraints:
-      name: dev-gatekeeper-constraints
-      namespace: dev-gatekeeper
-      project: dev-gatekeeper
-      path: ./overlays/dev
-      repoURL: https://github.com/momoah/gitops-gatekeeper.git
-      targetRevision: main
-      plugin:
-        name: kustomize-with-policygen
+      #    acm-backup:
+      #      name: acm-backup
+      #      project: hub
+      #      path: common/acm-backup
 
-    # RHACM dev policies
-    dev-acm-policies:
-      name: dev-policies
-      namespace: dev-policies
-      project: dev-policies
-      path: overlays/dev/
-      repoURL: https://github.com/momoah/gitops-policies.git
-      targetRevision: main
-      plugin:
-        name: kustomize-with-policygen
-      ignoreDifferences:
-        - group: policy.open-cluster-management.io
-          kind: Policy
-          jsonPointers:
-            - /metadata/name
-            - /metadata/annotations
-            - /spec/policy-templates
-        - group: policy.open-cluster-management.io
-          kind: PolicySet
-          jsonPointers:
-            - /spec/policies
 
-  imperative:
-    # NOTE: We *must* use lists and not hashes.
-    # As hashes lose ordering once parsed by helm
-    # The default schedule is every 10 minutes: imperative.schedule
-    # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
-    # imagePullPolicy is set to always: imperative.imagePullPolicy
-    # For additional overrides that apply to the jobs, please refer to
-    # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
-    jobs:
-      - name: hello-world
-        # ansible playbook to be run
-        playbook: common/ansible/playbooks/hello-world/hello-world.yaml
-        # per playbook timeout in seconds
-        timeout: 234
-        # verbosity: "-v"
 
-  managedClusterGroups:
-    exampleRegion:
-      name: group-one
-      acmlabels:
-        - name: clusterGroup
-          value: group-one
-      helmOverrides:
-        - name: clusterGroup.isHubCluster
-          value: false
+
+#  managedClusterGroups:
+#    exampleRegion:
+#      name: group-one
+#      acmlabels:
+#        - name: clusterGroup
+#          value: group-one
+#      helmOverrides:
+#        - name: clusterGroup.isHubCluster
+#          value: false
 
 # Before enabling cluster provisioning, ensure AWS and/or Azure
 #   credentials and OCP pull secrets are defined in Vault.
