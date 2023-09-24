@@ -59,7 +59,7 @@ clusterGroup:
     gatekeeper:
       name: gatekeeper
       namespace: gatekeeper-system
-      project: hub
+      project: gatekeeper-system
       path: common/gatekeeper
 
     vault:
@@ -91,7 +91,6 @@ clusterGroup:
       namespace: gatekeeper-system
       project: gatekeeper-constrainttemplates
       path: ./
-      kustomize: true
       repoURL: https://github.com/momoah/gitops-gatekeeper.git
       targetRevision: main
       plugin:

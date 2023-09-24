@@ -22,7 +22,7 @@ clusterGroup:
         namespace: openshift-compliance
         channel: stable
       - name: gatekeeper-operator-product
-        namespace: openshift-operators
+        namespace: openshift-operators 
         channel: stable
 
 
@@ -31,6 +31,7 @@ clusterGroup:
     - config-demo
     - hello-world
     - openshift-piplines
+    - openshift-operators
 
   applications:
     golang-external-secrets:
@@ -60,7 +61,7 @@ clusterGroup:
     gatekeeper:
       name: gatekeeper
       namespace: gatekeeper-system
-      project: hub
+      project: gatekeeper-system
       path: common/gatekeeper
 
       #    acm-observability:
