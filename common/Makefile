@@ -122,6 +122,30 @@ validate-prereq: ## verify pre-requisites
 	@if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi
 	@echo "OK"
 
+.PHONY: argo-healthcheck
+argo-healthcheck: ## Checks if all argo applications are synced
+	@echo "Checking argo applications"
+	$(eval APPS := $(shell oc get applications -A -o jsonpath='{range .items[*]}{@.metadata.namespace}{","}{@.metadata.name}{"\n"}{end}'))
+	@NOTOK=0; \
+	for i in $(APPS); do\
+		n=`echo "$${i}" | cut -f1 -d,`;\
+		a=`echo "$${i}" | cut -f2 -d,`;\
+		STATUS=`oc get -n "$${n}" application/"$${a}" -o jsonpath='{.status.sync.status}'`;\
+		if [[ $$STATUS != "Synced" ]]; then\
+			NOTOK=$$(( $${NOTOK} + 1));\
+		fi;\
+		HEALTH=`oc get -n "$${n}" application/"$${a}" -o jsonpath='{.status.health.status}'`;\
+		if [[ $$HEALTH != "Healthy" ]]; then\
+			NOTOK=$$(( $${NOTOK} + 1));\
+		fi;\
+		echo "$${n} $${a} -> Sync: $${STATUS} - Health: $${HEALTH}";\
+	done;\
+	if [ $${NOTOK} -gt 0 ]; then\
+	    echo "Some applications are not synced or are unhealthy";\
+	    exit 1;\
+	fi
+
+
 ##@ Test and Linters Tasks
 
 CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | grep -v examples | sed -e 's/.\///')
