@@ -65,6 +65,9 @@ data:
       targetCluster: in-cluster
     enabled: all
     global:
+      Template:
+        BasePath: global-vars.yml
+        Name: global-vars
       extraValueFiles: []
       options:
         applicationRetryLimit: 20
