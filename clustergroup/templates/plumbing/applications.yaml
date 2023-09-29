@@ -59,8 +59,11 @@ spec:
           ignoreMissingValueFiles: true
           valueFiles:
           {{- include "clustergroup.app.globalvalues.valuefiles" $ | nindent 12 }}
+        {{- range $valueFile := $.Values.clusterGroup.sharedValueFiles }}
+            - {{ tpl $valueFile $ | quote }}
+        {{- end }}
         {{- range $valueFile := .extraValueFiles }}
-            - {{ tpl $valueFile $.Values.global | quote }}
+            - {{ tpl $valueFile $ | quote }}
         {{- end }}
         {{- if .useGeneratorValues }}
           values: |-
@@ -147,8 +150,11 @@ spec:
         ignoreMissingValueFiles: true
         valueFiles:
         {{- include "clustergroup.app.globalvalues.prefixedvaluefiles" $ | nindent 8 }}
+        {{- range $valueFile := $.Values.clusterGroup.sharedValueFiles }}
+        - {{ tpl $valueFile $ | quote }}
+        {{- end }}
         {{- range $valueFile := .extraValueFiles }}
-        - {{ $valueFile | quote }}
+        - {{ tpl $valueFile $ | quote }}
         {{- end }}
         parameters:
           {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 8 }}
@@ -211,8 +217,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       {{- include "clustergroup.app.globalvalues.valuefiles" $ | nindent 6 }}
+      {{- range $valueFile := $.Values.clusterGroup.sharedValueFiles }}
+      - {{ tpl $valueFile $ | quote }}
+      {{- end }}
       {{- range $valueFile := .extraValueFiles }}
-      - {{ tpl $valueFile $.Values.global | quote }}
+      - {{ tpl $valueFile $ | quote }}
       {{- end }}
       parameters:
         {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 8 }}
