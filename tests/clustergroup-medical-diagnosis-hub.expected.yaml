@@ -260,6 +260,7 @@ data:
       projects:
       - hub
       - medical-diagnosis
+      sharedValueFiles: []
       subscriptions:
         amq-streams:
           channel: stable

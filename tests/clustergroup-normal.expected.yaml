@@ -81,6 +81,8 @@ data:
           path: common/acm
           project: datacenter
         pipe:
+          extraValueFiles:
+          - /values/4.12/aws.yaml
           name: pipelines
           namespace: application-ci
           path: charts/datacenter/pipelines
@@ -175,6 +177,9 @@ data:
       - excludes-ci
       projects:
       - datacenter
+      sharedValueFiles:
+      - /values/aws.yaml
+      - /values/4.12.yaml
       subscriptions:
         acm:
           channel: release-2.4
@@ -550,6 +555,8 @@ spec:
       - "/values-aws-4.12.yaml"
       - "/values-aws-example.yaml"
       - "/values-4.12-example.yaml" 
+      - "/values/aws.yaml"
+      - "/values/4.12.yaml"
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -611,6 +618,9 @@ spec:
       - "/values-aws-4.12.yaml"
       - "/values-aws-example.yaml"
       - "/values-4.12-example.yaml" 
+      - "/values/aws.yaml"
+      - "/values/4.12.yaml"
+      - "/values/4.12/aws.yaml"
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL

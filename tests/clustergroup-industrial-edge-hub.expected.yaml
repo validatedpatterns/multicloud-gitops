@@ -257,6 +257,7 @@ data:
       - production-datalake
       - golang-external-secrets
       - vault
+      sharedValueFiles: []
       subscriptions:
         acm:
           channel: release-2.6

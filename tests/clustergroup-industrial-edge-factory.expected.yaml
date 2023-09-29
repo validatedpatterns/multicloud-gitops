@@ -115,6 +115,7 @@ data:
       - manuela-factory-ml-workspace
       projects:
       - factory
+      sharedValueFiles: []
       subscriptions:
       - channel: stable
         name: opendatahub-operator
