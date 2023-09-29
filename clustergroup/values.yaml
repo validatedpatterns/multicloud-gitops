@@ -8,10 +8,6 @@ global:
     installPlanApproval: Automatic
     applicationRetryLimit: 20
 
-  # This is deeply unpleasant but makes values files easier to template
-  Template:
-    BasePath: "global-vars.yml"
-    Name: "global-vars"
 
 enabled: "all"
 
