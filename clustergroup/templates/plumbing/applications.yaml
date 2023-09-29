@@ -59,8 +59,8 @@ spec:
           ignoreMissingValueFiles: true
           valueFiles:
           {{- include "clustergroup.app.globalvalues.valuefiles" $ | nindent 12 }}
-        {{- range .extraValueFiles }}
-            - {{ . | quote }}
+        {{- range $valueFile := .extraValueFiles }}
+            - {{ tpl $valueFile $.Values.global | quote }}
         {{- end }}
         {{- if .useGeneratorValues }}
           values: |-
@@ -212,7 +212,7 @@ spec:
       valueFiles:
       {{- include "clustergroup.app.globalvalues.valuefiles" $ | nindent 6 }}
       {{- range $valueFile := .extraValueFiles }}
-      - {{ $valueFile | quote }}
+      - {{ tpl $valueFile $.Values.global | quote }}
       {{- end }}
       parameters:
         {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 8 }}
