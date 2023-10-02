@@ -234,6 +234,10 @@
           "type": "boolean",
           "description": "If set to true the values is used to identify whether this is the hub cluster or an edge/spoke cluster configuration."
         },
+        "sharedValueFiles": {
+            "type": "array",
+            "description": "Templated value file paths."
+	},
         "namespaces": {
           "type": "array",
           "description": "This is the array of namespaces that the VP framework will create.  In addition, operator groups will also be created for each namespace.",

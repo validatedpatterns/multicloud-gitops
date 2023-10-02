@@ -150,10 +150,18 @@ argo-healthcheck: ## Checks if all argo applications are synced
 
 CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | grep -v examples | sed -e 's/.\///')
 # Section related to tests and linting
-TEST_OPTS= -f values-global.yaml --set global.repoURL="https://github.com/pattern-clone/mypattern" \
-	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" --set main.git.revision=main --set global.pattern="mypattern" \
-	--set global.namespace="pattern-namespace" --set global.hubClusterDomain=apps.hub.example.com --set global.localClusterDomain=apps.region.example.com --set global.clusterDomain=region.example.com\
-	--set "clusterGroup.imperative.jobs[0].name"="test" --set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml"
+TEST_OPTS= -f values-global.yaml \
+	--set global.repoURL="https://github.com/pattern-clone/mypattern" \
+	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" \
+	--set main.git.revision=main --set global.pattern="mypattern" \
+	--set global.namespace="pattern-namespace" \
+	--set global.hubClusterDomain=apps.hub.example.com \
+	--set global.localClusterDomain=apps.region.example.com \
+	--set global.clusterDomain=region.example.com \
+	--set global.clusterVersion="4.12" \
+	--set global.clusterPlatform=aws \
+	--set "clusterGroup.imperative.jobs[0].name"="test" \
+	--set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml"
 PATTERN_OPTS=-f common/examples/values-example.yaml
 EXECUTABLES=git helm oc ansible
 
