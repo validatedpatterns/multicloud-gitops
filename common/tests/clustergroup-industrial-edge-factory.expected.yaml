@@ -115,6 +115,7 @@ data:
       - manuela-factory-ml-workspace
       projects:
       - factory
+      sharedValueFiles: []
       subscriptions:
       - channel: stable
         name: opendatahub-operator
@@ -136,6 +137,8 @@ data:
     enabled: all
     global:
       clusterDomain: region.example.com
+      clusterPlatform: aws
+      clusterVersion: "4.12"
       extraValueFiles: []
       git:
         account: hybrid-cloud-patterns
@@ -412,7 +415,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-factory.yaml" 
+      - "/values-factory.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-factory.yaml"
+      - "/values-4.12-factory.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -425,9 +432,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain

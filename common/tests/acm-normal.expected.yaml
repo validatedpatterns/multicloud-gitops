@@ -628,7 +628,7 @@ spec:
                       - name: global.clusterVersion
                         value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
                       - name: global.clusterPlatform
-                        value: 
+                        value: aws
                       - name: clusterGroup.name
                         value: acm-edge
                       - name: clusterGroup.isHubCluster
@@ -722,7 +722,7 @@ spec:
                       - name: global.clusterVersion
                         value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
                       - name: global.clusterPlatform
-                        value: 
+                        value: aws
                       - name: clusterGroup.name
                         value: acm-provision-edge
                       - name: clusterGroup.isHubCluster
