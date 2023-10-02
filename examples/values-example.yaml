@@ -11,6 +11,9 @@ clusterGroup:
   name: example
   #insecureUnsealVaultInsideCluster: false
   isHubCluster: true
+  sharedValueFiles:
+  - /values/{{ .Values.global.clusterPlatform }}.yaml
+  - /values/{{ .Values.global.clusterVersion }}.yaml
 
   namespaces:
   - open-cluster-management:
@@ -63,6 +66,8 @@ clusterGroup:
       namespace: application-ci
       project: datacenter
       path: charts/datacenter/pipelines
+      extraValueFiles:
+      - /values/{{ .Values.global.clusterVersion }}/{{ .Values.global.clusterPlatform }}.yaml
 
   imperative:
     namespace: imperative

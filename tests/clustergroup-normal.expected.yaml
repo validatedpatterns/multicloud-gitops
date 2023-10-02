@@ -81,6 +81,8 @@ data:
           path: common/acm
           project: datacenter
         pipe:
+          extraValueFiles:
+          - /values/4.12/aws.yaml
           name: pipelines
           namespace: application-ci
           path: charts/datacenter/pipelines
@@ -175,6 +177,9 @@ data:
       - excludes-ci
       projects:
       - datacenter
+      sharedValueFiles:
+      - /values/aws.yaml
+      - /values/4.12.yaml
       subscriptions:
         acm:
           channel: release-2.4
@@ -192,7 +197,12 @@ data:
       targetCluster: in-cluster
     enabled: all
     global:
+      Template:
+        BasePath: global-vars.yml
+        Name: global-vars
       clusterDomain: region.example.com
+      clusterPlatform: aws
+      clusterVersion: "4.12"
       extraValueFiles: []
       git:
         account: hybrid-cloud-patterns
@@ -540,7 +550,13 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-example.yaml" 
+      - "/values-example.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-example.yaml"
+      - "/values-4.12-example.yaml" 
+      - "/values/aws.yaml"
+      - "/values/4.12.yaml"
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -553,9 +569,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -597,7 +613,14 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-example.yaml" 
+      - "/values-example.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-example.yaml"
+      - "/values-4.12-example.yaml" 
+      - "/values/aws.yaml"
+      - "/values/4.12.yaml"
+      - "/values/4.12/aws.yaml"
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -610,9 +633,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
