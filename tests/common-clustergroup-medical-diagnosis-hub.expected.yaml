@@ -260,6 +260,7 @@ data:
       projects:
       - hub
       - medical-diagnosis
+      sharedValueFiles: []
       subscriptions:
         amq-streams:
           channel: stable
@@ -284,6 +285,8 @@ data:
     enabled: all
     global:
       clusterDomain: region.example.com
+      clusterPlatform: aws
+      clusterVersion: "4.12"
       extraValueFiles: []
       hubClusterDomain: apps.hub.example.com
       localClusterDomain: apps.region.example.com
@@ -625,7 +628,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -638,9 +645,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -673,7 +680,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -686,9 +697,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -721,7 +732,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -734,9 +749,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -769,7 +784,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -782,9 +801,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -817,7 +836,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -830,9 +853,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -865,7 +888,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -878,9 +905,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -913,7 +940,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -926,9 +957,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -961,7 +992,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -974,9 +1009,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1027,7 +1062,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1040,9 +1079,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1075,7 +1114,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1088,9 +1131,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1123,7 +1166,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1136,9 +1183,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1180,7 +1227,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1193,9 +1244,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1237,7 +1288,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1250,9 +1305,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
