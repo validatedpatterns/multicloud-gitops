@@ -136,9 +136,6 @@ data:
       targetCluster: in-cluster
     enabled: all
     global:
-      Template:
-        BasePath: global-vars.yml
-        Name: global-vars
       clusterDomain: region.example.com
       clusterPlatform: aws
       clusterVersion: "4.12"
