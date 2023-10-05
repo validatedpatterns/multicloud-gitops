@@ -1,4 +1,4 @@
-#https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html-single/governance/index#policy-gen-install-on-openshift-gitops
+# https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.8/html-single/governance/index#policy-gen-install-on-openshift-gitops
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
