@@ -1,0 +1,66 @@
+---
+# Source: ack-s3/templates/ack-s3-user-config-cm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ack-s3-user-config
+  namespace: ack-system
+  annotations:
+    argocd.argoproj.io/sync-wave: '-10'
+data:
+  ACK_ENABLE_DEVELOPMENT_LOGGING: "true"
+  ACK_LOG_LEVEL: "debug"
+  ACK_RESOURCE_TAGS: "acktagged"
+  ENABLE_LEADER_ELECTION: "true"
+  AWS_REGION: 
+  ACK_WATCH_NAMESPACE: ""
+  AWS_ENDPOINT_URL: ""
+  LEADER_ELECTION_NAMESPACE: ""
+---
+# Source: ack-s3/templates/create_bucket.yaml
+apiVersion: s3.services.k8s.aws/v1alpha1
+kind: Bucket
+metadata:
+  labels:
+  name: 
+  namespace: ack-system
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  name: 
+  policy: >-
+    {"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::/*"}]}
+---
+# Source: ack-s3/templates/eso-s3-user-secrets.yaml
+apiVersion: "external-secrets.io/v1beta1"
+kind: ExternalSecret
+metadata:
+  name: ack-eso-s3-user-secrets
+  namespace: ack-system
+  annotations:
+    argocd.argoproj.io/sync-wave: '-10'
+spec:
+  refreshInterval: 15s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: ack-s3-user-secrets
+    template:
+      type: Opaque
+  dataFrom:
+  - extract:
+      key: secret/data/hub/aws
+---
+# Source: ack-s3/templates/ack-system-operatorgroup.yaml
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: Bucket.v1alpha1.s3.services.k8s.aws
+    argocd.argoproj.io/sync-wave: '15'
+  name: ack-system-operator-group
+  namespace: ack-system
+spec:
+  upgradeStrategy: Default

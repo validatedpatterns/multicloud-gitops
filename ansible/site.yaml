@@ -1,17 +1,5 @@
-# This is only needed for RHPDS
-- name: MultiCloud-GitOps RHPDS bootstrap
+- name: HyperShift Config
   hosts: localhost
   connection: local
-  tasks:
-    # We cannot use .package or .dnf modules because python3 that is used comes
-    # from a virtualenv
-    - name: Launch the installation
-      ansible.builtin.command: ./pattern.sh make install
-      args:
-        chdir: "{{ lookup('env', 'PWD') }}"
-      register: output
-      changed_when: false
-
-    - name: Print output of installation
-      ansible.builtin.debug:
-        msg: "{{ output }}"
+  roles:
+    - hypershift

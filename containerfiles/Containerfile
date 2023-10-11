@@ -1,0 +1,12 @@
+FROM image-registry.openshift-image-registry.svc:5000/openshift/cli
+USER root
+WORKDIR /tmp
+RUN curl -skLfO https://hypershift-cli-download-multicluster-engine.apps.hcp.aws.validatedpatterns.io/linux/amd64/hypershift.tar.gz && \
+    tar xvf hypershift.tar.gz -C /usr/local/bin/ && \
+    chmod 755 /usr/local/bin/hypershift && \
+    mkdir -p /hypershift/.aws && \
+    chmod 775 /hypershift/.aws && \
+    rm -rf hypershift.tar.gz
+USER 1001
+WORKDIR /hypershift
+CMD /usr/local/bin/hypershift

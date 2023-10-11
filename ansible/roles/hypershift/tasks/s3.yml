@@ -1,0 +1,17 @@
+---
+- name: "aws s3 | create {{ s3_bucket_name }}"
+  amazon.aws.s3_bucket:
+    name: "{{ s3_bucket_name }}"
+    state: present
+    region: "{{ region }}"
+    public_access:
+      block_public_acls: false
+      block_public_policy: false
+      ignore_public_acls: false
+      restrict_public_buckets: false
+
+- name: "aws s3 | Attach policy to {{ s3_bucket_name }}"
+  amazon.aws.s3_bucket:
+    name: "{{ s3_bucket_name }}"
+    state: present
+    policy: "{{ lookup('template', 'policy.json.j2') }}"

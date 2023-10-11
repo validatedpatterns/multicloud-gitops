@@ -81,6 +81,8 @@ data:
           path: common/acm
           project: datacenter
         pipe:
+          extraValueFiles:
+          - /values/4.12/aws.yaml
           name: pipelines
           namespace: application-ci
           path: charts/datacenter/pipelines
@@ -175,6 +177,9 @@ data:
       - excludes-ci
       projects:
       - datacenter
+      sharedValueFiles:
+      - /values/aws.yaml
+      - /values/4.12.yaml
       subscriptions:
         acm:
           channel: release-2.4
@@ -193,6 +198,8 @@ data:
     enabled: all
     global:
       clusterDomain: region.example.com
+      clusterPlatform: aws
+      clusterVersion: "4.12"
       extraValueFiles: []
       git:
         account: hybrid-cloud-patterns
@@ -523,6 +530,8 @@ kind: Application
 metadata:
   name: acm
   namespace: mypattern-example
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -538,7 +547,13 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-example.yaml" 
+      - "/values-example.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-example.yaml"
+      - "/values-4.12-example.yaml" 
+      - "/values/aws.yaml"
+      - "/values/4.12.yaml"
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -551,9 +566,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -578,6 +593,8 @@ kind: Application
 metadata:
   name: pipelines
   namespace: mypattern-example
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -593,7 +610,14 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-example.yaml" 
+      - "/values-example.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-example.yaml"
+      - "/values-4.12-example.yaml" 
+      - "/values/aws.yaml"
+      - "/values/4.12.yaml"
+      - "/values/4.12/aws.yaml"
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -606,9 +630,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -873,26 +897,27 @@ metadata:
 spec:
 # Adding health checks to argocd to prevent pvc resources
 # that aren't bound state from blocking deployments
-  resourceCustomizations: |
-    PersistentVolumeClaim:
-      health.lua: |
-        hs = {}
-        if obj.status ~= nil then
-          if obj.status.phase ~= nil then
-            if obj.status.phase == "Pending" then
-              hs.status = "Healthy"
-              hs.message = obj.status.phase
-              return hs
-            elseif obj.status.phase == "Bound" then
-              hs.status = "Healthy"
-              hs.message = obj.status.phase
-              return hs
-            end
+  resourceHealthChecks:
+  - kind: PersistentVolumeClaim
+    check: |
+      hs = {}
+      if obj.status ~= nil then
+        if obj.status.phase ~= nil then
+          if obj.status.phase == "Pending" then
+            hs.status = "Healthy"
+            hs.message = obj.status.phase
+            return hs
+          elseif obj.status.phase == "Bound" then
+            hs.status = "Healthy"
+            hs.message = obj.status.phase
+            return hs
           end
         end
-        hs.status = "Progressing"
-        hs.message = "Waiting for PVC"
-        return hs
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for PVC"
+      return hs
+
   applicationInstanceLabelKey: argocd.argoproj.io/instance
   # Not the greatest way to pass git/quay info to sub-applications, but it will do until
   # we can support helmChart with kustomize

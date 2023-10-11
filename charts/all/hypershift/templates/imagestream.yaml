@@ -1,0 +1,17 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: hypershift
+  namespace: multicluster-engine
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - name: {{ .Values.global.imagestream.tag }}
+    from:
+      kind: DockerImage
+      name: {{ .Values.global.imagestream.sourceImage }}
+    referencePolicy:
+      type: Source

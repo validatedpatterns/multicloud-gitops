@@ -257,6 +257,7 @@ data:
       - production-datalake
       - golang-external-secrets
       - vault
+      sharedValueFiles: []
       subscriptions:
         acm:
           channel: release-2.6
@@ -297,6 +298,8 @@ data:
     enabled: all
     global:
       clusterDomain: region.example.com
+      clusterPlatform: aws
+      clusterVersion: "4.12"
       extraValueFiles: []
       hubClusterDomain: apps.hub.example.com
       localClusterDomain: apps.region.example.com
@@ -663,6 +666,8 @@ kind: Application
 metadata:
   name: acm
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -678,7 +683,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-datacenter.yaml" 
+      - "/values-datacenter.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-datacenter.yaml"
+      - "/values-4.12-datacenter.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -691,9 +700,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -718,6 +727,8 @@ kind: Application
 metadata:
   name: odh
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -733,7 +744,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-datacenter.yaml" 
+      - "/values-datacenter.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-datacenter.yaml"
+      - "/values-4.12-datacenter.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -746,9 +761,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -764,6 +779,8 @@ kind: Application
 metadata:
   name: pipelines
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -779,7 +796,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-datacenter.yaml" 
+      - "/values-datacenter.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-datacenter.yaml"
+      - "/values-4.12-datacenter.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -792,9 +813,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -810,6 +831,8 @@ kind: Application
 metadata:
   name: production-data-lake
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -825,7 +848,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-datacenter.yaml" 
+      - "/values-datacenter.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-datacenter.yaml"
+      - "/values-4.12-datacenter.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -838,9 +865,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -886,6 +913,8 @@ kind: Application
 metadata:
   name: external-secrets
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -901,7 +930,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-datacenter.yaml" 
+      - "/values-datacenter.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-datacenter.yaml"
+      - "/values-4.12-datacenter.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -914,9 +947,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -932,6 +965,8 @@ kind: Application
 metadata:
   name: golang-external-secrets
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -947,7 +982,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-datacenter.yaml" 
+      - "/values-datacenter.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-datacenter.yaml"
+      - "/values-4.12-datacenter.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -960,9 +999,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -978,6 +1017,8 @@ kind: Application
 metadata:
   name: manuela-test
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1003,6 +1044,8 @@ kind: Application
 metadata:
   name: vault
   namespace: mypattern-datacenter
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1018,7 +1061,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-datacenter.yaml" 
+      - "/values-datacenter.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-datacenter.yaml"
+      - "/values-4.12-datacenter.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1031,9 +1078,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1076,26 +1123,27 @@ metadata:
 spec:
 # Adding health checks to argocd to prevent pvc resources
 # that aren't bound state from blocking deployments
-  resourceCustomizations: |
-    PersistentVolumeClaim:
-      health.lua: |
-        hs = {}
-        if obj.status ~= nil then
-          if obj.status.phase ~= nil then
-            if obj.status.phase == "Pending" then
-              hs.status = "Healthy"
-              hs.message = obj.status.phase
-              return hs
-            elseif obj.status.phase == "Bound" then
-              hs.status = "Healthy"
-              hs.message = obj.status.phase
-              return hs
-            end
+  resourceHealthChecks:
+  - kind: PersistentVolumeClaim
+    check: |
+      hs = {}
+      if obj.status ~= nil then
+        if obj.status.phase ~= nil then
+          if obj.status.phase == "Pending" then
+            hs.status = "Healthy"
+            hs.message = obj.status.phase
+            return hs
+          elseif obj.status.phase == "Bound" then
+            hs.status = "Healthy"
+            hs.message = obj.status.phase
+            return hs
           end
         end
-        hs.status = "Progressing"
-        hs.message = "Waiting for PVC"
-        return hs
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for PVC"
+      return hs
+
   applicationInstanceLabelKey: argocd.argoproj.io/instance
   # Not the greatest way to pass git/quay info to sub-applications, but it will do until
   # we can support helmChart with kustomize

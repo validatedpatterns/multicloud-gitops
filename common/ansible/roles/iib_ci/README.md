@@ -26,6 +26,13 @@ make load-iib
 # This will install the pattern using the gitops operator from the IIB
 ```
 
+***NOTE:*** When using an SNO without shared storage in a non-production environment, the enablement of the internal registry will fail. You need to run the following to enable it:
+
+```sh
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"managementState":"Managed"}}'
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
+```
+
 Then in case of the `openshift-gitops-operator` we would install with:
 
 ```sh

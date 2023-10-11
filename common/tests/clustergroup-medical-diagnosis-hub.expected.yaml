@@ -260,6 +260,7 @@ data:
       projects:
       - hub
       - medical-diagnosis
+      sharedValueFiles: []
       subscriptions:
         amq-streams:
           channel: stable
@@ -284,6 +285,8 @@ data:
     enabled: all
     global:
       clusterDomain: region.example.com
+      clusterPlatform: aws
+      clusterVersion: "4.12"
       extraValueFiles: []
       git:
         account: hybrid-cloud-patterns
@@ -613,6 +616,8 @@ kind: Application
 metadata:
   name: golang-external-secrets
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -628,7 +633,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -641,9 +650,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -659,6 +668,8 @@ kind: Application
 metadata:
   name: kafdrop
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -674,7 +685,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -687,9 +702,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -705,6 +720,8 @@ kind: Application
 metadata:
   name: kafka
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -720,7 +737,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -733,9 +754,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -751,6 +772,8 @@ kind: Application
 metadata:
   name: odh
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -766,7 +789,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -779,9 +806,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -797,6 +824,8 @@ kind: Application
 metadata:
   name: odf
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -812,7 +841,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -825,9 +858,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -843,6 +876,8 @@ kind: Application
 metadata:
   name: serverless
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -858,7 +893,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -871,9 +910,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -889,6 +928,8 @@ kind: Application
 metadata:
   name: xraylab-service-account
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -904,7 +945,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -917,9 +962,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -935,6 +980,8 @@ kind: Application
 metadata:
   name: vault
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -950,7 +997,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -963,9 +1014,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -999,6 +1050,8 @@ kind: Application
 metadata:
   name: xraylab-database
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1014,7 +1067,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1027,9 +1084,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1045,6 +1102,8 @@ kind: Application
 metadata:
   name: xraylab-grafana-dashboards
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1060,7 +1119,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1073,9 +1136,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1091,6 +1154,8 @@ kind: Application
 metadata:
   name: xraylab-image-generator
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1106,7 +1171,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1119,9 +1188,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1146,6 +1215,8 @@ kind: Application
 metadata:
   name: xraylab-image-server
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1161,7 +1232,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1174,9 +1249,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1201,6 +1276,8 @@ kind: Application
 metadata:
   name: xraylab-init
   namespace: mypattern-hub
+  labels:
+    validatedpatterns.io/pattern: mypattern
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
@@ -1216,7 +1293,11 @@ spec:
       ignoreMissingValueFiles: true
       valueFiles:
       - "/values-global.yaml"
-      - "/values-hub.yaml" 
+      - "/values-hub.yaml"
+      - "/values-aws.yaml"
+      - "/values-aws-4.12.yaml"
+      - "/values-aws-hub.yaml"
+      - "/values-4.12-hub.yaml" 
       parameters:
         - name: global.repoURL
           value: $ARGOCD_APP_SOURCE_REPO_URL
@@ -1229,9 +1310,9 @@ spec:
         - name: global.clusterDomain
           value: region.example.com
         - name: global.clusterVersion
-          value: ""
+          value: "4.12"
         - name: global.clusterPlatform
-          value: ""
+          value: "aws"
         - name: global.hubClusterDomain
           value: apps.hub.example.com
         - name: global.localClusterDomain
@@ -1256,26 +1337,27 @@ metadata:
 spec:
 # Adding health checks to argocd to prevent pvc resources
 # that aren't bound state from blocking deployments
-  resourceCustomizations: |
-    PersistentVolumeClaim:
-      health.lua: |
-        hs = {}
-        if obj.status ~= nil then
-          if obj.status.phase ~= nil then
-            if obj.status.phase == "Pending" then
-              hs.status = "Healthy"
-              hs.message = obj.status.phase
-              return hs
-            elseif obj.status.phase == "Bound" then
-              hs.status = "Healthy"
-              hs.message = obj.status.phase
-              return hs
-            end
+  resourceHealthChecks:
+  - kind: PersistentVolumeClaim
+    check: |
+      hs = {}
+      if obj.status ~= nil then
+        if obj.status.phase ~= nil then
+          if obj.status.phase == "Pending" then
+            hs.status = "Healthy"
+            hs.message = obj.status.phase
+            return hs
+          elseif obj.status.phase == "Bound" then
+            hs.status = "Healthy"
+            hs.message = obj.status.phase
+            return hs
           end
         end
-        hs.status = "Progressing"
-        hs.message = "Waiting for PVC"
-        return hs
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for PVC"
+      return hs
+
   applicationInstanceLabelKey: argocd.argoproj.io/instance
   # Not the greatest way to pass git/quay info to sub-applications, but it will do until
   # we can support helmChart with kustomize

@@ -1,0 +1,10 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: Bucket.v1alpha1.s3.services.k8s.aws
+    argocd.argoproj.io/sync-wave: '15'
+  name: ack-system-operator-group
+  namespace: ack-system
+spec:
+  upgradeStrategy: Default

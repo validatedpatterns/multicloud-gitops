@@ -1,0 +1,5 @@
+---
+# tasks file for hypershift
+- name: Setup and Configure HyperShift resources
+  include_tasks:
+    file: bootstrap.yml

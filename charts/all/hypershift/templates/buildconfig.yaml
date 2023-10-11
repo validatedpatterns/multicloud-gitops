@@ -1,0 +1,25 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: hypershift-bc
+  namespace: multicluster-engine
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  source:
+    type: Git
+    git:
+      uri: {{ .Values.global.buildconfig.git.uri }}
+      ref: {{ .Values.global.buildconfig.git.ref | default "main" }}
+    contextDir: {{ .Values.global.buildconfig.contextDir }}
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: {{ .Values.global.buildconfig.dockerfilePath | default "Containerfile" }}
+  triggers:
+    - type: ConfigChange
+  output:
+    to:
+      kind: ImageStreamTag
+      name: hypershift:{{ .Values.global.imagestream.tag | default "latest"}}
+

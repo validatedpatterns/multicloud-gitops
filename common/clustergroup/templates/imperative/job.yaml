@@ -1,6 +1,6 @@
 {{- if not (eq .Values.enabled "plumbing") }}
 {{/* Define this if needed (jobs defined */}}
-{{- if (gt (len $.Values.clusterGroup.imperative.jobs) 0) -}}
+{{- if (and $.Values.clusterGroup.imperative (gt (len $.Values.clusterGroup.imperative.jobs) 0)) -}}
 ---
 apiVersion: batch/v1
 kind: CronJob

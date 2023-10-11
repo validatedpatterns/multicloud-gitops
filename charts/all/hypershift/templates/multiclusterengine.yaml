@@ -1,0 +1,36 @@
+apiVersion: multicluster.openshift.io/v1
+kind: MultiClusterEngine
+metadata:
+  name: engine
+  namespace: multicluster-engine
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  availabilityConfig: High
+  overrides:
+    components:
+    - enabled: true
+      name: assisted-service
+    - enabled: true
+      name: cluster-lifecycle
+    - enabled: true
+      name: cluster-manager
+    - enabled: true
+      name: discovery
+    - enabled: true
+      name: hive
+    - enabled: true
+      name: server-foundation
+    - enabled: true
+      name: cluster-proxy-addon
+    - enabled: true
+      name: local-cluster
+    - enabled: true
+      name: hypershift-local-hosting
+    - enabled: true
+      name: managedserviceaccount-preview
+    - enabled: true
+      name: hypershift-preview
+    - enabled: true
+      name: console-mce
+  targetNamespace: multicluster-engine

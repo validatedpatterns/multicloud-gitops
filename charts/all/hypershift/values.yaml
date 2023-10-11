@@ -1,0 +1,43 @@
+# Default values for hypershift.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+clusterGroup:
+  isHubCluster: true
+
+# Reference the Hashicorp Vault backend for ESO
+secretStore:
+  name: vault-backend
+  kind: ClusterSecretStore
+
+# Secret provisioned for the HyperShift installation 
+awsCredentials:
+  key: secret/data/hub/awsCreds
+
+# Begin global parameters
+global:
+  hubClusterDomain: hub.example.com
+  localClusterDomain: region-one.example.com
+
+# Provision External Secret resources: default true
+  useExternalSecrets: true
+
+# S3 bucket information
+  s3:
+    region: 
+    bucketName: 
+
+# Parameters for the imagestream
+  imagestream:
+    sourceImage: image-registry.openshift-image-registry.svc:5000/openshift/cli
+    tag: latest
+
+# Parameters for the buildconfig
+  buildconfig:
+    git:
+      uri: https://github.com/validatedpatterns-sandbox/hypershift
+      ref: main
+    contextDir: containerfiles
+    dockerfilePath: Containerfile
+    triggers: ConfigChange
+
+# End global parameters
