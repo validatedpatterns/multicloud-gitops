@@ -12,8 +12,10 @@ metadata:
   name: {{ $k }}-operator-group
   namespace: {{ $k }}
 spec:
+    {{- if not ( has $k $.Values.clusterGroup.operatorgroupExcludeTargetNS ) }}
   targetNamespaces:
   - {{ $k }}
+    {{- end }}
   {{- end }}{{- /* range $k, $v := $ns */}}
   {{- else if kindIs "string" $ns }}
 apiVersion: operators.coreos.com/v1
