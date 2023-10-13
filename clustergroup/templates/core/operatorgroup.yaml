@@ -15,7 +15,6 @@ spec:
   targetNamespaces:
   - {{ $k }}
   {{- end }}{{- /* range $k, $v := $ns */}}
-
   {{- else if kindIs "string" $ns }}
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
@@ -23,8 +22,10 @@ metadata:
   name: {{ . }}-operator-group
   namespace: {{ . }}
 spec:
+    {{- if not ( has . $.Values.clusterGroup.operatorgroupExcludeTargetNS ) }}
   targetNamespaces:
   - {{ . }}
+    {{- end }}
   {{- end }} {{- /* if kindIs "string" $ns */}}
 ---
 {{- end }} {{- /* if or (empty $.Values.clusterGroup.operatorgroupExcludes) (not (has . $.Values.clusterGroup.operatorgroupExcludes)) */}}
