@@ -268,7 +268,7 @@
         },
         "operatorgroupExcludeTargetNS": {
           "type": "array",
-          "description": "List of namespaces to exclude the target namespace.",
+          "description": "Specify the list of namespaces where the target namespace field in the corresponding operatorgroup object should be excluded.",
           "items": {
             "type": "string"
           }
