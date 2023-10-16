@@ -29,6 +29,8 @@ clusterGroup:
   operatorgroupExcludes:
   - excludes-ci
 
+  operatorgroupExcludeTargetNS:
+  - application-ci
 
   subscriptions:
     acm:
