@@ -77,12 +77,20 @@ clusterGroup:
   sharedValueFiles:
     - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
 
-  # To mirror the "Classic" magic include structure, the clusterGroup would need all of these:
-  # sharedValueFiles:
+  # sharedValueFiles is a flexible mechanism that will add the listed valuefiles to every app defined in the
+  # applications section. We intend this to supplement and possibly even replace previous "magic" mechanisms, though
+  # we do not at present have a target date for removal.
+  #
+  # To replicate the "classic" magic include structure, the clusterGroup would need all of these
+  # sharedValueFiles, in this order:
   #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
   #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
   #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
   #   - '/cluster-overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+
+  # Another useful thing that can be done is to create an override for just the hub cluster
+  # since the pattern operator will be installed on the hub cluster:
+  #   - '/cluster-overrides/values-{{ $.Values.global.localClusterName }}.yaml'
 
   managedClusterGroups:
     exampleRegion:
