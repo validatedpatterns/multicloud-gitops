@@ -1,6 +1,5 @@
 clusterGroup:
   name: hub
-  isHubCluster: true
 
   namespaces:
     - open-cluster-management
@@ -72,15 +71,25 @@ clusterGroup:
       timeout: 234
       # verbosity: "-v"
 
+  # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
+  # We can use self-referential variables because the chart calls the tpl function with these variables defined
+  sharedValueFiles:
+    - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
+
+  # To mirror the "Classic" magic include structure, the clusterGroup would need all of these:
+  # sharedValueFiles:
+  #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
+  #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
+  #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
+  #   - '/cluster-overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+
   managedClusterGroups:
     exampleRegion:
       name: group-one
       acmlabels:
       - name: clusterGroup
         value: group-one
-      helmOverrides:
-      - name: clusterGroup.isHubCluster
-        value: false
+      helmOverrides: []
 
       # Before enabling cluster provisioning, ensure AWS and/or Azure
       #   credentials and OCP pull secrets are defined in Vault.
