@@ -173,6 +173,8 @@ data:
             openshift.io/node-selector: ""
       - application-ci
       - excludes-ci
+      operatorgroupExcludeTargetNS:
+      - application-ci
       operatorgroupExcludes:
       - excludes-ci
       projects:
@@ -1051,8 +1053,6 @@ metadata:
   name: application-ci-operator-group
   namespace: application-ci
 spec:
-  targetNamespaces:
-  - application-ci
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
