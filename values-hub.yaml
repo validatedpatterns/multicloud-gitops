@@ -1,5 +1,6 @@
 clusterGroup:
   name: hub
+  isHubCluster: true
 
   namespaces:
     - open-cluster-management
@@ -89,7 +90,9 @@ clusterGroup:
       acmlabels:
       - name: clusterGroup
         value: group-one
-      helmOverrides: []
+      helmOverrides:
+      - name: clusterGroup.isHubCluster
+        value: false
 
       # Before enabling cluster provisioning, ensure AWS and/or Azure
       #   credentials and OCP pull secrets are defined in Vault.

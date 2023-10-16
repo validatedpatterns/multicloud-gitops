@@ -6,6 +6,7 @@ global:
 
 clusterGroup:
   name: group-one
+  isHubCluster: false
 
   namespaces:
     - config-demo
