@@ -87,10 +87,12 @@ clusterGroup:
   #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
   #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
   #   - '/cluster-overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
-
-  # Another useful thing that can be done is to create an override for just the hub cluster
-  # since the pattern operator will be installed on the hub cluster:
   #   - '/cluster-overrides/values-{{ $.Values.global.localClusterName }}.yaml'
+
+  # This kind of variable substitution will work with any of the variables the Validated Patterns operator knows
+  # about and sets, so this is also possible, for example:
+  #   - '/cluster-overrides/values-{{ $.Values.global.hubClusterDomain }}.yaml'
+  #   - '/cluster-overrides/values-{{ $.Values.global.localClusterDomain }}.yaml'
 
   managedClusterGroups:
     exampleRegion:
