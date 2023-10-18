@@ -44,6 +44,9 @@ help: ## This help message
 show: ## show the starting template without installing it
 	helm template common/operator-install/ --name-template $(NAME) $(HELM_OPTS)
 
+preview-%:
+	common/scripts/preview.sh hub $* $(TARGET_REPO) $(TARGET_BRANCH)
+
 .PHONY: operator-deploy
 operator-deploy operator-upgrade: validate-prereq validate-origin validate-cluster ## runs helm install
 	@set -e -o pipefail
