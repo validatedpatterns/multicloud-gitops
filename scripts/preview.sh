@@ -5,8 +5,6 @@ APP=$1; shift
 GIT_REPO=$1; shift
 GIT_BRANCH=$1; shift
 
-
-export APP=config-demo;
 chart=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
 namespace=$(yq ".clusterGroup.applications.$APP.namespace" values-$SITE.yaml)
 pattern=$(yq ".global.pattern" values-global.yaml)
@@ -25,6 +23,17 @@ function replaceGlobals() {
     echo $output
 }
 
+function getOverrides() {
+    overrides=''
+    overrides=$( yq ".clusterGroup.applications.$APP.overrides[]" "values-$SITE.yaml" )
+    overrides=$( echo "$overrides" | tr -d '\n' )
+    overrides=$( echo "$overrides" | sed -e 's/name:/ --set/g; s/value: /=/g' )
+    if [ -n "$overrides" ]; then
+        echo "$overrides"
+    fi
+}
+
+
 CLUSTER_OPTS=""
 CLUSTER_OPTS="$CLUSTER_OPTS --set global.pattern=$pattern"
 CLUSTER_OPTS="$CLUSTER_OPTS --set global.repoURL=$GIT_REPO"
@@ -32,14 +41,15 @@ CLUSTER_OPTS="$CLUSTER_OPTS --set main.git.repoURL=$GIT_REPO"
 CLUSTER_OPTS="$CLUSTER_OPTS --set main.git.revision=$GIT_BRANCH"
 CLUSTER_OPTS="$CLUSTER_OPTS --set global.namespace=$namespace"
 CLUSTER_OPTS="$CLUSTER_OPTS --set global.hubClusterDomain=apps.$domain"
-CLUSTER_OPTS="$CLUSTER_OPTS --set global.localClusterDomain=apps.$domain" 
+CLUSTER_OPTS="$CLUSTER_OPTS --set global.localClusterDomain=apps.$domain"
 CLUSTER_OPTS="$CLUSTER_OPTS --set global.clusterDomain=$domain"
-CLUSTER_OPTS="$CLUSTER_OPTS --set global.clusterVersion=$ocpversion" 
+CLUSTER_OPTS="$CLUSTER_OPTS --set global.clusterVersion=$ocpversion"
 CLUSTER_OPTS="$CLUSTER_OPTS --set global.clusterPlatform=$platform"
 
 
 sharedValueFiles=$(yq ".clusterGroup.sharedValueFiles" values-$SITE.yaml)
 appValueFiles=$(yq ".clusterGroup.applications.$APP.extraValueFiles" values-$SITE.yaml)
+OVERRIDES=$( getOverrides )
 
 VALUE_FILES=""
 IFS=$'\n'
@@ -57,7 +67,5 @@ for line in $appValueFiles; do
     fi
 done
 
-cmd="helm template $chart --name-template ${APP} -n ${namespace} ${VALUE_FILES} ${CLUSTER_OPTS}"
-eval $cmd
-
-    
+cmd="helm template $chart --name-template ${APP} -n ${namespace} ${VALUE_FILES} ${OVERRIDES} ${CLUSTER_OPTS}"
+eval "$cmd"
