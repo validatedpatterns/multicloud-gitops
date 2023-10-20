@@ -45,11 +45,11 @@ show: ## show the starting template without installing it
 	helm template common/operator-install/ --name-template $(NAME) $(HELM_OPTS)
 
 preview-all:
-	common/scripts/preview-all.sh $(TARGET_REPO) $(TARGET_BRANCH)
+	@common/scripts/preview-all.sh $(TARGET_REPO) $(TARGET_BRANCH)
 
 preview-%:
 	CLUSTERGROUP?=$(shell yq ".main.clusterGroupName" values-global.yaml)
-	common/scripts/preview.sh $(CLUSTERGROUP) $* $(TARGET_REPO) $(TARGET_BRANCH)
+	@common/scripts/preview.sh $(CLUSTERGROUP) $* $(TARGET_REPO) $(TARGET_BRANCH)
 
 .PHONY: operator-deploy
 operator-deploy operator-upgrade: validate-prereq validate-origin validate-cluster ## runs helm install
