@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 SITE=$1; shift
 APP=$1; shift
