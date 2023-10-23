@@ -57,14 +57,14 @@ clusterGroup:
   # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
   # We can use self-referential variables because the chart calls the tpl function with these variables defined
   sharedValueFiles:
-    - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
+    - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
 
   # To mirror the "Classic" magic include structure, the clusterGroup would need all of these:
   # sharedValueFiles:
-  #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
-  #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
-  #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
-  #   - '/cluster-overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
+  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
+  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
+  #   - '/overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
 
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #

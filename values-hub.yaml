@@ -21,6 +21,28 @@ clusterGroup:
     - config-demo
     - hello-world
 
+  # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
+  # We can use self-referential variables because the chart calls the tpl function with these variables defined
+  sharedValueFiles:
+    - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
+
+  # sharedValueFiles is a flexible mechanism that will add the listed valuefiles to every app defined in the
+  # applications section. We intend this to supplement and possibly even replace previous "magic" mechanisms, though
+  # we do not at present have a target date for removal.
+  #
+  # To replicate the "classic" magic include structure, the clusterGroup would need all of these
+  # sharedValueFiles, in this order:
+  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
+  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
+  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
+  #   - '/overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+  #   - '/overrides/values-{{ $.Values.global.localClusterName }}.yaml'
+
+  # This kind of variable substitution will work with any of the variables the Validated Patterns operator knows
+  # about and sets, so this is also possible, for example:
+  #   - '/overrides/values-{{ $.Values.global.hubClusterDomain }}.yaml'
+  #   - '/overrides/values-{{ $.Values.global.localClusterDomain }}.yaml'
+
   applications:
     acm:
       name: acm
@@ -71,28 +93,6 @@ clusterGroup:
       # per playbook timeout in seconds
       timeout: 234
       # verbosity: "-v"
-
-  # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
-  # We can use self-referential variables because the chart calls the tpl function with these variables defined
-  sharedValueFiles:
-    - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
-
-  # sharedValueFiles is a flexible mechanism that will add the listed valuefiles to every app defined in the
-  # applications section. We intend this to supplement and possibly even replace previous "magic" mechanisms, though
-  # we do not at present have a target date for removal.
-  #
-  # To replicate the "classic" magic include structure, the clusterGroup would need all of these
-  # sharedValueFiles, in this order:
-  #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
-  #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
-  #   - '/cluster-overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
-  #   - '/cluster-overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
-  #   - '/cluster-overrides/values-{{ $.Values.global.localClusterName }}.yaml'
-
-  # This kind of variable substitution will work with any of the variables the Validated Patterns operator knows
-  # about and sets, so this is also possible, for example:
-  #   - '/cluster-overrides/values-{{ $.Values.global.hubClusterDomain }}.yaml'
-  #   - '/cluster-overrides/values-{{ $.Values.global.localClusterDomain }}.yaml'
 
   managedClusterGroups:
     exampleRegion:
