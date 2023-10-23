@@ -17,9 +17,18 @@ spec:
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: application-ci
   labels:
     argocd.argoproj.io/managed-by: mypattern-example
-  name: application-ci
+spec:
+---
+# Source: clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
+  name: include-ci
 spec:
 ---
 # Source: clustergroup/templates/core/namespaces.yaml
@@ -168,13 +177,14 @@ data:
           annotations:
             openshift.io/cluster-monitoring: "true"
             owner: namespace owner
+          excludeOperatorGroupTargetNS: true
           labels:
             kubernetes.io/os: linux
             openshift.io/node-selector: ""
-      - application-ci
+      - application-ci:
+          excludeOperatorGroupTargetNS: true
+      - include-ci
       - excludes-ci
-      operatorgroupExcludeTargetNS:
-      - application-ci
       operatorgroupExcludes:
       - excludes-ci
       projects:
@@ -1043,8 +1053,6 @@ metadata:
   name: open-cluster-management-operator-group
   namespace: open-cluster-management
 spec:
-  targetNamespaces:
-  - open-cluster-management
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
@@ -1053,6 +1061,16 @@ metadata:
   name: application-ci-operator-group
   namespace: application-ci
 spec:
+---
+# Source: clustergroup/templates/core/operatorgroup.yaml
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: include-ci-operator-group
+  namespace: include-ci
+spec:
+  targetNamespaces:
+  - include-ci
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
