@@ -12,7 +12,7 @@ metadata:
   name: {{ $k }}-operator-group
   namespace: {{ $k }}
 spec:
-    {{- if not ( has $k $.Values.clusterGroup.operatorgroupExcludeTargetNS ) }}
+    {{- if not $v.excludeOperatorGroupTargetNS }}
   targetNamespaces:
   - {{ $k }}
     {{- end }}
@@ -24,10 +24,8 @@ metadata:
   name: {{ . }}-operator-group
   namespace: {{ . }}
 spec:
-    {{- if not ( has . $.Values.clusterGroup.operatorgroupExcludeTargetNS ) }}
   targetNamespaces:
   - {{ . }}
-    {{- end }}
   {{- end }} {{- /* if kindIs "string" $ns */}}
 ---
 {{- end }} {{- /* if or (empty $.Values.clusterGroup.operatorgroupExcludes) (not (has . $.Values.clusterGroup.operatorgroupExcludes)) */}}
