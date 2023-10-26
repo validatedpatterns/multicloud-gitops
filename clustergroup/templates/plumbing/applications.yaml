@@ -52,7 +52,7 @@ spec:
         path: {{ .path }}
         {{- end }}
         {{- if .plugin }}
-        plugin: {{ .plugin }}
+        plugin: {{ .plugin | toPrettyJson }}
         {{- end }}
         {{- if not .kustomize }}
         helm:
