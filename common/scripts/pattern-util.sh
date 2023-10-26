@@ -27,7 +27,7 @@ fi
 
 # Do not quote the ${KUBECONF_ENV} below, otherwise we will pass '' to podman
 # which will be confused
-podman run -it --rm \
+podman run -it --rm --pull=newer \
 	--security-opt label=disable \
 	-e EXTRA_HELM_OPTS \
 	-e KUBECONFIG \
