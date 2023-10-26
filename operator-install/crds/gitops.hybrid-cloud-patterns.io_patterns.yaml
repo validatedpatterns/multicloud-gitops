@@ -144,7 +144,8 @@ spec:
             description: PatternStatus defines the observed state of Pattern
             properties:
               analyticsSent:
-                type: boolean
+                default: 0
+                type: integer
               analyticsUUID:
                 type: string
               appClusterDomain:
