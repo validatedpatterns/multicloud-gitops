@@ -4,13 +4,13 @@
   connection: local
   gather_facts: false
   vars:
-    rh_url: "https://datagrepper.engineering.redhat.com/raw?topic=/topic/VirtualTopic.eng.ci.redhat-container-image.index.built&contains=%s&rows_per_page=20"
+    rh_url: "https://datagrepper.engineering.redhat.com/raw?topic=/topic/VirtualTopic.eng.ci.redhat-container-image.index.built&delta=15780000&contains=%s"
     operator: "openshift-gitops-1-gitops-operator-bundle"
     ocp_versions: {}
   tasks:
     - name: Set url fact
       ansible.builtin.set_fact:
-        url: "{{ rh_url | format(operator + ':v') }}"
+        url: "{{ rh_url | format(operator) }}"
 
     - name: Fetch URI
       ansible.builtin.uri:
