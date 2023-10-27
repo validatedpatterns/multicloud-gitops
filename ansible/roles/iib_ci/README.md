@@ -7,6 +7,9 @@ Run `ansible-playbook common/ansible/playbooks/iib-ci/lookup.yml` to see which I
 openshift-gitops). If you want to look up IIBs for a different operator run:
 `ansible-playbook -e operator=acm-operator common/ansible/playbooks/iib-ci/lookup.yml`
 
+You can also try running curl manually via:
+`curl -sSL "https://datagrepper.engineering.redhat.com/raw?topic=/topic/VirtualTopic.eng.ci.redhat-container-image.index.built&delta=15780000&contains=acm-operator" | jq ".raw_messages[].msg"`
+
 Typically IIB are prerelease stuff that lives on some internal boxes. What these scripts do is fetch
 the IIB internally, mirror it to the registry inside the cluster, parse all the needed images and mirror
 those to the internal cluster registry and then set up the registries.conf files on all nodes so
