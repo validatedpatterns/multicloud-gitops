@@ -23,9 +23,14 @@ clusterGroup:
       annotations:
         openshift.io/cluster-monitoring: "true"
         owner: "namespace owner"
-      excludeOperatorGroupTargetNS: true
   - application-ci:
-      excludeOperatorGroupTargetNS: true
+      operatorgroup:
+        targetNamespaces:
+          - application-ci
+          - other-namespace
+  - exclude-targetns:
+      operatorgroup:
+        targetNamespaces:
   - include-ci
   - excludes-ci
 

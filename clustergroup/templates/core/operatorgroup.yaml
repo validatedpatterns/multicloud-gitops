@@ -12,10 +12,14 @@ metadata:
   name: {{ $k }}-operator-group
   namespace: {{ $k }}
 spec:
-    {{- if not $v.excludeOperatorGroupTargetNS }}
   targetNamespaces:
+    {{- if $v.operatorgroup }}
+      {{- range $v.operatorgroup.targetNamespaces }}{{- /* We loop through the list of tergetnamespaces */}}
+  - {{ . }}
+      {{- end }}{{- /* End range targetNamespaces */}}
+    {{- else }}
   - {{ $k }}
-    {{- end }}
+    {{- end }}{{- /* End of if operatorGroup */}}
   {{- end }}{{- /* range $k, $v := $ns */}}
   {{- else if kindIs "string" $ns }}
 apiVersion: operators.coreos.com/v1
