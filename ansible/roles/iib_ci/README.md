@@ -3,7 +3,9 @@
 A set of ansible plays to fetch an IIB (Image Index Bundle, aka a container created by the operator sdk
 that contains a bunch of references to operators that can be installed in an OpenShift cluster)
 
-Run `make lookup` to see which IIBs are available.
+Run `ansible-playbook common/ansible/playbooks/iib-ci/lookup.yml` to see which IIBs are available (defaults to
+openshift-gitops). If you want to look up IIBs for a different operator run:
+`ansible-playbook -e operator=acm-operator common/ansible/playbooks/iib-ci/lookup.yml`
 
 Typically IIB are prerelease stuff that lives on some internal boxes. What these scripts do is fetch
 the IIB internally, mirror it to the registry inside the cluster, parse all the needed images and mirror
