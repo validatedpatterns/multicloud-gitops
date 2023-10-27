@@ -317,6 +317,8 @@ data:
       git:
         repoURL: https://github.com/pattern-clone/mypattern
         revision: main
+      multiSourceConfig:
+        enabled: true
     secretStore:
       kind: ClusterSecretStore
       name: vault-backend
