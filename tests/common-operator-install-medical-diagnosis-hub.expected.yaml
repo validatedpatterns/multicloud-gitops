@@ -1,4 +1,19 @@
 ---
+# Source: pattern-install/templates/pattern-operator-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: patterns-operator-config
+  namespace: openshift-operators
+data:
+  gitops.catalogSource: redhat-operators
+  gitops.channel: gitops-1.8
+
+  # gitops.sourceNamespace: GitOpsDefaultCatalogSourceNamespace
+  # gitops.installApprovalPlan: GitOpsDefaultApprovalPlan
+  # gitops.ManualSync: GitOpsDefaultManualSync
+  # gitops.name: GitOpsDefaultPackageName
+---
 # Source: pattern-install/templates/pattern.yaml
 apiVersion: gitops.hybrid-cloud-patterns.io/v1alpha1
 kind: Pattern
