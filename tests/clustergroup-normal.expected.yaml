@@ -46,7 +46,16 @@ kind: Namespace
 metadata:
   labels:
     argocd.argoproj.io/managed-by: mypattern-example
-  name: excludes-ci
+  name: exclude-og
+spec:
+---
+# Source: clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: totally-exclude-og
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
 spec:
 ---
 # Source: clustergroup/templates/imperative/namespace.yaml
@@ -190,17 +199,19 @@ data:
             kubernetes.io/os: linux
             openshift.io/node-selector: ""
       - application-ci:
-          operatorgroup:
-            targetNamespaces:
-            - application-ci
-            - other-namespace
+          operatorGroup: true
+          targetNamespaces:
+          - application-ci
+          - other-namespace
       - exclude-targetns:
-          operatorgroup:
-            targetNamespaces: null
+          operatorGroup: true
+          targetNamespaces: null
       - include-ci
-      - excludes-ci
+      - exclude-og
+      - totally-exclude-og:
+          operatorGroup: false
       operatorgroupExcludes:
-      - excludes-ci
+      - exclude-og
       projects:
       - datacenter
       sharedValueFiles:
@@ -504,6 +515,9 @@ spec:
             configMap:
               name: helm-values-configmap-example
           restartPolicy: Never
+---
+# Source: clustergroup/templates/core/operatorgroup.yaml
+---
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 ---
@@ -1064,22 +1078,11 @@ spec:
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  name: open-cluster-management-operator-group
-  namespace: open-cluster-management
-spec:
-  targetNamespaces:
-  - open-cluster-management
----
-# Source: clustergroup/templates/core/operatorgroup.yaml
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
   name: application-ci-operator-group
   namespace: application-ci
 spec:
   targetNamespaces:
   - application-ci
-  - other-namespace
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1

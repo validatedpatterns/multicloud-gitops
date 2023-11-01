@@ -24,18 +24,20 @@ clusterGroup:
         openshift.io/cluster-monitoring: "true"
         owner: "namespace owner"
   - application-ci:
-      operatorgroup:
-        targetNamespaces:
-          - application-ci
-          - other-namespace
+      operatorGroup: true
+      targetNamespaces:
+        - application-ci
+        - other-namespace
   - exclude-targetns:
-      operatorgroup:
-        targetNamespaces:
+      operatorGroup: true
+      targetNamespaces:
   - include-ci
-  - excludes-ci
+  - exclude-og
+  - totally-exclude-og:
+      operatorGroup: false
 
   operatorgroupExcludes:
-  - excludes-ci
+  - exclude-og
 
   subscriptions:
     acm:
