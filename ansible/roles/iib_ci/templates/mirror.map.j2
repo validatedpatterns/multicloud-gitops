@@ -1,11 +1,3 @@
-{% set previous_item = [] %}
-{% set tag_count = 1 %}
 {% for item in image_urls.values() %}
-{% if item.source_nosha in previous_item  %}
-    {{ item.source }}={{ item.mirrordest_nosha }}:{{ item.mirrordest_tag ~ '-' ~ tag_count }}
-    {% set tag_count = tag_count + 1 %}
-{% else %}
-    {{ item.source }}={{ item.mirrordest_nosha }}:{{ item.mirrordest_tag }}
-{% endif %}
-{% set previous_item = previous_item.append( item.source_nosha ) %}
+{{ item.source }}={{ item.mirrordest_nosha }}:{{ item.mirrordest_tag }}
 {% endfor %}
