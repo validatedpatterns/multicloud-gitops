@@ -35,6 +35,8 @@ clusterGroup:
   - exclude-og
   - totally-exclude-og:
       operatorGroup: false
+  - include-default-og:
+      operatorGroup: true
 
   operatorgroupExcludes:
   - exclude-og
