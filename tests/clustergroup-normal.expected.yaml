@@ -58,6 +58,15 @@ metadata:
     argocd.argoproj.io/managed-by: mypattern-example
 spec:
 ---
+# Source: clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: include-default-og
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
+spec:
+---
 # Source: clustergroup/templates/imperative/namespace.yaml
 apiVersion: v1
 kind: Namespace
@@ -210,6 +219,8 @@ data:
       - exclude-og
       - totally-exclude-og:
           operatorGroup: false
+      - include-default-og:
+          operatorGroup: true
       operatorgroupExcludes:
       - exclude-og
       projects:
@@ -515,9 +526,6 @@ spec:
             configMap:
               name: helm-values-configmap-example
           restartPolicy: Never
----
-# Source: clustergroup/templates/core/operatorgroup.yaml
----
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 ---
@@ -1083,6 +1091,7 @@ metadata:
 spec:
   targetNamespaces:
   - application-ci
+  - other-namespace
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
 apiVersion: operators.coreos.com/v1
@@ -1102,6 +1111,17 @@ metadata:
 spec:
   targetNamespaces:
   - include-ci
+---
+# Source: clustergroup/templates/core/operatorgroup.yaml
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: include-default-og-operator-group
+  namespace: include-default-og
+spec:
+  targetNamespaces:
+  - include-default-og
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
