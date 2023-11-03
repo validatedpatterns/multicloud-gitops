@@ -18,6 +18,11 @@ clusterGroup:
   targetCluster: in-cluster
   sharedValueFiles: []
 
+  argoCD:
+    initContainers: []
+    legacyConfigManagementPlugins: ""
+    configManagementPlugins: []
+
   imperative:
     jobs: []
     # This image contains ansible + kubernetes.core by default and is used to run the jobs

@@ -317,6 +317,9 @@
             "$ref": "#/definitions/Applications"
           }
         },
+        "argoCD": {
+          "$ref": "#/definitions/ArgoCD"
+        },
         "imperative": {
           "$ref": "#/definitions/Imperative"
         },
@@ -487,6 +490,54 @@
         "project"
       ],
       "title": "Applications"
+    },
+    "ArgoCD": {
+      "type": "object",
+      "description": "Details for configuring ArgoCD instances in particular",
+      "additionalProperties": false,
+      "properties": {
+        "legacyConfigManagementPlugins": {
+          "type": "string",
+          "description": "The legacy (and not deprecated) string-based configManagementPlugins config"
+        },
+        "configManagementPlugins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArgoCDConfigManagementPlugin"
+          },
+          "description": "The new configManagementPlugins array, will also generate configMaps to inject into the plugins"
+        },
+        "initContainers": {
+          "type": "array",
+          "description": "A list of initContainers to add to the repo-server if needed"
+        }
+      }
+    },
+    "ArgoCDConfigManagementPlugin": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name for the config management plugin"
+        },
+        "image": {
+          "type": "string",
+          "description": "Image for a sidecar container"
+        },
+        "imagePullPolicy": {
+          "type": "string",
+          "description": "Image pull policy for the sidecar. Defaults to 'Always'"
+        },
+        "pluginConfig": {
+          "type": "string",
+          "description": "Configuration file to project into sidecar container. This will create a configMap if specified"
+        }
+      },
+      "required": [
+        "name",
+        "image"
+      ]
     },
     "IndexImages": {
       "type": "object",

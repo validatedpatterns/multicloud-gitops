@@ -39,33 +39,9 @@ spec:
   # Not the greatest way to pass git/quay info to sub-applications, but it will do until
   # we can support helmChart with kustomize
   # The other option is to pass them in as environment variables eg. BLUEPRINT_VERSION
-  configManagementPlugins: |
-    - name: kustomize-version
-      generate:
-        command: ["sh", "-c"]
-        args: ["kustomize version 1>&2 && exit 1"]
-    - name: kustomize-with-helm
-      generate:
-        command: ["kustomize"]
-        args: ["build", "--enable-helm"]
-    - name: helm-with-kustomize
-      init:
-        command: ["/bin/sh", "-c"]
-        args: ["helm dependency build"]
-      generate:
-        command: ["/bin/bash", "-c"]
-        args: ["helm template . --name-template ${ARGOCD_APP_NAME:0:52}
-            -f $(git rev-parse --show-toplevel)/values-global.yaml
-            -f $(git rev-parse --show-toplevel)/values-{{ .Values.clusterGroup.name }}.yaml
-            --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
-            --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
-            --set global.namespace=$ARGOCD_APP_NAMESPACE
-            --set global.pattern={{ .Values.global.pattern }}
-            --set global.clusterDomain={{ .Values.global.clusterDomain }}
-            --set global.hubClusterDomain={{ .Values.global.hubClusterDomain }}
-            --set global.localClusterDomain={{ coalesce .Values.global.localClusterDomain .Values.global.hubClusterDomain }}
-            --set clusterGroup.name={{ .Values.clusterGroup.name }}
-            --post-renderer ./kustomize"]
+  {{- if len $.Values.clusterGroup.argoCD.legacyConfigManagementPlugins }}
+  configManagementPlugins: | {{ $.Values.clusterGroup.argoCD.legacyConfigManagementPlugins | nindent 4 }}
+  {{- end }}
   applicationSet:
     resources:
       limits:
@@ -98,6 +74,40 @@ spec:
   rbac:
     defaultPolicy: role:admin
   repo:
+{{- if len $.Values.clusterGroup.argoCD.initContainers }}
+    initContainers: {{ $.Values.clusterGroup.argoCD.initContainers | toPrettyJson }}
+{{- end }}
+{{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
+    sidecarContainers:
+{{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}
+      - name: {{ $cmp.name }}
+        command: [/var/run/argocd/argocd-cmp-server]
+        image: {{ $cmp.image }}
+        imagePullPolicy: {{ coalesce $cmp.imagePullPolicy "Always" }}
+        securityContext:
+          runAsNonRoot: true
+        volumeMounts:
+          - mountPath: /var/run/argocd
+            name: var-files
+          - mountPath: /home/argocd/cmp-server/plugins
+            name: plugins
+          - mountPath: /tmp
+            name: tmp
+{{- if $cmp.pluginConfig }}
+          - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+            subPath: plugin.yaml
+            name: {{ $cmp.name }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
+    volumes:
+{{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}
+      - configMap:
+          name: "argocd-cmp-{{ $cmp.name }}"
+        name: {{ $cmp.name }}
+{{- end }}
+{{- end }}
     resources:
       limits:
         cpu: "1"
