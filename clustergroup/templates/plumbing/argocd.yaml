@@ -36,9 +36,6 @@ spec:
       return hs
 
   applicationInstanceLabelKey: argocd.argoproj.io/instance
-  # Not the greatest way to pass git/quay info to sub-applications, but it will do until
-  # we can support helmChart with kustomize
-  # The other option is to pass them in as environment variables eg. BLUEPRINT_VERSION
   {{- if len $.Values.clusterGroup.argoCD.legacyConfigManagementPlugins }}
   configManagementPlugins: | {{ $.Values.clusterGroup.argoCD.legacyConfigManagementPlugins | nindent 4 }}
   {{- end }}
