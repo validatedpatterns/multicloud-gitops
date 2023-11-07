@@ -48,4 +48,4 @@ vault:
         termination: "reencrypt"
     image:
       repository: "registry.connect.redhat.com/hashicorp/vault"
-      tag: "1.14.0-ubi"
+      tag: "1.15.1-ubi"
