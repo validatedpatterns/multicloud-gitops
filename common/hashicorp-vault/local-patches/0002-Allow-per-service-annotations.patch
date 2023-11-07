@@ -1,69 +1,10 @@
-From f62623030374c55410624a00755e9a3c07a411da Mon Sep 17 00:00:00 2001
-From: Michele Baldessari <michele@acksyn.org>
-Date: Tue, 29 Nov 2022 20:06:09 +0100
-Subject: [PATCH] Allow per-service annotations
-
-We add the 'annotations' field to the existing
-vault.service.{active,standby} dictionaries which are relevant for the
-active/standby vault ha services. We also add
-vault.service.{nonha,internal}.annotations in order to allow per-service
-annotations when using the non-ha variant.
-
-We had to choose 'nonha' as we cannot reuse the existing
-vault.service.annotations key, because that gets still applied to all
-services and we do not want to break existing installations.
-
-WIP as we need to add some more docs and maybe some more tests.
----
- templates/_helpers.tpl                   | 57 ++++++++++++++++++++++++
- templates/server-ha-active-service.yaml  |  3 +-
- templates/server-ha-standby-service.yaml |  1 +
- templates/server-headless-service.yaml   |  1 +
- templates/server-service.yaml            |  1 +
- test/unit/server-ha-active-service.bats  | 11 +++++
- test/unit/server-ha-standby-service.bats | 11 +++++
- test/unit/server-service.bats            | 10 +++++
- values.schema.json                       | 34 ++++++++++++++
- values.yaml                              | 22 +++++++++
- 10 files changed, 150 insertions(+), 1 deletion(-)
-
-diff --git a/templates/_helpers.tpl b/templates/_helpers.tpl
-index 3897391..9e98c0b 100644
---- a/templates/_helpers.tpl
-+++ b/templates/_helpers.tpl
-@@ -683,6 +683,63 @@ Sets extra vault server Service annotations
-   {{- end }}
+diff -up vault/templates/_helpers.tpl.0.26.1 vault/templates/_helpers.tpl
+--- vault/templates/_helpers.tpl.0.26.1	2023-11-07 14:06:52.285821136 +0100
++++ vault/templates/_helpers.tpl	2023-11-07 14:07:45.445038627 +0100
+@@ -738,6 +738,35 @@ Sets extra vault server Service annotati
  {{- end -}}
  
-+{{/*
-+Sets extra vault server Service active annotations
-+*/}}
-+{{- define "vault.service.active.annotations" -}}
-+  {{- if .Values.server.service.active.annotations }}
-+    {{- $tp := typeOf .Values.server.service.active.annotations }}
-+    {{- if eq $tp "string" }}
-+      {{- tpl .Values.server.service.active.annotations . | nindent 4 }}
-+    {{- else }}
-+      {{- toYaml .Values.server.service.active.annotations | nindent 4 }}
-+    {{- end }}
-+  {{- end }}
-+{{- end -}}
-+
-+{{/*
-+Sets extra vault server Service standby annotations
-+*/}}
-+{{- define "vault.service.standby.annotations" -}}
-+  {{- if .Values.server.service.standby.annotations }}
-+    {{- $tp := typeOf .Values.server.service.standby.annotations }}
-+    {{- if eq $tp "string" }}
-+      {{- tpl .Values.server.service.standby.annotations . | nindent 4 }}
-+    {{- else }}
-+      {{- toYaml .Values.server.service.standby.annotations | nindent 4 }}
-+    {{- end }}
-+  {{- end }}
-+{{- end -}}
-+
-+{{/*
+ {{/*
 +Sets extra vault server Service internal annotations
 +*/}}
 +{{- define "vault.service.internal.annotations" -}}
@@ -92,53 +33,25 @@ index 3897391..9e98c0b 100644
 +  {{- end }}
 +{{- end -}}
 +
- {{/*
++{{/*
  Sets PodSecurityPolicy annotations
  */}}
-diff --git a/templates/server-ha-active-service.yaml b/templates/server-ha-active-service.yaml
-index 7def2a0..649ffb8 100644
---- a/templates/server-ha-active-service.yaml
-+++ b/templates/server-ha-active-service.yaml
-@@ -18,8 +18,9 @@ metadata:
-     vault-active: "true"
-   annotations:
- {{ template "vault.service.annotations" .}}
-+{{ template "vault.service.active.annotations" .}}
- spec:
--  {{- if .Values.server.service.type}}
-+  {{- if .Values.server.service.type }}
-   type: {{ .Values.server.service.type }}
-   {{- end}}
-   {{- if .Values.server.service.clusterIP }}
-diff --git a/templates/server-ha-standby-service.yaml b/templates/server-ha-standby-service.yaml
-index 50fca4b..cdbfcad 100644
---- a/templates/server-ha-standby-service.yaml
-+++ b/templates/server-ha-standby-service.yaml
-@@ -17,6 +17,7 @@ metadata:
-     app.kubernetes.io/managed-by: {{ .Release.Service }}
-   annotations:
- {{ template "vault.service.annotations" .}}
-+{{ template "vault.service.standby.annotations" .}}
- spec:
-   {{- if .Values.server.service.type}}
-   type: {{ .Values.server.service.type }}
-diff --git a/templates/server-headless-service.yaml b/templates/server-headless-service.yaml
-index b03f491..25aaa8d 100644
---- a/templates/server-headless-service.yaml
-+++ b/templates/server-headless-service.yaml
-@@ -16,6 +16,7 @@ metadata:
+ {{- define "vault.psp.annotations" -}}
+diff -up vault/templates/server-headless-service.yaml.0.26.1 vault/templates/server-headless-service.yaml
+--- vault/templates/server-headless-service.yaml.0.26.1	2023-11-07 14:08:24.302197609 +0100
++++ vault/templates/server-headless-service.yaml	2023-11-07 14:08:48.707297472 +0100
+@@ -21,6 +21,7 @@ metadata:
      vault-internal: "true"
    annotations:
  {{ template "vault.service.annotations" .}}
 +{{ template "vault.service.internal.annotations" .}}
  spec:
-   clusterIP: None
-   publishNotReadyAddresses: {{ .Values.server.service.publishNotReadyAddresses }}
-diff --git a/templates/server-service.yaml b/templates/server-service.yaml
-index 913b569..02a1ccd 100644
---- a/templates/server-service.yaml
-+++ b/templates/server-service.yaml
-@@ -15,6 +15,7 @@ metadata:
+   {{- if (semverCompare ">= 1.23-0" .Capabilities.KubeVersion.Version) }}
+   {{- if .Values.server.service.ipFamilyPolicy }}
+diff -up vault/templates/server-service.yaml.0.26.1 vault/templates/server-service.yaml
+--- vault/templates/server-service.yaml.0.26.1	2023-11-07 14:09:43.152520231 +0100
++++ vault/templates/server-service.yaml	2023-11-07 14:09:55.406570360 +0100
+@@ -20,6 +20,7 @@ metadata:
      app.kubernetes.io/managed-by: {{ .Release.Service }}
    annotations:
  {{ template "vault.service.annotations" .}}
@@ -146,87 +59,10 @@ index 913b569..02a1ccd 100644
  spec:
    {{- if .Values.server.service.type}}
    type: {{ .Values.server.service.type }}
-diff --git a/test/unit/server-ha-active-service.bats b/test/unit/server-ha-active-service.bats
-index d78f5d4..13b5271 100755
---- a/test/unit/server-ha-active-service.bats
-+++ b/test/unit/server-ha-active-service.bats
-@@ -13,6 +13,17 @@ load _helpers
-   [ "${actual}" = "true" ]
- }
- 
-+@test "server/ha-active-Service: specific annotations" {
-+  cd `chart_dir`
-+  local actual=$(helm template \
-+      --show-only templates/server-ha-active-service.yaml \
-+      --set 'server.ha.enabled=true' \
-+      --set 'server.service.active.annotations=vaultIsAwesome: true' \
-+      . | tee /dev/stderr |
-+      yq -r '.metadata.annotations["vaultIsAwesome"]' | tee /dev/stderr)
-+  [ "${actual}" = "true" ]
-+}
-+
- @test "server/ha-active-Service: disable with ha.enabled false" {
-   cd `chart_dir`
-   local actual=$( (helm template \
-diff --git a/test/unit/server-ha-standby-service.bats b/test/unit/server-ha-standby-service.bats
-index 6698314..6244565 100755
---- a/test/unit/server-ha-standby-service.bats
-+++ b/test/unit/server-ha-standby-service.bats
-@@ -13,6 +13,17 @@ load _helpers
-   [ "${actual}" = "true" ]
- }
- 
-+@test "server/ha-standby-Service: specific annotations string" {
-+  cd `chart_dir`
-+  local actual=$(helm template \
-+      --show-only templates/server-ha-standby-service.yaml \
-+      --set 'server.ha.enabled=true' \
-+      --set 'server.service.standby.annotations=vaultIsAwesome: true' \
-+      . | tee /dev/stderr |
-+      yq -r '.metadata.annotations["vaultIsAwesome"]' | tee /dev/stderr)
-+  [ "${actual}" = "true" ]
-+}
-+
- @test "server/ha-standby-Service: generic annotations yaml" {
-   cd `chart_dir`
-   local actual=$(helm template \
-diff --git a/test/unit/server-service.bats b/test/unit/server-service.bats
-index 70a5445..cc66987 100755
---- a/test/unit/server-service.bats
-+++ b/test/unit/server-service.bats
-@@ -153,6 +153,16 @@ load _helpers
-   [ "${actual}" = "true" ]
- }
- 
-+@test "server/Service: specific annotations" {
-+  cd `chart_dir`
-+  local actual=$(helm template \
-+      --show-only templates/server-service.yaml \
-+      --set 'server.service.nonha.annotations=vaultIsAwesome: true' \
-+      . | tee /dev/stderr |
-+      yq -r '.metadata.annotations["vaultIsAwesome"]' | tee /dev/stderr)
-+  [ "${actual}" = "true" ]
-+}
-+
- @test "server/Service: publish not ready" {
-   cd `chart_dir`
-   local actual=$(helm template \
-diff --git a/values.schema.json b/values.schema.json
-index c183957..d0dca34 100644
---- a/values.schema.json
-+++ b/values.schema.json
-@@ -854,11 +854,39 @@
-                         "active": {
-                             "type": "object",
-                             "properties": {
-+                                "annotations" : {
-+                                    "type": [
-+                                        "object",
-+                                        "string"
-+                                    ]
-+                                },
-                                 "enabled": {
-                                     "type": "boolean"
+diff -up vault/values.schema.json.0.26.1 vault/values.schema.json
+--- vault/values.schema.json.0.26.1	2023-11-07 14:10:35.177733085 +0100
++++ vault/values.schema.json	2023-11-07 14:11:52.244048399 +0100
+@@ -931,6 +931,28 @@
                                  }
                              }
                          },
@@ -255,40 +91,13 @@ index c183957..d0dca34 100644
                          "annotations": {
                              "type": [
                                  "object",
-@@ -890,6 +918,12 @@
-                             "properties": {
-                                 "enabled": {
-                                     "type": "boolean"
-+                                },
-+                                "annotations": {
-+                                    "type": [
-+                                        "object",
-+                                        "string"
-+                                    ]
-                                 }
-                             }
-                         },
-diff --git a/values.yaml b/values.yaml
-index 2c3d9e2..32d8ea1 100644
---- a/values.yaml
-+++ b/values.yaml
-@@ -600,10 +600,32 @@ server:
-     # have labelled themselves as the cluster leader with `vault-active: "true"`
-     active:
-       enabled: true
-+      # Extra annotations for the service definition. This can either be YAML or a
-+      # YAML-formatted multi-line templated string map of the annotations to apply
-+      # to the service.
-+      annotations: {}
-+
-     # Enable or disable the vault-standby service, which selects Vault pods that
-     # have labelled themselves as a cluster follower with `vault-active: "false"`
-     standby:
-       enabled: true
-+      # Extra annotations for the service definition. This can either be YAML or a
-+      # YAML-formatted multi-line templated string map of the annotations to apply
-+      # to the service.
-+      annotations: {}
+diff -up vault/values.yaml.0.26.1 vault/values.yaml
+--- vault/values.yaml.0.26.1	2023-11-07 14:13:00.865329166 +0100
++++ vault/values.yaml	2023-11-07 14:14:15.318633813 +0100
+@@ -673,6 +673,19 @@ server:
+       # YAML-formatted multi-line templated string map of the annotations to apply
+       # to the standby service.
+       annotations: {}
 +
 +    nonha:
 +      # Extra annotations for the service definition. This can either be YAML or a
@@ -305,6 +114,3 @@ index 2c3d9e2..32d8ea1 100644
      # If enabled, the service selectors will include `app.kubernetes.io/instance: {{ .Release.Name }}`
      # When disabled, services may select Vault pods not deployed from the chart.
      # Does not affect the headless vault-internal service with `ClusterIP: None`
--- 
-2.38.1
-
