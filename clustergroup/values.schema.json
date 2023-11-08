@@ -266,6 +266,13 @@
             "type": "string"
           }
         },
+        "operatorgroupExcludeTargetNS": {
+          "type": "array",
+          "description": "Specify the list of namespaces where the target namespace field in the corresponding operatorgroup object should be excluded.",
+          "items": {
+            "type": "string"
+          }
+        },
         "hostedSite": {
           "type": "object",
           "items": {

@@ -17,9 +17,18 @@ spec:
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: application-ci
   labels:
     argocd.argoproj.io/managed-by: mypattern-example
-  name: application-ci
+spec:
+---
+# Source: clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: exclude-targetns
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
 spec:
 ---
 # Source: clustergroup/templates/core/namespaces.yaml
@@ -28,7 +37,34 @@ kind: Namespace
 metadata:
   labels:
     argocd.argoproj.io/managed-by: mypattern-example
-  name: excludes-ci
+  name: include-ci
+spec:
+---
+# Source: clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
+  name: exclude-og
+spec:
+---
+# Source: clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: totally-exclude-og
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
+spec:
+---
+# Source: clustergroup/templates/core/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: include-default-og
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
 spec:
 ---
 # Source: clustergroup/templates/imperative/namespace.yaml
@@ -171,10 +207,22 @@ data:
           labels:
             kubernetes.io/os: linux
             openshift.io/node-selector: ""
-      - application-ci
-      - excludes-ci
+      - application-ci:
+          operatorGroup: true
+          targetNamespaces:
+          - application-ci
+          - other-namespace
+      - exclude-targetns:
+          operatorGroup: true
+          targetNamespaces: null
+      - include-ci
+      - exclude-og
+      - totally-exclude-og:
+          operatorGroup: false
+      - include-default-og:
+          operatorGroup: true
       operatorgroupExcludes:
-      - excludes-ci
+      - exclude-og
       projects:
       - datacenter
       sharedValueFiles:
@@ -1038,21 +1086,42 @@ spec:
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  name: open-cluster-management-operator-group
-  namespace: open-cluster-management
-spec:
-  targetNamespaces:
-  - open-cluster-management
----
-# Source: clustergroup/templates/core/operatorgroup.yaml
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
   name: application-ci-operator-group
   namespace: application-ci
 spec:
   targetNamespaces:
   - application-ci
+  - other-namespace
+---
+# Source: clustergroup/templates/core/operatorgroup.yaml
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: exclude-targetns-operator-group
+  namespace: exclude-targetns
+spec:
+  targetNamespaces:
+---
+# Source: clustergroup/templates/core/operatorgroup.yaml
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: include-ci-operator-group
+  namespace: include-ci
+spec:
+  targetNamespaces:
+  - include-ci
+---
+# Source: clustergroup/templates/core/operatorgroup.yaml
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: include-default-og-operator-group
+  namespace: include-default-og
+spec:
+  targetNamespaces:
+  - include-default-og
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1
