@@ -23,12 +23,23 @@ clusterGroup:
       annotations:
         openshift.io/cluster-monitoring: "true"
         owner: "namespace owner"
-  - application-ci
-  - excludes-ci
+  - application-ci:
+      operatorGroup: true
+      targetNamespaces:
+        - application-ci
+        - other-namespace
+  - exclude-targetns:
+      operatorGroup: true
+      targetNamespaces:
+  - include-ci
+  - exclude-og
+  - totally-exclude-og:
+      operatorGroup: false
+  - include-default-og:
+      operatorGroup: true
 
   operatorgroupExcludes:
-  - excludes-ci
-
+  - exclude-og
 
   subscriptions:
     acm:
