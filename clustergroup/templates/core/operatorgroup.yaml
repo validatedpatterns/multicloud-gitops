@@ -13,7 +13,7 @@ metadata:
   namespace: {{ $k }}
 spec:
   targetNamespaces:
-    {{- if or (and $v.operatorGroup (hasKey $v "targetNamespaces")) (and $v.operatorGroup (not (empty $v.targetNamespaces))) }}
+    {{- if (hasKey $v "targetNamespaces") }}
       {{- range $v.targetNamespaces }}{{- /* We loop through the list of tergetnamespaces */}}
   - {{ . }}
       {{- end }}{{- /* End range targetNamespaces */}}
