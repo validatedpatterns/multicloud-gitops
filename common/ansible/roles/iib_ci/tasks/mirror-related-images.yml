@@ -89,7 +89,7 @@
     image_urls: "{{ image_urls | default({}) | combine({item:
       {'mirrordest': mirror_dest + item | basename,
        'mirrordest_nosha': (mirror_dest + item | basename) | regex_replace('@.*$', ''),
-       'mirrordest_tag': iib}}, recursive=true) }}"
+       'mirrordest_tag': 'tag-' + item | basename | regex_replace('^.*@sha256:', '')}}, recursive=true) }}"
   loop: "{{ all_images }}"
   when: use_internal_registry
 
