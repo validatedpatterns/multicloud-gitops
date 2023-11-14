@@ -89,7 +89,7 @@ spec:
           - mountPath: /home/argocd/cmp-server/plugins
             name: plugins
           - mountPath: /tmp
-            name: tmp
+            name: cmp-tmp
 {{- if $cmp.pluginConfig }}
           - mountPath: /home/argocd/cmp-server/config/plugin.yaml
             subPath: {{ coalesce $cmp.subPath "plugin.yaml" }}
@@ -99,6 +99,8 @@ spec:
 {{- end }}
 {{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
     volumes:
+      - emptyDir: {}
+        name: cmp-tmp
 {{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}
       - configMap:
           name: "argocd-cmp-{{ $cmp.name }}"
