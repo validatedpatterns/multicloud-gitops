@@ -7,12 +7,12 @@ golangExternalSecrets:
   # This controls how ESO connects to vault
   caProvider:
     enabled: true # If vault is exposed via a route that is signed by a non internal CA you might want to disable this
-    hubCluster:
+    vaultHostCluster:
       type: ConfigMap
       name: kube-root-ca.crt
       key: ca.crt
       namespace: golang-external-secrets
-    nonhubCluster:
+    vaultClientCluster:
       type: Secret
       name: hub-ca
       key: hub-kube-root-ca.crt
