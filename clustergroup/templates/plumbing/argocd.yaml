@@ -92,7 +92,7 @@ spec:
             name: cmp-tmp
 {{- if $cmp.pluginConfig }}
           - mountPath: /home/argocd/cmp-server/config/plugin.yaml
-            subPath: {{ coalesce $cmp.subPath "plugin.yaml" }}
+            subPath: plugin.yaml
             name: {{ $cmp.name }}
 {{- end }}
 {{- end }}
