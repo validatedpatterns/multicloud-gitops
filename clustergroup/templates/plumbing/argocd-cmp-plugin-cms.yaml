@@ -8,7 +8,7 @@ metadata:
   name: "argocd-cmp-{{ $cmp.name }}"
   namespace: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
 data:
-  {{ $cmp.pluginConfig | indent 2 }}
+  "plugin.yaml": | {{ tpl $cmp.pluginConfig $ | indent 4 }}
 {{- end }}
 {{- end }}
 {{- end }}
