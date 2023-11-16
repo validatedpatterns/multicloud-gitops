@@ -532,6 +532,10 @@
         "pluginConfig": {
           "type": "string",
           "description": "Configuration file to project into sidecar container. This will create a configMap if specified"
+        },
+        "pluginArgs": {
+          "type": "array",
+          "description": "Additional args to pass to the cmpserver command, usually loglevel"
         }
       },
       "required": [

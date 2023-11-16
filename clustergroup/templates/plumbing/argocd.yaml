@@ -79,6 +79,9 @@ spec:
 {{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}
       - name: {{ $cmp.name }}
         command: [/var/run/argocd/argocd-cmp-server]
+{{- if $cmp.pluginArgs }}
+        args: {{ $cmp.pluginArgs | toPrettyJson }}
+{{- end }}
         image: {{ $cmp.image }}
         imagePullPolicy: {{ coalesce $cmp.imagePullPolicy "Always" }}
         securityContext:
