@@ -36,9 +36,6 @@ spec:
       return hs
 
   applicationInstanceLabelKey: argocd.argoproj.io/instance
-  {{- if len $.Values.clusterGroup.argoCD.legacyConfigManagementPlugins }}
-  configManagementPlugins: | {{ $.Values.clusterGroup.argoCD.legacyConfigManagementPlugins | nindent 4 }}
-  {{- end }}
   applicationSet:
     resources:
       limits:

@@ -218,7 +218,6 @@ data:
       argoCD:
         configManagementPlugins: []
         initContainers: []
-        legacyConfigManagementPlugins: ""
       imperative:
         activeDeadlineSeconds: 3600
         clusterRoleName: imperative-cluster-role

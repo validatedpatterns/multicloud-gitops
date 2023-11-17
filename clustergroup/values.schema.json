@@ -496,10 +496,6 @@
       "description": "Details for configuring ArgoCD instances in particular",
       "additionalProperties": false,
       "properties": {
-        "legacyConfigManagementPlugins": {
-          "type": "string",
-          "description": "The legacy (and not deprecated) string-based configManagementPlugins config"
-        },
         "configManagementPlugins": {
           "type": "array",
           "items": {

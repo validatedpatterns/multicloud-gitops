@@ -20,7 +20,6 @@ clusterGroup:
 
   argoCD:
     initContainers: []
-    legacyConfigManagementPlugins: ""
     configManagementPlugins: []
 
   imperative:
