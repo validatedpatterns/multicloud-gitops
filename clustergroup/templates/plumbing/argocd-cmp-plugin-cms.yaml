@@ -1,4 +1,3 @@
-{{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
 {{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}
 {{- if $cmp.pluginConfig }}
 ---
@@ -9,6 +8,5 @@ metadata:
   namespace: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
 data:
   "plugin.yaml": | {{ tpl $cmp.pluginConfig $ | nindent 4 }}
-{{- end }}
 {{- end }}
 {{- end }}
