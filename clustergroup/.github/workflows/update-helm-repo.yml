@@ -9,6 +9,7 @@
 # - Contents: r/w
 # - Deployments: r/w
 # - Pages: r/w
+#
 
 name: vp-patterns/update-helm-repo
 on:
