@@ -65,6 +65,37 @@ clusterGroup:
   - golang-external-secrets
   - vault
 
+  argoCD:
+    configManagementPlugins:
+      - name: helm-with-kustomize
+        image: quay.io/hybridcloudpatterns/utility-container:latest
+        pluginArgs:
+          - '--loglevel=debug'
+        pluginConfig: |
+          apiVersion: argoproj.io/v1alpha1
+          kind: ConfigManagementPlugin
+          metadata:
+            name: helm-with-kustomize
+          spec:
+            preserveFileMode: true
+            init:
+              command: ["/bin/sh", "-c"]
+              args: ["helm dependency build"]
+            generate:
+              command: ["/bin/bash", "-c"]
+              args: ["helm template . --name-template ${ARGOCD_APP_NAME:0:52}
+                -f $(git rev-parse --show-toplevel)/values-global.yaml
+                -f $(git rev-parse --show-toplevel)/values-{{ .Values.clusterGroup.name }}.yaml
+                --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
+                --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
+                --set global.namespace=$ARGOCD_APP_NAMESPACE
+                --set global.pattern={{ .Values.global.pattern }}
+                --set global.clusterDomain={{ .Values.global.clusterDomain }}
+                --set global.hubClusterDomain={{ .Values.global.hubClusterDomain }}
+                --set global.localClusterDomain={{ coalesce .Values.global.localClusterDomain .Values.global.hubClusterDomain }}
+                --set clusterGroup.name={{ .Values.clusterGroup.name }}
+                --post-renderer ./kustomize"]
+
   applications:
     acm:
       name: acm

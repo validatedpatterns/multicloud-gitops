@@ -1,0 +1,12 @@
+{{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}
+{{- if $cmp.pluginConfig }}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: "argocd-cmp-{{ $cmp.name }}"
+  namespace: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
+data:
+  "plugin.yaml": | {{ tpl $cmp.pluginConfig $ | nindent 4 }}
+{{- end }}
+{{- end }}
