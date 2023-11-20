@@ -120,6 +120,12 @@ spec:
       kinds:
       - TaskRun
       - PipelineRun
+{{ if .Values.global.excludeESO }}
+    - apiGroups:
+      - external-secrets.io
+      kinds:
+      - ExternalSecret
+{{ end }}
   server:
     autoscale:
       enabled: false
