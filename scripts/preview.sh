@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# DISCLAIMER
+# 
+# - Parsing of applications needs to be more clever. Currently the code assumes that all 
+# targets will be local charts. This is not true, for example, in industrial-edge.
+# - There is currently not a mechanism to actually preview against multiple clusters 
+# (i.e. a hub and a remote). All previews will be done against the current.
+# - Make output can be included in the YAML.
+
 SITE=$1; shift
 APP=$1; shift
 GIT_REPO=$1; shift
