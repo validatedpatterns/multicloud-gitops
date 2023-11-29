@@ -2,6 +2,15 @@
 # Source: acm/templates/policies/acm-hub-ca-policy.yaml
 # This pushes out the HUB's Certificate Authorities on to the imported clusters
 ---
+# Source: acm/templates/policies/private-repo-policies.yaml
+# We copy the vp-private-repo-credentials from the "openshift-gitops" namespace
+# to the "open-cluster-management" via the "private-hub-policy"
+#
+# Then we copy the secret from the "open-cluster-management" namespace to the
+# managed clusters "openshift-gitops" instance
+#
+# And we also copy the same secret to the namespaced argo's namespace
+---
 # Source: acm/templates/multiclusterhub.yaml
 apiVersion: operator.open-cluster-management.io/v1
 kind: MultiClusterHub
