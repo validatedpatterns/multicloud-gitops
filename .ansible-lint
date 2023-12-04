@@ -14,4 +14,7 @@ skip_list:
 exclude_paths:
   - ./ansible/playbooks/vault/vault.yaml
   - ./ansible/playbooks/iib-ci/iib-ci.yaml
+  - ./ansible/playbooks/k8s_secrets/k8s_secrets.yml
+  - ./ansible/playbooks/process_secrets/process_secrets.yml
+  - ./ansible/playbooks/process_secrets/display_secrets_info.yml
   - ./ansible/roles/vault_utils/tests/test.yml

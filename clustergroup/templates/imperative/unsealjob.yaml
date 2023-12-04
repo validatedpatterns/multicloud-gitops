@@ -1,3 +1,4 @@
+{{- if eq .Values.global.secretStore.backend "vault" | default "vault" }}
 {{- if not (eq .Values.enabled "plumbing") }}
 {{- if $.Values.clusterGroup.isHubCluster }}
 ---
@@ -54,5 +55,6 @@ spec:
             configMap:
               name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}-{{ $.Values.clusterGroup.name }}
           restartPolicy: Never
+{{- end }}
 {{- end }}
 {{- end }}

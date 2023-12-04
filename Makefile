@@ -77,8 +77,36 @@ uninstall: ## runs helm uninstall
 	@oc delete csv -n openshift-operators $(CSV)
 
 .PHONY: load-secrets
-load-secrets: ## loads the secrets into the vault
+load-secrets: ## loads the secrets into the backend determined by values-global setting
+	common/scripts/process-secrets.sh $(NAME)
+
+.PHONY: legacy-load-secrets
+legacy-load-secrets: ## loads the secrets into vault (only)
 	common/scripts/vault-utils.sh push_secrets $(NAME)
+
+.PHONY: secrets-backend-vault
+secrets-backend-vault: ## Edits values files to use default Vault+ESO secrets config
+	common/scripts/set-secret-backend.sh vault
+	common/scripts/manage-secret-app.sh vault present
+	common/scripts/manage-secret-app.sh golang-external-secrets present
+	common/scripts/manage-secret-namespace.sh validated-patterns-secrets absent
+	@git diff --exit-code || echo "Secrets backend set to vault, please review changes, commit, and push to activate in the pattern"
+
+.PHONY: secrets-backend-kubernetes
+secrets-backend-kubernetes: ## Edits values file to use Kubernetes+ESO secrets config
+	common/scripts/set-secret-backend.sh kubernetes
+	common/scripts/manage-secret-namespace.sh validated-patterns-secrets present
+	common/scripts/manage-secret-app.sh vault absent
+	common/scripts/manage-secret-app.sh golang-external-secrets present
+	@git diff --exit-code || echo "Secrets backend set to kubernetes, please review changes, commit, and push to activate in the pattern"
+
+.PHONY: secrets-backend-none
+secrets-backend-none: ## Edits values files to remove secrets manager + ESO
+	common/scripts/set-secret-backend.sh none
+	common/scripts/manage-secret-app.sh vault absent
+	common/scripts/manage-secret-app.sh golang-external-secrets absent
+	common/scripts/manage-secret-namespace.sh validated-patterns-secrets absent
+	@git diff --exit-code || echo "Secrets backend set to none, please review changes, commit, and push to activate in the pattern"
 
 .PHONY: load-iib
 load-iib: ## CI target to install Index Image Bundles

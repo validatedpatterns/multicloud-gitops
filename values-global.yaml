@@ -12,6 +12,9 @@ global:
     email: someone@somewhere.com
     dev_revision: main
 
+  secretStore:
+    backend: vault
+
 main:
   clusterGroupName: example
 
