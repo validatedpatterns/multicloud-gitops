@@ -116,9 +116,9 @@ spec:
                       used when developing the clustergroup helm chart)
                     type: string
                   clusterGroupChartVersion:
-                    default: 0.0.*
+                    default: 0.8.*
                     description: Which chart version for the clustergroup helm chart
-                      Defaults to "0.0.*"
+                      Defaults to "0.8.*"
                     type: string
                   clusterGroupGitRepoUrl:
                     description: The url when deploying the clustergroup helm chart
@@ -126,7 +126,7 @@ spec:
                       (Only used when developing the clustergroup helm chart)
                     type: string
                   enabled:
-                    default: false
+                    default: true
                     description: (EXPERIMENTAL) Enable multi-source support when deploying
                       the clustergroup argo application
                     type: boolean
