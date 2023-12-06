@@ -1,0 +1,4 @@
+# This values file is for adding IBM Cloud specific settings into the Helm Charts.
+
+cloudProvider:
+  storageClass: ibmc-vpc-block-10iops-tier
