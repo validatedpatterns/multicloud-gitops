@@ -20,6 +20,8 @@ Default always defined top-level variables for helm charts
   value: {{ $.Values.global.hubClusterDomain }}
 - name: global.localClusterDomain
   value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
+- name: global.privateRepo
+  value: {{ $.Values.global.privateRepo | quote }}
 {{- end }} {{/* clustergroup.globalvaluesparameters */}}
 
 
