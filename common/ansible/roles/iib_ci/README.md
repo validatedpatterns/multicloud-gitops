@@ -54,7 +54,7 @@ export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=ii
 make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscriptions.acm.source --set main.extraParameters[0].value=iib-${IIB} --set main.extraParameters[1].name=clusterGroup.subscriptions.acm.channel --set main.extraParameters[1].value=${CHANNEL}" install
 ```
 
-*Note*: This needs VP operator version >= 0.0.14
+*Note*: In this case `acm` is the name of the subscription in `values-hub.yaml`
 
 ### OCP 4.13 and onwards
 
