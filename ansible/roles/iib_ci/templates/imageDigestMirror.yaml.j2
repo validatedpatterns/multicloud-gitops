@@ -10,9 +10,9 @@ spec:
     - mirrors:
         - {{ item.mirrordest_nosha }}
       source: {{ item.source_nosha }}
-      mirrorSourcePolicy: NeverContactSource
+      mirrorSourcePolicy: AllowContactingSource
     - mirrors:
         - {{ item.mirrordest_nosha }}
       source: {{ item.image_nosha }}
-      mirrorSourcePolicy: NeverContactSource
+      mirrorSourcePolicy: AllowContactingSource
 {% endfor %}
