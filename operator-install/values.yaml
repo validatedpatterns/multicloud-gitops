@@ -18,3 +18,8 @@ main:
     source: community-operators
 
   clusterGroupName: default
+
+  # If you are using a private repository define the secret where
+  # credentials to access the private repository are
+  # tokenSecret:
+  # tokenSecretNamespace:
