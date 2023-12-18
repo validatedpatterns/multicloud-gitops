@@ -16,6 +16,10 @@ spec:
 {{- if .Values.main.analyticsUUID }}
   analyticsUUID: {{ .Values.main.analyticsUUID }}
 {{- end }} {{/* if .Values.main.analyticsUUID */}}
+{{- if and .Values.main.tokenSecret .Values.main.tokenSecretNamespace }}
+  tokenSecret: {{ .Values.main.tokenSecret }}
+  tokenSecretNamespace: {{ .Values.main.tokenSecretNamespace }}
+{{- end }} {{/* if and .Values.main.tokenSecret .Values.main.tokenSecretNamespace */}}
 {{- if .Values.main.extraParameters }}
   extraParameters:
 {{- range .Values.main.extraParameters }}
