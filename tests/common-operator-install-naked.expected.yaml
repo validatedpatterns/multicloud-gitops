@@ -27,7 +27,7 @@ spec:
     targetRevision: main
   gitOpsSpec:
     operatorChannel: gitops-1.8
-    operatorSource: redhat-operators
+    operatorSource: redhat-operators 
   multiSourceConfig:
     enabled: false
 ---
