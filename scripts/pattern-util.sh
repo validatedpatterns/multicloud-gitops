@@ -1,8 +1,14 @@
 #!/bin/bash
+function is_available {
+  command -v $1 >/dev/null 2>&1 || { echo >&2 "$1 is required but it's not installed. Aborting."; exit 1; }
+}
 
 if [ -z "$PATTERN_UTILITY_CONTAINER" ]; then
 	PATTERN_UTILITY_CONTAINER="quay.io/hybridcloudpatterns/utility-container"
 fi
+
+readonly commands=(podman)
+for cmd in ${commands[@]}; do is_available "$cmd"; done
 
 UNSUPPORTED_PODMAN_VERSIONS="1.6 1.5"
 for i in ${UNSUPPORTED_PODMAN_VERSIONS}; do
