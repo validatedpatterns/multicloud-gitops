@@ -10,12 +10,6 @@
 
 ## Patches
 
-### Issue 9136
-
-**IMPORTANT**: Due to the fact that 'null' values do not work in helm charts
-([GH#9136](https://github.com/helm/helm/issues/9136)), we need to patch the
-chart to skip setting the host.
-
 ### Issue 674
 
 In order to be able to use vault ssl we need to patch the helm chart to fix
