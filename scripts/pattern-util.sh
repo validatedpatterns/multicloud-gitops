@@ -35,9 +35,10 @@ if [ $(version "${PODMAN_VERSION}") -lt $(version "4.3.0") ]; then
     PODMAN_ARGS="-v ${HOME}:/root"
 else
     # We do not rely on bash's $UID and $GID because on MacOSX $GID is not set
+    MYNAME=$(id -n -u)
     MYUID=$(id -u)
     MYGID=$(id -g)
-    PODMAN_ARGS="--user ${MYUID}:${MYGID} --userns keep-id:uid=${MYUID},gid=${MYGID}"
+    PODMAN_ARGS="--passwd-entry ${MYNAME}:x:${MYUID}:${MYGID}:/pattern-home:/bin/bash --user ${MYUID}:${MYGID} --userns keep-id:uid=${MYUID},gid=${MYGID}"
 fi
 
 if [ -n "$KUBECONFIG" ]; then
