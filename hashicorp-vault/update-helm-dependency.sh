@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -eu -o pipefail
 
 # Get the version of the dependency and then unquote it
 TMPVER=$(sed -e '1,/^version:/ d' "Chart.yaml" | grep "version:" | awk '{ print $2 }')
