@@ -99,14 +99,9 @@ load-iib: ## CI target to install Index Image Bundles
 .PHONY: validate-origin
 validate-origin: ## verify the git origin is available
 	@echo "Checking repository:"
-	@echo -n "  $(TARGET_REPO) - branch $(TARGET_BRANCH): "
-	@if [ ! -f /run/.containerenv ]; then\
-		git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null &&\
-				echo "OK" ||\
-				(echo "NOT FOUND"; exit 1);\
-	else\
-		echo "Running inside a container: Skipping git ssh checks";\
-	fi
+	@echo -n "  $(TARGET_REPO) - branch '$(TARGET_BRANCH)': "
+	@git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null &&\
+		echo "OK" || (echo "NOT FOUND"; exit 1)
 
 .PHONY: validate-cluster
 validate-cluster: ## Do some cluster validations before installing
