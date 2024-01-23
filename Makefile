@@ -125,15 +125,19 @@ validate-schema: ## validates values files against schema in common/clustergroup
 
 .PHONY: validate-prereq
 validate-prereq: ## verify pre-requisites
-	@echo "Checking prerequisites:"
-	@for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done
-	@echo "  Check for '$(EXECUTABLES)': OK"
-	@echo -n "  Check for python-kubernetes: "
-	@if ! ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1; then echo "Not found"; exit 1; fi
-	@echo "OK"
-	@echo -n "  Check for kubernetes.core collection: "
-	@if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi
-	@echo "OK"
+	@if [ ! -f /run/.containerenv ]; then\
+	  echo "Checking prerequisites:";\
+	  for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done;\
+	  echo "  Check for '$(EXECUTABLES)': OK";\
+	  echo -n "  Check for python-kubernetes: ";\
+	  if ! ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1; then echo "Not found"; exit 1; fi;\
+	  echo "OK";\
+	  echo -n "  Check for kubernetes.core collection: ";\
+	  if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi;\
+	  echo "OK";\
+	else\
+	  echo "Skipping prerequisites check as we're running inside a container";\
+	fi
 
 .PHONY: argo-healthcheck
 argo-healthcheck: ## Checks if all argo applications are synced
