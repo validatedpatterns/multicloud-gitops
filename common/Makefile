@@ -99,14 +99,9 @@ load-iib: ## CI target to install Index Image Bundles
 .PHONY: validate-origin
 validate-origin: ## verify the git origin is available
 	@echo "Checking repository:"
-	@echo -n "  $(TARGET_REPO) - branch $(TARGET_BRANCH): "
-	@if [ ! -f /run/.containerenv ]; then\
-		git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null &&\
-				echo "OK" ||\
-				(echo "NOT FOUND"; exit 1);\
-	else\
-		echo "Running inside a container: Skipping git ssh checks";\
-	fi
+	@echo -n "  $(TARGET_REPO) - branch '$(TARGET_BRANCH)': "
+	@git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null &&\
+		echo "OK" || (echo "NOT FOUND"; exit 1)
 
 .PHONY: validate-cluster
 validate-cluster: ## Do some cluster validations before installing
@@ -130,15 +125,19 @@ validate-schema: ## validates values files against schema in common/clustergroup
 
 .PHONY: validate-prereq
 validate-prereq: ## verify pre-requisites
-	@echo "Checking prerequisites:"
-	@for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done
-	@echo "  Check for '$(EXECUTABLES)': OK"
-	@echo -n "  Check for python-kubernetes: "
-	@if ! ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1; then echo "Not found"; exit 1; fi
-	@echo "OK"
-	@echo -n "  Check for kubernetes.core collection: "
-	@if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi
-	@echo "OK"
+	@if [ ! -f /run/.containerenv ]; then\
+	  echo "Checking prerequisites:";\
+	  for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done;\
+	  echo "  Check for '$(EXECUTABLES)': OK";\
+	  echo -n "  Check for python-kubernetes: ";\
+	  if ! ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1; then echo "Not found"; exit 1; fi;\
+	  echo "OK";\
+	  echo -n "  Check for kubernetes.core collection: ";\
+	  if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi;\
+	  echo "OK";\
+	else\
+	  echo "Skipping prerequisites check as we're running inside a container";\
+	fi
 
 .PHONY: argo-healthcheck
 argo-healthcheck: ## Checks if all argo applications are synced
