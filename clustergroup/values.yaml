@@ -1,6 +1,8 @@
 global:
   extraValueFiles: []
   pattern: common
+  secretStore:
+    backend: "vault"
   targetRevision: main
   options:
     useCSV: True
