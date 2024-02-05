@@ -1,13 +1,14 @@
-from ocp_resources.resource import Resource, NamespacedResource
+from ocp_resources.resource import NamespacedResource, Resource
+
 
 class ArgoCD(NamespacedResource):
     """
     OpenShift ArgoCD / GitOps object.
     """
 
-    api_group = 'argoproj.io'
+    api_group = "argoproj.io"
     api_version = NamespacedResource.ApiVersion.V1ALPHA1
-    kind = 'Application'
+    kind = "Application"
 
     @property
     def health(self):
@@ -16,9 +17,13 @@ class ArgoCD(NamespacedResource):
         :return: boolean
         """
 
-        if self.instance.status.operationState.phase == "Succeeded" and self.instance.status.health.status == "Healthy":
-                return True
+        if (
+            self.instance.status.operationState.phase == "Succeeded"
+            and self.instance.status.health.status == "Healthy"
+        ):
+            return True
         return False
+
 
 class ManagedCluster(Resource):
     """
