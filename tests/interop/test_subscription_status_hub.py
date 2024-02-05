@@ -121,7 +121,7 @@ def test_subscription_status_hub(openshift_dyn_client):
         checkpath = os.path.exists(previouspath)
         logger.info(checkpath)
 
-        if checkpath == True:
+        if checkpath is True:
             logger.info("Diff current operator list with previous file")
             diff = opdiff(open(previouspath).readlines(), open(currentfile).readlines())
             diffstring = "".join(diff)
@@ -143,7 +143,7 @@ def test_subscription_status_hub(openshift_dyn_client):
         # and we are not testing a pre-release operator nor
         # running externally
         if os.getenv("EXTERNAL_TEST") != "true":
-            if checkpath == True and not os.environ["INDEX_IMAGE"]:
+            if checkpath is True and not os.environ["INDEX_IMAGE"]:
                 os.remove(previouspath)
                 os.rename(currentfile, previouspath)
 
@@ -156,7 +156,7 @@ def test_subscription_status_hub(openshift_dyn_client):
                     ["git", "commit", "-m", "Update operator versions list"],
                     cwd=cwd,
                 )
-                push = subprocess.run(["git", "push"], cwd=cwd)
+                subprocess.run(["git", "push"], cwd=cwd)
 
         logger.info("PASS: Subscription status check passed")
 

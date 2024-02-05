@@ -64,9 +64,10 @@ def get_long_live_bearer_token(
                 filtered_secrets.append(secret.instance.data.token)
     except StopIteration as e:
         logger.exception(
-            "Specified substring %s doesn't exist in namespace %s",
+            "Specified substring %s doesn't exist in namespace %s: %s",
             sub_string,
             namespace,
+            e,
         )
     except ProtocolError as e:
         # See https://github.com/kubernetes-client/python/issues/1225
