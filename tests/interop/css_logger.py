@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
-
 if os.getenv("EXTERNAL_TEST") == "true":
     LOG_DIR = os.path.join(os.environ["WORKSPACE"], ".results/test_execution_logs")
 else:

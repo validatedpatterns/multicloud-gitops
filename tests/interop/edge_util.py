@@ -1,13 +1,15 @@
-import os
-import yaml
-import logging
-import requests
-import subprocess
-import fileinput
 import base64
+import fileinput
+import logging
+import os
+import subprocess
+
+import requests
+import yaml
+from ocp_resources.secret import Secret
 from requests import HTTPError, RequestException
 from urllib3.exceptions import InsecureRequestWarning, ProtocolError
-from ocp_resources.secret import Secret
+
 from . import __loggername__
 
 logger = logging.getLogger(__loggername__)

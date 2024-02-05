@@ -1,11 +1,13 @@
 import os
 from datetime import datetime
+
+import pytest
 from kubernetes import config
 from kubernetes.client import Configuration
 from openshift.dynamic import DynamicClient
-import pytest
-from .css_logger import CSS_Logger
+
 from . import __loggername__
+from .css_logger import CSS_Logger
 
 
 def pytest_addoption(parser):

@@ -1,8 +1,10 @@
-import pytest
 import logging
+
+import pytest
 from ocp_resources.cluster_version import ClusterVersion
 from ocp_resources.subscription import Subscription
 from openshift.dynamic.exceptions import NotFoundError
+
 from . import __loggername__
 
 logger = logging.getLogger(__loggername__)

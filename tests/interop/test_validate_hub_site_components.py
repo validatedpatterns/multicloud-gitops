@@ -1,22 +1,24 @@
-import pytest
 import logging
-import subprocess
 import os
+import subprocess
 from os.path import expanduser
-from .edge_util import (
-    load_yaml_file,
-    find_number_of_edge_sites,
-    get_site_response,
-    get_long_live_bearer_token,
-)
+
+import pytest
+from ocp_resources.namespace import Namespace
 from ocp_resources.pod import Pod
 from ocp_resources.resource import Resource
 from ocp_resources.route import Route
-from ocp_resources.namespace import Namespace
 from ocp_resources.storage_class import StorageClass
+from openshift.dynamic.exceptions import NotFoundError
+
 from . import __loggername__
 from .crd import ArgoCD, ManagedCluster
-from openshift.dynamic.exceptions import NotFoundError
+from .edge_util import (
+    find_number_of_edge_sites,
+    get_long_live_bearer_token,
+    get_site_response,
+    load_yaml_file,
+)
 
 logger = logging.getLogger(__loggername__)
 

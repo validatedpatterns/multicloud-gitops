@@ -1,15 +1,17 @@
-import pytest
 import logging
-import subprocess
 import os
-from .edge_util import get_site_response, get_long_live_bearer_token
+import subprocess
+
+import pytest
+from ocp_resources.namespace import Namespace
 from ocp_resources.pod import Pod
 from ocp_resources.resource import Resource
 from ocp_resources.route import Route
-from ocp_resources.namespace import Namespace
+from openshift.dynamic.exceptions import NotFoundError
+
 from . import __loggername__
 from .crd import ArgoCD
-from openshift.dynamic.exceptions import NotFoundError
+from .edge_util import get_long_live_bearer_token, get_site_response
 
 logger = logging.getLogger(__loggername__)
 

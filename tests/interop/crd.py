@@ -1,4 +1,4 @@
-from ocp_resources.resource import Resource, NamespacedResource
+from ocp_resources.resource import NamespacedResource, Resource
 
 
 class ArgoCD(NamespacedResource):
