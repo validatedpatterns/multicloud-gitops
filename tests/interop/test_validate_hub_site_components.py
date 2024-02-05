@@ -3,7 +3,12 @@ import logging
 import subprocess
 import os
 from os.path import expanduser
-from .edge_util import load_yaml_file, find_number_of_edge_sites, get_site_response, get_long_live_bearer_token
+from .edge_util import (
+    load_yaml_file,
+    find_number_of_edge_sites,
+    get_site_response,
+    get_long_live_bearer_token,
+)
 from ocp_resources.pod import Pod
 from ocp_resources.resource import Resource
 from ocp_resources.route import Route
@@ -15,7 +20,7 @@ from openshift.dynamic.exceptions import NotFoundError
 
 logger = logging.getLogger(__loggername__)
 
-oc = os.environ["HOME"] + '/oc_client/oc'
+oc = os.environ["HOME"] + "/oc_client/oc"
 
 """
 Validate following multicloud-gitops components pods and endpoints on hub site (central server):
@@ -58,7 +63,9 @@ def test_validate_hub_site_reachable(kube_config, openshift_dyn_client):
     if not bearer_token:
         assert False, "Bearer token is missing for hub site"
 
-    hub_api_response = get_site_response(site_url=hub_api_url, bearer_token=bearer_token)
+    hub_api_response = get_site_response(
+        site_url=hub_api_url, bearer_token=bearer_token
+    )
 
     if hub_api_response.status_code != 200:
         err_msg = "Hub site is not reachable. Please check the deployment."
@@ -87,9 +94,7 @@ def test_check_pod_status(openshift_dyn_client):
     for project in projects:
         # Check for missing project
         try:
-            namespaces = Namespace.get(
-                dyn_client=openshift_dyn_client, name=project
-            )
+            namespaces = Namespace.get(dyn_client=openshift_dyn_client, name=project)
             namespace = next(namespaces)
         except NotFoundError:
             missing_projects.append(project)
@@ -106,7 +111,6 @@ def test_check_pod_status(openshift_dyn_client):
         pods = Pod.get(dyn_client=openshift_dyn_client, namespace=project)
         logger.info(f"Checking pods in namespace '{project}'")
         for pod in pods:
-
             for container in pod.instance.status.containerStatuses:
                 logger.info(
                     f"{pod.instance.metadata.name} : {container.name} :"
@@ -120,9 +124,7 @@ def test_check_pod_status(openshift_dyn_client):
                             " FAILED:"
                         )
                         failed_pods.append(pod.instance.metadata.name)
-                        logger.info(
-                            describe_pod(project, pod.instance.metadata.name)
-                        )
+                        logger.info(describe_pod(project, pod.instance.metadata.name))
                         logger.info(
                             get_log_output(
                                 project,
@@ -137,9 +139,7 @@ def test_check_pod_status(openshift_dyn_client):
                         " FAILED:"
                     )
                     failed_pods.append(pod.instance.metadata.name)
-                    logger.info(
-                        describe_pod(project, pod.instance.metadata.name)
-                    )
+                    logger.info(describe_pod(project, pod.instance.metadata.name))
                     logger.info(
                         get_log_output(
                             project, pod.instance.metadata.name, container.name
@@ -147,9 +147,7 @@ def test_check_pod_status(openshift_dyn_client):
                     )
 
     if missing_projects:
-        err_msg.append(
-            f"The following namespaces are missing: {missing_projects}"
-        )
+        err_msg.append(f"The following namespaces are missing: {missing_projects}")
 
     if missing_pods:
         err_msg.append(
@@ -165,12 +163,13 @@ def test_check_pod_status(openshift_dyn_client):
     else:
         logger.info("PASS: Pod status check succeeded.")
 
+
 # No longer needed for ACM 2.7
 #
 # @pytest.mark.validate_acm_route_reachable
 # def test_validate_acm_route_reachable(openshift_dyn_client):
 #     namespace = "open-cluster-management"
-    
+
 #     logger.info("Check if ACM route is reachable")
 #     try:
 #         for route in Route.get(dyn_client=openshift_dyn_client, namespace=namespace, name="multicloud-console"):
@@ -179,11 +178,11 @@ def test_check_pod_status(openshift_dyn_client):
 #         err_msg = "ACM url/route is missing in open-cluster-management namespace"
 #         logger.error(f"FAIL: {err_msg}")
 #         assert False, err_msg
-    
+
 #     final_acm_url = f"{'http://'}{acm_route_url}"
 #     logger.info(f"ACM route/url : {final_acm_url}")
 
-    
+
 #     bearer_token = get_long_live_bearer_token(dyn_client=openshift_dyn_client,
 #                                               namespace=namespace,
 #                                               sub_string="multiclusterhub-operator-token")
@@ -203,14 +202,19 @@ def test_check_pod_status(openshift_dyn_client):
 #         logger.error(f"FAIL: {err_msg}")
 #         assert False, err_msg
 #     else:
-#         logger.info("PASS: ACM is reachable.") 
+#         logger.info("PASS: ACM is reachable.")
 
 
 @pytest.mark.validate_acm_self_registration_managed_clusters
 def test_validate_acm_self_registration_managed_clusters(openshift_dyn_client):
     logger.info("Check ACM self registration for edge site")
-    site_name = os.environ['EDGE_CLUSTER_PREFIX'] + '-' + os.environ['INFRA_PROVIDER'] \
-                                                + '-' + os.environ['MPTS_TEST_RUN_ID']
+    site_name = (
+        os.environ["EDGE_CLUSTER_PREFIX"]
+        + "-"
+        + os.environ["INFRA_PROVIDER"]
+        + "-"
+        + os.environ["MPTS_TEST_RUN_ID"]
+    )
     clusters = ManagedCluster.get(dyn_client=openshift_dyn_client, name=site_name)
     cluster = next(clusters)
     is_managed_cluster_joined, managed_cluster_status = cluster.self_registered
@@ -231,7 +235,11 @@ def test_validate_argocd_reachable_hub_site(openshift_dyn_client):
     namespace = "openshift-gitops"
     logger.info("Check if argocd route/url on hub site is reachable")
     try:
-        for route in Route.get(dyn_client=openshift_dyn_client, namespace=namespace, name="openshift-gitops-server"):
+        for route in Route.get(
+            dyn_client=openshift_dyn_client,
+            namespace=namespace,
+            name="openshift-gitops-server",
+        ):
             argocd_route_url = route.instance.spec.host
     except StopIteration:
         err_msg = "Argocd url/route is missing in open-cluster-management namespace"
@@ -241,17 +249,23 @@ def test_validate_argocd_reachable_hub_site(openshift_dyn_client):
     final_argocd_url = f"{'http://'}{argocd_route_url}"
     logger.info(f"ACM route/url : {final_argocd_url}")
 
-    bearer_token = get_long_live_bearer_token(dyn_client=openshift_dyn_client,
-                                              namespace=namespace,
-                                              sub_string="openshift-gitops-argocd-server-token")
+    bearer_token = get_long_live_bearer_token(
+        dyn_client=openshift_dyn_client,
+        namespace=namespace,
+        sub_string="openshift-gitops-argocd-server-token",
+    )
     if not bearer_token:
-        err_msg = "Bearer token is missing for argocd-server in openshift-gitops namespace"
+        err_msg = (
+            "Bearer token is missing for argocd-server in openshift-gitops namespace"
+        )
         logger.error(f"FAIL: {err_msg}")
         assert False, err_msg
     else:
         logger.debug(f"Argocd bearer token : {bearer_token}")
 
-    argocd_route_response = get_site_response(site_url=final_argocd_url, bearer_token=bearer_token)
+    argocd_route_response = get_site_response(
+        site_url=final_argocd_url, bearer_token=bearer_token
+    )
 
     logger.info(f"Argocd route response : {argocd_route_response}")
 
@@ -274,14 +288,16 @@ def test_validate_argocd_applications_health_hub_site(openshift_dyn_client):
             app_name = app.instance.metadata.name
             app_health = app.instance.status.health.status
             app_sync = app.instance.status.sync.status
-            
+
             logger.info(f"Status for {app_name} : {app_health} : {app_sync}")
-            
-            if 'Healthy' != app_health or 'Synced' != app_sync:
+
+            if "Healthy" != app_health or "Synced" != app_sync:
                 logger.info(f"Dumping failed resources for app: {app_name}")
                 unhealthy_apps.append(app_name)
                 for res in app.instance.status.resources:
-                    if (res.health and res.health.status != 'Healthy') or res.status != 'Synced':
+                    if (
+                        res.health and res.health.status != "Healthy"
+                    ) or res.status != "Synced":
                         logger.info(f"\n{res}")
 
     if unhealthy_apps:

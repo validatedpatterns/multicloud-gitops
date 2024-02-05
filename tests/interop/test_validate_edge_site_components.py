@@ -13,7 +13,7 @@ from openshift.dynamic.exceptions import NotFoundError
 
 logger = logging.getLogger(__loggername__)
 
-oc = os.environ["HOME"] + '/oc_client/oc'
+oc = os.environ["HOME"] + "/oc_client/oc"
 
 """
 Validate following multicloud-gitops components pods and endpoints on edge site (line server):
@@ -23,13 +23,14 @@ Validate following multicloud-gitops components pods and endpoints on edge site 
 3) applications health (Applications deployed through argocd)
 """
 
+
 @pytest.mark.test_validate_edge_site_components
 def test_validate_edge_site_components():
     logger.info("Checking Openshift version on edge site")
-    version_out = subprocess.run(["oc", 'version'], capture_output=True)
+    version_out = subprocess.run(["oc", "version"], capture_output=True)
     version_out = version_out.stdout.decode("utf-8")
     logger.info(f"Openshift version:\n{version_out}")
-        
+
 
 @pytest.mark.validate_edge_site_reachable
 def test_validate_edge_site_reachable(kube_config, openshift_dyn_client):
@@ -46,7 +47,9 @@ def test_validate_edge_site_reachable(kube_config, openshift_dyn_client):
     if not bearer_token:
         assert False, "Bearer token is missing for hub site"
 
-    edge_api_response = get_site_response(site_url=edge_api_url, bearer_token=bearer_token)
+    edge_api_response = get_site_response(
+        site_url=edge_api_url, bearer_token=bearer_token
+    )
 
     if edge_api_response.status_code != 200:
         err_msg = "Edge site is not reachable. Please check the deployment."
@@ -74,9 +77,7 @@ def test_check_pod_status(openshift_dyn_client):
     for project in projects:
         # Check for missing project
         try:
-            namespaces = Namespace.get(
-                dyn_client=openshift_dyn_client, name=project
-            )
+            namespaces = Namespace.get(dyn_client=openshift_dyn_client, name=project)
             namespace = next(namespaces)
         except NotFoundError:
             missing_projects.append(project)
@@ -93,7 +94,6 @@ def test_check_pod_status(openshift_dyn_client):
         pods = Pod.get(dyn_client=openshift_dyn_client, namespace=project)
         logger.info(f"Checking pods in namespace '{project}'")
         for pod in pods:
-
             for container in pod.instance.status.containerStatuses:
                 logger.info(
                     f"{pod.instance.metadata.name} : {container.name} :"
@@ -107,9 +107,7 @@ def test_check_pod_status(openshift_dyn_client):
                             " FAILED:"
                         )
                         failed_pods.append(pod.instance.metadata.name)
-                        logger.info(
-                            describe_pod(project, pod.instance.metadata.name)
-                        )
+                        logger.info(describe_pod(project, pod.instance.metadata.name))
                         logger.info(
                             get_log_output(
                                 project,
@@ -124,9 +122,7 @@ def test_check_pod_status(openshift_dyn_client):
                         " FAILED:"
                     )
                     failed_pods.append(pod.instance.metadata.name)
-                    logger.info(
-                        describe_pod(project, pod.instance.metadata.name)
-                    )
+                    logger.info(describe_pod(project, pod.instance.metadata.name))
                     logger.info(
                         get_log_output(
                             project, pod.instance.metadata.name, container.name
@@ -134,9 +130,7 @@ def test_check_pod_status(openshift_dyn_client):
                     )
 
     if missing_projects:
-        err_msg.append(
-            f"The following namespaces are missing: {missing_projects}"
-        )
+        err_msg.append(f"The following namespaces are missing: {missing_projects}")
 
     if missing_pods:
         err_msg.append(
@@ -158,7 +152,11 @@ def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
     namespace = "openshift-gitops"
 
     try:
-        for route in Route.get(dyn_client=openshift_dyn_client, namespace=namespace, name="openshift-gitops-server"):
+        for route in Route.get(
+            dyn_client=openshift_dyn_client,
+            namespace=namespace,
+            name="openshift-gitops-server",
+        ):
             acm_route_url = route.instance.spec.host
     except StopIteration:
         err_msg = f"Argocd url/route is missing in {namespace} namespace"
@@ -176,9 +174,11 @@ def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
         final_argocd_url = f"{'https://'}{argocd_route_url}"
         logger.info(f"Argocd route/url : {final_argocd_url}")
 
-    bearer_token = get_long_live_bearer_token(dyn_client=openshift_dyn_client,
-                                              namespace=namespace,
-                                              sub_string="openshift-gitops-argocd-server-token")
+    bearer_token = get_long_live_bearer_token(
+        dyn_client=openshift_dyn_client,
+        namespace=namespace,
+        sub_string="openshift-gitops-argocd-server-token",
+    )
     if not bearer_token:
         err_msg = f"Bearer token is missing for argocd-server in {namespace} namespace"
         logger.error(f"FAIL: {err_msg}")
@@ -186,7 +186,9 @@ def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
     else:
         logger.debug(f"Argocd bearer token : {bearer_token}")
 
-    argocd_route_response = get_site_response(site_url=final_argocd_url, bearer_token=bearer_token)
+    argocd_route_response = get_site_response(
+        site_url=final_argocd_url, bearer_token=bearer_token
+    )
 
     logger.info(f"Argocd route response : {argocd_route_response}")
 
@@ -204,7 +206,7 @@ def test_validate_argocd_applications_health_edge_site(openshift_dyn_client):
 
     argocd_apps_status = dict()
     logger.info("Get all applications deployed by argocd on edge site")
-    
+
     for app in ArgoCD.get(dyn_client=openshift_dyn_client, namespace=namespace):
         app_name = app.instance.metadata.name
         app_health = app.health
