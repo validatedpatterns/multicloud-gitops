@@ -14,27 +14,29 @@ metadata:
 spec:
 # Adding health checks to argocd to prevent pvc resources
 # that aren't bound state from blocking deployments
-  resourceCustomizations: |
-    PersistentVolumeClaim:
-      health.lua: |
-        hs = {}
-        if obj.status ~= nil then
-          if obj.status.phase ~= nil then
-            if obj.status.phase == "Pending" then
-              hs.status = "Healthy"
-              hs.message = obj.status.phase
-              return hs
-            elseif obj.status.phase == "Bound" then
-              hs.status = "Healthy"
-              hs.message = obj.status.phase
-              return hs
-            end
+  resourceHealthChecks:
+  - kind: PersistentVolumeClaim
+    check: |
+      hs = {}
+      if obj.status ~= nil then
+        if obj.status.phase ~= nil then
+          if obj.status.phase == "Pending" then
+            hs.status = "Healthy"
+            hs.message = obj.status.phase
+            return hs
+          elseif obj.status.phase == "Bound" then
+            hs.status = "Healthy"
+            hs.message = obj.status.phase
+            return hs
           end
         end
-        hs.status = "Progressing"
-        hs.message = "Waiting for PVC"
-        return hs
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for PVC"
+      return hs
+
   applicationInstanceLabelKey: argocd.argoproj.io/instance
+
   # Not the greatest way to pass git/quay info to sub-applications, but it will do until
   # we can support helmChart with kustomize
   # The other option is to pass them in as environment variables eg. BLUEPRINT_VERSION
@@ -69,6 +71,7 @@ spec:
             --set global.localClusterDomain={{ coalesce .Values.global.localClusterDomain .Values.global.hubClusterDomain }}
             --set clusterGroup.name={{ .Values.clusterGroup.name }}
             --post-renderer ./kustomize"]
+
   applicationSet:
     resources:
       limits:
@@ -102,6 +105,7 @@ spec:
     defaultPolicy: role:admin
   kustomizeBuildOptions: --enable-alpha-plugins
   repo:
+
     env:
     - name: KUSTOMIZE_PLUGIN_HOME
       value: /etc/kustomize/plugin
@@ -123,6 +127,47 @@ spec:
     volumes:
     - emptyDir: {}
       name: policy-generator
+
+{{- if len $.Values.clusterGroup.argoCD.initContainers }}
+    initContainers: {{ $.Values.clusterGroup.argoCD.initContainers | toPrettyJson }}
+{{- end }}
+{{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
+    sidecarContainers:
+{{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}
+      - name: {{ $cmp.name }}
+        command: [/var/run/argocd/argocd-cmp-server]
+{{- if $cmp.pluginArgs }}
+        args: {{ $cmp.pluginArgs | toPrettyJson }}
+{{- end }}
+        image: {{ $cmp.image }}
+        imagePullPolicy: {{ coalesce $cmp.imagePullPolicy "Always" }}
+        securityContext:
+          runAsNonRoot: true
+        volumeMounts:
+          - mountPath: /var/run/argocd
+            name: var-files
+          - mountPath: /home/argocd/cmp-server/plugins
+            name: plugins
+          - mountPath: /tmp
+            name: cmp-tmp
+{{- if $cmp.pluginConfig }}
+          - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+            subPath: plugin.yaml
+            name: {{ $cmp.name }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
+    volumes:
+      - emptyDir: {}
+        name: cmp-tmp
+{{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}
+      - configMap:
+          name: "argocd-cmp-{{ $cmp.name }}"
+        name: {{ $cmp.name }}
+{{- end }}
+{{- end }}
+
     resources:
       limits:
         cpu: "1"
@@ -136,6 +181,12 @@ spec:
       kinds:
       - TaskRun
       - PipelineRun
+{{- if .Values.global.excludeESO }}
+    - apiGroups:
+      - external-secrets.io
+      kinds:
+      - ExternalSecret
+{{- end }}
   server:
     autoscale:
       enabled: false

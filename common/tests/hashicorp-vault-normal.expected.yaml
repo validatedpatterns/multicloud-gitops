@@ -4,9 +4,9 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: hashicorp-vault
-  namespace: default
+  namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.25.0
+    helm.sh/chart: vault-0.27.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -16,9 +16,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: hashicorp-vault-config
-  namespace: default
+  namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.25.0
+    helm.sh/chart: vault-0.27.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -42,7 +42,7 @@ kind: ClusterRoleBinding
 metadata:
   name: hashicorp-vault-server-binding
   labels:
-    helm.sh/chart: vault-0.25.0
+    helm.sh/chart: vault-0.27.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -53,7 +53,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: hashicorp-vault
-  namespace: default
+  namespace: pattern-namespace
 ---
 # Source: hashicorp-vault/charts/vault/templates/server-headless-service.yaml
 # Service for Vault cluster
@@ -61,9 +61,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hashicorp-vault-internal
-  namespace: default
+  namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.25.0
+    helm.sh/chart: vault-0.27.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -93,9 +93,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hashicorp-vault
-  namespace: default
+  namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.25.0
+    helm.sh/chart: vault-0.27.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -124,9 +124,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hashicorp-vault-ui
-  namespace: default
+  namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.25.0
+    helm.sh/chart: vault-0.27.0
     app.kubernetes.io/name: vault-ui
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -148,7 +148,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: hashicorp-vault
-  namespace: default
+  namespace: pattern-namespace
   labels:
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
@@ -167,7 +167,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: vault-0.25.0
+        helm.sh/chart: vault-0.27.0
         app.kubernetes.io/name: vault
         app.kubernetes.io/instance: hashicorp-vault
         component: server
@@ -204,7 +204,7 @@ spec:
       containers:
         - name: vault
           
-          image: registry.connect.redhat.com/hashicorp/vault:1.14.0-ubi
+          image: registry.connect.redhat.com/hashicorp/vault:1.15.2-ubi
           imagePullPolicy: IfNotPresent
           command:
           - "/bin/sh"
@@ -317,6 +317,7 @@ spec:
     - metadata:
         name: data
       
+      
       spec:
         accessModes:
           - ReadWriteOnce
@@ -343,9 +344,9 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: hashicorp-vault
-  namespace: default
+  namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.25.0
+    helm.sh/chart: vault-0.27.0
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -364,19 +365,19 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "hashicorp-vault-server-test"
-  namespace: default
+  name: hashicorp-vault-server-test
+  namespace: pattern-namespace
   annotations:
     "helm.sh/hook": test
 spec:
   
   containers:
     - name: hashicorp-vault-server-test
-      image: registry.connect.redhat.com/hashicorp/vault:1.14.0-ubi
+      image: registry.connect.redhat.com/hashicorp/vault:1.15.2-ubi
       imagePullPolicy: IfNotPresent
       env:
         - name: VAULT_ADDR
-          value: http://hashicorp-vault.default.svc:8200
+          value: http://hashicorp-vault.pattern-namespace.svc:8200
         
         - name: "VAULT_ADDR"
           value: "https://vault.vault.svc.cluster.local:8200"

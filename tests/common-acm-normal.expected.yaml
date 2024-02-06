@@ -22,6 +22,15 @@ type: Opaque
 # Source: acm/templates/policies/acm-hub-ca-policy.yaml
 # This pushes out the HUB's Certificate Authorities on to the imported clusters
 ---
+# Source: acm/templates/policies/private-repo-policies.yaml
+# We copy the vp-private-repo-credentials from the "openshift-gitops" namespace
+# to the "open-cluster-management" via the "private-hub-policy"
+#
+# Then we copy the secret from the "open-cluster-management" namespace to the
+# managed clusters "openshift-gitops" instance
+#
+# And we also copy the same secret to the namespaced argo's namespace
+---
 # Source: acm/templates/provision/clusterpool.yaml
 apiVersion: hive.openshift.io/v1
 kind: ClusterClaim
@@ -627,8 +636,10 @@ spec:
                       # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
                       - name: global.clusterVersion
                         value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
+                      - name: global.localClusterName
+                        value: '{{ (split "." (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain)._1 }}'
                       - name: global.clusterPlatform
-                        value: 
+                        value: aws
                       - name: clusterGroup.name
                         value: acm-edge
                       - name: clusterGroup.isHubCluster
@@ -721,8 +732,10 @@ spec:
                       # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
                       - name: global.clusterVersion
                         value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
+                      - name: global.localClusterName
+                        value: '{{ (split "." (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain)._1 }}'
                       - name: global.clusterPlatform
-                        value: 
+                        value: aws
                       - name: clusterGroup.name
                         value: acm-provision-edge
                       - name: clusterGroup.isHubCluster

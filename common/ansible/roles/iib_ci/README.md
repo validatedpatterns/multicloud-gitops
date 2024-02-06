@@ -3,7 +3,12 @@
 A set of ansible plays to fetch an IIB (Image Index Bundle, aka a container created by the operator sdk
 that contains a bunch of references to operators that can be installed in an OpenShift cluster)
 
-Run `make lookup` to see which IIBs are available.
+Run `ansible-playbook common/ansible/playbooks/iib-ci/lookup.yml` to see which IIBs are available (defaults to
+openshift-gitops). If you want to look up IIBs for a different operator run:
+`ansible-playbook -e operator=acm-operator common/ansible/playbooks/iib-ci/lookup.yml`
+
+You can also try running curl manually via:
+`curl -sSL "https://datagrepper.engineering.redhat.com/raw?topic=/topic/VirtualTopic.eng.ci.redhat-container-image.index.built&delta=15780000&contains=acm-operator" | jq ".raw_messages[].msg"`
 
 Typically IIB are prerelease stuff that lives on some internal boxes. What these scripts do is fetch
 the IIB internally, mirror it to the registry inside the cluster, parse all the needed images and mirror
@@ -26,6 +31,13 @@ make load-iib
 # This will install the pattern using the gitops operator from the IIB
 ```
 
+***NOTE:*** When using an SNO without shared storage in a non-production environment, the enablement of the internal registry will fail. You need to run the following to enable it:
+
+```sh
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"managementState":"Managed"}}'
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
+```
+
 Then in case of the `openshift-gitops-operator` we would install with:
 
 ```sh
@@ -42,7 +54,7 @@ export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=ii
 make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscriptions.acm.source --set main.extraParameters[0].value=iib-${IIB} --set main.extraParameters[1].name=clusterGroup.subscriptions.acm.channel --set main.extraParameters[1].value=${CHANNEL}" install
 ```
 
-*Note*: This needs VP operator version >= 0.0.14
+*Note*: In this case `acm` is the name of the subscription in `values-hub.yaml`
 
 ### OCP 4.13 and onwards
 

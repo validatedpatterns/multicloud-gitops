@@ -11,6 +11,9 @@ clusterGroup:
   name: example
   #insecureUnsealVaultInsideCluster: false
   isHubCluster: true
+  sharedValueFiles:
+  - /values/{{ .Values.global.clusterPlatform }}.yaml
+  - /values/{{ .Values.global.clusterVersion }}.yaml
 
   namespaces:
   - open-cluster-management:
@@ -20,12 +23,23 @@ clusterGroup:
       annotations:
         openshift.io/cluster-monitoring: "true"
         owner: "namespace owner"
-  - application-ci
-  - excludes-ci
+  - application-ci:
+      operatorGroup: true
+      targetNamespaces:
+        - application-ci
+        - other-namespace
+  - exclude-targetns:
+      operatorGroup: true
+      targetNamespaces:
+  - include-ci
+  - exclude-og
+  - totally-exclude-og:
+      operatorGroup: false
+  - include-default-og:
+      operatorGroup: true
 
   operatorgroupExcludes:
-  - excludes-ci
-
+  - exclude-og
 
   subscriptions:
     acm:
@@ -63,6 +77,8 @@ clusterGroup:
       namespace: application-ci
       project: datacenter
       path: charts/datacenter/pipelines
+      extraValueFiles:
+      - /values/{{ .Values.global.clusterVersion }}/{{ .Values.global.clusterPlatform }}.yaml
 
   imperative:
     namespace: imperative

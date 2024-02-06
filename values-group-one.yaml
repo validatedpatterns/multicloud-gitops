@@ -4,17 +4,15 @@ global:
     useCSV: False
     syncPolicy: Automatic
     installPlanApproval: Automatic
-
 clusterGroup:
   name: region-one
   isHubCluster: false
-
   namespaces:
     - config-demo
     - hello-world
     - golang-external-secrets
-
   subscriptions:
+
       - name: web-terminal
         namespace: openshift-operators
         channel: fast
@@ -26,12 +24,16 @@ clusterGroup:
         channel: stable
 
 
+
   projects:
     - eso
     - config-demo
     - hello-world
+
     - openshift-piplines
     - openshift-operators
+
+
 
   applications:
     golang-external-secrets:
@@ -39,18 +41,17 @@ clusterGroup:
       namespace: golang-external-secrets
       project: eso
       path: common/golang-external-secrets
-
     config-demo:
       name: config-demo
       namespace: config-demo
       project: config-demo
       path: charts/all/config-demo
-
     hello-world:
       name: hello-world
       namespace: hello-world
       project: hello-world
       path: charts/all/hello-world
+
 
     openshift-pipelines:
       name: openshift-pipelines
@@ -116,6 +117,31 @@ clusterGroup:
 
 #  To have apps in multiple flavors, use namespaces
 #  and use helm overrides as appropriate
+  imperative:
+    # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
+    # The default schedule is every 10 minutes: imperative.schedule
+    # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
+    # imagePullPolicy is set to always: imperative.imagePullPolicy
+    # For additional overrides that apply to the jobs, please refer to
+    # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
+    jobs:
+      - name: hello-world
+        # ansible playbook to be run
+        playbook: common/ansible/playbooks/hello-world/hello-world.yaml
+        # per playbook timeout in seconds
+        timeout: 234
+        # verbosity: "-v"
+  # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
+  # We can use self-referential variables because the chart calls the tpl function with these variables defined
+  sharedValueFiles:
+    - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
+    # To mirror the "Classic" magic include structure, the clusterGroup would need all of these:
+    # sharedValueFiles:
+    #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
+    #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
+    #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
+    #   - '/overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+#  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
 #    pipelines:
 #      name: pipelines

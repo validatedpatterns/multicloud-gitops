@@ -1,5 +1,13 @@
 # Changes
 
+## Sep 25, 2023
+
+* Upgraded ESO to v0.9.5
+
+## Aug 17, 2023
+
+* Introduced support for multisource applications via .chart + .chartVersion
+
 ## Jul 8, 2023
 
 * Introduced a default of 20 for sync failures retries in argo applications (global override via global.options.applicationRetryLimit

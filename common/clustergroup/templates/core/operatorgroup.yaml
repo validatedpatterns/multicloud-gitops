@@ -5,7 +5,7 @@
 
   {{- if kindIs "map" $ns }}
   {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
-
+  {{- if $v.operatorGroup }}{{- /* Checks if the user sets operatorGroup: false */}}
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -13,9 +13,15 @@ metadata:
   namespace: {{ $k }}
 spec:
   targetNamespaces:
+    {{- if (hasKey $v "targetNamespaces") }}
+      {{- range $v.targetNamespaces }}{{- /* We loop through the list of tergetnamespaces */}}
+  - {{ . }}
+      {{- end }}{{- /* End range targetNamespaces */}}
+    {{- else }}
   - {{ $k }}
+    {{- end }}{{- /* End of if operatorGroup */}}
   {{- end }}{{- /* range $k, $v := $ns */}}
-
+  {{- end }}{{- /* End of if operatorGroup */}}
   {{- else if kindIs "string" $ns }}
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup

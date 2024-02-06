@@ -1,9 +1,9 @@
+---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.7.0
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: v0.11.4
   name: patterns.gitops.hybrid-cloud-patterns.io
 spec:
   group: gitops.hybrid-cloud-patterns.io
@@ -45,11 +45,15 @@ spec:
           spec:
             description: PatternSpec defines the desired state of Pattern
             properties:
+              analyticsUUID:
+                description: Analytics UUID. Leave empty to autogenerate a random
+                  one. Not PII information
+                type: string
               clusterGroupName:
                 type: string
               extraParameters:
                 description: '.Name is dot separated per the helm --set syntax, such
-                  as:   global.something.field'
+                  as: global.something.field'
                 items:
                   properties:
                     name:
@@ -68,29 +72,9 @@ spec:
                 type: array
               gitOpsSpec:
                 properties:
-                  manualApproval:
-                    description: 'Require manual confirmation before installing and
-                      upgrading operators. Default: False'
-                    type: boolean
                   manualSync:
                     description: 'Require manual intervention before Argo will sync
                       new content. Default: False'
-                    type: boolean
-                  operatorCSV:
-                    description: Specific version of openshift-gitops to deploy.  Requires
-                      UseCSV=True
-                    type: string
-                  operatorChannel:
-                    description: 'Channel to deploy openshift-gitops from. Default:
-                      gitops-1.8'
-                    type: string
-                  operatorSource:
-                    description: 'Source to deploy openshift-gitops from. Default:
-                      redhat-operators'
-                    type: string
-                  useCSV:
-                    description: 'Dangerous. Force a specific version to be installed.
-                      Default: False'
                     type: boolean
                 type: object
               gitSpec:
@@ -108,19 +92,57 @@ spec:
                       Does not support short-sha's. Default to HEAD
                     type: string
                   pollInterval:
+                    default: 180
                     description: 'Interval in seconds to poll for drifts between origin
                       and target repositories. Default: 180 seconds'
                     type: integer
                   targetRepo:
                     description: Git repo containing the pattern to deploy. Must use
-                      https/http
+                      https/http or, for ssh, git@server:foo/bar.git
                     type: string
                   targetRevision:
                     description: 'Branch, tag, or commit to deploy.  Does not support
                       short-sha''s. Default: HEAD'
                     type: string
+                  tokenSecret:
+                    description: Optional. K8s secret name where the info for connecting
+                      to git can be found. The supported secrets are modeled after
+                      the private repositories in argo (https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories)
+                      currently ssh and username+password are supported
+                    type: string
+                  tokenSecretNamespace:
+                    description: Optional. K8s secret namespace where the token for
+                      connecting to git can be found
+                    type: string
                 required:
                 - targetRepo
+                type: object
+              multiSourceConfig:
+                properties:
+                  clusterGroupChartGitRevision:
+                    default: main
+                    description: The git reference when deploying the clustergroup
+                      helm chart directly from a git repo Defaults to 'main'. (Only
+                      used when developing the clustergroup helm chart)
+                    type: string
+                  clusterGroupChartVersion:
+                    description: Which chart version for the clustergroup helm chart.
+                      Defaults to "0.8.*"
+                    type: string
+                  clusterGroupGitRepoUrl:
+                    description: The url when deploying the clustergroup helm chart
+                      directly from a git repo Defaults to '' which means not used
+                      (Only used when developing the clustergroup helm chart)
+                    type: string
+                  enabled:
+                    default: true
+                    description: (EXPERIMENTAL) Enable multi-source support when deploying
+                      the clustergroup argo application
+                    type: boolean
+                  helmRepoUrl:
+                    description: The helm chart url to fetch the helm charts from
+                      in order to deploy the pattern. Defaults to https://charts.validatedpatterns.io/
+                    type: string
                 type: object
             required:
             - clusterGroupName
@@ -129,8 +151,32 @@ spec:
           status:
             description: PatternStatus defines the observed state of Pattern
             properties:
+              analyticsSent:
+                default: 0
+                type: integer
+              analyticsUUID:
+                type: string
               appClusterDomain:
                 type: string
+              applications:
+                items:
+                  description: PatternApplicationInfo defines the Applications Status
+                    for the Pattern. This structure is part of the PatternStatus as
+                    an array The Application Status will be included as part of the
+                    Observed state of Pattern
+                  properties:
+                    healthMessage:
+                      type: string
+                    healthStatus:
+                      type: string
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                    syncStatus:
+                      type: string
+                  type: object
+                type: array
               clusterDomain:
                 type: string
               clusterID:
@@ -175,6 +221,8 @@ spec:
               lastStep:
                 description: Last action related to the pattern
                 type: string
+              path:
+                type: string
               version:
                 description: Number of updates to the pattern
                 type: integer
@@ -184,9 +232,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    kind: ""
-    plural: ""
-  conditions: []
-  storedVersions: []

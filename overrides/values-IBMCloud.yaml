@@ -1,0 +1,10 @@
+# When using IBM ROKS the route certificates are signed by letsencrypt
+# By default the ESO configuration uses the kube-root-ca.crt configmap
+# to validate the connection to vault. Since this configmap will not contain
+# the letsencrypt CA, ESO will be unable to connect to the vault and return an
+# x509 CA unknown error.
+# Uncomment the following if you are using IBM ROKS (IPI installs on IBM Cloud are unaffected)
+
+# golangExternalSecrets:
+#   caProvider:
+#     enabled: false
