@@ -1,3 +1,4 @@
+---
 clusterGroup:
   name: hub
   isHubCluster: true
@@ -23,8 +24,7 @@ clusterGroup:
       name: gatekeeper-operator-product
       namespace: openshift-operators
       channel: stable
-
-      #csv: advanced-cluster-management.v2.6.1
+      # csv: advanced-cluster-management.v2.6.1
   projects:
     - hub
     - config-demo
@@ -37,23 +37,32 @@ clusterGroup:
     - prod-gatekeeper
     - gatekeeper-system
 
-  # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
-  # We can use self-referential variables because the chart calls the tpl function with these variables defined
+  # Explicitly mention the cluster-state based
+  # overrides we plan to use for this pattern.
+  # We can use self-referential variables because the chart
+  # calls the tpl function with these variables defined
   sharedValueFiles:
     - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
-  # sharedValueFiles is a flexible mechanism that will add the listed valuefiles to every app defined in the
-  # applications section. We intend this to supplement and possibly even replace previous "magic" mechanisms, though
+  # sharedValueFiles is a flexible mechanism that will
+  # add the listed valuefiles to every app defined in the
+  # applications section. We intend this to supplement and
+  # possibly even replace previous "magic" mechanisms, though
   # we do not at present have a target date for removal.
   #
-  # To replicate the "classic" magic include structure, the clusterGroup would need all of these
+  # To replicate the "classic" magic include structure,
+  # the clusterGroup would need all of these
   # sharedValueFiles, in this order:
   #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
-  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
-  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
-  #   - '/overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-\
+  #   {{ $.Values.global.clusterVersion }}.yaml'
+  #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-\
+  #   {{ $.Values.clusterGroup.name }}.yaml'
+  #   - '/overrides/values-{{ $.Values.global.clusterVersion }}-\
+  #   {{ $.Values.clusterGroup.name }}.yaml"
   #   - '/overrides/values-{{ $.Values.global.localClusterName }}.yaml'
 
-  # This kind of variable substitution will work with any of the variables the Validated Patterns operator knows
+  # This kind of variable substitution will work with any of the
+  # variables the Validated Patterns operator knows
   # about and sets, so this is also possible, for example:
   #   - '/overrides/values-{{ $.Values.global.hubClusterDomain }}.yaml'
   #   - '/overrides/values-{{ $.Values.global.localClusterDomain }}.yaml'
@@ -64,23 +73,17 @@ clusterGroup:
       project: hub
       path: common/acm
       ignoreDifferences:
-      - group: internal.open-cluster-management.io
-        kind: ManagedClusterInfo
-        jsonPointers:
-          - /spec/loggingCA
-
-            #    gatekeeper:
-            #      name: gatekeeper
-            #      namespace: gatekeeper-system
-            #      project: hub
-            #      path: common/gatekeeper
+        - group: internal.open-cluster-management.io
+          kind: ManagedClusterInfo
+          jsonPointers:
+            - /spec/loggingCA
 
     gatekeeper:
       name: gatekeeper
       namespace: gatekeeper-system
       project: gatekeeper-system
       path: common/gatekeeper
-
+      ignoreDifferences:
         - group: internal.open-cluster-management.io
           kind: ManagedClusterInfo
           jsonPointers:
@@ -135,38 +138,38 @@ clusterGroup:
 
     # RHACM Prod policies
     prod-acm-policies:
-     name: prod-policies
-     namespace: prod-policies
-     project: prod-policies
-     path: overlays/prod/
-     kustomize: true # adding this
-     repoURL: https://github.com/momoah/gitops-policies.git
-     targetRevision: main
-     plugin:
-       name: kustomize-with-policygen
-     ignoreDifferences:
-     - group: policy.open-cluster-management.io
-       kind: Policy
-       jsonPointers:
-        - /metadata/name
-        - /metadata/annotations
-        - /spec/policy-templates
-     - group: policy.open-cluster-management.io
-       kind: PolicySet
-       jsonPointers:
-        - /spec/policies
+      name: prod-policies
+      namespace: prod-policies
+      project: prod-policies
+      path: overlays/prod/
+      kustomize: true   # adding this to imply using the kustomize plugin
+      repoURL: https://github.com/momoah/gitops-policies.git
+      targetRevision: main
+      plugin:
+        name: kustomize-with-policygen
+      ignoreDifferences:
+        - group: policy.open-cluster-management.io
+          kind: Policy
+          jsonPointers:
+            - /metadata/name
+            - /metadata/annotations
+            - /spec/policy-templates
+        - group: policy.open-cluster-management.io
+          kind: PolicySet
+          jsonPointers:
+            - /spec/policies
 
     # Contains constraints to apply gatekeeper policies to prod environment
     prod-gatekeeper-constraints:
-     name: prod-gatekeeper-constraints
-     namespace: prod-gatekeeper
-     project: prod-gatekeeper
-     path: ./overlays/prod
-     kustomize: true
-     repoURL: https://github.com/momoah/gitops-gatekeeper.git
-     targetRevision: main
-     plugin:
-       name: kustomize-with-policygen
+      name: prod-gatekeeper-constraints
+      namespace: prod-gatekeeper
+      project: prod-gatekeeper
+      path: ./overlays/prod
+      kustomize: true
+      repoURL: https://github.com/momoah/gitops-gatekeeper.git
+      targetRevision: main
+      plugin:
+        name: kustomize-with-policygen
 
     ##
     # DEV APPS
@@ -174,52 +177,54 @@ clusterGroup:
 
     # Contains constraints to apply gatekeeper policies to dev environment
     dev-gatekeeper-constraints:
-     name: dev-gatekeeper-constraints
-     namespace: dev-gatekeeper
-     project: dev-gatekeeper
-     path: ./overlays/dev
-     kustomize: true
-     repoURL: https://github.com/momoah/gitops-gatekeeper.git
-     targetRevision: main
-     plugin:
-       name: kustomize-with-policygen
-    
+      name: dev-gatekeeper-constraints
+      namespace: dev-gatekeeper
+      project: dev-gatekeeper
+      path: ./overlays/dev
+      kustomize: true
+      repoURL: https://github.com/momoah/gitops-gatekeeper.git
+      targetRevision: main
+      plugin:
+        name: kustomize-with-policygen
+
     # RHACM dev policies
     dev-acm-policies:
-     name: dev-policies
-     namespace: dev-policies
-     project: dev-policies
-     path: overlays/dev/
-     kustomize: true
-     repoURL: https://github.com/momoah/gitops-policies.git
-     targetRevision: main
-     plugin:
-       name: kustomize-with-policygen
-     ignoreDifferences:
-     - group: policy.open-cluster-management.io
-       kind: Policy
-       jsonPointers:
-        - /metadata/name
-        - /metadata/annotations
-        - /spec/policy-templates
-     - group: policy.open-cluster-management.io
-       kind: PolicySet
-       jsonPointers:
-        - /spec/policies
+      name: dev-policies
+      namespace: dev-policies
+      project: dev-policies
+      path: overlays/dev/
+      kustomize: true
+      repoURL: https://github.com/momoah/gitops-policies.git
+      targetRevision: main
+      plugin:
+        name: kustomize-with-policygen
+      ignoreDifferences:
+        - group: policy.open-cluster-management.io
+          kind: Policy
+          jsonPointers:
+            - /metadata/name
+            - /metadata/annotations
+            - /spec/policy-templates
+        - group: policy.open-cluster-management.io
+          kind: PolicySet
+          jsonPointers:
+            - /spec/policies
   imperative:
-    # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
+    # NOTE: We *must* use lists and not hashes.
+    # As hashes lose ordering once parsed by helm
     # The default schedule is every 10 minutes: imperative.schedule
     # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
     # imagePullPolicy is set to always: imperative.imagePullPolicy
     # For additional overrides that apply to the jobs, please refer to
     # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
     jobs:
-    - name: regional-ca
-      # ansible playbook to be run
-      playbook: ansible/playbooks/on-hub-get-regional-ca.yml
-      # per playbook timeout in seconds
-      timeout: 234
-      # verbosity: "-v"
+      - name: regional-ca
+        # ansible playbook to be run
+        playbook: ansible/playbooks/on-hub-get-regional-ca.yml
+        # per playbook timeout in seconds
+        timeout: 234
+        # verbosity: "-v"
+
       - name: hello-world
         # ansible playbook to be run
         playbook: common/ansible/playbooks/hello-world/hello-world.yaml
@@ -240,7 +245,7 @@ clusterGroup:
           #   credentials and OCP pull secrets are defined in Vault.
           #   See values-secret.yaml.template
           #
-          #clusterPools:
+          # clusterPools:
           #  exampleAWSPool:
           #    name: aws-ap
           #    openshiftVersion: 4.10.18
@@ -262,7 +267,9 @@ clusterGroup:
           #    clusters:
           #    - Two
           #    - Three
-#  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
+
+#  To have apps in multiple flavors, use namespaces and
+#  use helm overrides as appropriate
 #
 #    pipelines:
 #      name: pipelines

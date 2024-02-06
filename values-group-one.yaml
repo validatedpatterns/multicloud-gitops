@@ -1,7 +1,7 @@
 ---
 global:
   options:
-    useCSV: False
+    useCSV: false
     syncPolicy: Automatic
     installPlanApproval: Automatic
 clusterGroup:
@@ -12,28 +12,22 @@ clusterGroup:
     - hello-world
     - golang-external-secrets
   subscriptions:
-
-      - name: web-terminal
-        namespace: openshift-operators
-        channel: fast
-      - name: compliance-operator
-        namespace: openshift-compliance
-        channel: stable
-      - name: gatekeeper-operator-product
-        namespace: openshift-operators 
-        channel: stable
-
-
+    - name: web-terminal
+      namespace: openshift-operators
+      channel: fast
+    - name: compliance-operator
+      namespace: openshift-compliance
+      channel: stable
+    - name: gatekeeper-operator-product
+      namespace: openshift-operators
+      channel: stable
 
   projects:
     - eso
     - config-demo
     - hello-world
-
     - openshift-piplines
     - openshift-operators
-
-
 
   applications:
     golang-external-secrets:
@@ -75,24 +69,21 @@ clusterGroup:
       #      project: hub
       #      path: common/acm-backup
 
+      #  managedClusterGroups:
+      #    exampleRegion:
+      #      name: group-one
+      #      acmlabels:
+      #        - name: clusterGroup
+      #          value: group-one
+      #      helmOverrides:
+      #        - name: clusterGroup.isHubCluster
+      #          value: false
 
-
-
-#  managedClusterGroups:
-#    exampleRegion:
-#      name: group-one
-#      acmlabels:
-#        - name: clusterGroup
-#          value: group-one
-#      helmOverrides:
-#        - name: clusterGroup.isHubCluster
-#          value: false
-
-# Before enabling cluster provisioning, ensure AWS and/or Azure
-#   credentials and OCP pull secrets are defined in Vault.
+      # Before enabling cluster provisioning, ensure AWS and/or Azure
+      #   credentials and OCP pull secrets are defined in Vault.
       #   See values-secret.yaml.template
       #
-      #clusterPools:
+      # clusterPools:
       #  exampleAWSPool:
       #    name: aws-ap
       #    openshiftVersion: 4.10.18
@@ -115,10 +106,11 @@ clusterGroup:
       #    - Two
       #    - Three
 
-#  To have apps in multiple flavors, use namespaces
-#  and use helm overrides as appropriate
+      #  To have apps in multiple flavors, use namespaces
+      #  and use helm overrides as appropriate
   imperative:
-    # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
+    # NOTE: We *must* use lists and not hashes.
+    # As hashes lose ordering once parsed by helm
     # The default schedule is every 10 minutes: imperative.schedule
     # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
     # imagePullPolicy is set to always: imperative.imagePullPolicy
@@ -131,17 +123,24 @@ clusterGroup:
         # per playbook timeout in seconds
         timeout: 234
         # verbosity: "-v"
-  # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
-  # We can use self-referential variables because the chart calls the tpl function with these variables defined
+  # Explicitly mention the cluster-state based
+  # overrides we plan to use for this pattern.
+  # We can use self-referential variables because the
+  # chart calls the tpl function with these variables defined
   sharedValueFiles:
     - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
-    # To mirror the "Classic" magic include structure, the clusterGroup would need all of these:
+    # To mirror the "Classic" magic include structure,
+    # the clusterGroup would need all of these:
     # sharedValueFiles:
     #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
-    #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.global.clusterVersion }}.yaml'
-    #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-{{ $.Values.clusterGroup.name }}.yaml'
-    #   - '/overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
-#  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
+    #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-\
+    #   {{ $.Values.global.clusterVersion }}.yaml'
+    #   - '/overrides/values-{{ $.Values.global.clusterPlatform }}-\
+    #   {{ $.Values.clusterGroup.name }}.yaml'
+    #   - '/overrides/values-{{ $.Values.global.clusterVersion }}-\
+    #   {{ $.Values.clusterGroup.name }}.yaml"
+#  To have apps in multiple flavors, use namespaces
+#  and use helm overrides as appropriate
 #
 #    pipelines:
 #      name: pipelines
