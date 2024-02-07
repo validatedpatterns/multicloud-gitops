@@ -5,7 +5,6 @@ import subprocess
 import pytest
 from ocp_resources.namespace import Namespace
 from ocp_resources.pod import Pod
-from ocp_resources.resource import Resource
 from ocp_resources.route import Route
 from openshift.dynamic.exceptions import NotFoundError
 
@@ -80,7 +79,7 @@ def test_check_pod_status(openshift_dyn_client):
         # Check for missing project
         try:
             namespaces = Namespace.get(dyn_client=openshift_dyn_client, name=project)
-            namespace = next(namespaces)
+            next(namespaces)
         except NotFoundError:
             missing_projects.append(project)
             continue
@@ -149,6 +148,26 @@ def test_check_pod_status(openshift_dyn_client):
         logger.info("PASS: Pod status check succeeded.")
 
 
+def describe_pod(project, pod):
+    cmd_out = subprocess.run(
+        [oc, "describe", "pod", "-n", project, pod], capture_output=True
+    )
+    if cmd_out.stdout:
+        return cmd_out.stdout.decode("utf-8")
+    else:
+        assert False, cmd_out.stderr
+
+
+def get_log_output(project, pod, container):
+    cmd_out = subprocess.run(
+        [oc, "logs", "-n", project, pod, "-c", container], capture_output=True
+    )
+    if cmd_out.stdout:
+        return cmd_out.stdout.decode("utf-8")
+    else:
+        assert False, cmd_out.stderr
+
+
 @pytest.mark.validate_argocd_reachable_edge_site
 def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
     namespace = "openshift-gitops"
@@ -159,13 +178,11 @@ def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
             namespace=namespace,
             name="openshift-gitops-server",
         ):
-            acm_route_url = route.instance.spec.host
+            argocd_route_url = route.instance.spec.host
     except StopIteration:
         err_msg = f"Argocd url/route is missing in {namespace} namespace"
         logger.error(f"FAIL: {err_msg}")
         assert False, err_msg
-
-    argocd_route_url = route.instance.spec.host
 
     logger.info("Check if argocd route/url on hub site is reachable")
     if not argocd_route_url:
