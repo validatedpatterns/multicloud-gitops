@@ -4,4 +4,6 @@
   connection: local
   gather_facts: false
   roles:
+   - find_vp_secrets
+   - cluster_pre_check
    - vault_utils

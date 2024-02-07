@@ -76,6 +76,8 @@ data:
         syncPolicy: Automatic
         useCSV: true
       pattern: common
+      secretStore:
+        backend: vault
       targetRevision: main
     secretStore:
       kind: ClusterSecretStore

@@ -102,3 +102,23 @@ def get_ini_value(inifile, inisection, inikey):
     config = configparser.ConfigParser()
     config.read(inifile)
     return config.get(inisection, inikey, fallback=None)
+
+
+def stringify_dict(input_dict):
+    """
+    Return a dict whose keys and values are all co-erced to strings, for creating labels and annotations in the
+    python Kubernetes module
+
+    Parameters:
+        input_dict(dict): A dictionary of keys and values
+
+    Returns:
+
+        obj: The same dict in the same order but with the keys coerced to str
+    """
+    output_dict = {}
+
+    for key, value in input_dict.items():
+        output_dict[str(key)] = str(value)
+
+    return output_dict

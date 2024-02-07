@@ -1,0 +1,87 @@
+---
+# Once V1 support is dropped we can remove the whole secret_template support
+- name: Set secret_template fact
+  no_log: "{{ override_no_log | default(true) }}"
+  ansible.builtin.set_fact:
+    secret_template: "{{ pattern_dir }}/values-secret.yaml.template"
+
+- name: Is a VALUES_SECRET env variable set?
+  ansible.builtin.set_fact:
+    custom_env_values_secret: "{{ lookup('ansible.builtin.env', 'VALUES_SECRET') }}"
+
+- name: Check if VALUES_SECRET file exists
+  ansible.builtin.stat:
+    path: "{{ custom_env_values_secret }}"
+  register: custom_file_values_secret
+  when: custom_env_values_secret | default('') | length > 0
+
+- name: Set values-secret yaml file to {{ custom_file_values_secret.stat.path }}
+  ansible.builtin.set_fact:
+    found_file: "{{ custom_file_values_secret.stat.path }}"
+  when:
+    - custom_env_values_secret | default('') | length > 0
+    - custom_file_values_secret.stat.exists
+
+# FIXME(bandini): Eventually around end of 2023(?) we should drop
+# ~/values-secret-{{ pattern_name }}.yaml and ~/values-secret.yaml
+- name: Find first existing values-secret yaml file
+  ansible.builtin.set_fact:
+    found_file: "{{ lookup('ansible.builtin.first_found', findme) }}"
+  vars:
+    findme:
+      - "~/.config/hybrid-cloud-patterns/values-secret-{{ pattern_name }}.yaml"
+      - "~/.config/validated-patterns/values-secret-{{ pattern_name }}.yaml"
+      - "~/values-secret-{{ pattern_name }}.yaml"
+      - "~/values-secret.yaml"
+      - "{{ pattern_dir }}/values-secret.yaml.template"
+  when: custom_env_values_secret | default('') | length == 0
+
+- name: Is found values secret file encrypted
+  no_log: "{{ override_no_log | default(true) }}"
+  ansible.builtin.shell: |
+    set -o pipefail
+    head -1 "{{ found_file }}" | grep -q \$ANSIBLE_VAULT
+  changed_when: false
+  register: encrypted
+  failed_when: (encrypted.rc not in [0, 1])
+
+# When HOME is set we replace it with '~' in this debug message
+# because when run from inside the container the HOME is /pattern-home
+# which is confusing for users
+- name: Is found values secret file encrypted
+  ansible.builtin.debug:
+    msg: "Using {{ (lookup('env', 'HOME') | length > 0) | ternary(found_file | regex_replace('^' + lookup('env', 'HOME'), '~'), found_file) }} to parse secrets"
+
+- name: Set encryption bool fact
+  no_log: "{{ override_no_log | default(true) }}"
+  ansible.builtin.set_fact:
+    is_encrypted: "{{ encrypted.rc == 0 | bool }}"
+
+- name: Get password for "{{ found_file }}"
+  ansible.builtin.pause:
+    prompt: "Input the password for {{ found_file }}"
+    echo: false
+  when: is_encrypted
+  register: vault_pass
+
+- name: Get decrypted content if {{ found_file }} was encrypted
+  no_log: "{{ override_no_log | default(true) }}"
+  ansible.builtin.shell:
+    ansible-vault view --vault-password-file <(cat <<<"{{ vault_pass.user_input }}") "{{ found_file }}"
+  register: values_secret_plaintext
+  when: is_encrypted
+  changed_when: false
+
+- name: Normalize secrets format (un-encrypted)
+  no_log: '{{ override_no_log | default(true) }}'
+  ansible.builtin.set_fact:
+    values_secrets_data: "{{ lookup('file', found_file) | from_yaml }}"
+  when: not is_encrypted
+  changed_when: false
+
+- name: Normalize secrets format (encrypted)
+  no_log: '{{ override_no_log | default(true) }}'
+  ansible.builtin.set_fact:
+    values_secrets_data: "{{ values_secret_plaintext.stdout | from_yaml }}"
+  when: is_encrypted
+  changed_when: false

@@ -1,6 +1,4 @@
 ---
-- name: Vault pre checks
-  ansible.builtin.include_tasks: pre_check.yaml
 - name: Vault status check
   ansible.builtin.include_tasks: vault_status.yaml
 
