@@ -1,7 +1,4 @@
 ---
-- name: Vault pre checks
-  ansible.builtin.include_tasks: pre_check.yaml
-
 - name: Find managed clusters
   kubernetes.core.k8s_info:
     kind: ManagedCluster

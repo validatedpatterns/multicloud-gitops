@@ -181,6 +181,8 @@ data:
         useCSV: false
       pattern: mypattern
       repoURL: https://github.com/pattern-clone/mypattern
+      secretStore:
+        backend: vault
       targetRevision: main
     main:
       clusterGroupName: hub

@@ -1,18 +1,25 @@
 ---
-# Eventually we should aim to move these two under the golangExternalSecrets key
-mountPath: "hub"
-mountRole: "hub-role"
-
 golangExternalSecrets:
-  # This controls how ESO connects to vault
+  rbac:
+    rolename: "hub-role"
+
+  kubernetes:
+    remoteNamespace: "validated-patterns-secrets"
+    server:
+      url: 'https://kubernetes.default'
+
+  vault:
+    mountPath: "hub"
+
+    # This controls how ESO connects to vault
   caProvider:
     enabled: true # If vault is exposed via a route that is signed by a non internal CA you might want to disable this
-    vaultHostCluster:
+    hostCluster:
       type: ConfigMap
       name: kube-root-ca.crt
       key: ca.crt
       namespace: golang-external-secrets
-    vaultClientCluster:
+    clientCluster:
       type: Secret
       name: hub-ca
       key: hub-kube-root-ca.crt
@@ -21,6 +28,9 @@ golangExternalSecrets:
 global:
   hubClusterDomain: hub.example.com
   clusterDomain: foo.example.com
+
+  secretStore:
+    backend: "vault"
 
 clusterGroup:
   isHubCluster: true

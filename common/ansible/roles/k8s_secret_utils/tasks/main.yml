@@ -1,0 +1,6 @@
+---
+- name: Parse and extract k8s secrets from values-secret file
+  ansible.builtin.include_tasks: parse_secrets.yml
+
+- name: Inject k8s secrets
+  ansible.builtin.include_tasks: inject_k8s_secrets.yml

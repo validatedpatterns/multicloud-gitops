@@ -5,6 +5,7 @@ __pycache__/
 *.swo
 values-secret.yaml
 .*.expected.yaml
+.vscode
 pattern-vault.init
 pattern-vault.init.bak
 super-linter.log
