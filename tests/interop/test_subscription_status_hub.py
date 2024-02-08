@@ -111,7 +111,7 @@ def test_subscription_status_hub(openshift_dyn_client):
             )
             logger.info(clone.stdout)
             logger.info(clone.stderr)
-        except:
+        except Exception:
             pass
 
         previouspath = os.getcwd() + f"/operator-versions/mcgitops_hub_{shortversion}"
