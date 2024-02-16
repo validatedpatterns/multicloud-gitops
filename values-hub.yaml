@@ -8,6 +8,10 @@ clusterGroup:
     - golang-external-secrets
     - config-demo
     - hello-world
+
+  operatorgroupExcludes:
+    - openshift-operators
+
   subscriptions:
     acm:
       name: advanced-cluster-management
