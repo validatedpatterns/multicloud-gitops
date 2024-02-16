@@ -7,15 +7,29 @@ clusterGroup:
   name: group-one
   isHubCluster: false
   namespaces:
+    - openshift-nfd
     - config-demo
     - hello-world
     - golang-external-secrets
   subscriptions:
   projects:
+    - openshift-nfd
     - eso
     - config-demo
     - hello-world
   applications:
+    nfd:
+      name: nfd
+      namespace: openshift-nfd
+      project: openshift-nfd
+      path: charts/all/nfd
+
+    intel-device-plugins:
+      name: intel-device-plugins
+      namespace: openshift-operators
+      project: openshift-operators
+      path: charts/all/intel-device-plugins
+
     golang-external-secrets:
       name: golang-external-secrets
       namespace: golang-external-secrets

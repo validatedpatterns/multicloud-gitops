@@ -1,0 +1,13 @@
+# Copyright (c) 2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-nfd
+  labels:
+    kubernetes.io/metadata.name: openshift-nfd
+  annotations:
+  labels:
+spec:

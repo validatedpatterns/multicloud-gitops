@@ -1,0 +1,142 @@
+diff -up vault/templates/_helpers.tpl vault/templates/_helpers.tpl
+--- vault/templates/_helpers.tpl	2023-11-20 17:20:24.000000000 +0100
++++ vault/templates/_helpers.tpl	2024-01-30 15:55:58.101764511 +0100
+@@ -187,6 +187,9 @@ extra volumes the user may have specifie
+         - name: config
+           configMap:
+             name: {{ template "vault.fullname" . }}-config
++    {{- if .Values.server.sgx }}
++            defaultMode: {{ .defaultMode | default 511 }}
++    {{- end }}
+   {{ end }}
+   {{- range .Values.server.extraVolumes }}
+         - name: userconfig-{{ .name }}
+@@ -196,7 +199,7 @@ extra volumes the user may have specifie
+           {{- else if (eq .type "secret") }}
+             secretName: {{ .name }}
+           {{- end }}
+-            defaultMode: {{ .defaultMode | default 420 }}
++            defaultMode: {{ .defaultMode | default 511 }}
+   {{- end }}
+   {{- if .Values.server.volumes }}
+     {{- toYaml .Values.server.volumes | nindent 8}}
+@@ -207,6 +210,22 @@ extra volumes the user may have specifie
+             secretName: {{ .Values.server.enterpriseLicense.secretName }}
+             defaultMode: 0440
+   {{- end }}
++  {{- if .Values.server.sgx }}
++        - name: data
++          persistentVolumeClaim:
++            claimName: data-vault-0
++  {{- end }}
++{{- end -}}
++
++{{/*
++Set's command line to execute for the container
++*/}}
++{{- define "vault.command" -}}
++  {{- if not .Values.server.sgx }}
++          command:
++          - "/bin/sh"
++          - "-ec"
++  {{- end }}
+ {{- end -}}
+
+ {{/*
+@@ -215,7 +234,11 @@ file with IP addresses to make the out o
+ for users looking to use this chart with Consul Helm.
+ */}}
+ {{- define "vault.args" -}}
+-  {{ if or (eq .mode "standalone") (eq .mode "ha") }}
++  {{- if .Values.server.sgx }}
++          - server
++          - -config=/vault/config/extraconfig-from-values.hcl
++  {{- else }}
++    {{ if or (eq .mode "standalone") (eq .mode "ha") }}
+           - |
+             cp /vault/config/extraconfig-from-values.hcl /tmp/storageconfig.hcl;
+             [ -n "${HOST_IP}" ] && sed -Ei "s|HOST_IP|${HOST_IP?}|g" /tmp/storageconfig.hcl;
+@@ -225,10 +248,11 @@ for users looking to use this chart with
+             [ -n "${TRANSIT_ADDR}" ] && sed -Ei "s|TRANSIT_ADDR|${TRANSIT_ADDR?}|g" /tmp/storageconfig.hcl;
+             [ -n "${RAFT_ADDR}" ] && sed -Ei "s|RAFT_ADDR|${RAFT_ADDR?}|g" /tmp/storageconfig.hcl;
+             /usr/local/bin/docker-entrypoint.sh vault server -config=/tmp/storageconfig.hcl {{ .Values.server.extraArgs }}
+-   {{ else if eq .mode "dev" }}
++    {{ else if eq .mode "dev" }}
+           - |
+             /usr/local/bin/docker-entrypoint.sh vault server -dev {{ .Values.server.extraArgs }}
+-  {{ end }}
++    {{ end }}
++  {{- end }}
+ {{- end -}}
+
+ {{/*
+@@ -264,7 +288,6 @@ based on the mode configured.
+   {{ end }}
+   {{- range .Values.server.extraVolumes }}
+             - name: userconfig-{{ .name }}
+-              readOnly: true
+               mountPath: {{ .path | default "/vault/userconfig" }}/{{ .name }}
+   {{- end }}
+   {{- if .Values.server.volumeMounts }}
+diff -up vault/templates/server-config-configmap.yaml vault/templates/server-config-configmap.yaml
+--- vault/templates/server-config-configmap.yaml	2023-11-16 23:06:42.000000000 +0100
++++ vault/templates/server-config-configmap.yaml	2024-01-30 10:23:56.116132685 +0100
+@@ -20,6 +20,21 @@ metadata:
+     app.kubernetes.io/managed-by: {{ .Release.Service }}
+ data:
+   extraconfig-from-values.hcl: |-
++  {{- if .Values.server.sgx }}
++    disable_mlock = true
++    ui = true
++
++    listener "tcp" {
++        address = "[::]:8200"
++        cluster_address = "[::]:8201"
++        tls_cert_file = "/vault/userconfig/vault-secret/tls.crt"
++        tls_key_file = "/vault/userconfig/vault-secret/tls.key"
++    }
++
++    storage "file" {
++        path = "/vault/data"
++    }
++  {{- else }}
+   {{- if or (eq .mode "ha") (eq .mode "standalone") }}
+   {{- $type := typeOf (index .Values.server .mode).config }}
+   {{- if eq $type "string" }}
+@@ -39,6 +54,7 @@ data:
+   {{- end }}
+   {{- end }}
+   {{- end }}
++  {{- end }}
+ {{- end }}
+ {{- end }}
+ {{- end }}
+diff -up vault/templates/server-statefulset.yaml vault/templates/server-statefulset.yaml
+--- vault/templates/server-statefulset.yaml	2023-11-16 23:06:42.000000000 +0100
++++ vault/templates/server-statefulset.yaml	2024-01-30 10:23:56.117132695 +0100
+@@ -77,9 +77,7 @@ spec:
+           {{ template "vault.resources" . }}
+           image: {{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default "latest" }}
+           imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+-          command:
+-          - "/bin/sh"
+-          - "-ec"
++          {{- template "vault.command" . }}
+           args: {{ template "vault.args" . }}
+           {{- template "server.statefulSet.securityContext.container" . }}
+           env:
+diff -up vault/values.openshift.yaml vault/values.openshift.yaml
+--- vault/values.openshift.yaml	2023-11-16 23:06:42.000000000 +0100
++++ vault/values.openshift.yaml	2024-01-30 16:05:38.821979243 +0100
+@@ -17,8 +17,9 @@ injector:
+
+ server:
+   image:
+-    repository: "registry.connect.redhat.com/hashicorp/vault"
+-    tag: "1.15.2-ubi"
++    repository: "docker.io/seahorse910/sgx-gramine"
++    tag: "rh-vault-1.15.3-ubi-sgx-gramine-loaderuid-vault107-threads512-vol"
++    pullPolicy: Always
+
+   readinessProbe:
+     path: "/v1/sys/health?uninitcode=204"

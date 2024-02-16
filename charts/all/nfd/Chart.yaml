@@ -1,0 +1,6 @@
+apiVersion: v2
+description: A Helm chart for NFD (Node Feature Discovery) deployment
+keywords:
+- nfd
+name: nfd
+version: 0.0.1
