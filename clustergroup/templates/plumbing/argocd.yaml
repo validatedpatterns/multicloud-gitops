@@ -1,3 +1,5 @@
+{{- $hasInitContainerCapability := and (.Values.global.experimentalCapabilities) (has "initcontainers" (splitList "," .Values.global.experimentalCapabilities)) }}
+
 {{- if (eq .Values.enabled "all") }}
 {{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
 apiVersion: argoproj.io/v1beta1
@@ -68,9 +70,50 @@ spec:
   rbac:
     defaultPolicy: role:admin
   repo:
+{{- if $hasInitContainerCapability }}
+    initContainers:
+    - command:
+      - bash
+      - -c
+      - cat /var/run/kube-root-ca/ca.crt /var/run/trusted-ca/ca-bundle.crt > /tmp/ca-bundles/ca-bundle.crt || true
+      image: {{ $.Values.clusterGroup.imperative.image }}
+      name: fetch-ca
+      resources: {}
+      volumeMounts:
+      - mountPath: /var/run/kube-root-ca
+        name: kube-root-ca
+      - mountPath: /var/run/trusted-ca
+        name: trusted-ca-bundle
+      - mountPath: /tmp/ca-bundles
+        name: ca-bundles
+    resources:
+      limits:
+        cpu: "1"
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    volumeMounts:
+    - mountPath: /etc/pki/tls/certs
+      name: ca-bundles
+    volumes:
+    - configMap:
+        name: kube-root-ca.crt
+      name: kube-root-ca
+    - configMap:
+        name: trusted-ca-bundle
+        optional: true
+      name: trusted-ca-bundle
+    - emptyDir: {}
+      name: ca-bundles
+{{- if len $.Values.clusterGroup.argoCD.initContainers }}
+{{ $.Values.clusterGroup.argoCD.initContainers | toPrettyJson }}
+{{- end }}
+{{- else }}
 {{- if len $.Values.clusterGroup.argoCD.initContainers }}
     initContainers: {{ $.Values.clusterGroup.argoCD.initContainers | toPrettyJson }}
 {{- end }}
+{{- end }}{{/* if $hasInitContainerCapability */}}
 {{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
     sidecarContainers:
 {{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}

@@ -9,4 +9,13 @@ metadata:
 data:
   values.yaml: |
 {{ tpl $valuesyaml . | indent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trusted-ca-bundle
+  namespace: {{ $.Values.clusterGroup.imperative.namespace}}
+  annotations:
+  labels:
+    config.openshift.io/inject-trusted-cabundle: 'true'
 {{- end }}

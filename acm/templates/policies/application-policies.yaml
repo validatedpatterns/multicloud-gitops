@@ -1,4 +1,5 @@
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
+{{- $hasInitContainerCapability := and (.Values.global.experimentalCapabilities) (has "initcontainers" (splitList "," .Values.global.experimentalCapabilities)) }}
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
 {{- if not .hostedArgoSites }}
@@ -75,6 +76,8 @@ spec:
                         value: {{ $.Values.global.clusterPlatform }}
                       - name: clusterGroup.name
                         value: {{ $group.name }}
+                      - name: global.experimentalCapabilities
+                        value: {{ $.Values.global.experimentalCapabilities }}
                      {{- range .helmOverrides }}
                       - name: {{ .name }}
                         value: {{ .value | quote }}
