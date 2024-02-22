@@ -1396,7 +1396,7 @@ spec:
       limit: 20
 ---
 # Source: clustergroup/templates/plumbing/argocd.yaml
-apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1beta1
 kind: ArgoCD
 metadata:
   finalizers:
