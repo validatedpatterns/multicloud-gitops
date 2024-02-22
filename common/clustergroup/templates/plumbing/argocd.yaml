@@ -1,6 +1,6 @@
 {{- if (eq .Values.enabled "all") }}
 {{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
-apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1beta1
 kind: ArgoCD
 metadata:
   finalizers:
