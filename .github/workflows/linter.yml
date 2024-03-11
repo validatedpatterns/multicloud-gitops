@@ -34,7 +34,7 @@ jobs:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
       - name: Setup helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4
         with:
           version: 'v3.13.2'
         id: install
