@@ -55,6 +55,7 @@ fi
 podman run -it --rm --pull=newer \
 	--security-opt label=disable \
 	-e EXTRA_HELM_OPTS \
+	-e EXTRA_PLAYBOOK_OPTS \
 	-e KUBECONFIG \
 	-v /etc/pki:/etc/pki:ro \
 	-v "${HOME}":"${HOME}" \
