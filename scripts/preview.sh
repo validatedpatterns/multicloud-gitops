@@ -62,16 +62,16 @@ OVERRIDES=$( getOverrides )
 VALUE_FILES=""
 IFS=$'\n'
 for line in $sharedValueFiles; do
-    if [ $line != "null" ]; then
-	file=$(replaceGlobals $line)
-	VALUE_FILES="$VALUE_FILES -f $PWD$file"
+    if [ $line != "null" ] && [ -f $line ]; then
+	    file=$(replaceGlobals $line)
+	    VALUE_FILES="$VALUE_FILES -f $PWD$file"
     fi
 done
 
 for line in $appValueFiles; do
-    if [ $line != "null" ]; then
-	file=$(replaceGlobals $line)
-	VALUE_FILES="$VALUE_FILES -f $PWD$file"
+    if [ $line != "null" ] && [ -f $line ]; then
+	    file=$(replaceGlobals $line)
+	    VALUE_FILES="$VALUE_FILES -f $PWD$file"
     fi
 done
 
