@@ -57,6 +57,7 @@ CLUSTER_OPTS="$CLUSTER_OPTS --set global.clusterPlatform=$platform"
 
 sharedValueFiles=$(yq ".clusterGroup.sharedValueFiles" values-$SITE.yaml)
 appValueFiles=$(yq ".clusterGroup.applications.$APP.extraValueFiles" values-$SITE.yaml)
+isKustomize=$(yq ".clusterGroup.applications.$APP.kustomize" values-$SITE.yaml)
 OVERRIDES=$( getOverrides )
 
 VALUE_FILES=""
@@ -75,5 +76,11 @@ for line in $appValueFiles; do
     fi
 done
 
-cmd="helm template $chart --name-template ${APP} -n ${namespace} ${VALUE_FILES} ${OVERRIDES} ${CLUSTER_OPTS}"
-eval "$cmd"
+if [ $isKustomize == "true" ]; then
+    kustomizePath=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
+    cmd="oc kustomize ${kustomizePath}"
+    eval "$cmd"
+else
+    cmd="helm template $chart --name-template ${APP} -n ${namespace} ${VALUE_FILES} ${OVERRIDES} ${CLUSTER_OPTS}"
+    eval "$cmd"
+fi
