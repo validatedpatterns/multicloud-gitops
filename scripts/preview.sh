@@ -78,7 +78,7 @@ done
 
 if [ $isKustomize == "true" ]; then
     kustomizePath=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
-    cmd="kustomize build ${kustomizePath}"
+    cmd="oc kustomize ${kustomizePath}"
     eval "$cmd"
 else
     cmd="helm template $chart --name-template ${APP} -n ${namespace} ${VALUE_FILES} ${OVERRIDES} ${CLUSTER_OPTS}"
