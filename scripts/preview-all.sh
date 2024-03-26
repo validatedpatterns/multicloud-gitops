@@ -18,6 +18,7 @@ fi
 for cluster in ${ALL_CLUSTERS[@]}; do
     APPS=$( yq ".clusterGroup.applications.[].name" values-$cluster.yaml )
     for app in $APPS; do
+        printf "# Parsing application $app from cluster $cluster\n"
         common/scripts/preview.sh $cluster $app $REPO $TARGET_BRANCH
     done
 done
