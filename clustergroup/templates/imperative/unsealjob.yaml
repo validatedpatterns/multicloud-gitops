@@ -1,4 +1,6 @@
-{{- if eq .Values.global.secretStore.backend "vault" | default "vault" }}
+{{/* If the backend is not set at all we default to "vault". See https://www.github.com/helm/helm/issues/3308
+     why we avoid using the default function */}}
+{{- if or (eq .Values.global.secretStore.backend "vault") (not (hasKey .Values.global.secretStore "backend")) }}
 {{- if not (eq .Values.enabled "plumbing") }}
 {{- if $.Values.clusterGroup.isHubCluster }}
 ---
