@@ -153,12 +153,27 @@
         },
         "options": {
           "$ref": "#/definitions/Options"
+        },
+        "secretStore": {
+          "$ref": "#/definitions/GlobalSecretStore"
         }
       },
       "required": [
         "options"
       ],
       "title": "Global"
+    },
+    "GlobalSecretStore": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "type": "string",
+          "description": "Name of the secrets backend",
+          "default": "vault"
+        }
+      },
+      "title": "GlobalSecretsStore"
     },
     "GlobalGit": {
       "type": "object",
