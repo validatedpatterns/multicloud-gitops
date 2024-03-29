@@ -64,7 +64,7 @@ appValueFiles=$(yq ".clusterGroup.applications.$APP.extraValueFiles" values-$SIT
 isKustomize=$(yq ".clusterGroup.applications.$APP.kustomize" values-$SITE.yaml)
 OVERRIDES=$( getOverrides )
 
-VALUE_FILES=""
+VALUE_FILES="-f values-global.yaml -f values-$SITE.yaml"
 IFS=$'\n'
 for line in $sharedValueFiles; do
     if [ $line != "null" ] && [ -f $line ]; then
