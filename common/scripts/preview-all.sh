@@ -16,7 +16,8 @@ if [ $CLUSTER_INFO_RET -ne 0 ]; then
 fi
 
 for cluster in ${ALL_CLUSTERS[@]}; do
-    APPS=$( yq ".clusterGroup.applications.[].name" values-$cluster.yaml )
+    # We always add clustergroup as it is the entry point and it gets special cased in preview.sh.
+    APPS="clustergroup $( yq ".clusterGroup.applications.[].name" values-$cluster.yaml )"
     for app in $APPS; do
         printf "# Parsing application $app from cluster $cluster\n"
         common/scripts/preview.sh $cluster $app $REPO $TARGET_BRANCH

@@ -13,8 +13,13 @@ APP=$1; shift
 GIT_REPO=$1; shift
 GIT_BRANCH=$1; shift
 
-chart=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
-namespace=$(yq ".clusterGroup.applications.$APP.namespace" values-$SITE.yaml)
+if [ "${APP}" != "clustergroup" ]; then
+  chart=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
+  namespace=$(yq ".clusterGroup.applications.$APP.namespace" values-$SITE.yaml)
+else
+  chart="common/clustergroup"
+  namespace="openshift-operators"
+fi
 pattern=$(yq ".global.pattern" values-global.yaml)
 
 # You can override the default lookups by using OCP_{PLATFORM,VERSION,DOMAIN}
