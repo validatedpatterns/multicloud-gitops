@@ -17,9 +17,13 @@ chart=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
 namespace=$(yq ".clusterGroup.applications.$APP.namespace" values-$SITE.yaml)
 pattern=$(yq ".global.pattern" values-global.yaml)
 
-platform=$(oc get Infrastructure.config.openshift.io/cluster  -o jsonpath='{.spec.platformSpec.type}')
-ocpversion=$(oc get clusterversion/version -o jsonpath='{.status.desired.version}' | awk -F. '{print $1"."$2}')
-domain=$(oc get Ingress.config.openshift.io/cluster -o jsonpath='{.spec.domain}' | sed 's/^apps.//')
+# You can override the default lookups by using OCP_{PLATFORM,VERSION,DOMAIN}
+# Note that when using the utility container you need to pass in the above variables
+# by export EXTRA_ARGS="-e OCP_PLATFORM -e OCP_VERSION -e OCP_DOMAIN" before
+# invoking pattern-util.sh
+platform=${OCP_PLATFORM:-$(oc get Infrastructure.config.openshift.io/cluster  -o jsonpath='{.spec.platformSpec.type}')}
+ocpversion=${OCP_VERSION:-$(oc get clusterversion/version -o jsonpath='{.status.desired.version}' | awk -F. '{print $1"."$2}')}
+domain=${OCP_DOMAIN:-$(oc get Ingress.config.openshift.io/cluster -o jsonpath='{.spec.domain}' | sed 's/^apps.//')}
 
 function replaceGlobals() {
     output=$( echo $1 | sed -e 's/ //g' -e 's/\$//g' -e s@^-@@g  -e s@\'@@g )
@@ -60,7 +64,7 @@ appValueFiles=$(yq ".clusterGroup.applications.$APP.extraValueFiles" values-$SIT
 isKustomize=$(yq ".clusterGroup.applications.$APP.kustomize" values-$SITE.yaml)
 OVERRIDES=$( getOverrides )
 
-VALUE_FILES=""
+VALUE_FILES="-f values-global.yaml -f values-$SITE.yaml"
 IFS=$'\n'
 for line in $sharedValueFiles; do
     if [ $line != "null" ] && [ -f $line ]; then
