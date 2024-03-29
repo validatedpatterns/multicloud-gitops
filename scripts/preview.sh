@@ -9,14 +9,23 @@
 # - Make output can be included in the YAML.
 
 SITE=$1; shift
-APP=$1; shift
+APPNAME=$1; shift
 GIT_REPO=$1; shift
 GIT_BRANCH=$1; shift
 
-if [ "${APP}" != "clustergroup" ]; then
+if [ "${APPNAME}" != "clustergroup" ]; then
+  # This covers the following case:
+  # foobar:
+  #   name: foo
+  #   namespace: foo
+  #   project: foo
+  #   path: charts/all/foo
+  # So we retrieve the actual index ("foobar") given the name attribute of the application
+  APP=$(yq ".clusterGroup.applications | with_entries(select(.value.name == \"$APPNAME\")) | keys | .[0]" values-$SITE.yaml)
   chart=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
   namespace=$(yq ".clusterGroup.applications.$APP.namespace" values-$SITE.yaml)
 else
+  APP=$APPNAME
   chart="common/clustergroup"
   namespace="openshift-operators"
 fi
