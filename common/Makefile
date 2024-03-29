@@ -55,7 +55,8 @@ help: ## This help message
 show: ## show the starting template without installing it
 	helm template common/operator-install/ --name-template $(NAME) $(HELM_OPTS)
 
-preview-all:
+preview-all: ## (EXPERIMENTAL) Previews all applications on hub and managed clusters
+	@echo "NOTE: This is just a tentative approximation of rendering all hub and managed clusters templates"
 	@common/scripts/preview-all.sh $(TARGET_REPO) $(TARGET_BRANCH)
 
 preview-%:

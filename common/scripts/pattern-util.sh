@@ -61,6 +61,7 @@ podman run -it --rm --pull=newer \
 	-v "${HOME}":"${HOME}" \
 	-v "${HOME}":/pattern-home \
 	${PODMAN_ARGS} \
+	${EXTRA_ARGS} \
 	-w "$(pwd)" \
 	"$PATTERN_UTILITY_CONTAINER" \
 	$@
