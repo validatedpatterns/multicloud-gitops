@@ -619,9 +619,9 @@ spec:
                         - '/values-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
                       parameters:
                       - name: global.repoURL
-                        value: $ARGOCD_APP_SOURCE_REPO_URL
+                        value: https://github.com/pattern-clone/mypattern
                       - name: global.targetRevision
-                        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+                        value: main
                       - name: global.namespace
                         value: $ARGOCD_APP_NAMESPACE
                       - name: global.pattern
@@ -715,9 +715,9 @@ spec:
                         - '/values-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
                       parameters:
                       - name: global.repoURL
-                        value: $ARGOCD_APP_SOURCE_REPO_URL
+                        value: https://github.com/pattern-clone/mypattern
                       - name: global.targetRevision
-                        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+                        value: main
                       - name: global.namespace
                         value: $ARGOCD_APP_NAMESPACE
                       - name: global.pattern
