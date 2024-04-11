@@ -254,7 +254,14 @@
             "description": "Templated value file paths."
 	},
         "namespaces": {
-          "type": "array",
+          "anyOf": [
+            {
+              "type": "array"
+            },
+            {
+              "type": "object"
+            }
+          ],
           "description": "This is the array of namespaces that the VP framework will create.  In addition, operator groups will also be created for each namespace.",
           "items": {
             "$ref": "#/definitions/Namespaces"
@@ -312,7 +319,14 @@
           }
         },
         "projects": {
-          "type": "array",
+          "anyOf": [
+            {
+              "type": "array"
+            },
+            {
+              "type": "object"
+            }
+          ],
           "description": "The list of projects that will be created in the ArgoCD instances.",
           "items": {
             "type": "string"
