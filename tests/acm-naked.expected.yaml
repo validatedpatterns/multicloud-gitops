@@ -92,6 +92,15 @@ spec:
           object-templates:
             - complianceType: mustonlyhave
               objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: trusted-ca-bundle
+                  namespace: openshift-gitops
+                  labels:
+                    config.openshift.io/inject-trusted-cabundle: 'true'
+            - complianceType: mustonlyhave
+              objectDefinition:
                 # This is an auto-generated file. DO NOT EDIT
                 apiVersion: operators.coreos.com/v1alpha1
                 kind: Subscription
