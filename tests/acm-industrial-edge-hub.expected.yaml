@@ -248,6 +248,8 @@ spec:
                         value: aws
                       - name: clusterGroup.name
                         value: factory
+                      - name: global.experimentalCapabilities
+                        value: 
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
@@ -296,6 +298,15 @@ spec:
             include:
               - default
           object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: trusted-ca-bundle
+                  namespace: openshift-gitops
+                  labels:
+                    config.openshift.io/inject-trusted-cabundle: 'true'
             - complianceType: mustonlyhave
               objectDefinition:
                 # This is an auto-generated file. DO NOT EDIT

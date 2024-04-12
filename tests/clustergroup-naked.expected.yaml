@@ -83,6 +83,25 @@ data:
       kind: ClusterSecretStore
       name: vault-backend
 ---
+# Source: clustergroup/templates/imperative/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trusted-ca-bundle
+  namespace: imperative
+  annotations:
+  labels:
+    config.openshift.io/inject-trusted-cabundle: 'true'
+---
+# Source: clustergroup/templates/plumbing/trusted-bundle-ca-configmap.yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: trusted-ca-bundle
+  namespace: common-example
+  labels:
+    config.openshift.io/inject-trusted-cabundle: 'true'
+---
 # Source: clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -212,6 +231,9 @@ spec:
               env:
                 - name: HOME
                   value: /git/home
+              volumeMounts:
+              - name: git
+                mountPath: "/git"
               command:
               - 'sh'
               - '-c'
@@ -237,9 +259,6 @@ spec:
                 mkdir /git/{repo,home};
                 git clone --single-branch --branch main --depth 1 -- "${URL}" /git/repo;
                 chmod 0770 /git/{repo,home};
-              volumeMounts:
-              - name: git
-                mountPath: "/git"
             - name: unseal-playbook
               image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
               imagePullPolicy: Always
@@ -274,12 +293,12 @@ spec:
                 - 'echo'
                 - 'done'
                 - '\n'
-          volumes:
-          - name: git
-            emptyDir: {}
-          - name: values-volume
-            configMap:
-              name: helm-values-configmap-example
+          volumes:            
+            - name: git
+              emptyDir: {}
+            - name: values-volume
+              configMap:
+                name: helm-values-configmap-example
           restartPolicy: Never
 ---
 # Source: clustergroup/templates/plumbing/argocd.yaml
