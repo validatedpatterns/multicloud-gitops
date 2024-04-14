@@ -619,9 +619,9 @@ spec:
                         - '/values-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
                       parameters:
                       - name: global.repoURL
-                        value: $ARGOCD_APP_SOURCE_REPO_URL
+                        value: https://github.com/pattern-clone/mypattern
                       - name: global.targetRevision
-                        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+                        value: main
                       - name: global.namespace
                         value: $ARGOCD_APP_NAMESPACE
                       - name: global.pattern
@@ -642,6 +642,8 @@ spec:
                         value: aws
                       - name: clusterGroup.name
                         value: acm-edge
+                      - name: global.experimentalCapabilities
+                        value: 
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
@@ -715,9 +717,9 @@ spec:
                         - '/values-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
                       parameters:
                       - name: global.repoURL
-                        value: $ARGOCD_APP_SOURCE_REPO_URL
+                        value: https://github.com/pattern-clone/mypattern
                       - name: global.targetRevision
-                        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+                        value: main
                       - name: global.namespace
                         value: $ARGOCD_APP_NAMESPACE
                       - name: global.pattern
@@ -738,6 +740,8 @@ spec:
                         value: aws
                       - name: clusterGroup.name
                         value: acm-provision-edge
+                      - name: global.experimentalCapabilities
+                        value: 
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
@@ -786,6 +790,15 @@ spec:
             include:
               - default
           object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: trusted-ca-bundle
+                  namespace: openshift-gitops
+                  labels:
+                    config.openshift.io/inject-trusted-cabundle: 'true'
             - complianceType: mustonlyhave
               objectDefinition:
                 # This is an auto-generated file. DO NOT EDIT
