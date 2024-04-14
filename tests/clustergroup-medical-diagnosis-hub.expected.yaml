@@ -480,7 +480,6 @@ spec:
                     U="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.username | base64decode }}')";
                     P="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.password | base64decode }}')";
                     URL=$(echo https://github.com/pattern-clone/mypattern | sed -E "s/(https?:\/\/)/\1${U}:${P}@/");
-                    echo "USER/PASS: ${URL}";
                   else
                     S="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.sshPrivateKey | base64decode }}')";
                     mkdir -p --mode 0700 "${HOME}/.ssh";
@@ -488,7 +487,6 @@ spec:
                     chmod 0600 "${HOME}/.ssh/id_rsa";
                     URL=$(echo https://github.com/pattern-clone/mypattern | sed -E "s/(https?:\/\/)/\1git@/");
                     git config --global core.sshCommand "ssh -i "${HOME}/.ssh/id_rsa" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
-                    echo "SSH: ${URL}";
                   fi;
                 fi;
                 mkdir /git/{repo,home};
@@ -575,7 +573,6 @@ spec:
                     U="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.username | base64decode }}')";
                     P="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.password | base64decode }}')";
                     URL=$(echo https://github.com/pattern-clone/mypattern | sed -E "s/(https?:\/\/)/\1${U}:${P}@/");
-                    echo "USER/PASS: ${URL}";
                   else
                     S="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.sshPrivateKey | base64decode }}')";
                     mkdir -p --mode 0700 "${HOME}/.ssh";
@@ -583,7 +580,6 @@ spec:
                     chmod 0600 "${HOME}/.ssh/id_rsa";
                     URL=$(echo https://github.com/pattern-clone/mypattern | sed -E "s/(https?:\/\/)/\1git@/");
                     git config --global core.sshCommand "ssh -i "${HOME}/.ssh/id_rsa" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
-                    echo "SSH: ${URL}";
                   fi;
                 fi;
                 mkdir /git/{repo,home};
