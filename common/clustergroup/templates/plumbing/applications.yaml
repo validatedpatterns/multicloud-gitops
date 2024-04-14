@@ -105,7 +105,7 @@ spec:
         {{- end }}
         {{- range $k, $v := $.Values.extraParametersNested }}
             - name: {{ $k }}
-              value: {{ $v }}
+              value: {{ printf "%s" $v | quote }}
         {{- end }}
         {{- range .overrides }}
             - name: {{ .name  }}
@@ -184,7 +184,7 @@ spec:
           {{- end }}
           {{- range $k, $v := $.Values.extraParametersNested }}
           - name: {{ $k }}
-            value: {{ $v }}
+            value: {{ printf "%s" $v | quote }}
           {{- end }}
           {{- range .overrides }}
           - name: {{ .name }}
@@ -251,7 +251,7 @@ spec:
         {{- end }}
         {{- range $k, $v := $.Values.extraParametersNested }}
         - name: {{ $k }}
-          value: {{ $v }}
+          value: {{ printf "%s" $v | quote }}
         {{- end }}
         {{- range .overrides }}
         - name: {{ .name }}

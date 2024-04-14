@@ -315,6 +315,25 @@ data:
       kind: ClusterSecretStore
       name: vault-backend
 ---
+# Source: clustergroup/templates/imperative/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trusted-ca-bundle
+  namespace: imperative
+  annotations:
+  labels:
+    config.openshift.io/inject-trusted-cabundle: 'true'
+---
+# Source: clustergroup/templates/plumbing/trusted-bundle-ca-configmap.yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: trusted-ca-bundle
+  namespace: mypattern-hub
+  labels:
+    config.openshift.io/inject-trusted-cabundle: 'true'
+---
 # Source: clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -444,6 +463,9 @@ spec:
               env:
                 - name: HOME
                   value: /git/home
+              volumeMounts:
+              - name: git
+                mountPath: "/git"
               command:
               - 'sh'
               - '-c'
@@ -455,7 +477,6 @@ spec:
                     U="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.username | base64decode }}')";
                     P="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.password | base64decode }}')";
                     URL=$(echo https://github.com/pattern-clone/mypattern | sed -E "s/(https?:\/\/)/\1${U}:${P}@/");
-                    echo "USER/PASS: ${URL}";
                   else
                     S="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.sshPrivateKey | base64decode }}')";
                     mkdir -p --mode 0700 "${HOME}/.ssh";
@@ -463,15 +484,17 @@ spec:
                     chmod 0600 "${HOME}/.ssh/id_rsa";
                     URL=$(echo https://github.com/pattern-clone/mypattern | sed -E "s/(https?:\/\/)/\1git@/");
                     git config --global core.sshCommand "ssh -i "${HOME}/.ssh/id_rsa" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
-                    echo "SSH: ${URL}";
                   fi;
                 fi;
+                OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpProxy}' 2>/dev/null)";
+                if [ -n "${OUT}" ]; then export HTTP_PROXY="${OUT}"; fi;
+                OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpsProxy}' 2>/dev/null)";
+                if [ -n "${OUT}" ]; then export HTTPS_PROXY="${OUT}"; fi;
+                OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.noProxy}' 2>/dev/null)";
+                if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
                 mkdir /git/{repo,home};
                 git clone --single-branch --branch main --depth 1 -- "${URL}" /git/repo;
                 chmod 0770 /git/{repo,home};
-              volumeMounts:
-              - name: git
-                mountPath: "/git"
             - name: test
               image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
               imagePullPolicy: Always
@@ -504,12 +527,12 @@ spec:
                 - 'echo'
                 - 'done'
                 - '\n'
-          volumes:
-          - name: git
-            emptyDir: {}
-          - name: values-volume
-            configMap:
-              name: helm-values-configmap-hub
+          volumes:            
+            - name: git
+              emptyDir: {}
+            - name: values-volume
+              configMap:
+                name: helm-values-configmap-hub
           restartPolicy: Never
 ---
 # Source: clustergroup/templates/imperative/unsealjob.yaml
@@ -539,6 +562,9 @@ spec:
               env:
                 - name: HOME
                   value: /git/home
+              volumeMounts:
+              - name: git
+                mountPath: "/git"
               command:
               - 'sh'
               - '-c'
@@ -550,7 +576,6 @@ spec:
                     U="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.username | base64decode }}')";
                     P="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.password | base64decode }}')";
                     URL=$(echo https://github.com/pattern-clone/mypattern | sed -E "s/(https?:\/\/)/\1${U}:${P}@/");
-                    echo "USER/PASS: ${URL}";
                   else
                     S="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.sshPrivateKey | base64decode }}')";
                     mkdir -p --mode 0700 "${HOME}/.ssh";
@@ -558,15 +583,17 @@ spec:
                     chmod 0600 "${HOME}/.ssh/id_rsa";
                     URL=$(echo https://github.com/pattern-clone/mypattern | sed -E "s/(https?:\/\/)/\1git@/");
                     git config --global core.sshCommand "ssh -i "${HOME}/.ssh/id_rsa" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
-                    echo "SSH: ${URL}";
                   fi;
                 fi;
+                OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpProxy}' 2>/dev/null)";
+                if [ -n "${OUT}" ]; then export HTTP_PROXY="${OUT}"; fi;
+                OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpsProxy}' 2>/dev/null)";
+                if [ -n "${OUT}" ]; then export HTTPS_PROXY="${OUT}"; fi;
+                OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.noProxy}' 2>/dev/null)";
+                if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
                 mkdir /git/{repo,home};
                 git clone --single-branch --branch main --depth 1 -- "${URL}" /git/repo;
                 chmod 0770 /git/{repo,home};
-              volumeMounts:
-              - name: git
-                mountPath: "/git"
             - name: unseal-playbook
               image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
               imagePullPolicy: Always
@@ -601,12 +628,12 @@ spec:
                 - 'echo'
                 - 'done'
                 - '\n'
-          volumes:
-          - name: git
-            emptyDir: {}
-          - name: values-volume
-            configMap:
-              name: helm-values-configmap-hub
+          volumes:            
+            - name: git
+              emptyDir: {}
+            - name: values-volume
+              configMap:
+                name: helm-values-configmap-hub
           restartPolicy: Never
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
@@ -703,6 +730,8 @@ spec:
           value: apps.region.example.com
         - name: global.privateRepo
           value: 
+        - name: global.experimentalCapabilities
+          value: 
   syncPolicy:
     automated: {}
     retry:
@@ -756,6 +785,8 @@ spec:
         - name: global.localClusterDomain
           value: apps.region.example.com
         - name: global.privateRepo
+          value: 
+        - name: global.experimentalCapabilities
           value: 
   syncPolicy:
     automated: {}
@@ -811,6 +842,8 @@ spec:
           value: apps.region.example.com
         - name: global.privateRepo
           value: 
+        - name: global.experimentalCapabilities
+          value: 
   syncPolicy:
     automated: {}
     retry:
@@ -864,6 +897,8 @@ spec:
         - name: global.localClusterDomain
           value: apps.region.example.com
         - name: global.privateRepo
+          value: 
+        - name: global.experimentalCapabilities
           value: 
   syncPolicy:
     automated: {}
@@ -919,6 +954,8 @@ spec:
           value: apps.region.example.com
         - name: global.privateRepo
           value: 
+        - name: global.experimentalCapabilities
+          value: 
   syncPolicy:
     automated: {}
     retry:
@@ -972,6 +1009,8 @@ spec:
         - name: global.localClusterDomain
           value: apps.region.example.com
         - name: global.privateRepo
+          value: 
+        - name: global.experimentalCapabilities
           value: 
   syncPolicy:
     automated: {}
@@ -1027,6 +1066,8 @@ spec:
           value: apps.region.example.com
         - name: global.privateRepo
           value: 
+        - name: global.experimentalCapabilities
+          value: 
   syncPolicy:
     automated: {}
     retry:
@@ -1080,6 +1121,8 @@ spec:
         - name: global.localClusterDomain
           value: apps.region.example.com
         - name: global.privateRepo
+          value: 
+        - name: global.experimentalCapabilities
           value: 
         - name: global.openshift
           value: "true"
@@ -1153,6 +1196,8 @@ spec:
           value: apps.region.example.com
         - name: global.privateRepo
           value: 
+        - name: global.experimentalCapabilities
+          value: 
   syncPolicy:
     automated: {}
     retry:
@@ -1207,6 +1252,8 @@ spec:
           value: apps.region.example.com
         - name: global.privateRepo
           value: 
+        - name: global.experimentalCapabilities
+          value: 
   syncPolicy:
     automated: {}
     retry:
@@ -1260,6 +1307,8 @@ spec:
         - name: global.localClusterDomain
           value: apps.region.example.com
         - name: global.privateRepo
+          value: 
+        - name: global.experimentalCapabilities
           value: 
   ignoreDifferences: [
   {
@@ -1324,6 +1373,8 @@ spec:
           value: apps.region.example.com
         - name: global.privateRepo
           value: 
+        - name: global.experimentalCapabilities
+          value: 
   ignoreDifferences: [
   {
     "group": "apps.openshift.io",
@@ -1386,6 +1437,8 @@ spec:
         - name: global.localClusterDomain
           value: apps.region.example.com
         - name: global.privateRepo
+          value: 
+        - name: global.experimentalCapabilities
           value: 
   syncPolicy:
     automated: {}

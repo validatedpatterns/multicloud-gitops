@@ -351,9 +351,6 @@
           "items": {
             "$ref": "#/definitions/ManagedClusterGroup"
           }
-        },
-        "externalClusters": {
-          "type": "array"
         }
       },
       "required": [
