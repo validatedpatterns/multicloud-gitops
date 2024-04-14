@@ -58,6 +58,12 @@
         git config --global core.sshCommand "ssh -i "${HOME}/.ssh/id_rsa" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
       fi;
     fi;
+    OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpProxy}' 2>/dev/null)";
+    if [ -n "${OUT}" ]; then export HTTP_PROXY="${OUT}"; fi;
+    OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpsProxy}' 2>/dev/null)";
+    if [ -n "${OUT}" ]; then export HTTPS_PROXY="${OUT}"; fi;
+    OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.noProxy}' 2>/dev/null)";
+    if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
     mkdir /git/{repo,home};
     git clone --single-branch --branch {{ $.Values.global.targetRevision }} --depth 1 -- "${URL}" /git/repo;
     chmod 0770 /git/{repo,home};
@@ -96,6 +102,12 @@
         git config --global core.sshCommand "ssh -i "${HOME}/.ssh/id_rsa" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
       fi;
     fi;
+    OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpProxy}' 2>/dev/null)";
+    if [ -n "${OUT}" ]; then export HTTP_PROXY="${OUT}"; fi;
+    OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpsProxy}' 2>/dev/null)";
+    if [ -n "${OUT}" ]; then export HTTPS_PROXY="${OUT}"; fi;
+    OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.noProxy}' 2>/dev/null)";
+    if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
     mkdir /git/{repo,home};
     git clone --single-branch --branch {{ $.Values.global.targetRevision }} --depth 1 -- "${URL}" /git/repo;
     chmod 0770 /git/{repo,home};
