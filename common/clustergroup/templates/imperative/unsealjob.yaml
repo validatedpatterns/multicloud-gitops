@@ -1,3 +1,5 @@
+{{- $hasInitContainerCapability := and (.Values.global.experimentalCapabilities) (has "initcontainers" (splitList "," .Values.global.experimentalCapabilities)) }}
+
 {{/* If the backend is not set at all we default to "vault". See https://www.github.com/helm/helm/issues/3308
      why we avoid using the default function */}}
 {{- if or (eq .Values.global.secretStore.backend "vault") (not (hasKey .Values.global.secretStore "backend")) }}
@@ -24,7 +26,13 @@ spec:
           initContainers:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there
+{{- if $hasInitContainerCapability }}
+
+            {{- include  "imperative.initcontainers.fetch-ca" . | indent 12 }}
+            {{- include  "imperative.initcontainers.gitinit-ca" . | indent 12 }}
+{{- else }}
             {{- include  "imperative.initcontainers.gitinit" . | indent 12 }}
+{{- end }}
             - name: unseal-playbook
               image: {{ $.Values.clusterGroup.imperative.image }}
               imagePullPolicy: {{ $.Values.clusterGroup.imperative.imagePullPolicy }}
@@ -47,15 +55,19 @@ spec:
                 - 'vault_init,vault_unseal,vault_secrets_init,vault_spokes_init'
                 - "common/ansible/playbooks/vault/vault.yaml"
               volumeMounts:
+{{- if $hasInitContainerCapability }}
+                {{- include "imperative.volumemounts_ca" . | indent 16 }}
+{{- else }}
                 {{- include "imperative.volumemounts" . | indent 16 }}
+{{- end }}
           containers:
           {{- include "imperative.containers.done" . | indent 12 }}
           volumes:
-          - name: git
-            emptyDir: {}
-          - name: values-volume
-            configMap:
-              name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}-{{ $.Values.clusterGroup.name }}
+{{- if $hasInitContainerCapability }}
+          {{- include "imperative.volumes_ca" . | indent 12 }}
+{{- else }}
+          {{- include "imperative.volumes" . | indent 12 }}
+{{- end }}
           restartPolicy: Never
 {{- end }}
 {{- end }}
