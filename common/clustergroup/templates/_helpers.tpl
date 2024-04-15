@@ -72,3 +72,155 @@ Default always defined valueFiles to be included in Applications but with a pref
 {{- end }} {{/* range $.Values.global.extraValueFiles */}}
 {{- end }} {{/* if $.Values.global.extraValueFiles */}}
 {{- end }} {{/* clustergroup.app.globalvalues.prefixedvaluefiles */}}
+
+{{/* 
+Helper function to generate AppProject from a map object
+Called from common/clustergroup/templates/plumbing/projects.yaml 
+*/}}
+{{- define "clustergroup.template.plumbing.projects.map" -}}
+{{- $projects := index . 0 }}
+{{- $namespace := index . 1 }}
+{{- $enabled := index . 2 }}
+{{- range $k, $v := $projects}}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ $k }}
+{{- if (eq $enabled "plumbing") }}
+  namespace: openshift-gitops
+{{- else }}
+  namespace: {{ $namespace }}
+{{- end }}
+spec:
+  description: "Pattern {{ . }}"
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+status: {}
+---
+{{- end }}
+{{- end }}
+
+{{/* 
+  Helper function to generate AppProject from a list object.
+  Called from common/clustergroup/templates/plumbing/projects.yaml 
+*/}}
+{{- define "clustergroup.template.plumbing.projects.list" -}}
+{{- $projects := index . 0 }}
+{{- $namespace := index . 1 }}
+{{- $enabled := index . 2 }}
+{{- range $projects}}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ . }}
+{{- if (eq $enabled "plumbing") }}
+  namespace: openshift-gitops
+{{- else }}
+  namespace: {{ $namespace }}
+{{- end }}
+spec:
+  description: "Pattern {{ . }}"
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+status: {}
+{{- end }}
+{{- end }}
+
+{{/* 
+  Helper function to generate Namespaces from a map object.
+  Arguments passed as a list object are:
+  0 - The namespace hash keys
+  1 - Pattern name from .Values.global.pattern
+  2 - Cluster group name from .Values.clusterGroup.name
+  Called from common/clustergroup/templates/core/namespaces.yaml 
+*/}}
+{{- define "clustergroup.template.core.namespaces.map" -}}
+{{- $ns := index . 0 }}
+{{- $patternName := index . 1 }}
+{{- $clusterGroupName := index . 2 }}
+
+{{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $k }}
+  {{- if ne $v nil }}
+  labels:
+    argocd.argoproj.io/managed-by: {{ $patternName }}-{{ .clusterGroupName }}
+    {{- if $v.labels }}
+    {{- range $key, $value := $v.labels }} {{- /* We loop here even though the map has always just one key */}}
+    {{ $key }}: {{ $value | default "" | quote }}
+    {{- end }}
+    {{- end }}
+  {{- if $v.annotations }}
+  annotations:
+    {{- range $key, $value := $v.annotations }} {{- /* We loop through the map to get key/value pairs */}}
+    {{ $key }}: {{ $value | default "" | quote }}
+    {{- end }}
+  {{- end }}{{- /* if $v.annotations */}}
+  {{- end }}
+spec:
+---
+{{- end }}{{- /* range $k, $v := $ns */}}
+{{- end }}
+
+{{- /* 
+  Helper function to generate OperatorGroup from a map object.
+  Arguments passed as a list object are:
+  0 - The namespace hash keys
+  1 - The operatorExcludes section from .Values.clusterGroup.operatorgroupExcludes
+  Called from common/clustergroup/templates/core/operatorgroup.yaml
+*/ -}}
+{{- define "clustergroup.template.core.operatorgroup.map" -}}
+{{- $ns := index . 0 }}
+{{- $operatorgroupExcludes := index . 1 }}
+{{- if or (empty $operatorgroupExcludes) (not (has . $operatorgroupExcludes)) }}
+  {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
+  {{- if $v }}
+    {{- if $v.operatorGroup }}{{- /* Checks if the user sets operatorGroup: false */}}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ $k }}-operator-group
+  namespace: {{ $k }}
+spec:
+  targetNamespaces:
+      {{- if (hasKey $v "targetNamespaces") }}
+        {{- range $v.targetNamespaces }}{{- /* We loop through the list of tergetnamespaces */}}
+  - {{ . }}
+        {{- end }}{{- /* End range targetNamespaces */}}
+      {{- else }}
+  - {{ $k }}
+      {{- end }}{{- /* End of if hasKey $v "targetNamespaces" */}}
+    {{- end }}{{- /* End if $v.operatorGroup */}}
+  {{- else }}{{- /* else if $v == nil  */}}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ $k }}-operator-group
+  namespace: {{ $k }}
+spec:
+  targetNamespaces:
+  - {{ $k }}
+  {{- end }}{{- /* end if $v */}}
+  {{- end }}{{- /* End range $k, $v = $ns */}}
+{{- end }}{{- /* End of if operatorGroupExcludes */}}
+{{- end }} {{- /* End define  "clustergroup.template.core.operatorgroup.map" */}}

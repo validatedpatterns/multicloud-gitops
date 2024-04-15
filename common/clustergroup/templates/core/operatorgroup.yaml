@@ -1,4 +1,13 @@
 {{- if not (eq .Values.enabled "plumbing") }}
+{{- /*
+  We first check if namespaces are defined as a map.  If it is we call
+  our helper function in _helpers.tpl to process the projects
+  described in the values file. This is to support issue 
+  https://github.com/validatedpatterns/common/issues/459 created by our customer.
+*/ -}}
+{{- if kindIs "map" .Values.clusterGroup.namespaces }}
+{{- template "clustergroup.template.core.operatorgroup.map" (list .Values.clusterGroup.namespaces .Values.clusterGroup.operatorgroupExcludes) }}
+{{- else }}
 {{- range $ns := .Values.clusterGroup.namespaces }}
 
 {{- if or (empty $.Values.clusterGroup.operatorgroupExcludes) (not (has . $.Values.clusterGroup.operatorgroupExcludes)) }}
@@ -35,4 +44,5 @@ spec:
 ---
 {{- end }} {{- /* if or (empty $.Values.clusterGroup.operatorgroupExcludes) (not (has . $.Values.clusterGroup.operatorgroupExcludes)) */}}
 {{- end }} {{- /* range $ns := .Values.clusterGroup.namespaces */}}
+{{- end }} {{- /* if kindIs "map" $ns */}}
 {{- end }} {{- /* if not (eq .Values.enabled "plumbing") */}}
