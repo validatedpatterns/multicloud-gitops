@@ -1,4 +1,13 @@
 {{- if not (eq .Values.enabled "plumbing") }}
+{{- /*
+  We first check if namespaces are defined as a map.  If it is we call
+  our helper function in _helpers.tpl to process the namespaces
+  described in the values file. This is to support issue 
+  https://github.com/validatedpatterns/common/issues/459 created by our customer.
+*/ -}}
+{{- if kindIs "map" .Values.clusterGroup.namespaces }}
+{{- template "clustergroup.template.core.namespaces.map" (list .Values.clusterGroup.namespaces $.Values.global.pattern $.Values.clusterGroup.name) }}
+{{- else }}
 {{- range $ns := .Values.clusterGroup.namespaces }}
 apiVersion: v1
 kind: Namespace
@@ -28,5 +37,6 @@ metadata:
   {{- end }} {{- /* if kindIs "string" $ns */}}
 spec:
 ---
+{{- end }}
 {{- end }}
 {{- end }}

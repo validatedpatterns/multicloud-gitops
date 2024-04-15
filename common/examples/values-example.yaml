@@ -15,6 +15,18 @@ clusterGroup:
   - /values/{{ .Values.global.clusterPlatform }}.yaml
   - /values/{{ .Values.global.clusterVersion }}.yaml
 
+  # 
+  # You can define namespaces using hashes and not as a list like so:
+  # namespaces:
+  #   open-cluster-management:
+  #     labels:
+  #       openshift.io/node-selector: ""
+  #       kubernetes.io/os: linux
+  #     annotations:
+  #       openshift.io/cluster-monitoring: "true"
+  #       owner: "namespace owner"
+  #   application-ci: 
+  # You cannot mix list and hashes to define namespaces
   namespaces:
   - open-cluster-management:
       labels:
@@ -58,6 +70,12 @@ clusterGroup:
       name: openshift-pipelines-operator-rh
       csv: redhat-openshift-pipelines.v1.5.2
 
+  # 
+  # You can define projects using hashes like so:
+  # projects:
+  #   hub:
+  #   datacenter:
+  # You cannot mix list and hashes to define projects.
   projects:
   - datacenter
 
