@@ -1,17 +1,5 @@
 {{- range .Values.clusterGroup.managedClusterGroups }}
 {{- $group := . }}
-{{- if .clusterPools }}{{- /* We only create ManagedClusterSets if there are clusterPools defined */}}
-apiVersion: cluster.open-cluster-management.io/v1beta1
-kind: ManagedClusterSet
-metadata:
-  annotations:
-    cluster.open-cluster-management.io/submariner-broker-ns: {{ .name }}-broker
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-  name: {{ .name }}
-spec:
-  clusterSelector:
-    selectorType: LegacyClusterSetLabel
----
 {{- range .clusterPools }}
 
 {{- $pool := . }}
@@ -54,7 +42,7 @@ spec:
   runningCount: {{ $numClusters }}
   baseDomain: {{ .baseDomain }}
   installConfigSecretTemplateRef:
-    name: {{ $poolName }}-install-config 
+    name: {{ $poolName }}-install-config
   imageSetRef:
     name: img{{ .openshiftVersion }}-multi-appsub
   pullSecretRef:
@@ -91,5 +79,4 @@ spec:
 ---
 {{- end }}{{- /* range .range clusters */}}
 {{- end }}{{- /* range .clusterPools */}}
-{{- end }}{{- /* if .clusterPools) */}}
 {{- end }}{{- /* range .Values.clusterGroup.managedClusterGroups */}}
