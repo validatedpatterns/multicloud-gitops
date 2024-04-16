@@ -6,7 +6,7 @@ metadata:
   name: aws-ap-acm-provision-edge-install-config
 data:
   # Base64 encoding of install-config yaml
-  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWFwJyAKYmFzZURvbWFpbjogYmx1ZXByaW50cy5yaGVjb2VuZy5jb20KY29udHJvbFBsYW5lOgogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIG5hbWU6IGNvbnRyb2xQbGFuZQogIHJlcGxpY2FzOiAxCiAgcGxhdGZvcm06CiAgICBhd3M6CiAgICAgIHR5cGU6IG01LnhsYXJnZQpjb21wdXRlOgotIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIG5hbWU6ICd3b3JrZXInCiAgcmVwbGljYXM6IDAKbmV0d29ya2luZzoKICBjbHVzdGVyTmV0d29yazoKICAtIGNpZHI6IDEwLjEyOC4wLjAvMTQKICAgIGhvc3RQcmVmaXg6IDIzCiAgbWFjaGluZU5ldHdvcms6CiAgLSBjaWRyOiAxMC4wLjAuMC8xNgogIG5ldHdvcmtUeXBlOiBPVk5LdWJlcm5ldGVzCiAgc2VydmljZU5ldHdvcms6CiAgLSAxNzIuMzAuMC4wLzE2CnBsYXRmb3JtOgogIGF3czoKICAgIHJlZ2lvbjogYXAtc291dGhlYXN0LTIKcHVsbFNlY3JldDogIiIgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cwpzc2hLZXk6ICIiICAgICAjIHNraXAsIGhpdmUgd2lsbCBpbmplY3QgYmFzZWQgb24gaXQncyBzZWNyZXRz 
+  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWFwJyAKYmFzZURvbWFpbjogYmx1ZXByaW50cy5yaGVjb2VuZy5jb20KY29udHJvbFBsYW5lOgogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIG5hbWU6IGNvbnRyb2xQbGFuZQogIHJlcGxpY2FzOiAxCiAgcGxhdGZvcm06CiAgICBhd3M6CiAgICAgIHR5cGU6IG01LnhsYXJnZQpjb21wdXRlOgotIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIG5hbWU6ICd3b3JrZXInCiAgcmVwbGljYXM6IDAKbmV0d29ya2luZzoKICBjbHVzdGVyTmV0d29yazoKICAtIGNpZHI6IDEwLjEyOC4wLjAvMTQKICAgIGhvc3RQcmVmaXg6IDIzCiAgbWFjaGluZU5ldHdvcms6CiAgLSBjaWRyOiAxMC4wLjAuMC8xNgogIG5ldHdvcmtUeXBlOiBPVk5LdWJlcm5ldGVzCiAgc2VydmljZU5ldHdvcms6CiAgLSAxNzIuMzAuMC4wLzE2CnBsYXRmb3JtOgogIGF3czoKICAgIHJlZ2lvbjogYXAtc291dGhlYXN0LTIKcHVsbFNlY3JldDogIiIgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cwpzc2hLZXk6ICIiICAgICAjIHNraXAsIGhpdmUgd2lsbCBpbmplY3QgYmFzZWQgb24gaXQncyBzZWNyZXRz
 type: Opaque
 ---
 # Source: acm/templates/provision/secrets-common.yaml
@@ -16,7 +16,7 @@ metadata:
   name: azure-us-acm-provision-edge-install-config
 data:
   # Base64 encoding of install-config yaml
-  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXp1cmUtdXMnIApiYXNlRG9tYWluOiBibHVlcHJpbnRzLnJoZWNvZW5nLmNvbQpjb250cm9sUGxhbmU6CiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgbmFtZTogY29udHJvbFBsYW5lCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF6dXJlOgogICAgICB0eXBlOiBTdGFuZGFyZF9EOHNfdjMKY29tcHV0ZToKLSBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBuYW1lOiAnd29ya2VyJwogIHJlcGxpY2FzOiAzCiAgcGxhdGZvcm06CiAgICBhenVyZToKICAgICAgdHlwZTogU3RhbmRhcmRfRDhzX3YzCm5ldHdvcmtpbmc6CiAgY2x1c3Rlck5ldHdvcms6CiAgLSBjaWRyOiAxMC4xMjguMC4wLzE0CiAgICBob3N0UHJlZml4OiAyMwogIG1hY2hpbmVOZXR3b3JrOgogIC0gY2lkcjogMTAuMC4wLjAvMTYKICBuZXR3b3JrVHlwZTogT1ZOS3ViZXJuZXRlcwogIHNlcnZpY2VOZXR3b3JrOgogIC0gMTcyLjMwLjAuMC8xNgpwbGF0Zm9ybToKICBhenVyZToKICAgIGJhc2VEb21haW5SZXNvdXJjZUdyb3VwTmFtZTogZG9qby1kbnMtem9uZXMKICAgIHJlZ2lvbjogZWFzdHVzCnB1bGxTZWNyZXQ6ICIiICMgc2tpcCwgaGl2ZSB3aWxsIGluamVjdCBiYXNlZCBvbiBpdCdzIHNlY3JldHMKc3NoS2V5OiAiIiAgICAgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cw== 
+  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXp1cmUtdXMnIApiYXNlRG9tYWluOiBibHVlcHJpbnRzLnJoZWNvZW5nLmNvbQpjb250cm9sUGxhbmU6CiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgbmFtZTogY29udHJvbFBsYW5lCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF6dXJlOgogICAgICB0eXBlOiBTdGFuZGFyZF9EOHNfdjMKY29tcHV0ZToKLSBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBuYW1lOiAnd29ya2VyJwogIHJlcGxpY2FzOiAzCiAgcGxhdGZvcm06CiAgICBhenVyZToKICAgICAgdHlwZTogU3RhbmRhcmRfRDhzX3YzCm5ldHdvcmtpbmc6CiAgY2x1c3Rlck5ldHdvcms6CiAgLSBjaWRyOiAxMC4xMjguMC4wLzE0CiAgICBob3N0UHJlZml4OiAyMwogIG1hY2hpbmVOZXR3b3JrOgogIC0gY2lkcjogMTAuMC4wLjAvMTYKICBuZXR3b3JrVHlwZTogT1ZOS3ViZXJuZXRlcwogIHNlcnZpY2VOZXR3b3JrOgogIC0gMTcyLjMwLjAuMC8xNgpwbGF0Zm9ybToKICBhenVyZToKICAgIGJhc2VEb21haW5SZXNvdXJjZUdyb3VwTmFtZTogZG9qby1kbnMtem9uZXMKICAgIHJlZ2lvbjogZWFzdHVzCnB1bGxTZWNyZXQ6ICIiICMgc2tpcCwgaGl2ZSB3aWxsIGluamVjdCBiYXNlZCBvbiBpdCdzIHNlY3JldHMKc3NoS2V5OiAiIiAgICAgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cw==
 type: Opaque
 ---
 # Source: acm/templates/policies/acm-hub-ca-policy.yaml
@@ -79,7 +79,7 @@ spec:
   runningCount: 0
   baseDomain: blueprints.rhecoeng.com
   installConfigSecretTemplateRef:
-    name: aws-ap-acm-provision-edge-install-config 
+    name: aws-ap-acm-provision-edge-install-config
   imageSetRef:
     name: img4.10.18-multi-appsub
   pullSecretRef:
@@ -109,7 +109,7 @@ spec:
   runningCount: 2
   baseDomain: blueprints.rhecoeng.com
   installConfigSecretTemplateRef:
-    name: azure-us-acm-provision-edge-install-config 
+    name: azure-us-acm-provision-edge-install-config
   imageSetRef:
     name: img4.10.18-multi-appsub
   pullSecretRef:
@@ -147,7 +147,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-ap-acm-provision-edge-infra-creds
-spec: 
+spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
@@ -170,7 +170,7 @@ spec:
       key: secret/data/hub/privatekey
       property: content
   refreshInterval: 24h0m0s
-  secretStoreRef: 
+  secretStoreRef:
     name: vault-backend
     kind: ClusterSecretStore
   target:
@@ -229,7 +229,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: azure-us-acm-provision-edge-infra-creds
-spec: 
+spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
@@ -248,7 +248,7 @@ spec:
       key: secret/data/hub/azureOsServicePrincipal
       property: content
   refreshInterval: 24h0m0s
-  secretStoreRef: 
+  secretStoreRef:
     name: vault-backend
     kind: ClusterSecretStore
   target:
@@ -282,7 +282,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-ap-acm-provision-edge-pull-secret
-spec: 
+spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
@@ -330,7 +330,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: azure-us-acm-provision-edge-pull-secret
-spec: 
+spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
@@ -373,8 +373,8 @@ spec:
         ssh-privatekey: |-
           {{ .sshPrivateKey | toString }}
 ---
-# Source: acm/templates/provision/clusterpool.yaml
-apiVersion: cluster.open-cluster-management.io/v1beta1
+# Source: acm/templates/provision/managedclusterset.yaml
+apiVersion: cluster.open-cluster-management.io/v1beta2
 kind: ManagedClusterSet
 metadata:
   annotations:
