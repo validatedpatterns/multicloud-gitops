@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.11.4
+    controller-gen.kubebuilder.io/version: v0.14.0
   name: patterns.gitops.hybrid-cloud-patterns.io
 spec:
   group: gitops.hybrid-cloud-patterns.io
@@ -31,14 +31,19 @@ spec:
         description: Pattern is the Schema for the patterns API
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
           metadata:
             type: object
@@ -51,9 +56,14 @@ spec:
                 type: string
               clusterGroupName:
                 type: string
+              experimentalCapabilities:
+                description: Comma separated capabilities to enable certain experimental
+                  features
+                type: string
               extraParameters:
-                description: '.Name is dot separated per the helm --set syntax, such
-                  as: global.something.field'
+                description: |-
+                  .Name is dot separated per the helm --set syntax, such as:
+                    global.something.field
                 items:
                   properties:
                     name:
@@ -105,9 +115,9 @@ spec:
                       short-sha''s. Default: HEAD'
                     type: string
                   tokenSecret:
-                    description: Optional. K8s secret name where the info for connecting
-                      to git can be found. The supported secrets are modeled after
-                      the private repositories in argo (https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories)
+                    description: |-
+                      Optional. K8s secret name where the info for connecting to git can be found. The supported secrets are modeled after the
+                      private repositories in argo (https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories)
                       currently ssh and username+password are supported
                     type: string
                   tokenSecretNamespace:
@@ -121,18 +131,18 @@ spec:
                 properties:
                   clusterGroupChartGitRevision:
                     default: main
-                    description: The git reference when deploying the clustergroup
-                      helm chart directly from a git repo Defaults to 'main'. (Only
-                      used when developing the clustergroup helm chart)
+                    description: |-
+                      The git reference when deploying the clustergroup helm chart directly from a git repo
+                      Defaults to 'main'. (Only used when developing the clustergroup helm chart)
                     type: string
                   clusterGroupChartVersion:
                     description: Which chart version for the clustergroup helm chart.
                       Defaults to "0.8.*"
                     type: string
                   clusterGroupGitRepoUrl:
-                    description: The url when deploying the clustergroup helm chart
-                      directly from a git repo Defaults to '' which means not used
-                      (Only used when developing the clustergroup helm chart)
+                    description: |-
+                      The url when deploying the clustergroup helm chart directly from a git repo
+                      Defaults to '' which means not used (Only used when developing the clustergroup helm chart)
                     type: string
                   enabled:
                     default: true
@@ -160,10 +170,11 @@ spec:
                 type: string
               applications:
                 items:
-                  description: PatternApplicationInfo defines the Applications Status
-                    for the Pattern. This structure is part of the PatternStatus as
-                    an array The Application Status will be included as part of the
-                    Observed state of Pattern
+                  description: |-
+                    PatternApplicationInfo defines the Applications
+                    Status for the Pattern.
+                    This structure is part of the PatternStatus as an array
+                    The Application Status will be included as part of the Observed state of Pattern
                   properties:
                     healthMessage:
                       type: string
