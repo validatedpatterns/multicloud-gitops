@@ -15,7 +15,7 @@ clusterGroup:
   - /values/{{ .Values.global.clusterPlatform }}.yaml
   - /values/{{ .Values.global.clusterVersion }}.yaml
 
-  # 
+  #
   # You can define namespaces using hashes and not as a list like so:
   # namespaces:
   #   open-cluster-management:
@@ -25,7 +25,7 @@ clusterGroup:
   #     annotations:
   #       openshift.io/cluster-monitoring: "true"
   #       owner: "namespace owner"
-  #   application-ci: 
+  #   application-ci:
   # You cannot mix list and hashes to define namespaces
   namespaces:
   - open-cluster-management:
@@ -70,7 +70,7 @@ clusterGroup:
       name: openshift-pipelines-operator-rh
       csv: redhat-openshift-pipelines.v1.5.2
 
-  # 
+  #
   # You can define projects using hashes like so:
   # projects:
   #   hub:
@@ -159,9 +159,26 @@ clusterGroup:
         clusters:
         - Two
         - three
+    clusterDeployments:
+      myFirstCluster:
+        name: aws-cd-one-w-pool
+        openshiftVersion: 4.10.18
+        baseDomain: blueprints.rhecoeng.com
+        platform:
+          aws:
+            region: ap-southeast-1
     acmlabels:
     - name: clusterGroup
       value: region
+  - name: acm-provision-on-deploy
+    clusterDeployments:
+      mySecondCluster:
+        name: aws-cd-two-wo-pool
+        openshiftVersion: 4.10.18
+        baseDomain: blueprints.rhecoeng.com
+        platform:
+          aws:
+            region: ap-southeast-3
   - name: argo-edge
     hostedArgoSites:
     - name: perth
