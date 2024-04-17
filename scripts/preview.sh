@@ -96,6 +96,10 @@ done
 
 if [ $isKustomize == "true" ]; then
     kustomizePath=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
+    repoURL=$(yq ".clusterGroup.applications.$APP.repoURL" values-$SITE.yaml)
+    if [[ $repoURL == http* ]] || [[ $repoURL == git@ ]]; then
+         kustomizePath="${repoURL}/${kustomizePath}"
+    fi
     cmd="oc kustomize ${kustomizePath}"
     eval "$cmd"
 else
