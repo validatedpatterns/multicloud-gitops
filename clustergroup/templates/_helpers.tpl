@@ -164,7 +164,7 @@ metadata:
   name: {{ $k }}
   {{- if ne $v nil }}
   labels:
-    argocd.argoproj.io/managed-by: {{ $patternName }}-{{ .clusterGroupName }}
+    argocd.argoproj.io/managed-by: {{ $patternName }}-{{ $clusterGroupName }}
     {{- if $v.labels }}
     {{- range $key, $value := $v.labels }} {{- /* We loop here even though the map has always just one key */}}
     {{ $key }}: {{ $value | default "" | quote }}
