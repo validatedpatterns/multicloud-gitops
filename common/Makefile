@@ -1,4 +1,5 @@
 NAME ?= $(shell basename "`pwd`")
+
 ifneq ($(origin TARGET_SITE), undefined)
   TARGET_SITE_OPT=--set main.clusterGroupName=$(TARGET_SITE)
 endif
@@ -60,7 +61,7 @@ preview-all: ## (EXPERIMENTAL) Previews all applications on hub and managed clus
 	@common/scripts/preview-all.sh $(TARGET_REPO) $(TARGET_BRANCH)
 
 preview-%:
-	CLUSTERGROUP?=$(shell yq ".main.clusterGroupName" values-global.yaml)
+	$(eval CLUSTERGROUP ?= $(shell yq ".main.clusterGroupName" values-global.yaml))
 	@common/scripts/preview.sh $(CLUSTERGROUP) $* $(TARGET_REPO) $(TARGET_BRANCH)
 
 .PHONY: operator-deploy
