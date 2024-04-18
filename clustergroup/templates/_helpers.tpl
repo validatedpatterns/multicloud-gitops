@@ -195,7 +195,7 @@ spec:
 {{- if or (empty $operatorgroupExcludes) (not (has . $operatorgroupExcludes)) }}
   {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
   {{- if $v }}
-    {{- if $v.operatorGroup }}{{- /* Checks if the user sets operatorGroup: false */}}
+    {{- if or $v.operatorGroup (not (hasKey $v "operatorGroup")) }}{{- /* Checks if the user sets operatorGroup: false */}}
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
