@@ -1434,6 +1434,7 @@ spec:
   - golang-external-secrets
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1444,6 +1445,7 @@ spec:
   - external-secrets
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1454,6 +1456,7 @@ spec:
   - open-cluster-management
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1464,6 +1467,7 @@ spec:
   - manuela-tst-all
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1474,6 +1478,7 @@ spec:
   - manuela-ci
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1484,6 +1489,7 @@ spec:
   - manuela-data-lake
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1494,6 +1500,7 @@ spec:
   - staging
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:

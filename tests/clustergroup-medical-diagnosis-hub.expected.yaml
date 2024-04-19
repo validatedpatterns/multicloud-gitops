@@ -1581,6 +1581,7 @@ spec:
   - open-cluster-management
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1591,6 +1592,7 @@ spec:
   - openshift-serverless
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1601,6 +1603,7 @@ spec:
   - opendatahub
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1611,6 +1614,7 @@ spec:
   - openshift-storage
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1621,6 +1625,7 @@ spec:
   - xraylab-1
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1631,6 +1636,7 @@ spec:
   - knative-serving
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1641,6 +1647,7 @@ spec:
   - staging
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1651,6 +1658,7 @@ spec:
   - vault
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:

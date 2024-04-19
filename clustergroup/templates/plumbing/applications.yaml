@@ -40,7 +40,7 @@ spec:
           limit: {{ default 20 $.Values.global.options.applicationRetryLimit }}
       {{- end }}
       {{- if .ignoreDifferences }}
-      ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
+      ignoreDifferences: {{ .ignoreDifferences | toPrettyJson | nindent 2 }}
       {{- end }}
       source:
         repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
@@ -119,6 +119,7 @@ spec:
         server: {{ coalesce .destinationServer "https://kubernetes.default.svc" }}
         namespace: {{ coalesce .destinationNamespace .namespace $namespace }}
 {{- else }}
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -280,7 +281,6 @@ spec:
     retry:
       limit: {{ default 20 $.Values.global.applicationRetryLimit }}
   {{- end }}{{- /* .syncPolicy */}}
----
 {{- end }}{{- /* if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) */}}
 {{- end }}{{- /* range .Values.clusterGroup.applications */}}
 {{- end }}{{- /* if not (eq .Values.enabled "core") */}}
