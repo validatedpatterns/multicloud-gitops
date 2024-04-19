@@ -196,6 +196,7 @@ spec:
   {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
   {{- if $v }}
     {{- if or $v.operatorGroup (not (hasKey $v "operatorGroup")) }}{{- /* Checks if the user sets operatorGroup: false */}}
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -212,6 +213,7 @@ spec:
       {{- end }}{{- /* End of if hasKey $v "targetNamespaces" */}}
     {{- end }}{{- /* End if $v.operatorGroup */}}
   {{- else }}{{- /* else if $v == nil  */}}
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
