@@ -33,13 +33,24 @@
     right=$(grep "{{ image }}" "{{ iib_local_folder }}/mapping.txt" | cut -f2 -d=)
     right_base=$(echo $right | sed -e 's/:.*$//' -e 's/@.*$//')
     right_log=$(echo "${right_base}@${left_sha}" | sed -e 's/\//-/g')
-    if skopeo inspect --authfile "{{ pull_secrets_tempfolder.path }}/.dockerconfigjson" --no-tags docker://"{{ image }}" &> /tmp/skopeo-"{{ image | regex_replace('/', '-') }}".log; then
+    left_out=$(skopeo inspect --authfile "{{ pull_secrets_tempfolder.path }}/.dockerconfigjson" --no-tags docker://"{{ image }}" 2>&1)
+    left_ret=$?
+    if [ $left_ret -eq 0 ]; then
       echo "{{ image }}"
-    elif skopeo inspect --authfile "{{ pull_secrets_tempfolder.path }}/.dockerconfigjson" --no-tags docker://"${right_base}@${left_sha}" &> "/tmp/skopeo-${right_log}.log"; then
-      echo "${right_base}@${left_sha}"
     else
-      echo "ERROR: both {{ image }} and echo ${right_base}@${left_sha} could not be found"
-      exit 1
+      echo "${left_out}" > /tmp/skopeo-"{{ image | regex_replace('/', '-') }}".log
+      right_out=$(skopeo inspect --authfile "{{ pull_secrets_tempfolder.path }}/.dockerconfigjson" --no-tags docker://"${right_base}@${left_sha}" 2>&1)
+      right_ret=$?
+      if [ $right_ret -eq 0 ]; then
+        echo "${right_base}@${left_sha}"
+      else # both left_ret and right_ret were != 0
+        echo "${right_out}" > "/tmp/skopeo-${right_log}.log"
+        echo "ERROR: both {{ image }} and echo ${right_base}@${left_sha} could not be found"
+        echo "Printing both outputs:"
+        echo "Left out: ${left_out}"
+        echo "Right out: ${right_out}"
+        exit 1
+      fi
     fi
   register: all_existing_images
   with_items: "{{ all_images }}"
@@ -91,16 +102,6 @@
        'mirrordest_nosha': (mirror_dest + item | basename) | regex_replace('@.*$', ''),
        'mirrordest_tag': 'tag-' + item | basename | regex_replace('^.*@sha256:', '')}}, recursive=true) }}"
   loop: "{{ all_images }}"
-  when: use_internal_registry
-
-- name: Create dict with full image name+sha -> mirror destination (OCP < 4.13)
-  ansible.builtin.set_fact:
-    image_urls: "{{ image_urls | default({}) | combine({item:
-      {'mirrordest': mirror_dest + '@' + item | basename | regex_replace('^.*@', ''),
-       'mirrordest_nosha': mirror_dest,
-       'mirrordest_tag': 'tag-' + item | basename | regex_replace('^.*@sha256:', '')}}, recursive=true) }}"
-  loop: "{{ all_images }}"
-  when: not use_internal_registry
 
 - name: Create dict with full image name+sha -> image key without sha
   ansible.builtin.set_fact:
@@ -124,14 +125,6 @@
     src: ./templates/imageDigestMirror.yaml.j2
     dest: "{{ iib_local_folder }}/imageMirror.yaml"
     mode: "0644"
-  when: use_internal_registry
-
-- name: Template out imageMirror.yaml (OCP < 4.13)
-  ansible.builtin.template:
-    src: ./templates/imageContentSourcePolicy.yaml.j2
-    dest: "{{ iib_local_folder }}/imageMirror.yaml"
-    mode: "0644"
-  when: not use_internal_registry
 
 - name: Template out mirror.map
   ansible.builtin.template:
