@@ -4,6 +4,14 @@
   failed_when:
     (iib_image is not defined or iib_image | length == 0)
 
+- name: Check for pre-requisite binaries presence
+  ansible.builtin.shell: |
+    which "{{ item }}"
+  with_items:
+    - skopeo
+    - oc
+    - podman
+
 - name: Set IIB fact
   ansible.builtin.set_fact:
     iib: "{{ iib_image.split(':')[1] }}"
