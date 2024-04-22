@@ -601,6 +601,9 @@ spec:
                 name: helm-values-configmap-example
           restartPolicy: Never
 ---
+# Source: clustergroup/templates/core/operatorgroup.yaml
+---
+---
 # Source: clustergroup/templates/core/subscriptions.yaml
 ---
 ---
@@ -1135,6 +1138,7 @@ spec:
   text: 'Example ArgoCD'
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1146,6 +1150,7 @@ spec:
   - other-namespace
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1155,6 +1160,7 @@ spec:
   targetNamespaces:
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -1165,7 +1171,6 @@ spec:
   - include-ci
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
----
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
