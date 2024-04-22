@@ -65,7 +65,7 @@
     OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.noProxy}' 2>/dev/null)";
     if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
     mkdir /git/{repo,home};
-    git clone --single-branch --branch {{ $.Values.global.targetRevision }} --depth 1 -- "${URL}" /git/repo;
+    git clone --recurse-submodules --single-branch --branch {{ $.Values.global.targetRevision }} --depth 1 -- "${URL}" /git/repo;
     chmod 0770 /git/{repo,home};
 {{- end }}
 
@@ -109,7 +109,7 @@
     OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.noProxy}' 2>/dev/null)";
     if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
     mkdir /git/{repo,home};
-    git clone --single-branch --branch {{ $.Values.global.targetRevision }} --depth 1 -- "${URL}" /git/repo;
+    git clone --recurse-submodules --single-branch --branch {{ $.Values.global.targetRevision }} --depth 1 -- "${URL}" /git/repo;
     chmod 0770 /git/{repo,home};
 {{- end }}
 {{/* Final done container */}}
