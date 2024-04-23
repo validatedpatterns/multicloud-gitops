@@ -1,5 +1,6 @@
 {{- if not (eq .Values.enabled "plumbing") }}
 {{/* This is always defined as we always unseal the cluster with an imperative job */}}
+{{- if $.Values.clusterGroup.imperative.serviceAccountCreate }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -18,4 +19,19 @@ rules:
     - list
     - watch
 {{- end }}
+{{- end }} {{/* if $.Values.clusterGroup.imperative.serviceAccountCreate */}}
+{{- if $.Values.clusterGroup.imperative.adminServiceAccountCreate }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ $.Values.clusterGroup.imperative.adminClusterRoleName }}
+rules:
+  - apiGroups:
+    - '*'
+    resources:
+    - '*'
+    verbs:
+    - '*'
+{{- end }} {{/* if $.Values.clusterGroup.imperative.adminServiceAccountCreate */}}
 {{- end }}
