@@ -3,6 +3,14 @@
 
 {{- range $group.clusterDeployments}}
 {{ $cluster := . }}
+
+{{- if (eq $cluster.name nil) }}
+{{- fail (printf "managedClusterGroup clusterDeployment cluster name is empty: %s" $cluster) }}
+{{- end }}
+{{- if (eq $group.name nil) }}
+{{- fail (printf "managedClusterGroup clusterDeployment group name is empty: %s" $cluster) }}
+{{- end }}
+
 {{- $deploymentName := print $cluster.name "-" $group.name }}
 
 {{- $cloud := "None" }}
@@ -30,6 +38,8 @@ metadata:
   namespace: {{ $deploymentName }}
   labels:
     vendor: OpenShift
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   baseDomain: {{ $cluster.baseDomain }}
   clusterName: {{ $deploymentName }}
@@ -65,6 +75,8 @@ metadata:
     {{- end }}
   {{- end }}
   name: {{ $deploymentName }}
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   hubAcceptsClient: true
 {{- end }}{{- /* range $group.clusterDeployments */}}

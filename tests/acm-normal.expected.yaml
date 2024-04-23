@@ -101,6 +101,8 @@ metadata:
   namespace: aws-cd-one-w-pool-acm-provision-edge
   labels:
     vendor: OpenShift
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   baseDomain: blueprints.rhecoeng.com
   clusterName: aws-cd-one-w-pool-acm-provision-edge
@@ -128,6 +130,8 @@ metadata:
   namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
   labels:
     vendor: OpenShift
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   baseDomain: blueprints.rhecoeng.com
   clusterName: aws-cd-two-wo-pool-acm-provision-on-deploy
@@ -719,6 +723,8 @@ metadata:
     cluster.open-cluster-management.io/clusterset: acm-provision-edge
     clusterGroup: region
   name: aws-cd-one-w-pool-acm-provision-edge
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   hubAcceptsClient: true
 ---
@@ -730,6 +736,8 @@ metadata:
     cluster.open-cluster-management.io/clusterset: acm-provision-on-deploy
     clusterGroup: acm-provision-on-deploy
   name: aws-cd-two-wo-pool-acm-provision-on-deploy
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   hubAcceptsClient: true
 ---
