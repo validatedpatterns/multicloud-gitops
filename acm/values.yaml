@@ -30,6 +30,15 @@ clusterGroup:
 #      - name: clusterGroup
 #        value: region-one
 
+acm:
+  # Just used for IIB testing, drives the source and channel for the MCE
+  # subscription triggered by ACM
+  mce_operator:
+    source: redhat-operators
+    channel: null
+
+
+
 secretStore:
   name: vault-backend
   kind: ClusterSecretStore
