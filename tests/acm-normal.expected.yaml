@@ -749,9 +749,6 @@ metadata:
     cluster.open-cluster-management.io/submariner-broker-ns: acm-provision-edge-broker
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   name: acm-provision-edge
-spec:
-  clusterSelector:
-    selectorType: LegacyClusterSetLabel
 ---
 # Source: acm/templates/provision/managedclusterset.yaml
 apiVersion: cluster.open-cluster-management.io/v1beta2
@@ -761,9 +758,6 @@ metadata:
     cluster.open-cluster-management.io/submariner-broker-ns: acm-provision-on-deploy-broker
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   name: acm-provision-on-deploy
-spec:
-  clusterSelector:
-    selectorType: LegacyClusterSetLabel
 ---
 # Source: acm/templates/multiclusterhub.yaml
 apiVersion: operator.open-cluster-management.io/v1
