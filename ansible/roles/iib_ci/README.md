@@ -38,6 +38,8 @@ oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patc
 oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
 ```
 
+### Gitops operator
+
 Then in case of the `openshift-gitops-operator` we would install with:
 
 ```sh
@@ -45,16 +47,42 @@ export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=ii
 make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-${IIB} --set main.gitops.channel=${CHANNEL}" install
 ```
 
-To install ACM (`export OPERATOR=advanced-cluster-management`) or any other
-operator (except the gitops one) from an IIB we would call the following as a
-final step:
+### ACM operator
+
+The advanced-cluster-management operator is a little bit more complex than the others because it
+also installes another operator called MCE multicluster-engine. So to install ACM you typically
+need two IIBs (one for acm and one for mce). With those two at hand, do the following (the ordering must be
+consistent: the first IIB corresponds to the first OPERATOR, etc).
+
+```sh
+export OPERATOR=advanced-cluster-management,multicluster-engine
+export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:713808,registry-proxy.engineering.redhat.com/rh-osbs/iib:718034
+make load-iib
+```
+
+Once the IIBs are loaded into the cluster we need to run the following steps:
+
+```sh
+export ACM_CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-713808" --field-selector "metadata.name=advanced-cluster-management" -o jsonpath='{.items[0].status.defaultChannel}')
+export MCE_CHANNEL=$(oc get -n openshift-margetplace packagemanifests -l "catalog=iib-718034" --field-selector "metadata.name=multicluster-engine" -o jsonpath='{.items[0].status.defaultChannel}')
+make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscriptions.acm.source --set main.extraParameters[0].value=iib-713808 \
+                      --set main.extraParameters[1].name=clusterGroup.subscriptions.acm.channel --set main.extraParameters[1].value=${ACM_CHANNEL} \
+                      --set main.extraParameters[2].name=acm.mce_operator.source --set main.extraParameters[2].value="iib-718034" \
+                      --set main.extraParameters[3].name=acm.mce_operator.channel --set main.extraParameters[3].value=${MCE_CHANNEL}" install
+```
+
+*Note*: In this case the `acm` in `clusterGroup.subscriptions.acm.*` is the name of the key in the subscriptions in `values-hub.yaml`
+
+### Other operators
+
+To install operators other than gitops and acm do the following:
 
 ```sh
 export CHANNEL=$(oc get -n openshift-marketplace packagemanifests -l "catalog=iib-${IIB}" --field-selector "metadata.name=${OPERATOR}" -o jsonpath='{.items[0].status.defaultChannel}')
-make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscriptions.acm.source --set main.extraParameters[0].value=iib-${IIB} --set main.extraParameters[1].name=clusterGroup.subscriptions.acm.channel --set main.extraParameters[1].value=${CHANNEL}" install
+make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscriptions.<subname>.source --set main.extraParameters[0].value=iib-${IIB} --set main.extraParameters[1].name=clusterGroup.subscriptions.<subname>.channel --set main.extraParameters[1].value=${CHANNEL}" install
 ```
 
-*Note*: In this case `acm` is the name of the subscription in `values-hub.yaml`
+*Note*: Replace `<subname>` with the actual name of the subscription dictionary in `values-hub.yaml`
 
 ## Useful commands
 
