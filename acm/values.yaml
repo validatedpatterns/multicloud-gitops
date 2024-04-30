@@ -1,6 +1,6 @@
 main:
   gitops:
-    channel: "gitops-1.11"
+    channel: "gitops-1.12"
 
 global:
   extraValueFiles: []
