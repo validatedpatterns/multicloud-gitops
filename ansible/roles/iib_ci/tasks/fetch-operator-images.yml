@@ -2,9 +2,9 @@
 # the operator name is defined in the variable "item". This
 # set of tasks is to be included in a loop that goes over the
 # needed operators
-- name: Get default channel in the IIB for "{{ item }}"
+- name: Get default channel in the IIB for "{{ item.key }}"
   ansible.builtin.shell: |
-    oc get -n "{{ internal_registry_ns }}" packagemanifests -l "catalog=iib-{{ iib }}" --field-selector "metadata.name={{ item }}" \
+    oc get -n "{{ internal_registry_ns }}" packagemanifests -l "catalog=iib-{{ item.value['iib'] }}" --field-selector "metadata.name={{ item.key }}" \
       -o jsonpath='{.items[0].status.defaultChannel}'
   register: default_channel_raw
   retries: 10
@@ -15,9 +15,13 @@
   ansible.builtin.set_fact:
     default_channel: "{{ default_channel_raw.stdout }}"
 
-- name: Get all related images in the IIB for "{{ item }}"
+- name: Print default channel
+  ansible.builtin.debug:
+    msg: "Default channel for {{ item.key }}: {{ default_channel }}"
+
+- name: Get all related images in the IIB for "{{ item.key }}"
   ansible.builtin.shell: |
-    oc get packagemanifests -l "catalog=iib-{{ iib }}" --field-selector "metadata.name={{ item }}" \
+    oc get packagemanifests -l "catalog=iib-{{ item.value['iib'] }}" --field-selector "metadata.name={{ item.key }}" \
       -o jsonpath="{.items[0].status.channels[?(@.name==\"{{ default_channel }}\")].currentCSVDesc.relatedImages}"
   register: related_images_raw
   retries: 5
@@ -29,7 +33,7 @@
     related_images: "{{ related_images_raw.stdout }}"
 
 # NOTE(bandini)
-# The following code is here to fund out what the operator bundle image is and to make
+# The following code is here to find out what the operator bundle image is and to make
 # sure it is on the internal registry.
 # This is all potentially hacky, but so far I could not find a single place in the cluster
 # where the olm.bundle image is available. The info is in there in the IIB, but it certainly
@@ -37,7 +41,7 @@
 # alpha commands inside the IIB image locally
 - name: Pull the IIB locally
   ansible.builtin.command:
-    podman pull "{{ iib_image }}"
+    podman pull "{{ item.value['iib_image'] }}"
 
 # $ opm alpha list channels /configs advanced-cluster-management
 # PACKAGE                      CHANNEL      HEAD
@@ -46,7 +50,7 @@
 - name: Read the operator bundle from the default channel
   ansible.builtin.shell: |
     set -o pipefail
-    podman run -it --rm "{{ iib_image }}" alpha list channels /configs "{{ item }}" | grep -E "(\s){{ default_channel }}(\s)" | awk '{ print $3 }'
+    podman run -it --rm "{{ item.value['iib_image'] }}" alpha list channels /configs "{{ item.key }}" | grep -E "(\s){{ default_channel }}(\s)" | awk '{ print $3 }'
   register: bundle_channel_raw
 
 - name: Set bundle fact
@@ -70,7 +74,7 @@
 - name: Get bundle image
   ansible.builtin.shell: |
     set -o pipefail
-    podman run -it --rm "{{ iib_image }}" alpha list bundles /configs "{{ item }}" | grep -e "{{ default_channel }}\s\+{{ bundle_channel }}" | awk '{ print $NF }'
+    podman run -it --rm "{{ item.value['iib_image'] }}" alpha list bundles /configs "{{ item.key }}" | grep -e "{{ default_channel }}\s\+{{ bundle_channel }}" | awk '{ print $NF }'
   register: bundle_image_raw
 
 - name: Set bundle image fact

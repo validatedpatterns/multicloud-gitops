@@ -113,9 +113,7 @@ secrets-backend-none: ## Edits values files to remove secrets manager + ESO
 .PHONY: load-iib
 load-iib: ## CI target to install Index Image Bundles
 	@set -e; if [ x$(INDEX_IMAGES) != x ]; then \
-		for IIB in $(shell echo $(INDEX_IMAGES) | tr ',' '\n'); do \
-			INDEX_IMAGE="$${IIB}" ansible-playbook common/ansible/playbooks/iib-ci/iib-ci.yaml; \
-		done; \
+		ansible-playbook common/ansible/playbooks/iib-ci/iib-ci.yaml; \
 	else \
 		echo "No INDEX_IMAGES defined. Bailing out"; \
 		exit 1; \

@@ -1,8 +1,7 @@
-# This is needed because some operators like "advanced-cluster-management"
-# install a second operator "multicluster-engine"
-- name: Set operators list
+# We redefine this var so it is easier to run this task independently
+- name: Set IIB local folder fact
   ansible.builtin.set_fact:
-    operator_list: "{{ [operator] + (operator == 'advanced-cluster-management') | ternary(['multicluster-engine'], []) }}"
+    iib_local_folder: "/tmp/manifest-{{ item.value['iib'] }}"
 
 - name: Set all images to empty list
   ansible.builtin.set_fact:
@@ -10,7 +9,6 @@
 
 - name: Fetch operator images tasks
   ansible.builtin.include_tasks: fetch-operator-images.yml
-  loop: "{{ operator_list }}"
 
 - name: Print all_images
   ansible.builtin.debug:
@@ -119,7 +117,7 @@
   ansible.builtin.debug:
     msg: "{{ image_urls }}"
 
-# OCP 4.13 uses the new fangled "ImageDigestMirrorSet", older OCPs use "ImageContentSourcePolicy"
+# OCP 4.13 uses the new fangled "ImageDigestMirrorSet"
 - name: Template out imageMirror.yaml (OCP >= 4.13)
   ansible.builtin.template:
     src: ./templates/imageDigestMirror.yaml.j2
