@@ -56,14 +56,6 @@ make EXTRA_HELM_OPTS="--set main.extraParameters[0].name=clusterGroup.subscripti
 
 *Note*: In this case `acm` is the name of the subscription in `values-hub.yaml`
 
-### OCP 4.13 and onwards
-
-Since 4.13 supports an internal registry that can cope with v2 docker manifests, we
-use that. Run `make iib` with the following environment variables set:
-
-* `INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:492329`
-* `KUBEADMINPASS="11111-22222-33333-44444"`
-
 ## Useful commands
 
 * List IIBs for an operator:

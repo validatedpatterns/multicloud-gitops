@@ -3,16 +3,16 @@ kind: ImageDigestMirrorSet
 metadata:
   labels:
     operators.openshift.org/catalog: "true"
-  name: iib-{{ iib }}
+  name: iib-{{ item.value['iib'] }}
 spec:
   imageDigestMirrors:
-{% for item in image_urls.values() %}
+{% for data in image_urls.values() %}
     - mirrors:
-        - {{ item.mirrordest_nosha }}
-      source: {{ item.source_nosha }}
+        - {{ data.mirrordest_nosha }}
+      source: {{ data.source_nosha }}
       mirrorSourcePolicy: AllowContactingSource
     - mirrors:
-        - {{ item.mirrordest_nosha }}
-      source: {{ item.image_nosha }}
+        - {{ data.mirrordest_nosha }}
+      source: {{ data.image_nosha }}
       mirrorSourcePolicy: AllowContactingSource
 {% endfor %}
