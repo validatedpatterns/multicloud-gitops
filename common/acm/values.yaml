@@ -1,6 +1,6 @@
 main:
   gitops:
-    channel: "gitops-1.11"
+    channel: "gitops-1.12"
 
 global:
   extraValueFiles: []
@@ -29,6 +29,15 @@ clusterGroup:
 #      labels:
 #      - name: clusterGroup
 #        value: region-one
+
+acm:
+  # Just used for IIB testing, drives the source and channel for the MCE
+  # subscription triggered by ACM
+  mce_operator:
+    source: redhat-operators
+    channel: null
+
+
 
 secretStore:
   name: vault-backend

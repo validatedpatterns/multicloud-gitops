@@ -1,3 +1,7 @@
+{{- $channel := "" }}
+{{- if .Values.acm.mce_operator.channel }}
+{{- $channel = printf ",\"channel\": \"%s\"" .Values.acm.mce_operator.channel }}
+{{- end }}
 apiVersion: operator.open-cluster-management.io/v1
 kind: MultiClusterHub
 metadata:
@@ -5,7 +9,5 @@ metadata:
   namespace: open-cluster-management
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
-    {{- if kindIs "map" .Values.clusterGroup.subscriptions }}
-    installer.open-cluster-management.io/mce-subscription-spec: '{"source": "{{ default "redhat-operators" .Values.clusterGroup.subscriptions.acm.source }}" }'
-    {{- end }}
+    installer.open-cluster-management.io/mce-subscription-spec: '{"source": "{{ default "redhat-operators" .Values.acm.mce_operator.source }}" {{- $channel }} }'
 spec: {}
