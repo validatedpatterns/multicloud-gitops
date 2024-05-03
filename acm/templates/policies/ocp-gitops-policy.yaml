@@ -195,6 +195,11 @@ spec:
                         memory: 128Mi
                     route:
                       enabled: true
+                      {{- if and (.Values.global.argocdServer) (.Values.global.argocdServer.route) (.Values.global.argocdServer.route.tls) }}
+                      tls:
+                        insecureEdgeTerminationPolicy: {{ default "Redirect" .Values.global.argocdServer.route.tls.insecureEdgeTerminationPolicy }}
+                        termination: {{ default "reencrypt" .Values.global.argocdServer.route.tls.termination }}
+                      {{- end }}
                     service:
                       type: ""
                   sso:
