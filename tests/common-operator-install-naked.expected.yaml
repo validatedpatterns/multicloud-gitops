@@ -25,9 +25,6 @@ spec:
   gitSpec:
     targetRepo: https://github.com/pattern-clone/mypattern
     targetRevision: main 
-  gitOpsSpec:
-    operatorChannel: gitops-1.12
-    operatorSource: redhat-operators
   multiSourceConfig:
     enabled: false
 ---

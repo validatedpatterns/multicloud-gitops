@@ -17,6 +17,9 @@
   ansible.builtin.shell: |
     oc get openshiftcontrollermanager/cluster -o yaml -o jsonpath='{.status.version}'
   register: oc_version_raw
+  retries: 10
+  delay: 10
+  until: oc_version_raw is not failed
   changed_when: false
 
 - name: Is OCP pre OCP 4.13? (aka registry supports v2 manifests)
