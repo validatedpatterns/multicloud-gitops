@@ -52,12 +52,17 @@ make EXTRA_HELM_OPTS="--set main.gitops.operatorSource=iib-${IIB} --set main.git
 The advanced-cluster-management operator is a little bit more complex than the others because it
 also installes another operator called MCE multicluster-engine. So to install ACM you typically
 need two IIBs (one for acm and one for mce). With those two at hand, do the following (the ordering must be
-consistent: the first IIB corresponds to the first OPERATOR, etc).
+consistent: the first IIB corresponds to the first OPERATOR, etc). The following operation needs to be done
+on both hub *and* spokes:
 
 ```sh
-export OPERATOR=advanced-cluster-management,multicluster-engine
-export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:713808,registry-proxy.engineering.redhat.com/rh-osbs/iib:718034
-make load-iib
+for i in hub-kubeconfig-file spoke-kubeconfig-file; do
+  export KUBECONFIG="${i}"
+  export KUBEADMINPASS="11111-22222-33333-44444"
+  export OPERATOR=advanced-cluster-management,multicluster-engine
+  export INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:713808,registry-proxy.engineering.redhat.com/rh-osbs/iib:718034
+  make load-iib
+done
 ```
 
 Once the IIBs are loaded into the cluster we need to run the following steps:

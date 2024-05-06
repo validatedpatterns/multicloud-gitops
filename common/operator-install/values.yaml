@@ -20,6 +20,9 @@ main:
   patternsOperator:
     channel: fast
     source: community-operators
+    installPlanApproval: Automatic
+    sourceNamespace: openshift-marketplace
+    startingCSV: null
 
   clusterGroupName: default
 
