@@ -1,10 +1,11 @@
 {{- if not (eq .Values.enabled "plumbing") }}
 {{/* This is always defined as we always unseal the cluster with an imperative job */}}
+{{- if $.Values.clusterGroup.imperative.serviceAccountCreate -}}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ $.Values.clusterGroup.imperative.namespace }}-cluster-admin-rolebinding
+  name: {{ $.Values.clusterGroup.imperative.namespace }}-cluster-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -17,7 +18,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ $.Values.clusterGroup.imperative.namespace }}-admin-rolebinding
+  name: {{ $.Values.clusterGroup.imperative.namespace }}-rolebinding
   namespace: {{ $.Values.clusterGroup.imperative.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -27,4 +28,20 @@ subjects:
   - kind: ServiceAccount
     name: {{ $.Values.clusterGroup.imperative.serviceAccountName }}
     namespace: {{ $.Values.clusterGroup.imperative.namespace }}
+{{- end }}
+{{- if $.Values.clusterGroup.imperative.adminServiceAccountCreate }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $.Values.clusterGroup.imperative.namespace }}-admin-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ $.Values.clusterGroup.imperative.adminClusterRoleName }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $.Values.clusterGroup.imperative.adminServiceAccountName }}
+    namespace: {{ $.Values.clusterGroup.imperative.namespace }}
+{{- end }}
 {{- end }}
