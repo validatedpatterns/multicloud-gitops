@@ -28,6 +28,13 @@ metadata:
   name: imperative-sa
   namespace: imperative
 ---
+# Source: clustergroup/templates/imperative/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: imperative-admin-sa
+  namespace: imperative
+---
 # Source: clustergroup/templates/imperative/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -43,6 +50,9 @@ data:
         initContainers: []
       imperative:
         activeDeadlineSeconds: 3600
+        adminClusterRoleName: imperative-admin-cluster-role
+        adminServiceAccountCreate: true
+        adminServiceAccountName: imperative-admin-sa
         clusterRoleName: imperative-cluster-role
         clusterRoleYaml: ""
         cronJobName: imperative-cronjob
@@ -117,11 +127,24 @@ rules:
     - list
     - watch
 ---
+# Source: clustergroup/templates/imperative/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: imperative-admin-cluster-role
+rules:
+  - apiGroups:
+    - '*'
+    resources:
+    - '*'
+    verbs:
+    - '*'
+---
 # Source: clustergroup/templates/imperative/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: imperative-cluster-admin-rolebinding
+  name: imperative-cluster-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -129,6 +152,20 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: imperative-sa
+    namespace: imperative
+---
+# Source: clustergroup/templates/imperative/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: imperative-admin-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: imperative-admin-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: imperative-admin-sa
     namespace: imperative
 ---
 # Source: clustergroup/templates/plumbing/argocd-super-role.yaml
@@ -193,7 +230,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: imperative-admin-rolebinding
+  name: imperative-rolebinding
   namespace: imperative
 roleRef:
   apiGroup: rbac.authorization.k8s.io
