@@ -677,6 +677,15 @@
         },
         "roleYaml": {
           "type": "string"
+        },
+        "adminServiceAccountCreate": {
+          "type": "boolean"
+        },
+        "adminServiceAccountName": {
+          "type": "string"
+        },
+        "adminClusterRoleName": {
+          "type": "string"
         }
       },
       "required": [

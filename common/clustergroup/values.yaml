@@ -51,6 +51,10 @@ clusterGroup:
     clusterRoleYaml: ""
     roleName: imperative-role
     roleYaml: ""
+    adminServiceAccountCreate: true
+    adminServiceAccountName: imperative-admin-sa
+    adminClusterRoleName: imperative-admin-cluster-role
+
   managedClusterGroups: {}
   namespaces: []
 #  - name: factory
