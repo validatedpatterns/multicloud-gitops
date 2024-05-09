@@ -20,6 +20,8 @@ clusterGroup:
   targetCluster: in-cluster
   sharedValueFiles: []
 
+  mastersSchedulable: false
+
   argoCD:
     initContainers: []
     configManagementPlugins: []

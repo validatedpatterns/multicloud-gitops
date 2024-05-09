@@ -211,6 +211,7 @@ data:
         - domain: syd.beekhof.net
           name: sydney
         name: argo-edge
+      mastersSchedulable: true
       name: example
       namespaces:
       - open-cluster-management:
@@ -1216,6 +1217,14 @@ metadata:
 spec:
   targetNamespaces:
   - include-default-og
+---
+# Source: clustergroup/templates/core/scheduler.yaml
+apiVersion: config.openshift.io/v1
+kind: Scheduler
+metadata:
+  name: cluster
+spec:
+  mastersSchedulable: true
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1

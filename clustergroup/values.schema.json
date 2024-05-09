@@ -257,6 +257,10 @@
             "type": "array",
             "description": "Templated value file paths."
 	},
+        "mastersSchedulable": {
+          "type": "boolean",
+          "description": "if set to true, the control plane nodes will be marked as schedulable for user workloads also."
+        },
         "namespaces": {
           "anyOf": [
             {

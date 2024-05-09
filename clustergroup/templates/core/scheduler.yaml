@@ -1,0 +1,8 @@
+{{- if not (eq .Values.enabled "plumbing") }}
+apiVersion: config.openshift.io/v1
+kind: Scheduler
+metadata:
+  name: cluster
+spec:
+  mastersSchedulable: {{ $.Values.clusterGroup.mastersSchedulable }}
+{{- end -}}
