@@ -28,6 +28,13 @@ metadata:
   name: imperative-sa
   namespace: imperative
 ---
+# Source: clustergroup/templates/imperative/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: imperative-admin-sa
+  namespace: imperative
+---
 # Source: clustergroup/templates/imperative/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -38,12 +45,18 @@ data:
   values.yaml: |
     clusterGroup:
       applications: {}
+      argoCD:
+        configManagementPlugins: []
+        initContainers: []
       imperative:
         activeDeadlineSeconds: 3600
+        adminClusterRoleName: imperative-admin-cluster-role
+        adminServiceAccountCreate: true
+        adminServiceAccountName: imperative-admin-sa
         clusterRoleName: imperative-cluster-role
         clusterRoleYaml: ""
         cronJobName: imperative-cronjob
-        image: registry.redhat.io/ansible-automation-platform-23/ee-supported-rhel8:latest
+        image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
         imagePullPolicy: Always
         insecureUnsealVaultInsideClusterSchedule: '*/5 * * * *'
         jobName: imperative-job
@@ -73,10 +86,31 @@ data:
         syncPolicy: Automatic
         useCSV: true
       pattern: common
+      secretStore:
+        backend: vault
       targetRevision: main
     secretStore:
       kind: ClusterSecretStore
       name: vault-backend
+---
+# Source: clustergroup/templates/imperative/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trusted-ca-bundle
+  namespace: imperative
+  annotations:
+  labels:
+    config.openshift.io/inject-trusted-cabundle: 'true'
+---
+# Source: clustergroup/templates/plumbing/trusted-bundle-ca-configmap.yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: trusted-ca-bundle
+  namespace: common-example
+  labels:
+    config.openshift.io/inject-trusted-cabundle: 'true'
 ---
 # Source: clustergroup/templates/imperative/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -93,11 +127,24 @@ rules:
     - list
     - watch
 ---
+# Source: clustergroup/templates/imperative/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: imperative-admin-cluster-role
+rules:
+  - apiGroups:
+    - '*'
+    resources:
+    - '*'
+    verbs:
+    - '*'
+---
 # Source: clustergroup/templates/imperative/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: imperative-cluster-admin-rolebinding
+  name: imperative-cluster-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -105,6 +152,20 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: imperative-sa
+    namespace: imperative
+---
+# Source: clustergroup/templates/imperative/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: imperative-admin-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: imperative-admin-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: imperative-admin-sa
     namespace: imperative
 ---
 # Source: clustergroup/templates/plumbing/argocd-super-role.yaml
@@ -169,7 +230,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: imperative-admin-rolebinding
+  name: imperative-rolebinding
   namespace: imperative
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -202,20 +263,45 @@ spec:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there            
             - name: git-init
-              image: registry.redhat.io/ansible-automation-platform-23/ee-supported-rhel8:latest
+              image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
               imagePullPolicy: Always
               env:
                 - name: HOME
                   value: /git/home
-              command:
-              - 'sh'
-              - '-c'
-              - "mkdir /git/{repo,home};git clone --single-branch --branch main --depth 1 --  /git/repo;chmod 0770 /git/{repo,home}"
               volumeMounts:
               - name: git
                 mountPath: "/git"
+              command:
+              - 'sh'
+              - '-c'
+              - >-
+                if ! oc get secrets -n openshift-gitops vp-private-repo-credentials &> /dev/null; then
+                  URL="";
+                else
+                  if ! oc get secrets -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.sshPrivateKey | base64decode}}' &>/dev/null; then
+                    U="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.username | base64decode }}')";
+                    P="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.password | base64decode }}')";
+                    URL=$(echo  | sed -E "s/(https?:\/\/)/\1${U}:${P}@/");
+                  else
+                    S="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{index .data.sshPrivateKey | base64decode }}')";
+                    mkdir -p --mode 0700 "${HOME}/.ssh";
+                    echo "${S}" > "${HOME}/.ssh/id_rsa";
+                    chmod 0600 "${HOME}/.ssh/id_rsa";
+                    URL=$(echo  | sed -E "s/(https?:\/\/)/\1git@/");
+                    git config --global core.sshCommand "ssh -i "${HOME}/.ssh/id_rsa" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
+                  fi;
+                fi;
+                OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpProxy}' 2>/dev/null)";
+                if [ -n "${OUT}" ]; then export HTTP_PROXY="${OUT}"; fi;
+                OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.httpsProxy}' 2>/dev/null)";
+                if [ -n "${OUT}" ]; then export HTTPS_PROXY="${OUT}"; fi;
+                OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.noProxy}' 2>/dev/null)";
+                if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
+                mkdir /git/{repo,home};
+                git clone --recurse-submodules --single-branch --branch main --depth 1 -- "${URL}" /git/repo;
+                chmod 0770 /git/{repo,home};
             - name: unseal-playbook
-              image: registry.redhat.io/ansible-automation-platform-23/ee-supported-rhel8:latest
+              image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
               imagePullPolicy: Always
               env:
                 - name: HOME
@@ -240,7 +326,7 @@ spec:
                   subPath: values.yaml
           containers:            
             - name: "done"
-              image: registry.redhat.io/ansible-automation-platform-23/ee-supported-rhel8:latest
+              image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
               imagePullPolicy: Always
               command:
                 - 'sh'
@@ -248,16 +334,16 @@ spec:
                 - 'echo'
                 - 'done'
                 - '\n'
-          volumes:
-          - name: git
-            emptyDir: {}
-          - name: values-volume
-            configMap:
-              name: helm-values-configmap-example
+          volumes:            
+            - name: git
+              emptyDir: {}
+            - name: values-volume
+              configMap:
+                name: helm-values-configmap-example
           restartPolicy: Never
 ---
 # Source: clustergroup/templates/plumbing/argocd.yaml
-apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1beta1
 kind: ArgoCD
 metadata:
   finalizers:
@@ -293,36 +379,6 @@ spec:
       return hs
 
   applicationInstanceLabelKey: argocd.argoproj.io/instance
-  # Not the greatest way to pass git/quay info to sub-applications, but it will do until
-  # we can support helmChart with kustomize
-  # The other option is to pass them in as environment variables eg. BLUEPRINT_VERSION
-  configManagementPlugins: |
-    - name: kustomize-version
-      generate:
-        command: ["sh", "-c"]
-        args: ["kustomize version 1>&2 && exit 1"]
-    - name: kustomize-with-helm
-      generate:
-        command: ["kustomize"]
-        args: ["build", "--enable-helm"]
-    - name: helm-with-kustomize
-      init:
-        command: ["/bin/sh", "-c"]
-        args: ["helm dependency build"]
-      generate:
-        command: ["/bin/bash", "-c"]
-        args: ["helm template . --name-template ${ARGOCD_APP_NAME:0:52}
-            -f $(git rev-parse --show-toplevel)/values-global.yaml
-            -f $(git rev-parse --show-toplevel)/values-example.yaml
-            --set global.repoURL=$ARGOCD_APP_SOURCE_REPO_URL
-            --set global.targetRevision=$ARGOCD_APP_SOURCE_TARGET_REVISION
-            --set global.namespace=$ARGOCD_APP_NAMESPACE
-            --set global.pattern=common
-            --set global.clusterDomain=
-            --set global.hubClusterDomain=
-            --set global.localClusterDomain=
-            --set clusterGroup.name=example
-            --post-renderer ./kustomize"]
   applicationSet:
     resources:
       limits:

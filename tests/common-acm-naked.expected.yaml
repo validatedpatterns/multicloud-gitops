@@ -5,6 +5,15 @@
 # Source: acm/templates/policies/application-policies.yaml
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
 ---
+# Source: acm/templates/policies/private-repo-policies.yaml
+# We copy the vp-private-repo-credentials from the "openshift-gitops" namespace
+# to the "open-cluster-management" via the "private-hub-policy"
+#
+# Then we copy the secret from the "open-cluster-management" namespace to the
+# managed clusters "openshift-gitops" instance
+#
+# And we also copy the same secret to the namespaced argo's namespace
+---
 # Source: acm/templates/multiclusterhub.yaml
 apiVersion: operator.open-cluster-management.io/v1
 kind: MultiClusterHub
@@ -83,6 +92,15 @@ spec:
           object-templates:
             - complianceType: mustonlyhave
               objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: trusted-ca-bundle
+                  namespace: openshift-gitops
+                  labels:
+                    config.openshift.io/inject-trusted-cabundle: 'true'
+            - complianceType: mustonlyhave
+              objectDefinition:
                 # This is an auto-generated file. DO NOT EDIT
                 apiVersion: operators.coreos.com/v1alpha1
                 kind: Subscription
@@ -92,7 +110,7 @@ spec:
                   labels:
                     operators.coreos.com/openshift-gitops-operator.openshift-operators: ''
                 spec:
-                  channel: gitops-1.8
+                  channel: gitops-1.12
                   installPlanApproval: Automatic
                   name: openshift-gitops-operator
                   source: redhat-operators

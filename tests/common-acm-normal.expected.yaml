@@ -22,6 +22,15 @@ type: Opaque
 # Source: acm/templates/policies/acm-hub-ca-policy.yaml
 # This pushes out the HUB's Certificate Authorities on to the imported clusters
 ---
+# Source: acm/templates/policies/private-repo-policies.yaml
+# We copy the vp-private-repo-credentials from the "openshift-gitops" namespace
+# to the "open-cluster-management" via the "private-hub-policy"
+#
+# Then we copy the secret from the "open-cluster-management" namespace to the
+# managed clusters "openshift-gitops" instance
+#
+# And we also copy the same secret to the namespaced argo's namespace
+---
 # Source: acm/templates/provision/clusterpool.yaml
 apiVersion: hive.openshift.io/v1
 kind: ClusterClaim
@@ -600,19 +609,19 @@ spec:
                     helm:
                       ignoreMissingValueFiles: true
                       valueFiles:
-                        - "/values-global.yaml"
-                        - "/values-acm-edge.yaml"
-                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
-                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}.yaml'
-                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-edge.yaml'
-                        # We cannot use $.Values.global.clusterVersion because that gets resolved to the
-                        # hub's cluster version, whereas we want to include the spoke cluster version
-                        - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-edge.yaml'
+                      - "/values-global.yaml"
+                      - "/values-acm-edge.yaml"
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-edge.yaml'
+                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                      # hub's cluster version, whereas we want to include the spoke cluster version
+                      - '/values-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
                       parameters:
                       - name: global.repoURL
-                        value: $ARGOCD_APP_SOURCE_REPO_URL
+                        value: https://github.com/pattern-clone/mypattern
                       - name: global.targetRevision
-                        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+                        value: main
                       - name: global.namespace
                         value: $ARGOCD_APP_NAMESPACE
                       - name: global.pattern
@@ -621,16 +630,18 @@ spec:
                         value: apps.hub.example.com
                       - name: global.localClusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
-                      # Requires ACM 2.6 or higher
                       - name: global.clusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}'
-                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
                       - name: global.clusterVersion
-                        value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
+                        value: '{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}'
+                      - name: global.localClusterName
+                        value: '{{ (split "." (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain)._1 }}'
                       - name: global.clusterPlatform
                         value: aws
                       - name: clusterGroup.name
                         value: acm-edge
+                      - name: global.experimentalCapabilities
+                        value: 
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
@@ -694,19 +705,19 @@ spec:
                     helm:
                       ignoreMissingValueFiles: true
                       valueFiles:
-                        - "/values-global.yaml"
-                        - "/values-acm-provision-edge.yaml"
-                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
-                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}.yaml'
-                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-provision-edge.yaml'
-                        # We cannot use $.Values.global.clusterVersion because that gets resolved to the
-                        # hub's cluster version, whereas we want to include the spoke cluster version
-                        - '/values-{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}-acm-provision-edge.yaml'
+                      - "/values-global.yaml"
+                      - "/values-acm-provision-edge.yaml"
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
+                      - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-provision-edge.yaml'
+                      # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                      # hub's cluster version, whereas we want to include the spoke cluster version
+                      - '/values-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
                       parameters:
                       - name: global.repoURL
-                        value: $ARGOCD_APP_SOURCE_REPO_URL
+                        value: https://github.com/pattern-clone/mypattern
                       - name: global.targetRevision
-                        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+                        value: main
                       - name: global.namespace
                         value: $ARGOCD_APP_NAMESPACE
                       - name: global.pattern
@@ -715,16 +726,18 @@ spec:
                         value: apps.hub.example.com
                       - name: global.localClusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
-                      # Requires ACM 2.6 or higher
                       - name: global.clusterDomain
                         value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}'
-                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
                       - name: global.clusterVersion
-                        value: '{{ printf "%d.%d" ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Major) ((semver (lookup "operator.openshift.io/v1" "OpenShiftControllerManager" "" "cluster").status.version).Minor) }}'
+                        value: '{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}'
+                      - name: global.localClusterName
+                        value: '{{ (split "." (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain)._1 }}'
                       - name: global.clusterPlatform
                         value: aws
                       - name: clusterGroup.name
                         value: acm-provision-edge
+                      - name: global.experimentalCapabilities
+                        value: 
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
@@ -775,6 +788,15 @@ spec:
           object-templates:
             - complianceType: mustonlyhave
               objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: trusted-ca-bundle
+                  namespace: openshift-gitops
+                  labels:
+                    config.openshift.io/inject-trusted-cabundle: 'true'
+            - complianceType: mustonlyhave
+              objectDefinition:
                 # This is an auto-generated file. DO NOT EDIT
                 apiVersion: operators.coreos.com/v1alpha1
                 kind: Subscription
@@ -784,7 +806,7 @@ spec:
                   labels:
                     operators.coreos.com/openshift-gitops-operator.openshift-operators: ''
                 spec:
-                  channel: gitops-1.8
+                  channel: gitops-1.12
                   installPlanApproval: Automatic
                   name: openshift-gitops-operator
                   source: redhat-operators
