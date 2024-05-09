@@ -271,6 +271,20 @@
             "$ref": "#/definitions/Namespaces"
           }
         },
+        "nodes": {
+          "anyOf": [
+            {
+              "type": "array"
+            },
+            {
+              "type": "object"
+            }
+          ],
+          "description": "Description of those nodes which ArgoCD will control the labels and/or annotations.",
+          "items": {
+            "$ref": "#/definitions/Nodes"
+          }
+        },
         "indexImages": {
           "anyOf": [
             {
@@ -389,28 +403,51 @@
           "type": "string"
         }
       ],
-	  "description": "Description of the applications that will be created in the ArgoCD instances. The Application CRD is the Kubernetes resource object representing a deployed application instance in an environment. Two ways of defining applications: Using a list or using a dictionary.",
-	  "additionalProperties": true,
-	  "properties": {
-         "name": {
-		    "type": "string",
-		    "description": "Name of the namespace."
-          },
-	      "labels": {
-		    "type": "array",
-		    "items": {
-		      "$ref": "#/definitions/NameValue"
-		    }
-	      },
-	      "annotations": {
-		    "type": "array",
-		    "items": {
-		      "$ref": "#/definitions/NameValue"
-		    }
-	      }
+      "description": "Description of the applications that will be created in the ArgoCD instances. The Application CRD is the Kubernetes resource object representing a deployed application instance in an environment. Two ways of defining applications: Using a list or using a dictionary.",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+	  "type": "string",
+	  "description": "Name of the namespace."
+        },
+	"labels": {
+	  "type": "array",
+	  "items": {
+            "$ref": "#/definitions/NameValue"
 	  }
+	},
+	"annotations": {
+          "type": "array",
+	  "items": {
+	    "$ref": "#/definitions/NameValue"
+	  }
+	}
+      }
     },
-	"NameValue": {
+    "Nodes": {
+      "type": "object",
+      "description": "Description of those nodes which ArgoCD will control the labels and/or annotations.",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the node."
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NameValue"
+          }
+        },
+	"annotations": {
+          "type": "array",
+	  "items": {
+	    "$ref": "#/definitions/NameValue"
+	  }
+	}
+      }
+    },
+    "NameValue": {
       "type": "object",
       "description": "Description of the applications that will be created in the ArgoCD instances. The Application CRD is the Kubernetes resource object representing a deployed application instance in an environment. Two ways of defining applications: Using a list or using a dictionary.",
       "additionalProperties": true,
@@ -423,8 +460,8 @@
           "type": "string",
           "description": "Name of the namespace."
         }
-	  }
-	},
+      }
+    },
     "Applications": {
       "type": "object",
       "description": "Description of the applications that will be created in the ArgoCD instances. The Application CRD is the Kubernetes resource object representing a deployed application instance in an environment. Two ways of defining applications: Using a list or using a dictionary.",

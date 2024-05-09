@@ -270,6 +270,7 @@ data:
       - staging
       - vault
       - golang-external-secrets
+      nodes: []
       projects:
       - hub
       - medical-diagnosis

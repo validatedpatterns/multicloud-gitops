@@ -152,6 +152,7 @@ data:
       - manuela-stormshift-machine-sensor
       - manuela-stormshift-messaging
       - manuela-factory-ml-workspace
+      nodes: []
       operatorgroupExcludes:
       - manuela-factory-ml-workspace
       projects:

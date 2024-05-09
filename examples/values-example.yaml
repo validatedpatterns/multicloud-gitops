@@ -50,6 +50,17 @@ clusterGroup:
   - include-default-og:
       operatorGroup: true
 
+  nodes:
+  - m-m00.cluster.example.tld:
+      labels:
+        cluster.ocs.openshift.io/openshift-storage: ""
+  - m-m01.cluster.example.tld:
+      labels:
+        cluster.ocs.openshift.io/openshift-storage: ""
+  - m-m02.cluster.example.tld:
+      labels:
+        cluster.ocs.openshift.io/openshift-storage: ""
+
   operatorgroupExcludes:
   - exclude-og
 

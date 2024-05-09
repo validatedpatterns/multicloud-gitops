@@ -73,6 +73,7 @@ data:
       managedClusterGroups: {}
       name: example
       namespaces: []
+      nodes: []
       projects: []
       sharedValueFiles: []
       subscriptions: {}

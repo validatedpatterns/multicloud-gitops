@@ -291,6 +291,7 @@ data:
       - manuela-data-lake
       - staging
       - vault
+      nodes: []
       operatorgroupExcludes:
       - manuela-ml-workspace
       projects:

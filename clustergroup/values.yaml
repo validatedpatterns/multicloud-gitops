@@ -10,7 +10,6 @@ global:
     installPlanApproval: Automatic
     applicationRetryLimit: 20
 
-
 enabled: "all"
 
 # Note that sometimes changing helm values might require a hard refresh (https://github.com/helm/helm/issues/3486)
@@ -73,6 +72,12 @@ clusterGroup:
 #          - OpenShift
 #
 #  - open-cluster-management
+#
+  nodes: []
+#  nodes:
+#  - m-m00.mycluster.domain.tld:
+#      labels:
+#        cluster.ocs.openshift.io/openshift-storage: ""
 #
   subscriptions: {}
 #  - name: advanced-cluster-management

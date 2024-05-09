@@ -1,0 +1,25 @@
+{{- if not (eq .Values.enabled "plumbing") }}
+{{- range $node := .Values.clusterGroup.nodes }}
+apiVersion: v1
+kind: Node
+metadata:
+  {{- range $k, $v := $node }}
+  name: {{ $k }}
+  labels:
+    argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
+    {{- if $v.labels }}
+    {{- range $key, $value := $v.labels }}
+    {{ $key }}: {{ $value | default "" | quote }}
+    {{- end }}
+    {{- end }}
+
+    {{- if $v.annotations }}
+  annotations:
+    {{- range $key, $value := $v.annotations }}
+    {{ $key }}: {{ $value | default "" | quote }}
+    {{- end }}
+    {{- end }}{{- /* if $v.annotations */}}
+  {{- end }}{{- /* range $k, $v := $node */}}
+---
+{{- end -}}
+{{- end -}}

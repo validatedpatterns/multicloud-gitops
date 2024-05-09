@@ -234,6 +234,16 @@ data:
           operatorGroup: false
       - include-default-og:
           operatorGroup: true
+      nodes:
+      - m-m00.cluster.example.tld:
+          labels:
+            cluster.ocs.openshift.io/openshift-storage: ""
+      - m-m01.cluster.example.tld:
+          labels:
+            cluster.ocs.openshift.io/openshift-storage: ""
+      - m-m02.cluster.example.tld:
+          labels:
+            cluster.ocs.openshift.io/openshift-storage: ""
       operatorgroupExcludes:
       - exclude-og
       projects:
@@ -1173,6 +1183,33 @@ spec:
   href: 'https://example-gitops-server-mypattern-example.apps.region.example.com'
   location: ApplicationMenu
   text: 'Example ArgoCD'
+---
+# Source: clustergroup/templates/core/nodes.yaml
+apiVersion: v1
+kind: Node
+metadata:
+  name: m-m00.cluster.example.tld
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
+    cluster.ocs.openshift.io/openshift-storage: ""
+---
+# Source: clustergroup/templates/core/nodes.yaml
+apiVersion: v1
+kind: Node
+metadata:
+  name: m-m01.cluster.example.tld
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
+    cluster.ocs.openshift.io/openshift-storage: ""
+---
+# Source: clustergroup/templates/core/nodes.yaml
+apiVersion: v1
+kind: Node
+metadata:
+  name: m-m02.cluster.example.tld
+  labels:
+    argocd.argoproj.io/managed-by: mypattern-example
+    cluster.ocs.openshift.io/openshift-storage: ""
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
 ---
