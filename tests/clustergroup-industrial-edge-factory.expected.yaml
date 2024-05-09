@@ -146,7 +146,6 @@ data:
         verbosity: ""
       isHubCluster: false
       managedClusterGroups: {}
-      mastersSchedulable: false
       name: factory
       namespaces:
       - manuela-stormshift-line-dashboard
@@ -774,14 +773,6 @@ metadata:
 spec:
   targetNamespaces:
   - manuela-stormshift-messaging
----
-# Source: clustergroup/templates/core/scheduler.yaml
-apiVersion: config.openshift.io/v1
-kind: Scheduler
-metadata:
-  name: cluster
-spec:
-  mastersSchedulable: false
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1

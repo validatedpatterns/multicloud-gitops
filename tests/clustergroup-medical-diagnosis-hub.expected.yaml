@@ -259,7 +259,6 @@ data:
           - name: clusterGroup.isHubCluster
             value: false
           name: region-one
-      mastersSchedulable: false
       name: hub
       namespaces:
       - open-cluster-management
@@ -1705,14 +1704,6 @@ metadata:
 spec:
   targetNamespaces:
   - golang-external-secrets
----
-# Source: clustergroup/templates/core/scheduler.yaml
-apiVersion: config.openshift.io/v1
-kind: Scheduler
-metadata:
-  name: cluster
-spec:
-  mastersSchedulable: false
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1

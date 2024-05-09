@@ -20,7 +20,10 @@ clusterGroup:
   targetCluster: in-cluster
   sharedValueFiles: []
 
-  mastersSchedulable: false
+#  scheduler:
+#    mastersSchedulable: true
+#    defaultNodeSelector: type=user-node,region=east
+#    profile: HighNodeUtilization 
 
   argoCD:
     initContainers: []

@@ -71,7 +71,6 @@ data:
         verbosity: ""
       isHubCluster: true
       managedClusterGroups: {}
-      mastersSchedulable: false
       name: example
       namespaces: []
       projects: []
@@ -464,11 +463,3 @@ spec:
   href: 'https://example-gitops-server-common-example.'
   location: ApplicationMenu
   text: 'Example ArgoCD'
----
-# Source: clustergroup/templates/core/scheduler.yaml
-apiVersion: config.openshift.io/v1
-kind: Scheduler
-metadata:
-  name: cluster
-spec:
-  mastersSchedulable: false

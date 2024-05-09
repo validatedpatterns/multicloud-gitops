@@ -280,7 +280,6 @@ data:
           - name: clusterGroup.isHubCluster
             value: "false"
           name: factory
-      mastersSchedulable: false
       name: datacenter
       namespaces:
       - golang-external-secrets
@@ -1547,14 +1546,6 @@ metadata:
 spec:
   targetNamespaces:
   - vault
----
-# Source: clustergroup/templates/core/scheduler.yaml
-apiVersion: config.openshift.io/v1
-kind: Scheduler
-metadata:
-  name: cluster
-spec:
-  mastersSchedulable: false
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
 apiVersion: operators.coreos.com/v1alpha1

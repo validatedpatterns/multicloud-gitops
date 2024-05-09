@@ -15,7 +15,8 @@ clusterGroup:
   - /values/{{ .Values.global.clusterPlatform }}.yaml
   - /values/{{ .Values.global.clusterVersion }}.yaml
 
-  mastersSchedulable: true
+  scheduler:
+    mastersSchedulable: true
 
   # 
   # You can define namespaces using hashes and not as a list like so:

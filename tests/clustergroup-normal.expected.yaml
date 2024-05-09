@@ -211,7 +211,6 @@ data:
         - domain: syd.beekhof.net
           name: sydney
         name: argo-edge
-      mastersSchedulable: true
       name: example
       namespaces:
       - open-cluster-management:
@@ -239,6 +238,8 @@ data:
       - exclude-og
       projects:
       - datacenter
+      scheduler:
+        mastersSchedulable: true
       sharedValueFiles:
       - /values/aws.yaml
       - /values/4.12.yaml
