@@ -1,0 +1,172 @@
+{{- if (eq .Values.enabled "all") }}
+{{- range .Values.clusterGroup.managedClusterGroups }}
+{{- $group := . }}
+{{- if .hostedArgoSites }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .name }}
+  namespace: openshift-gitops
+spec:
+  description: "Cluster Group {{ $group.name }}"
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+status: {}
+---
+{{- end }}
+{{- range .hostedArgoSites }}
+{{ $secretsPathDefault := print "secret/data/hub/cluster_" .name }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $.Values.global.pattern }}-{{ $group.name }}-{{ .name }}
+  namespace: openshift-gitops
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  project: {{ $group.name }}
+  source:
+    repoURL: {{ coalesce $group.repoURL $.Values.global.repoURL }}
+    targetRevision: {{ coalesce $group.targetRevision $.Values.global.targetRevision }}
+    path: {{ default "common/clustergroup" $group.path }}
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+      - "/values-global.yaml"
+      - "/values-{{ $group.name }}.yaml"
+      {{- range $valueFile := $group.extraValueFiles }}
+      - {{ $valueFile | quote }}
+      {{- end }}
+      parameters:
+      - name: global.repoURL
+        value: $ARGOCD_APP_SOURCE_REPO_URL
+      - name: global.targetRevision
+        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+      - name: global.namespace
+        value: $ARGOCD_APP_NAMESPACE
+      - name: global.pattern
+        value: {{ $.Values.global.pattern }}
+      - name: global.hubClusterDomain
+        value: {{ $.Values.global.hubClusterDomain }}
+      - name: global.localClusterDomain
+        value: apps.{{ .domain }}
+      - name: global.clusterDomain
+        value: {{ .domain }}
+      - name: enabled
+        value: core
+      - name: clusterGroup.name
+        value: {{ $group.name }}
+      - name: clusterGroup.targetCluster
+        value: {{ .name }}
+      - name: clusterGroup.hostedSite.secretsPath
+        value: {{ default $secretsPathDefault .secretsPath }}
+     {{- range $group.helmOverrides }}
+      - name: {{ .name }}
+        value: {{ .value | quote }}
+     {{- end }}
+     {{- if $group.fileParameters }}
+      fileParameters:
+      {{- range $group.fileParameters }}
+      - name: {{ .name }}
+        path: {{ .path }}
+      {{- end }}
+     {{- end }}
+  destination:
+    name: {{ .name }}
+    namespace: {{ $.Values.global.pattern }}-{{ $group.name }}
+  syncPolicy:
+    automated:
+      selfHeal: true
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  - group: route.openshift.io
+    kind: Route
+    jsonPointers:
+    - /status
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $.Values.global.pattern }}-{{ $group.name }}-{{ .name }}-plumbing
+  namespace: openshift-gitops
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  project: {{ $group.name }}
+  source:
+    repoURL: {{ coalesce $group.repoURL $.Values.global.repoURL }}
+    targetRevision: {{ coalesce $group.targetRevision $.Values.global.targetRevision }}
+    path: {{ default "common/clustergroup" $group.path }}
+    helm:
+      ignoreMissingValueFiles: true
+      valueFiles:
+      - "/values-global.yaml"
+      - "/values-{{ $group.name }}.yaml"
+      {{- range $valueFile := $group.extraValueFiles }}
+      - {{ $valueFile | quote }}
+      {{- end }}
+      parameters:
+      - name: global.repoURL
+        value: $ARGOCD_APP_SOURCE_REPO_URL
+      - name: global.targetRevision
+        value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+      - name: global.namespace
+        value: $ARGOCD_APP_NAMESPACE
+      - name: global.pattern
+        value: {{ $.Values.global.pattern }}
+      - name: global.hubClusterDomain
+        value: {{ $.Values.global.hubClusterDomain }}
+      - name: global.localClusterDomain
+        value: apps.{{ .domain }}
+      - name: global.clusterDomain
+        value: {{ .domain }}
+      - name: enabled
+        value: plumbing
+      - name: clusterGroup.name
+        value: {{ $group.name }}
+      - name: clusterGroup.targetCluster
+        value: {{ .name }}
+      - name: clusterGroup.hostedSite.secretsPath
+        value: {{ default $secretsPathDefault .secretsPath }}
+     {{- range $group.helmOverrides }}
+      - name: {{ .name }}
+        value: {{ .value | quote }}
+     {{- end }}
+     {{- if $group.fileParameters }}
+      fileParameters:
+      {{- range $group.fileParameters }}
+      - name: {{ .name }}
+        path: {{ .path }}
+      {{- end }}
+     {{- end }}
+  destination:
+    name: in-cluster
+    namespace: openshift-gitops
+  syncPolicy:
+    automated:
+      selfHeal: true
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  - group: route.openshift.io
+    kind: Route
+    jsonPointers:
+    - /status
+---
+{{- end }}
+{{- end }}
+{{- end }}

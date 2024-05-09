@@ -1,0 +1,20 @@
+global:
+  options:
+    useCSV: True
+    syncPolicy: Manual
+    installPlanApproval: Automatic
+    applicationRetryLimit: 20
+
+  git:
+    hostname: github.com
+    # Account is the user or organization under which the pattern repos lives
+    account: hybrid-cloud-patterns
+    email: someone@somewhere.com
+    dev_revision: main
+
+  secretStore:
+    backend: vault
+
+main:
+  clusterGroupName: example
+

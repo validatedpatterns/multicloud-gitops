@@ -1,0 +1,48 @@
+diff -up external-secrets/values.yaml.orig external-secrets/values.yaml
+--- external-secrets/values.yaml.orig	2023-07-31 15:12:18.815909938 +0200
++++ external-secrets/values.yaml	2023-07-31 15:32:59.905360226 +0200
+@@ -117,9 +117,11 @@ securityContext:
+       - ALL
+   readOnlyRootFilesystem: true
+   runAsNonRoot: true
+-  runAsUser: 1000
+-  seccompProfile:
+-    type: RuntimeDefault
++  # runAsUser: 1000
++  # Uncomment this once 4.10 is out of scope
++  # seccompProfile:
++  #   type: RuntimeDefault
++  seccompProfile: null
+ 
+ resources: {}
+   # requests:
+@@ -331,9 +333,11 @@ webhook:
+         - ALL
+     readOnlyRootFilesystem: true
+     runAsNonRoot: true
+-    runAsUser: 1000
+-    seccompProfile:
+-      type: RuntimeDefault
++    # runAsUser: 1000
++    seccompProfile: null
++    # Uncomment this once 4.10 is out of scope
++    # seccompProfile:
++    #   type: RuntimeDefault
+ 
+   resources: {}
+       # requests:
+@@ -453,9 +457,11 @@ certController:
+         - ALL
+     readOnlyRootFilesystem: true
+     runAsNonRoot: true
+-    runAsUser: 1000
+-    seccompProfile:
+-      type: RuntimeDefault
++    # runAsUser: 1000
++    seccompProfile: null
++    # Uncomment this once 4.10 is out of scope
++    # seccompProfile:
++    #   type: RuntimeDefault
+ 
+   resources: {}
+       # requests:

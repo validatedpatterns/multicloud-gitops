@@ -1,0 +1,254 @@
+{{- $hasInitContainerCapability := and (.Values.global.experimentalCapabilities) (has "initcontainers" (splitList "," .Values.global.experimentalCapabilities)) }}
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: openshift-gitops-policy
+  annotations:
+    policy.open-cluster-management.io/standards: NIST-CSF
+    policy.open-cluster-management.io/categories: PR.DS Data Security
+    policy.open-cluster-management.io/controls: PR.DS-1 Data-at-rest
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: openshift-gitops-config
+        spec:
+          remediationAction: enforce
+          severity: medium
+          namespaceSelector:
+            include:
+              - default
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: trusted-ca-bundle
+                  namespace: openshift-gitops
+                  labels:
+                    config.openshift.io/inject-trusted-cabundle: 'true'
+            - complianceType: mustonlyhave
+              objectDefinition:
+                # This is an auto-generated file. DO NOT EDIT
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: openshift-gitops-operator
+                  namespace: openshift-operators
+                  labels:
+                    operators.coreos.com/openshift-gitops-operator.openshift-operators: ''
+                spec:
+                  channel: {{ default "gitops-1.12" .Values.main.gitops.channel }}
+                  installPlanApproval: Automatic
+                  name: openshift-gitops-operator
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+                  config:
+                    env:
+                      - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
+                        value: "*"
+{{- if $hasInitContainerCapability }}
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: argoproj.io/v1beta1
+                kind: ArgoCD
+                metadata:
+                  name: openshift-gitops
+                  namespace: openshift-gitops
+                spec:
+                  applicationSet:
+                    resources:
+                      limits:
+                        cpu: "2"
+                        memory: 1Gi
+                      requests:
+                        cpu: 250m
+                        memory: 512Mi
+                    webhookServer:
+                      ingress:
+                        enabled: false
+                      route:
+                        enabled: false
+                  controller:
+                    processors: {}
+                    resources:
+                      limits:
+                        cpu: "2"
+                        memory: 2Gi
+                      requests:
+                        cpu: 250m
+                        memory: 1Gi
+                    sharding: {}
+                  grafana:
+                    enabled: false
+                    ingress:
+                      enabled: false
+                    resources:
+                      limits:
+                        cpu: 500m
+                        memory: 256Mi
+                      requests:
+                        cpu: 250m
+                        memory: 128Mi
+                    route:
+                      enabled: false
+                  ha:
+                    enabled: false
+                    resources:
+                      limits:
+                        cpu: 500m
+                        memory: 256Mi
+                      requests:
+                        cpu: 250m
+                        memory: 128Mi
+                  initialSSHKnownHosts: {}
+                  monitoring:
+                    enabled: false
+                  notifications:
+                    enabled: false
+                  prometheus:
+                    enabled: false
+                    ingress:
+                      enabled: false
+                    route:
+                      enabled: false
+                  rbac:
+                    defaultPolicy: ""
+                    policy: |-
+                      g, system:cluster-admins, role:admin
+                      g, cluster-admins, role:admin
+                    scopes: '[groups]'
+                  redis:
+                    resources:
+                      limits:
+                        cpu: 500m
+                        memory: 256Mi
+                      requests:
+                        cpu: 250m
+                        memory: 128Mi
+                  repo:
+                    initContainers:
+                    - command:
+                      - bash
+                      - -c
+                      - cat /var/run/kube-root-ca/ca.crt /var/run/trusted-ca/ca-bundle.crt > /tmp/ca-bundles/ca-bundle.crt
+                        || true
+                      image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+                      name: fetch-ca
+                      resources: {}
+                      volumeMounts:
+                      - mountPath: /var/run/kube-root-ca
+                        name: kube-root-ca
+                      - mountPath: /var/run/trusted-ca
+                        name: trusted-ca-bundle
+                      - mountPath: /tmp/ca-bundles
+                        name: ca-bundles
+                    resources:
+                      limits:
+                        cpu: "1"
+                        memory: 1Gi
+                      requests:
+                        cpu: 250m
+                        memory: 256Mi
+                    volumeMounts:
+                    - mountPath: /etc/pki/tls/certs
+                      name: ca-bundles
+                    volumes:
+                    - configMap:
+                        name: kube-root-ca.crt
+                      name: kube-root-ca
+                    - configMap:
+                        name: trusted-ca-bundle
+                        optional: true
+                      name: trusted-ca-bundle
+                    - emptyDir: {}
+                      name: ca-bundles
+                  resourceExclusions: |-
+                    - apiGroups:
+                      - tekton.dev
+                      clusters:
+                      - '*'
+                      kinds:
+                      - TaskRun
+                      - PipelineRun
+                  server:
+                    autoscale:
+                      enabled: false
+                    grpc:
+                      ingress:
+                        enabled: false
+                    ingress:
+                      enabled: false
+                    resources:
+                      limits:
+                        cpu: 500m
+                        memory: 256Mi
+                      requests:
+                        cpu: 125m
+                        memory: 128Mi
+                    route:
+                      enabled: true
+                      {{- if and (.Values.global.argocdServer) (.Values.global.argocdServer.route) (.Values.global.argocdServer.route.tls) }}
+                      tls:
+                        insecureEdgeTerminationPolicy: {{ default "Redirect" .Values.global.argocdServer.route.tls.insecureEdgeTerminationPolicy }}
+                        termination: {{ default "reencrypt" .Values.global.argocdServer.route.tls.termination }}
+                      {{- end }}
+                    service:
+                      type: ""
+                  sso:
+                    dex:
+                      openShiftOAuth: true
+                      resources:
+                        limits:
+                          cpu: 500m
+                          memory: 256Mi
+                        requests:
+                          cpu: 250m
+                          memory: 128Mi
+                    provider: dex
+                  tls:
+                    ca: {}
+{{- end }}{{/* if hasInitContainerCapability */}}
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: openshift-gitops-placement-binding
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+placementRef:
+  name: openshift-gitops-placement
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: openshift-gitops-policy
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: openshift-gitops-placement
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: vendor
+        operator: In
+        values:
+          - OpenShift
+      - key: local-cluster
+        operator: NotIn
+        values:
+          - 'true'

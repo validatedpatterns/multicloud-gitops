@@ -1,0 +1,108 @@
+- name: Check KUBEADMINPASS is set
+  ansible.builtin.fail:
+    msg: "KUBEADMINPASS: '{{ kubeadminpass }}' is not set"
+  failed_when: kubeadminpass is not defined or kubeadminpass | length == 0
+
+- name: Get kubeadmin api endpoint
+  ansible.builtin.command:
+    oc whoami --show-server=true
+  register: kubeadminapi_raw
+
+- name: Set kubeadminapi fact
+  ansible.builtin.set_fact:
+    kubeadminapi: "{{ kubeadminapi_raw.stdout }}"
+
+- name: Login via kubeadmin
+  ansible.builtin.command: |
+    oc login -u kubeadmin -p "{{ kubeadminpass }}" "{{ kubeadminapi }}"  --insecure-skip-tls-verify=true
+
+- name: Get kubeadmin token
+  ansible.builtin.command: |
+    oc whoami -t
+  register: oc_whoami_raw
+
+- name: Set kubeadmin token
+  ansible.builtin.set_fact:
+    kubeadmin_token: "{{ oc_whoami_raw.stdout }}"
+
+- name: Expose internal registry route
+  ansible.builtin.shell: |
+    oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
+
+- name: Fetch internal registry route value
+  ansible.builtin.command:
+    oc registry info --public=true
+  register: registry_route_raw
+  retries: 20
+  delay: 20
+  until:
+    - registry_route_raw is not failed
+    - registry_route_raw.stdout | length > 0
+
+- name: Set route fact
+  ansible.builtin.set_fact:
+    registry_route: "{{ registry_route_raw.stdout }}"
+
+- name: Set registry allowedRegistries
+  ansible.builtin.shell: >
+    oc patch image.config.openshift.io/cluster --patch "{\"spec\":{\"registrySources\":{\"allowedRegistries\":[ \"registry.stage.redhat.io\", \"registry.access.redhat.com\", \"registry.connect.redhat.com\", \"ghcr.io\", \"gcr.io\", \"quay.io\", \"registry.redhat.io\", \"docker.io\",
+    \"registry-proxy.engineering.redhat.com\", \"image-registry.openshift-image-registry.svc:5000\", \"{{ registry_route }}\"]}}}" --type=merge
+
+- name: Set registry insecureRegistries
+  ansible.builtin.shell: >
+    oc patch image.config.openshift.io/cluster --patch "{\"spec\":{\"registrySources\":{\"insecureRegistries\":[ \"registry-proxy.engineering.redhat.com\",
+    \"image-registry.openshift-image-registry.svc:5000\", \"{{ registry_route }}\"]}}}" --type=merge
+
+- name: Get current cluster pull secrets
+  ansible.builtin.command:
+    oc extract secret/pull-secret -n openshift-config --to=-
+  register: pull_secrets_raw
+
+- name: Add local registry to pull secrets and set auth fact
+  ansible.builtin.set_fact:
+    pull_secrets_new: "{{ pull_secrets_raw.stdout | from_json }}"
+    internal_registry_auth: "{{ ('kubeadmin:' + kubeadmin_token) | b64encode }}"
+
+- name: Add local registry to pull secrets
+  ansible.builtin.set_fact:
+    pull_secrets: "{{ pull_secrets_new | combine({'auths': {registry_route: {'email': internal_registry_email, 'auth': internal_registry_auth}}}, recursive=true) }}"
+
+- name: Get a tempfile for the pull secrets
+  ansible.builtin.tempfile:
+    state: directory
+  register: pull_secrets_tempfolder
+
+- name: Store pull secrets in tempfile
+  ansible.builtin.copy:
+    dest: "{{ pull_secrets_tempfolder.path }}/.dockerconfigjson"
+    content: "{{ pull_secrets | to_nice_json }}"
+    mode: "0644"
+
+- name: Update pull-secret in the cluster
+  ansible.builtin.shell: |
+    oc set data secret/pull-secret -n openshift-config --from-file="{{ pull_secrets_tempfolder.path }}/.dockerconfigjson"
+
+- name: Before proceeding here we need to make sure that the MCPs have all settled
+  ansible.builtin.shell: |
+    if [ $(oc get mcp/master -o jsonpath='{.status.readyMachineCount}') != $(oc get mcp/master -o jsonpath='{.status.machineCount}') ]; then
+      exit 1
+    fi
+    if [ $(oc get mcp/worker -o jsonpath='{.status.readyMachineCount}') != $(oc get mcp/worker -o jsonpath='{.status.machineCount}') ]; then
+      exit 1
+    fi
+  retries: 30
+  delay: 20
+  register: mcp_ready
+  until: mcp_ready is not failed
+
+- name: Login the internal registry with podman
+  ansible.builtin.command:
+    podman login --tls-verify=false --username unused --password "{{ kubeadmin_token }}" "{{ registry_route }}"
+
+- name: Set Mirror URL fact for internal mirror IIB
+  ansible.builtin.set_fact:
+    mirror_iib: "{{ registry_route }}/{{ internal_registry_ns }}/iib"
+
+- name: Set Mirror URL fact for internal mirror
+  ansible.builtin.set_fact:
+    mirror_dest: "{{ registry_route }}/{{ internal_registry_ns }}/"

@@ -1,0 +1,61 @@
+---
+# Registers a variable valled vault_status containing the vault's status json dict
+- name: Check for vault namespace
+  kubernetes.core.k8s_info:
+    kind: Namespace
+    name: "{{ vault_ns }}"
+  register: vault_ns_rc
+  until: vault_ns_rc.resources | length > 0
+  retries: 20
+  delay: 45
+
+- name: Check if the vault pod is present
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: "{{ vault_ns }}"
+    name: "{{ vault_pod }}"
+  register: vault_pod_rc
+  until: vault_pod_rc.resources | length > 0
+  retries: 20
+  delay: 45
+
+# This needs retrying because during startup we can just get
+# Failed to execute on pod vault-0 due to : (0)\nReason: Handshake status 500 Internal Server Error
+# In the above case there is no 'rc' in vault_status. So first we wait for 'rc' to show up and ignore
+# any errors, and then we bail out if rc is 2 as it means the vault is already initialized
+- name: Check for the vault status
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: vault status -format=json
+  register: vault_status_json
+  until: "'rc' in vault_status_json"
+  retries: 20
+  delay: 45
+  failed_when: "'stdout_lines' not in vault_status_json"
+
+- name: Set vault status output json fact
+  ansible.builtin.set_fact:
+    vault_status: "{{ vault_status_json.stdout | from_json }}"
+  when: vault_status_json.stdout_lines | length > 0
+
+- name: List Vault pods
+  kubernetes.core.k8s_info:
+    namespace: "{{ vault_ns }}"
+    kind: Pod
+    label_selectors:
+      - "component = server"
+  register: vault_pods_list
+
+- name: "Get pods"
+  ansible.builtin.set_fact:
+    vault_pods: "{{ vault_pods + [item.metadata.name] }}"
+  loop: "{{ vault_pods_list.resources }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"
+  vars:
+    vault_pods: []
+
+- name: "Followers"
+  ansible.builtin.set_fact:
+    followers: "{{ vault_pods | difference(vault_pod) }}"

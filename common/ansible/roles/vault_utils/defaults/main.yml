@@ -1,0 +1,24 @@
+---
+# defaults file for vault_utils
+values_secret: "{{ lookup('env', 'HOME') }}/values-secret.yaml"
+kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
+kubeconfig_backup: "{{ lookup('env', 'HOME') }}/.kube/config"
+vault_ns: "vault"
+vault_pod: "vault-0"
+vault_hub: "hub"
+vault_pvc: "data-vault-0"
+vault_hub_kubernetes_host: https://$KUBERNETES_PORT_443_TCP_ADDR:443
+# Needs extra escaping due to how it gets injected via shell in the vault
+vault_hub_capabilities: '[\\\"read\\\"]'
+vault_base_path: "secret"
+vault_path: "{{ vault_base_path }}/{{ vault_hub }}"
+vault_hub_ttl: "15m"
+vault_spoke_capabilities: '[\\\"read\\\"]'
+vault_spoke_ttl: "15m"
+vault_global_policy: global
+vault_global_capabilities: '[\\\"read\\\"]'
+external_secrets_ns: golang-external-secrets
+external_secrets_sa: golang-external-secrets
+external_secrets_secret: golang-external-secrets
+unseal_secret: "vaultkeys"
+unseal_namespace: "imperative"

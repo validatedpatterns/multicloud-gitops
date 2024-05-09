@@ -1,0 +1,23 @@
+# This playbook is a simple hello-world playbook to show capabilities
+# It creates a config-map inside the imperative namespace containing
+# the helm variable "global.clusterDomain"
+---
+- name: Hello World Example
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  vars:
+    ns: imperative
+  tasks:
+    - name: Create secret with managed cluster's CA
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          kind: ConfigMap
+          apiVersion: v1
+          metadata:
+            name: "hello-world"
+            namespace: "{{ ns }}"
+          data:
+            hello-cluster-domain: "{{ global['clusterDomain'] }}"

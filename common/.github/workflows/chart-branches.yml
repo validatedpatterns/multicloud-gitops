@@ -1,0 +1,118 @@
+---
+name: Create per-chart branches
+
+# We only run this job on the charts that will be later moved to full blown charts
+# We also want to run the subtree comand only for the charts that have been actually changed
+# because git subtree split is a bit of an expensive operation
+# github actions do not support yaml anchors so there is more duplication than usual
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'acm/**'
+      - 'golang-external-secrets/**'
+      - 'hashicorp-vault/**'
+      - 'letsencrypt/**'
+      - 'clustergroup/**'
+
+jobs:
+  changes:
+    name: Figure out per-chart changes
+    if: github.repository == 'validatedpatterns/common'
+    runs-on: ubuntu-latest
+    permissions: read-all
+    outputs:
+      acm: ${{ steps.filter.outputs.acm }}
+      golang-external-secrets: ${{ steps.filter.outputs.golang-external-secrets }}
+      hashicorp-vault: ${{ steps.filter.outputs.hashicorp-vault }}
+      letsencrypt: ${{ steps.filter.outputs.letsencrypt }}
+      clustergroup: ${{ steps.filter.outputs.clustergroup }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            acm:
+              - 'acm/**'
+            golang-external-secrets:
+              - 'golang-external-secrets/**'
+            hashicorp-vault:
+              - 'hashicorp-vault/**'
+            letsencrypt:
+              - 'letsencrypt/**'
+            clustergroup:
+              - 'clustergroup/**'
+
+  acm:
+    needs: changes
+    if: |
+      ${{ needs.changes.outputs.acm == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
+    uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
+    permissions:
+      actions: write
+      contents: write
+    with:
+      chart_name: acm
+      target_repository: validatedpatterns/acm-chart
+    secrets: inherit
+
+  golang-external-secrets:
+    needs: changes
+    if: |
+      ${{ needs.changes.outputs.golang-external-secrets == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
+    uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
+    permissions:
+      actions: write
+      contents: write
+    with:
+      chart_name: golang-external-secrets
+      target_repository: validatedpatterns/golang-external-secrets-chart
+    secrets: inherit
+
+  hashicorp-vault:
+    needs: changes
+    if: |
+      ${{ needs.changes.outputs.hashicorp-vault == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
+    uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
+    permissions:
+      actions: write
+      contents: write
+    with:
+      chart_name: hashicorp-vault
+      target_repository: validatedpatterns/hashicorp-vault-chart
+    secrets: inherit
+
+  letsencrypt:
+    needs: changes
+    if: |
+      ${{ needs.changes.outputs.letsencrypt == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
+    uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
+    permissions:
+      actions: write
+      contents: write
+    with:
+      chart_name: letsencrypt
+      target_repository: validatedpatterns/letsencrypt-chart
+    secrets: inherit
+
+  clustergroup:
+    needs: changes
+    if: |
+      ${{ needs.changes.outputs.clustergroup == 'true' }} &&
+      github.repository == 'validatedpatterns/common'
+    uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
+    permissions:
+      actions: write
+      contents: write
+    with:
+      chart_name: clustergroup
+      target_repository: validatedpatterns/clustergroup-chart
+    secrets: inherit

@@ -1,0 +1,38 @@
+---
+name: Split into chart repo branches
+
+on:
+  workflow_call:
+    inputs:
+      chart_name:
+        required: true
+        type: string
+      target_repository:
+        required: true
+        type: string
+
+jobs:
+  split_chart:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CHARTS_REPOS_TOKEN }}
+
+      - name: Run git subtree split and push
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHARTS_REPOS_TOKEN }}
+        run: |
+          set -e
+          N="${{ inputs.chart_name }}"
+          B="${N}-main-single-chart"
+          git push origin -d "${B}" || /bin/true
+          git subtree split -P "${N}" -b "${B}"
+          git push -f -u origin "${B}"
+          #git clone https://validatedpatterns:${GITHUB_TOKEN}@github.com/validatedpatterns/common.git -b "acm-main-single-chart" --single-branch
+          git push --force https://validatedpatterns:"${GITHUB_TOKEN}"@github.com/${{ inputs.target_repository }}.git "${B}:main"

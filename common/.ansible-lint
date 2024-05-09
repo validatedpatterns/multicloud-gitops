@@ -1,0 +1,20 @@
+# Vim filetype=yaml
+---
+offline: false
+skip_list:
+  - name[template] # Allow Jinja templating inside task and play names
+  - template-instead-of-copy # Templated files should use template instead of copy
+  - yaml[line-length] # too long lines
+  - yaml[indentation] # Forcing lists to be always indented by 2 chars is silly IMO
+  - var-naming[no-role-prefix] # This would be too much churn for very little gain
+  - no-changed-when
+  - var-naming[no-role-prefix] # There are too many changes now and it would be too risky
+
+# ansible-lint gh workflow cannot find ansible.cfg hence fails to import vault_utils role
+exclude_paths:
+  - ./ansible/playbooks/vault/vault.yaml
+  - ./ansible/playbooks/iib-ci/iib-ci.yaml
+  - ./ansible/playbooks/k8s_secrets/k8s_secrets.yml
+  - ./ansible/playbooks/process_secrets/process_secrets.yml
+  - ./ansible/playbooks/process_secrets/display_secrets_info.yml
+  - ./ansible/roles/vault_utils/tests/test.yml
