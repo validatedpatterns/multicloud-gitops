@@ -61,8 +61,15 @@ def test_subscription_status_hub(openshift_dyn_client):
             operator_versions_repo = (
                 "git@gitlab.cee.redhat.com:mpqe/mps/vp/operator-versions.git"
             )
+            git_env = os.environ.copy()
+            git_env[
+                "GIT_SSH_COMMAND"
+            ] = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
             clone = subprocess.run(
-                ["git", "clone", operator_versions_repo], capture_output=True, text=True
+                ["git", "clone", operator_versions_repo],
+                capture_output=True,
+                text=True,
+                env=git_env,
             )
             logger.info(clone.stdout)
             logger.info(clone.stderr)
