@@ -8,7 +8,9 @@ from ocp_resources.storage_class import StorageClass
 from validatedpatterns_tests.interop import components
 from validatedpatterns_tests.interop.crd import ArgoCD, ManagedCluster
 from validatedpatterns_tests.interop.edge_util import (
-    get_long_live_bearer_token, get_site_response)
+    get_long_live_bearer_token,
+    get_site_response,
+)
 
 from . import __loggername__
 
