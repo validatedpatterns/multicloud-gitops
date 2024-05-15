@@ -65,6 +65,10 @@
         "clusterGroupName": {
           "type": "string"
         },
+        "extraParameters": {
+          "type": "array",
+          "description": "Pass in extra Helm parameters to all ArgoCD Applications and the framework."
+        },
         "experimentalCapabilities": {
           "type": "string",
           "description": "String to enable certain experimental capabilities in the operator and the framework."
