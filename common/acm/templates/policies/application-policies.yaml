@@ -45,7 +45,7 @@ spec:
                       ignoreMissingValueFiles: true
                       valueFiles:
                       {{- include "acm.app.policies.valuefiles" . | nindent 22 }}
-                      {{- range $valueFile := $.Values.global.extraValueFiles }}
+                      {{- range $valueFile := .extraValueFiles }}
                       - {{ $valueFile | quote }}
                       {{- end }}
                       parameters:
