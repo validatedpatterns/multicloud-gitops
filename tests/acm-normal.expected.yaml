@@ -608,6 +608,8 @@ spec:
                     path: common/clustergroup
                     helm:
                       ignoreMissingValueFiles: true
+                      values: |
+                        extraParametersNested:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-acm-edge.yaml"
@@ -704,6 +706,8 @@ spec:
                     path: common/clustergroup
                     helm:
                       ignoreMissingValueFiles: true
+                      values: |
+                        extraParametersNested:
                       valueFiles:
                       - "/values-global.yaml"
                       - "/values-acm-provision-edge.yaml"

@@ -559,6 +559,8 @@ spec:
     path: charts/datacenter/opendatahub
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-factory.yaml"

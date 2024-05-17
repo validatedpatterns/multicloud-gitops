@@ -857,6 +857,8 @@ spec:
     path: common/acm
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -922,6 +924,8 @@ spec:
     path: charts/datacenter/opendatahub
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -978,6 +982,8 @@ spec:
     path: charts/datacenter/pipelines
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -1034,6 +1040,8 @@ spec:
     path: charts/datacenter/manuela-data-lake
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -1120,6 +1128,8 @@ spec:
     path: charts/datacenter/external-secrets
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -1176,6 +1186,8 @@ spec:
     path: common/golang-external-secrets
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -1259,6 +1271,8 @@ spec:
     chart: vault
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
