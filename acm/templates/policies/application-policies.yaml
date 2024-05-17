@@ -43,6 +43,11 @@ spec:
                     path: {{ default "common/clustergroup" .path }}
                     helm:
                       ignoreMissingValueFiles: true
+                      values: |
+                        extraParametersNested:
+                        {{- range $k, $v := $.Values.extraParametersNested }}
+                          {{ $k }}: {{ printf "%s" $v | quote }}
+                        {{- end }}
                       valueFiles:
                       {{- include "acm.app.policies.valuefiles" . | nindent 22 }}
                       {{- range $valueFile := .extraValueFiles }}
@@ -73,6 +78,10 @@ spec:
                         value: {{ $group.name }}
                       - name: global.experimentalCapabilities
                         value: {{ $.Values.global.experimentalCapabilities }}
+                      {{- range $k, $v := $.Values.extraParametersNested }}
+                      - name: {{ $k }}
+                        value: {{ printf "%s" $v | quote }}
+                      {{- end }}
                      {{- range .helmOverrides }}
                       - name: {{ .name }}
                         value: {{ .value | quote }}

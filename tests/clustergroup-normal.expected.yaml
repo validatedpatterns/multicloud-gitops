@@ -707,6 +707,8 @@ spec:
     path: common/acm
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-example.yaml"
@@ -774,6 +776,8 @@ spec:
     path: charts/datacenter/pipelines
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-example.yaml"
