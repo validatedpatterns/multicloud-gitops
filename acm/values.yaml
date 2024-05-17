@@ -9,6 +9,8 @@ global:
   targetRevision: main
   options:
     applicationRetryLimit: 20
+  secretStore:
+    backend: "vault"
 
 clusterGroup:
   subscriptions:

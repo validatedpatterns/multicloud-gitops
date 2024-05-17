@@ -23,7 +23,7 @@ golangExternalSecrets:
       type: Secret
       name: hub-ca
       key: hub-kube-root-ca.crt
-      namespace: imperative
+      namespace: golang-external-secrets
 
 global:
   hubClusterDomain: hub.example.com
