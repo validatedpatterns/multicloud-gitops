@@ -1,5 +1,6 @@
 # This pushes out the HUB's Certificate Authorities on to the imported clusters
-{{ if .Values.clusterGroup.isHubCluster }}
+{{- if .Values.clusterGroup.isHubCluster }}
+{{- if (eq (((.Values.global).secretStore).backend) "vault") }}
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
@@ -31,7 +32,7 @@ spec:
                 type: Opaque
                 metadata:
                   name: hub-ca
-                  namespace: imperative
+                  namespace: golang-external-secrets
                 data:
                   hub-kube-root-ca.crt: '{{ `{{hub fromConfigMap "" "kube-root-ca.crt" "ca.crt" | base64enc hub}}` }}'
                   hub-openshift-service-ca.crt: '{{ `{{hub fromConfigMap "" "openshift-service-ca.crt" "service-ca.crt" | base64enc hub}}` }}'
@@ -67,5 +68,5 @@ spec:
         operator: NotIn
         values:
           - 'true'
-{{ end }}
-
+{{- end }}
+{{- end }}
