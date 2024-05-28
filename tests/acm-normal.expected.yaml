@@ -36,6 +36,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: aws-cd-one-w-pool-acm-provision-edge-install-config
+  namespace: aws-cd-one-w-pool-acm-provision-edge
 data:
   # Base64 encoding of install-config yaml
   install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWNkLW9uZS13LXBvb2wnIApiYXNlRG9tYWluOiBibHVlcHJpbnRzLnJoZWNvZW5nLmNvbQpjb250cm9sUGxhbmU6CiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgbmFtZTogY29udHJvbFBsYW5lCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF3czoKICAgICAgdHlwZTogbTUueGxhcmdlCmNvbXB1dGU6Ci0gaHlwZXJ0aHJlYWRpbmc6IEVuYWJsZWQKICBhcmNoaXRlY3R1cmU6IGFtZDY0CiAgbmFtZTogJ3dvcmtlcicKICByZXBsaWNhczogMwogIHBsYXRmb3JtOgogICAgYXdzOgogICAgICB0eXBlOiBtNS54bGFyZ2UKbmV0d29ya2luZzoKICBjbHVzdGVyTmV0d29yazoKICAtIGNpZHI6IDEwLjEyOC4wLjAvMTQKICAgIGhvc3RQcmVmaXg6IDIzCiAgbWFjaGluZU5ldHdvcms6CiAgLSBjaWRyOiAxMC4wLjAuMC8xNgogIG5ldHdvcmtUeXBlOiBPVk5LdWJlcm5ldGVzCiAgc2VydmljZU5ldHdvcms6CiAgLSAxNzIuMzAuMC4wLzE2CnBsYXRmb3JtOgogIGF3czoKICAgIHJlZ2lvbjogYXAtc291dGhlYXN0LTEKcHVsbFNlY3JldDogIiIgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cwpzc2hLZXk6ICIiICAgICAjIHNraXAsIGhpdmUgd2lsbCBpbmplY3QgYmFzZWQgb24gaXQncyBzZWNyZXRz
@@ -46,6 +47,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: aws-cd-two-wo-pool-acm-provision-on-deploy-install-config
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
 data:
   # Base64 encoding of install-config yaml
   install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWNkLXR3by13by1wb29sJyAKYmFzZURvbWFpbjogYmx1ZXByaW50cy5yaGVjb2VuZy5jb20KY29udHJvbFBsYW5lOgogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIG5hbWU6IGNvbnRyb2xQbGFuZQogIHJlcGxpY2FzOiAzCiAgcGxhdGZvcm06CiAgICBhd3M6CiAgICAgIHR5cGU6IG01LnhsYXJnZQpjb21wdXRlOgotIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIG5hbWU6ICd3b3JrZXInCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF3czoKICAgICAgdHlwZTogbTUueGxhcmdlCm5ldHdvcmtpbmc6CiAgY2x1c3Rlck5ldHdvcms6CiAgLSBjaWRyOiAxMC4xMjguMC4wLzE0CiAgICBob3N0UHJlZml4OiAyMwogIG1hY2hpbmVOZXR3b3JrOgogIC0gY2lkcjogMTAuMC4wLjAvMTYKICBuZXR3b3JrVHlwZTogT1ZOS3ViZXJuZXRlcwogIHNlcnZpY2VOZXR3b3JrOgogIC0gMTcyLjMwLjAuMC8xNgpwbGF0Zm9ybToKICBhd3M6CiAgICByZWdpb246IGFwLXNvdXRoZWFzdC0zCnB1bGxTZWNyZXQ6ICIiICMgc2tpcCwgaGl2ZSB3aWxsIGluamVjdCBiYXNlZCBvbiBpdCdzIHNlY3JldHMKc3NoS2V5OiAiIiAgICAgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cw==
@@ -294,6 +296,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-cd-one-w-pool-acm-provision-edge-creds
+  namespace: aws-cd-one-w-pool-acm-provision-edge
 spec:
   dataFrom:
   - extract:
@@ -315,6 +318,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-cd-one-w-pool-acm-provision-edge-infra-creds
+  namespace: aws-cd-one-w-pool-acm-provision-edge
 spec:
   data:
   - secretKey: openshiftPullSecret
@@ -372,6 +376,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-cd-two-wo-pool-acm-provision-on-deploy-creds
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
 spec:
   dataFrom:
   - extract:
@@ -393,6 +398,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-cd-two-wo-pool-acm-provision-on-deploy-infra-creds
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
 spec:
   data:
   - secretKey: openshiftPullSecret
@@ -624,6 +630,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-cd-one-w-pool-acm-provision-edge-pull-secret
+  namespace: aws-cd-one-w-pool-acm-provision-edge
 spec:
   data:
   - secretKey: openshiftPullSecret
@@ -648,6 +655,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-cd-one-w-pool-acm-provision-edge-ssh-private-key
+  namespace: aws-cd-one-w-pool-acm-provision-edge
 spec:
   data:
   - secretKey: sshPrivateKey
@@ -672,6 +680,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-cd-two-wo-pool-acm-provision-on-deploy-pull-secret
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
 spec:
   data:
   - secretKey: openshiftPullSecret
@@ -696,6 +705,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-cd-two-wo-pool-acm-provision-on-deploy-ssh-private-key
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
 spec:
   data:
   - secretKey: sshPrivateKey
