@@ -78,7 +78,7 @@ spec:
             - name: global.namespace
               value: {{ $.Values.global.namespace }}
             - name: clusterGroup.name
-              value: {{ .Values.clusterGroup.name }}
+              value: {{ $.Values.clusterGroup.name }}
         {{- range .extraHubClusterDomainFields }}
             - name: {{ . }}
               value: {{ $.Values.global.hubClusterDomain }}
