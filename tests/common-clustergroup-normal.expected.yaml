@@ -1202,8 +1202,6 @@ kind: OperatorGroup
 metadata:
   name: exclude-targetns-operator-group
   namespace: exclude-targetns
-spec:
-  targetNamespaces:
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
 ---
