@@ -1,4 +1,16 @@
 ---
+# Source: acm/templates/provision/clusterdeployment.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aws-cd-one-w-pool-acm-provision-edge
+---
+# Source: acm/templates/provision/clusterdeployment.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aws-cd-two-wo-pool-acm-provision-on-deploy
+---
 # Source: acm/templates/provision/secrets-common.yaml
 apiVersion: v1
 kind: Secret
@@ -6,7 +18,7 @@ metadata:
   name: aws-ap-acm-provision-edge-install-config
 data:
   # Base64 encoding of install-config yaml
-  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWFwJyAKYmFzZURvbWFpbjogYmx1ZXByaW50cy5yaGVjb2VuZy5jb20KY29udHJvbFBsYW5lOgogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIG5hbWU6IGNvbnRyb2xQbGFuZQogIHJlcGxpY2FzOiAxCiAgcGxhdGZvcm06CiAgICBhd3M6CiAgICAgIHR5cGU6IG01LnhsYXJnZQpjb21wdXRlOgotIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIG5hbWU6ICd3b3JrZXInCiAgcmVwbGljYXM6IDAKbmV0d29ya2luZzoKICBjbHVzdGVyTmV0d29yazoKICAtIGNpZHI6IDEwLjEyOC4wLjAvMTQKICAgIGhvc3RQcmVmaXg6IDIzCiAgbWFjaGluZU5ldHdvcms6CiAgLSBjaWRyOiAxMC4wLjAuMC8xNgogIG5ldHdvcmtUeXBlOiBPVk5LdWJlcm5ldGVzCiAgc2VydmljZU5ldHdvcms6CiAgLSAxNzIuMzAuMC4wLzE2CnBsYXRmb3JtOgogIGF3czoKICAgIHJlZ2lvbjogYXAtc291dGhlYXN0LTIKcHVsbFNlY3JldDogIiIgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cwpzc2hLZXk6ICIiICAgICAjIHNraXAsIGhpdmUgd2lsbCBpbmplY3QgYmFzZWQgb24gaXQncyBzZWNyZXRz 
+  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWFwJyAKYmFzZURvbWFpbjogYmx1ZXByaW50cy5yaGVjb2VuZy5jb20KY29udHJvbFBsYW5lOgogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIG5hbWU6IGNvbnRyb2xQbGFuZQogIHJlcGxpY2FzOiAxCiAgcGxhdGZvcm06CiAgICBhd3M6CiAgICAgIHR5cGU6IG01LnhsYXJnZQpjb21wdXRlOgotIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIG5hbWU6ICd3b3JrZXInCiAgcmVwbGljYXM6IDAKbmV0d29ya2luZzoKICBjbHVzdGVyTmV0d29yazoKICAtIGNpZHI6IDEwLjEyOC4wLjAvMTQKICAgIGhvc3RQcmVmaXg6IDIzCiAgbWFjaGluZU5ldHdvcms6CiAgLSBjaWRyOiAxMC4wLjAuMC8xNgogIG5ldHdvcmtUeXBlOiBPVk5LdWJlcm5ldGVzCiAgc2VydmljZU5ldHdvcms6CiAgLSAxNzIuMzAuMC4wLzE2CnBsYXRmb3JtOgogIGF3czoKICAgIHJlZ2lvbjogYXAtc291dGhlYXN0LTIKcHVsbFNlY3JldDogIiIgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cwpzc2hLZXk6ICIiICAgICAjIHNraXAsIGhpdmUgd2lsbCBpbmplY3QgYmFzZWQgb24gaXQncyBzZWNyZXRz
 type: Opaque
 ---
 # Source: acm/templates/provision/secrets-common.yaml
@@ -16,7 +28,29 @@ metadata:
   name: azure-us-acm-provision-edge-install-config
 data:
   # Base64 encoding of install-config yaml
-  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXp1cmUtdXMnIApiYXNlRG9tYWluOiBibHVlcHJpbnRzLnJoZWNvZW5nLmNvbQpjb250cm9sUGxhbmU6CiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgbmFtZTogY29udHJvbFBsYW5lCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF6dXJlOgogICAgICB0eXBlOiBTdGFuZGFyZF9EOHNfdjMKY29tcHV0ZToKLSBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBuYW1lOiAnd29ya2VyJwogIHJlcGxpY2FzOiAzCiAgcGxhdGZvcm06CiAgICBhenVyZToKICAgICAgdHlwZTogU3RhbmRhcmRfRDhzX3YzCm5ldHdvcmtpbmc6CiAgY2x1c3Rlck5ldHdvcms6CiAgLSBjaWRyOiAxMC4xMjguMC4wLzE0CiAgICBob3N0UHJlZml4OiAyMwogIG1hY2hpbmVOZXR3b3JrOgogIC0gY2lkcjogMTAuMC4wLjAvMTYKICBuZXR3b3JrVHlwZTogT1ZOS3ViZXJuZXRlcwogIHNlcnZpY2VOZXR3b3JrOgogIC0gMTcyLjMwLjAuMC8xNgpwbGF0Zm9ybToKICBhenVyZToKICAgIGJhc2VEb21haW5SZXNvdXJjZUdyb3VwTmFtZTogZG9qby1kbnMtem9uZXMKICAgIHJlZ2lvbjogZWFzdHVzCnB1bGxTZWNyZXQ6ICIiICMgc2tpcCwgaGl2ZSB3aWxsIGluamVjdCBiYXNlZCBvbiBpdCdzIHNlY3JldHMKc3NoS2V5OiAiIiAgICAgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cw== 
+  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXp1cmUtdXMnIApiYXNlRG9tYWluOiBibHVlcHJpbnRzLnJoZWNvZW5nLmNvbQpjb250cm9sUGxhbmU6CiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgbmFtZTogY29udHJvbFBsYW5lCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF6dXJlOgogICAgICB0eXBlOiBTdGFuZGFyZF9EOHNfdjMKY29tcHV0ZToKLSBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBuYW1lOiAnd29ya2VyJwogIHJlcGxpY2FzOiAzCiAgcGxhdGZvcm06CiAgICBhenVyZToKICAgICAgdHlwZTogU3RhbmRhcmRfRDhzX3YzCm5ldHdvcmtpbmc6CiAgY2x1c3Rlck5ldHdvcms6CiAgLSBjaWRyOiAxMC4xMjguMC4wLzE0CiAgICBob3N0UHJlZml4OiAyMwogIG1hY2hpbmVOZXR3b3JrOgogIC0gY2lkcjogMTAuMC4wLjAvMTYKICBuZXR3b3JrVHlwZTogT1ZOS3ViZXJuZXRlcwogIHNlcnZpY2VOZXR3b3JrOgogIC0gMTcyLjMwLjAuMC8xNgpwbGF0Zm9ybToKICBhenVyZToKICAgIGJhc2VEb21haW5SZXNvdXJjZUdyb3VwTmFtZTogZG9qby1kbnMtem9uZXMKICAgIHJlZ2lvbjogZWFzdHVzCnB1bGxTZWNyZXQ6ICIiICMgc2tpcCwgaGl2ZSB3aWxsIGluamVjdCBiYXNlZCBvbiBpdCdzIHNlY3JldHMKc3NoS2V5OiAiIiAgICAgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cw==
+type: Opaque
+---
+# Source: acm/templates/provision/secrets-common.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-cd-one-w-pool-acm-provision-edge-install-config
+  namespace: aws-cd-one-w-pool-acm-provision-edge
+data:
+  # Base64 encoding of install-config yaml
+  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWNkLW9uZS13LXBvb2wnIApiYXNlRG9tYWluOiBibHVlcHJpbnRzLnJoZWNvZW5nLmNvbQpjb250cm9sUGxhbmU6CiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgbmFtZTogY29udHJvbFBsYW5lCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF3czoKICAgICAgdHlwZTogbTUueGxhcmdlCmNvbXB1dGU6Ci0gaHlwZXJ0aHJlYWRpbmc6IEVuYWJsZWQKICBhcmNoaXRlY3R1cmU6IGFtZDY0CiAgbmFtZTogJ3dvcmtlcicKICByZXBsaWNhczogMwogIHBsYXRmb3JtOgogICAgYXdzOgogICAgICB0eXBlOiBtNS54bGFyZ2UKbmV0d29ya2luZzoKICBjbHVzdGVyTmV0d29yazoKICAtIGNpZHI6IDEwLjEyOC4wLjAvMTQKICAgIGhvc3RQcmVmaXg6IDIzCiAgbWFjaGluZU5ldHdvcms6CiAgLSBjaWRyOiAxMC4wLjAuMC8xNgogIG5ldHdvcmtUeXBlOiBPVk5LdWJlcm5ldGVzCiAgc2VydmljZU5ldHdvcms6CiAgLSAxNzIuMzAuMC4wLzE2CnBsYXRmb3JtOgogIGF3czoKICAgIHJlZ2lvbjogYXAtc291dGhlYXN0LTEKcHVsbFNlY3JldDogIiIgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cwpzc2hLZXk6ICIiICAgICAjIHNraXAsIGhpdmUgd2lsbCBpbmplY3QgYmFzZWQgb24gaXQncyBzZWNyZXRz
+type: Opaque
+---
+# Source: acm/templates/provision/secrets-common.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-cd-two-wo-pool-acm-provision-on-deploy-install-config
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
+data:
+  # Base64 encoding of install-config yaml
+  install-config.yaml: CgphcGlWZXJzaW9uOiB2MQptZXRhZGF0YToKICBuYW1lOiAnYXdzLWNkLXR3by13by1wb29sJyAKYmFzZURvbWFpbjogYmx1ZXByaW50cy5yaGVjb2VuZy5jb20KY29udHJvbFBsYW5lOgogIGFyY2hpdGVjdHVyZTogYW1kNjQKICBoeXBlcnRocmVhZGluZzogRW5hYmxlZAogIG5hbWU6IGNvbnRyb2xQbGFuZQogIHJlcGxpY2FzOiAzCiAgcGxhdGZvcm06CiAgICBhd3M6CiAgICAgIHR5cGU6IG01LnhsYXJnZQpjb21wdXRlOgotIGh5cGVydGhyZWFkaW5nOiBFbmFibGVkCiAgYXJjaGl0ZWN0dXJlOiBhbWQ2NAogIG5hbWU6ICd3b3JrZXInCiAgcmVwbGljYXM6IDMKICBwbGF0Zm9ybToKICAgIGF3czoKICAgICAgdHlwZTogbTUueGxhcmdlCm5ldHdvcmtpbmc6CiAgY2x1c3Rlck5ldHdvcms6CiAgLSBjaWRyOiAxMC4xMjguMC4wLzE0CiAgICBob3N0UHJlZml4OiAyMwogIG1hY2hpbmVOZXR3b3JrOgogIC0gY2lkcjogMTAuMC4wLjAvMTYKICBuZXR3b3JrVHlwZTogT1ZOS3ViZXJuZXRlcwogIHNlcnZpY2VOZXR3b3JrOgogIC0gMTcyLjMwLjAuMC8xNgpwbGF0Zm9ybToKICBhd3M6CiAgICByZWdpb246IGFwLXNvdXRoZWFzdC0zCnB1bGxTZWNyZXQ6ICIiICMgc2tpcCwgaGl2ZSB3aWxsIGluamVjdCBiYXNlZCBvbiBpdCdzIHNlY3JldHMKc3NoS2V5OiAiIiAgICAgIyBza2lwLCBoaXZlIHdpbGwgaW5qZWN0IGJhc2VkIG9uIGl0J3Mgc2VjcmV0cw==
 type: Opaque
 ---
 # Source: acm/templates/policies/acm-hub-ca-policy.yaml
@@ -61,6 +95,64 @@ metadata:
 spec:
   clusterPoolName: azure-us-acm-provision-edge
 ---
+# Source: acm/templates/provision/clusterdeployment.yaml
+apiVersion: hive.openshift.io/v1
+kind: ClusterDeployment
+metadata:
+  name: aws-cd-one-w-pool-acm-provision-edge
+  namespace: aws-cd-one-w-pool-acm-provision-edge
+  labels:
+    vendor: OpenShift
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  baseDomain: blueprints.rhecoeng.com
+  clusterName: aws-cd-one-w-pool-acm-provision-edge
+  installAttemptsLimit: 1
+  platform:
+    aws:
+      credentialsSecretRef:
+        name: aws-cd-one-w-pool-acm-provision-edge-creds
+      region: ap-southeast-1
+  provisioning:
+    installConfigSecretRef:
+      name: aws-cd-one-w-pool-acm-provision-edge-install-config
+    sshPrivateKeySecretRef:
+      name: aws-cd-one-w-pool-acm-provision-edge-ssh-private-key
+    imageSetRef:
+      name: img4.10.18-multi-appsub
+  pullSecretRef:
+    name: aws-cd-one-w-pool-acm-provision-edge-pull-secret
+---
+# Source: acm/templates/provision/clusterdeployment.yaml
+apiVersion: hive.openshift.io/v1
+kind: ClusterDeployment
+metadata:
+  name: aws-cd-two-wo-pool-acm-provision-on-deploy
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
+  labels:
+    vendor: OpenShift
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  baseDomain: blueprints.rhecoeng.com
+  clusterName: aws-cd-two-wo-pool-acm-provision-on-deploy
+  installAttemptsLimit: 1
+  platform:
+    aws:
+      credentialsSecretRef:
+        name: aws-cd-two-wo-pool-acm-provision-on-deploy-creds
+      region: ap-southeast-3
+  provisioning:
+    installConfigSecretRef:
+      name: aws-cd-two-wo-pool-acm-provision-on-deploy-install-config
+    sshPrivateKeySecretRef:
+      name: aws-cd-two-wo-pool-acm-provision-on-deploy-ssh-private-key
+    imageSetRef:
+      name: img4.10.18-multi-appsub
+  pullSecretRef:
+    name: aws-cd-two-wo-pool-acm-provision-on-deploy-pull-secret
+---
 # Source: acm/templates/provision/clusterpool.yaml
 apiVersion: hive.openshift.io/v1
 kind: ClusterPool
@@ -79,7 +171,7 @@ spec:
   runningCount: 0
   baseDomain: blueprints.rhecoeng.com
   installConfigSecretTemplateRef:
-    name: aws-ap-acm-provision-edge-install-config 
+    name: aws-ap-acm-provision-edge-install-config
   imageSetRef:
     name: img4.10.18-multi-appsub
   pullSecretRef:
@@ -109,7 +201,7 @@ spec:
   runningCount: 2
   baseDomain: blueprints.rhecoeng.com
   installConfigSecretTemplateRef:
-    name: azure-us-acm-provision-edge-install-config 
+    name: azure-us-acm-provision-edge-install-config
   imageSetRef:
     name: img4.10.18-multi-appsub
   pullSecretRef:
@@ -147,7 +239,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-ap-acm-provision-edge-infra-creds
-spec: 
+spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
@@ -170,11 +262,171 @@ spec:
       key: secret/data/hub/privatekey
       property: content
   refreshInterval: 24h0m0s
-  secretStoreRef: 
+  secretStoreRef:
     name: vault-backend
     kind: ClusterSecretStore
   target:
     name: aws-ap-acm-provision-edge-infra-creds
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      metadata:
+        labels:
+          cluster.open-cluster-management.io/credentials: ""
+          cluster.open-cluster-management.io/type: aws
+      data:
+        baseDomain: "blueprints.rhecoeng.com"
+        pullSecret: |-
+          {{ .openshiftPullSecret | toString }}
+        aws_access_key_id: |-
+          {{ .awsKeyId | toString }}
+        aws_secret_access_key: |-
+          {{ .awsAccessKey | toString }}
+        ssh-privatekey: |-
+          {{ .sshPrivateKey | toString }}
+        ssh-publickey: |-
+          {{ .sshPublicKey | toString }}
+        httpProxy: ""
+        httpsProxy: ""
+        noProxy: ""
+        additionalTrustBundle: ""
+---
+# Source: acm/templates/provision/secrets-aws.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: aws-cd-one-w-pool-acm-provision-edge-creds
+  namespace: aws-cd-one-w-pool-acm-provision-edge
+spec:
+  dataFrom:
+  - extract:
+      # Expects entries called: aws_access_key_id and aws_secret_access_key
+      key: secret/data/hub/aws
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: aws-cd-one-w-pool-acm-provision-edge-creds
+    creationPolicy: Owner
+    template:
+      type: Opaque
+---
+# Source: acm/templates/provision/secrets-aws.yaml
+# For use when manually creating clusters with ACM
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: aws-cd-one-w-pool-acm-provision-edge-infra-creds
+  namespace: aws-cd-one-w-pool-acm-provision-edge
+spec:
+  data:
+  - secretKey: openshiftPullSecret
+    remoteRef:
+      key: secret/data/hub/openshiftPullSecret
+      property: content
+  - secretKey: awsKeyId
+    remoteRef:
+      key: secret/data/hub/aws
+      property: aws_access_key_id
+  - secretKey: awsAccessKey
+    remoteRef:
+      key: secret/data/hub/aws
+      property: aws_secret_access_key
+  - secretKey: sshPublicKey
+    remoteRef:
+      key: secret/data/hub/publickey
+      property: content
+  - secretKey: sshPrivateKey
+    remoteRef:
+      key: secret/data/hub/privatekey
+      property: content
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: aws-cd-one-w-pool-acm-provision-edge-infra-creds
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      metadata:
+        labels:
+          cluster.open-cluster-management.io/credentials: ""
+          cluster.open-cluster-management.io/type: aws
+      data:
+        baseDomain: "blueprints.rhecoeng.com"
+        pullSecret: |-
+          {{ .openshiftPullSecret | toString }}
+        aws_access_key_id: |-
+          {{ .awsKeyId | toString }}
+        aws_secret_access_key: |-
+          {{ .awsAccessKey | toString }}
+        ssh-privatekey: |-
+          {{ .sshPrivateKey | toString }}
+        ssh-publickey: |-
+          {{ .sshPublicKey | toString }}
+        httpProxy: ""
+        httpsProxy: ""
+        noProxy: ""
+        additionalTrustBundle: ""
+---
+# Source: acm/templates/provision/secrets-aws.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: aws-cd-two-wo-pool-acm-provision-on-deploy-creds
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
+spec:
+  dataFrom:
+  - extract:
+      # Expects entries called: aws_access_key_id and aws_secret_access_key
+      key: secret/data/hub/aws
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: aws-cd-two-wo-pool-acm-provision-on-deploy-creds
+    creationPolicy: Owner
+    template:
+      type: Opaque
+---
+# Source: acm/templates/provision/secrets-aws.yaml
+# For use when manually creating clusters with ACM
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: aws-cd-two-wo-pool-acm-provision-on-deploy-infra-creds
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
+spec:
+  data:
+  - secretKey: openshiftPullSecret
+    remoteRef:
+      key: secret/data/hub/openshiftPullSecret
+      property: content
+  - secretKey: awsKeyId
+    remoteRef:
+      key: secret/data/hub/aws
+      property: aws_access_key_id
+  - secretKey: awsAccessKey
+    remoteRef:
+      key: secret/data/hub/aws
+      property: aws_secret_access_key
+  - secretKey: sshPublicKey
+    remoteRef:
+      key: secret/data/hub/publickey
+      property: content
+  - secretKey: sshPrivateKey
+    remoteRef:
+      key: secret/data/hub/privatekey
+      property: content
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: aws-cd-two-wo-pool-acm-provision-on-deploy-infra-creds
     creationPolicy: Owner
     template:
       type: Opaque
@@ -229,7 +481,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: azure-us-acm-provision-edge-infra-creds
-spec: 
+spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
@@ -248,7 +500,7 @@ spec:
       key: secret/data/hub/azureOsServicePrincipal
       property: content
   refreshInterval: 24h0m0s
-  secretStoreRef: 
+  secretStoreRef:
     name: vault-backend
     kind: ClusterSecretStore
   target:
@@ -282,7 +534,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: aws-ap-acm-provision-edge-pull-secret
-spec: 
+spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
@@ -330,7 +582,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: azure-us-acm-provision-edge-pull-secret
-spec: 
+spec:
   data:
   - secretKey: openshiftPullSecret
     remoteRef:
@@ -373,17 +625,149 @@ spec:
         ssh-privatekey: |-
           {{ .sshPrivateKey | toString }}
 ---
-# Source: acm/templates/provision/clusterpool.yaml
-apiVersion: cluster.open-cluster-management.io/v1beta1
+# Source: acm/templates/provision/secrets-common.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: aws-cd-one-w-pool-acm-provision-edge-pull-secret
+  namespace: aws-cd-one-w-pool-acm-provision-edge
+spec:
+  data:
+  - secretKey: openshiftPullSecret
+    remoteRef:
+      key: secret/data/hub/openshiftPullSecret
+      property: content
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: aws-cd-one-w-pool-acm-provision-edge-pull-secret
+    creationPolicy: Owner
+    template:
+      type: kubernetes.io/dockerconfigjson
+      data:
+        .dockerconfigjson: |-
+          {{ .openshiftPullSecret | toString }}
+---
+# Source: acm/templates/provision/secrets-common.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: aws-cd-one-w-pool-acm-provision-edge-ssh-private-key
+  namespace: aws-cd-one-w-pool-acm-provision-edge
+spec:
+  data:
+  - secretKey: sshPrivateKey
+    remoteRef:
+      key: secret/data/hub/privatekey
+      property: content
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: aws-cd-one-w-pool-acm-provision-edge-ssh-private-key
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        ssh-privatekey: |-
+          {{ .sshPrivateKey | toString }}
+---
+# Source: acm/templates/provision/secrets-common.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: aws-cd-two-wo-pool-acm-provision-on-deploy-pull-secret
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
+spec:
+  data:
+  - secretKey: openshiftPullSecret
+    remoteRef:
+      key: secret/data/hub/openshiftPullSecret
+      property: content
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: aws-cd-two-wo-pool-acm-provision-on-deploy-pull-secret
+    creationPolicy: Owner
+    template:
+      type: kubernetes.io/dockerconfigjson
+      data:
+        .dockerconfigjson: |-
+          {{ .openshiftPullSecret | toString }}
+---
+# Source: acm/templates/provision/secrets-common.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: aws-cd-two-wo-pool-acm-provision-on-deploy-ssh-private-key
+  namespace: aws-cd-two-wo-pool-acm-provision-on-deploy
+spec:
+  data:
+  - secretKey: sshPrivateKey
+    remoteRef:
+      key: secret/data/hub/privatekey
+      property: content
+  refreshInterval: 24h0m0s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: aws-cd-two-wo-pool-acm-provision-on-deploy-ssh-private-key
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        ssh-privatekey: |-
+          {{ .sshPrivateKey | toString }}
+---
+# Source: acm/templates/provision/clusterdeployment.yaml
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata:
+  labels:
+    cluster.open-cluster-management.io/clusterset: acm-provision-edge
+    clusterGroup: region
+  name: aws-cd-one-w-pool-acm-provision-edge
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  hubAcceptsClient: true
+---
+# Source: acm/templates/provision/clusterdeployment.yaml
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata:
+  labels:
+    cluster.open-cluster-management.io/clusterset: acm-provision-on-deploy
+    clusterGroup: acm-provision-on-deploy
+  name: aws-cd-two-wo-pool-acm-provision-on-deploy
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  hubAcceptsClient: true
+---
+# Source: acm/templates/provision/managedclusterset.yaml
+apiVersion: cluster.open-cluster-management.io/v1beta2
 kind: ManagedClusterSet
 metadata:
   annotations:
     cluster.open-cluster-management.io/submariner-broker-ns: acm-provision-edge-broker
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   name: acm-provision-edge
-spec:
-  clusterSelector:
-    selectorType: LegacyClusterSetLabel
+---
+# Source: acm/templates/provision/managedclusterset.yaml
+apiVersion: cluster.open-cluster-management.io/v1beta2
+kind: ManagedClusterSet
+metadata:
+  annotations:
+    cluster.open-cluster-management.io/submariner-broker-ns: acm-provision-on-deploy-broker
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: acm-provision-on-deploy
 ---
 # Source: acm/templates/multiclusterhub.yaml
 apiVersion: operator.open-cluster-management.io/v1
@@ -441,6 +825,22 @@ placementRef:
   apiGroup: apps.open-cluster-management.io
 subjects:
   - name: acm-provision-edge-clustergroup-policy
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+# Source: acm/templates/policies/application-policies.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: acm-provision-on-deploy-placement-binding
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+placementRef:
+  name: acm-provision-on-deploy-placement
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: acm-provision-on-deploy-clustergroup-policy
     kind: Policy
     apiGroup: policy.open-cluster-management.io
 ---
@@ -507,6 +907,21 @@ spec:
   clusterSelector:
     matchLabels:
       clusterGroup: region
+---
+# Source: acm/templates/policies/application-policies.yaml
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: acm-provision-on-deploy-placement
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchLabels:
+      clusterGroup: acm-provision-on-deploy
 ---
 # Source: acm/templates/policies/ocp-gitops-policy.yaml
 apiVersion: apps.open-cluster-management.io/v1
@@ -747,6 +1162,102 @@ spec:
                   destination:
                     server: https://kubernetes.default.svc
                     namespace: mypattern-acm-provision-edge
+                  syncPolicy:
+                    automated:
+                      prune: false
+                      selfHeal: true
+                    retry:
+                      limit: 20
+                  ignoreDifferences:
+                  - group: apps
+                    kind: Deployment
+                    jsonPointers:
+                    - /spec/replicas
+                  - group: route.openshift.io
+                    kind: Route
+                    jsonPointers:
+                    - /status
+---
+# Source: acm/templates/policies/application-policies.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: acm-provision-on-deploy-clustergroup-policy
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: acm-provision-on-deploy-clustergroup-config
+        spec:
+          remediationAction: enforce
+          severity: medium
+          namespaceSelector:
+            include:
+              - default
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: argoproj.io/v1alpha1
+                kind: Application
+                metadata:
+                  name: mypattern-acm-provision-on-deploy
+                  namespace: openshift-gitops
+                  finalizers:
+                  - resources-finalizer.argocd.argoproj.io/foreground
+                spec:
+                  project: default
+                  source:
+                    repoURL: https://github.com/pattern-clone/mypattern
+                    targetRevision: main
+                    path: common/clustergroup
+                    helm:
+                      ignoreMissingValueFiles: true
+                      valueFiles:
+                        - "/values-global.yaml"
+                        - "/values-acm-provision-on-deploy.yaml"
+                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}.yaml'
+                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
+                        - '/values-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").spec.platformSpec.type }}-acm-provision-on-deploy.yaml'
+                        # We cannot use $.Values.global.clusterVersion because that gets resolved to the
+                        # hub's cluster version, whereas we want to include the spoke cluster version
+                        - '/values-{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}.yaml'
+                      parameters:
+                      - name: global.repoURL
+                        value: https://github.com/pattern-clone/mypattern
+                      - name: global.targetRevision
+                        value: main
+                      - name: global.namespace
+                        value: $ARGOCD_APP_NAMESPACE
+                      - name: global.pattern
+                        value: mypattern
+                      - name: global.hubClusterDomain
+                        value: apps.hub.example.com
+                      - name: global.localClusterDomain
+                        value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain }}'
+                      # Requires ACM 2.6 or higher
+                      - name: global.clusterDomain
+                        value: '{{ (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain | replace "apps." "" }}'
+                      # Requires ACM 2.6 or higher (I could not come up with something less terrible to get maj.min)
+                      - name: global.clusterVersion
+                        value: '{{ printf "%d.%d" ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Major) ((semver (index (lookup "config.openshift.io/v1" "ClusterVersion" "" "version").status.history 0).version).Minor) }}'
+                      - name: global.localClusterName
+                        value: '{{ (split "." (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain)._1 }}'
+                      - name: global.clusterPlatform
+                        value: aws
+                      - name: clusterGroup.name
+                        value: acm-provision-on-deploy
+                      - name: global.experimentalCapabilities
+                        value: 
+                  destination:
+                    server: https://kubernetes.default.svc
+                    namespace: mypattern-acm-provision-on-deploy
                   syncPolicy:
                     automated:
                       prune: false

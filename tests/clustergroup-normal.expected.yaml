@@ -170,6 +170,14 @@ data:
       - acmlabels:
         - name: clusterGroup
           value: region
+        clusterDeployments:
+          myFirstCluster:
+            baseDomain: blueprints.rhecoeng.com
+            name: aws-cd-one-w-pool
+            openshiftVersion: 4.10.18
+            platform:
+              aws:
+                region: ap-southeast-1
         clusterPools:
           exampleAWSPool:
             baseDomain: blueprints.rhecoeng.com
@@ -202,6 +210,15 @@ data:
           value: "false"
         name: acm-provision-edge
         targetRevision: main
+      - clusterDeployments:
+          mySecondCluster:
+            baseDomain: blueprints.rhecoeng.com
+            name: aws-cd-two-wo-pool
+            openshiftVersion: 4.10.18
+            platform:
+              aws:
+                region: ap-southeast-3
+        name: acm-provision-on-deploy
       - helmOverrides:
         - name: clusterGroup.isHubCluster
           value: "false"
