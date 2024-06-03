@@ -170,6 +170,14 @@ data:
       - acmlabels:
         - name: clusterGroup
           value: region
+        clusterDeployments:
+          myFirstCluster:
+            baseDomain: blueprints.rhecoeng.com
+            name: aws-cd-one-w-pool
+            openshiftVersion: 4.10.18
+            platform:
+              aws:
+                region: ap-southeast-1
         clusterPools:
           exampleAWSPool:
             baseDomain: blueprints.rhecoeng.com
@@ -202,6 +210,15 @@ data:
           value: "false"
         name: acm-provision-edge
         targetRevision: main
+      - clusterDeployments:
+          mySecondCluster:
+            baseDomain: blueprints.rhecoeng.com
+            name: aws-cd-two-wo-pool
+            openshiftVersion: 4.10.18
+            platform:
+              aws:
+                region: ap-southeast-3
+        name: acm-provision-on-deploy
       - helmOverrides:
         - name: clusterGroup.isHubCluster
           value: "false"
@@ -373,6 +390,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: openshift-gitops-cluster-admin-rolebinding
+  # We need to have this before anything else or the sync might get stuck forever
+  # due to permission issues
+  annotations:
+    argocd.argoproj.io/sync-wave: "-100"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -392,6 +413,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: mypattern-example-cluster-admin-rolebinding
+  # We need to have this before anything else or the sync might get stuck forever
+  # due to permission issues
+  annotations:
+    argocd.argoproj.io/sync-wave: "-100"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -709,6 +734,8 @@ spec:
     path: common/acm
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-example.yaml"
@@ -776,6 +803,8 @@ spec:
     path: charts/datacenter/pipelines
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-example.yaml"
@@ -1195,8 +1224,6 @@ kind: OperatorGroup
 metadata:
   name: exclude-targetns-operator-group
   namespace: exclude-targetns
-spec:
-  targetNamespaces:
 ---
 # Source: clustergroup/templates/core/operatorgroup.yaml
 ---

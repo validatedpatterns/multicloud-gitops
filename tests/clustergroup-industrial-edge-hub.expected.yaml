@@ -482,6 +482,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: openshift-gitops-cluster-admin-rolebinding
+  # We need to have this before anything else or the sync might get stuck forever
+  # due to permission issues
+  annotations:
+    argocd.argoproj.io/sync-wave: "-100"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -501,6 +505,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: mypattern-datacenter-cluster-admin-rolebinding
+  # We need to have this before anything else or the sync might get stuck forever
+  # due to permission issues
+  annotations:
+    argocd.argoproj.io/sync-wave: "-100"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -857,6 +865,8 @@ spec:
     path: common/acm
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -922,6 +932,8 @@ spec:
     path: charts/datacenter/opendatahub
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -978,6 +990,8 @@ spec:
     path: charts/datacenter/pipelines
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -1034,6 +1048,8 @@ spec:
     path: charts/datacenter/manuela-data-lake
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -1120,6 +1136,8 @@ spec:
     path: charts/datacenter/external-secrets
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -1176,6 +1194,8 @@ spec:
     path: common/golang-external-secrets
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"
@@ -1259,6 +1279,8 @@ spec:
     chart: vault
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
       valueFiles:
       - "/values-global.yaml"
       - "/values-datacenter.yaml"

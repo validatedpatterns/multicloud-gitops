@@ -78,7 +78,7 @@ spec:
             - name: global.namespace
               value: {{ $.Values.global.namespace }}
             - name: clusterGroup.name
-              value: {{ .Values.clusterGroup.name }}
+              value: {{ $.Values.clusterGroup.name }}
         {{- range .extraHubClusterDomainFields }}
             - name: {{ . }}
               value: {{ $.Values.global.hubClusterDomain }}
@@ -149,6 +149,11 @@ spec:
       {{- else }}
       helm:
         ignoreMissingValueFiles: true
+        values: |
+          extraParametersNested: 
+          {{- range $k, $v := $.Values.extraParametersNested }}
+            {{ $k }}: {{ printf "%s" $v | quote }}
+          {{- end }}
         valueFiles:
         {{- include "clustergroup.app.globalvalues.prefixedvaluefiles" $ | nindent 8 }}
         {{- range $valueFile := $.Values.clusterGroup.sharedValueFiles }}
@@ -216,6 +221,11 @@ spec:
     {{- else if not .kustomize }}
     helm:
       ignoreMissingValueFiles: true
+      values: |
+        extraParametersNested:
+          {{- range $k, $v := $.Values.extraParametersNested }}
+            {{ $k }}: {{ printf "%s" $v | quote }}
+          {{- end }}
       valueFiles:
       {{- include "clustergroup.app.globalvalues.valuefiles" $ | nindent 6 }}
       {{- range $valueFile := $.Values.clusterGroup.sharedValueFiles }}

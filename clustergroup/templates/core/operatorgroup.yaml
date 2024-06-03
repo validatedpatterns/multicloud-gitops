@@ -21,15 +21,19 @@ kind: OperatorGroup
 metadata:
   name: {{ $k }}-operator-group
   namespace: {{ $k }}
+  {{- if (hasKey $v "targetNamespaces") }}
+    {{- if $v.targetNamespaces }}
 spec:
   targetNamespaces:
-    {{- if (hasKey $v "targetNamespaces") }}
       {{- range $v.targetNamespaces }}{{- /* We loop through the list of tergetnamespaces */}}
   - {{ . }}
       {{- end }}{{- /* End range targetNamespaces */}}
-    {{- else }}
+    {{- end }}{{- /* End if $v.targetNamespaces */}}
+  {{- else }}
+spec:
+  targetNamespaces:
   - {{ $k }}
-    {{- end }}{{- /* End of if operatorGroup */}}
+  {{- end }}{{- /* End of if (hasKey $v "targetNamespaces") */}}
   {{- end }}{{- /* range $k, $v := $ns */}}
   {{- end }}{{- /* End of if operatorGroup */}}
   {{- else if kindIs "string" $ns }}

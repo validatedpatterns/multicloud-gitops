@@ -65,6 +65,10 @@
         "clusterGroupName": {
           "type": "string"
         },
+        "extraParameters": {
+          "type": "array",
+          "description": "Pass in extra Helm parameters to all ArgoCD Applications and the framework."
+        },
         "experimentalCapabilities": {
           "type": "string",
           "description": "String to enable certain experimental capabilities in the operator and the framework."
@@ -758,6 +762,12 @@
             "$ref": "#/definitions/ClusterPools"
           }
         },
+        "clusterDeployments": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/ClusterDeployments"
+          }
+        },
         "clusterSelector": {
           "type": "object",
           "additionalProperties": true
@@ -804,6 +814,32 @@
         "clusters"
       ],
       "title": "ClusterPools"
+    },
+    "ClusterDeployments": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "openshiftVersion": {
+          "type": "string"
+        },
+        "baseDomain": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "object",
+          "$ref": "#/definitions/ClusterPoolsPlatform"
+        }
+      },
+      "required": [
+        "name",
+        "openshiftVersion",
+        "baseDomain",
+        "platform"
+      ],
+      "title": "ClusterDeployments"
     },
     "ClusterPoolsPlatform": {
       "type": "object",

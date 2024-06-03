@@ -202,13 +202,19 @@ kind: OperatorGroup
 metadata:
   name: {{ $k }}-operator-group
   namespace: {{ $k }}
+      {{- if (hasKey $v "targetNamespaces") }}
+        {{- if $v.targetNamespaces }}
+          {{- if (len $v.targetNamespaces) }}
 spec:
   targetNamespaces:
-      {{- if (hasKey $v "targetNamespaces") }}
-        {{- range $v.targetNamespaces }}{{- /* We loop through the list of tergetnamespaces */}}
+            {{- range $v.targetNamespaces }}{{- /* We loop through the list of tergetnamespaces */}}
   - {{ . }}
-        {{- end }}{{- /* End range targetNamespaces */}}
+            {{- end }}{{- /* End range targetNamespaces */}}
+          {{- end }}{{- /* End if (len $v.targetNamespaces) */}}
+        {{- end }}{{- /* End $v.targetNamespaces */}}
       {{- else }}
+spec:
+  targetNamespaces:
   - {{ $k }}
       {{- end }}{{- /* End of if hasKey $v "targetNamespaces" */}}
     {{- end }}{{- /* End if $v.operatorGroup */}}
