@@ -230,6 +230,10 @@
           "deprecated": true,
           "description": "This is used to approval strategy for the subscriptions of OpenShift Operators being installed. You can choose Automatic or Manual updates. NOTE: This setting is now available in the subcriptions description in the values file."
         },
+        "autoApproveManualInstallPlans": {
+          "type": "boolean",
+          "description": "This is used to approve automatically those subscriptions of OpenShift Operators that are in Manual with a startingCSV version. You can choose True or False. Defaults: False."
+        },
         "applicationRetryLimit": {
           "type": "integer",
           "description": "Number of failed sync attempt retries; unlimited number of attempts if less than 0"
