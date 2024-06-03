@@ -16,7 +16,7 @@ spec:
         metadata:
           name: auto-approve-installplans-job
         spec:
-          serviceAccountName: {{ $.Values.clusterGroup.imperative.serviceAccountName }}
+          serviceAccountName: {{ $.Values.clusterGroup.imperative.adminServiceAccountName }}
           initContainers:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there
