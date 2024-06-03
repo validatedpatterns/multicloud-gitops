@@ -1,0 +1,11 @@
+{{- if not (eq .Values.enabled "plumbing") }}
+{{- if hasKey .Values.clusterGroup "scheduler" }}
+apiVersion: config.openshift.io/v1
+kind: Scheduler
+metadata:
+  name: cluster
+spec:
+{{- toYaml .Values.clusterGroup.scheduler | nindent 2 }}
+{{- end -}}
+{{- end -}}
+

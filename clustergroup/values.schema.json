@@ -261,6 +261,10 @@
             "type": "array",
             "description": "Templated value file paths."
 	},
+        "scheduler": {
+          "type": "object",
+          "description": "If set, it will become the spec of the scheduler/cluster in the managed cluster."
+        },
         "namespaces": {
           "anyOf": [
             {
