@@ -32,7 +32,7 @@ jobs:
           N="${{ inputs.chart_name }}"
           B="${N}-main-single-chart"
           GITIMG="quay.io/hybridcloudpatterns/gitsubtree-container:2.40.1"
-          sudo apt-get update -y && apt-get install -y podman
+          sudo apt-get update -y && sudo apt-get install -y podman
           echo "Running subtree split for ${B}"
           podman pull "${GITIMG}"
           git push origin -d "${B}" || /bin/true
