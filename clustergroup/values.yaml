@@ -28,6 +28,12 @@ clusterGroup:
   argoCD:
     initContainers: []
     configManagementPlugins: []
+    resourceExclusions: |
+      - apiGroups:
+        - tekton.dev
+        kinds:
+        - TaskRun
+        - PipelineRun
 
   imperative:
     jobs: []
