@@ -2,6 +2,7 @@ import logging
 import os
 
 import pytest
+import yaml
 from ocp_resources.route import Route
 from ocp_resources.storage_class import StorageClass
 from validatedpatterns_tests.interop import components
