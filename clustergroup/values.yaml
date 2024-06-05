@@ -28,6 +28,26 @@ clusterGroup:
   argoCD:
     initContainers: []
     configManagementPlugins: []
+    resourceHealthChecks:
+      - kind: PersistentVolumeClaim
+        check: |
+          hs = {}
+          if obj.status ~= nil then
+            if obj.status.phase ~= nil then
+              if obj.status.phase == "Pending" then
+                hs.status = "Healthy"
+                hs.message = obj.status.phase
+                return hs
+              elseif obj.status.phase == "Bound" then
+                hs.status = "Healthy"
+                hs.message = obj.status.phase
+                return hs
+              end
+            end
+          end
+          hs.status = "Progressing"
+          hs.message = "Waiting for PVC"
+          return hs
     resourceExclusions: |
       - apiGroups:
         - tekton.dev
