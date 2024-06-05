@@ -150,20 +150,33 @@ def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
 
 @pytest.mark.validate_argocd_applications_health_edge_site
 def test_validate_argocd_applications_health_edge_site(openshift_dyn_client):
-    namespace = "openshift-gitops"
-
-    argocd_apps_status = dict()
+    unhealthy_apps = []
     logger.info("Get all applications deployed by argocd on edge site")
+    projects = ["openshift-gitops"]
+    for project in projects:
+        logger.info(f"PROJECT: {project}")
+        for app in ArgoCD.get(dyn_client=openshift_dyn_client, namespace=project):
+            app_name = app.instance.metadata.name
+            app_health = app.instance.status.health.status
+            app_sync = app.instance.status.sync.status
 
-    for app in ArgoCD.get(dyn_client=openshift_dyn_client, namespace=namespace):
-        app_name = app.instance.metadata.name
-        app_health = app.health
-        argocd_apps_status[app_name] = app_health
-        logger.info(f"Health status of {app_name} is: {app_health}")
+            logger.info(f"Status for {app_name} : {app_health} : {app_sync}")
 
-    if False in (argocd_apps_status.values()):
-        err_msg = f"Some or all applications deployed on edge site are Degraded/Unhealthy: {argocd_apps_status}"
-        logger.error(f"FAIL: {err_msg}")
+            if "Healthy" != app_health or "Synced" != app_sync:
+                logger.info(f"Dumping failed resources for app: {app_name}")
+                unhealthy_apps.append(app_name)
+                try:
+                    for res in app.instance.status.resources:
+                        if (
+                            res.health and res.health.status != "Healthy"
+                        ) or res.status != "Synced":
+                            logger.info(f"\n{res}")
+                except TypeError:
+                    logger.info(f"No resources found for app: {app_name}")
+
+    if unhealthy_apps:
+        err_msg = "Some or all applications deployed on edge site are unhealthy"
+        logger.error(f"FAIL: {err_msg}:\n{unhealthy_apps}")
         assert False, err_msg
     else:
         logger.info("PASS: All applications deployed on edge site are healthy.")
