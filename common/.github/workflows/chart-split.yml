@@ -31,8 +31,12 @@ jobs:
           set -e
           N="${{ inputs.chart_name }}"
           B="${N}-main-single-chart"
+          GITIMG="quay.io/hybridcloudpatterns/gitsubtree-container:2.40.1"
+          sudo apt-get update -y && sudo apt-get install -y podman
+          echo "Running subtree split for ${B}"
+          podman pull "${GITIMG}"
           git push origin -d "${B}" || /bin/true
-          git subtree split -P "${N}" -b "${B}"
-          git push -f -u origin "${B}"
+          # Git subtree got broken on recent versions of git hence this container
+          podman run --net=host --rm -t -v .:/git "${GITIMG}" subtree split -P "${N}" -b "${B}"
           #git clone https://validatedpatterns:${GITHUB_TOKEN}@github.com/validatedpatterns/common.git -b "acm-main-single-chart" --single-branch
           git push --force https://validatedpatterns:"${GITHUB_TOKEN}"@github.com/${{ inputs.target_repository }}.git "${B}:main"

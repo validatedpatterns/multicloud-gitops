@@ -12,3 +12,7 @@ we just override the tag with the version + "-ubi"
 4. Tweak `values.yaml` with the new image versions
 5. Run `make test`
 6. Commit to git
+
+## PRs
+
+Please send PRs [here](https://github.com/validatedpatterns/common)
