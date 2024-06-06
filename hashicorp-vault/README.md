@@ -1,5 +1,9 @@
 # VP hashicorp-vault
 
+## PRs
+
+Please send PRs to https://github.com/validatedpatterns/common
+
 ## Updating the chart
 
 1. Edit Chart.yaml with the new version
