@@ -1,0 +1,83 @@
+{{- range .Values.clusterGroup.managedClusterGroups }}
+{{- $group := . }}
+
+{{- range $group.clusterDeployments}}
+{{ $cluster := . }}
+
+{{- if (eq $cluster.name nil) }}
+{{- fail (printf "managedClusterGroup clusterDeployment cluster name is empty: %s" $cluster) }}
+{{- end }}
+{{- if (eq $group.name nil) }}
+{{- fail (printf "managedClusterGroup clusterDeployment group name is empty: %s" $cluster) }}
+{{- end }}
+
+{{- $deploymentName := print $cluster.name "-" $group.name }}
+
+{{- $cloud := "None" }}
+{{- $region := "None" }}
+
+{{- if $cluster.platform.aws }}
+{{- $cloud = "aws" }}
+{{- $region = $cluster.platform.aws.region }}
+{{- else if $cluster.platform.azure }}
+{{- $cloud = "azure" }}
+{{- $region = $cluster.platform.azure.region }}
+{{- end }}
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $deploymentName }}
+
+---
+apiVersion: hive.openshift.io/v1
+kind: ClusterDeployment
+metadata:
+  name: {{ $deploymentName }}
+  namespace: {{ $deploymentName }}
+  labels:
+    vendor: OpenShift
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  baseDomain: {{ $cluster.baseDomain }}
+  clusterName: {{ $deploymentName }}
+  installAttemptsLimit: 1
+  platform:
+    {{ $cloud }}:
+      credentialsSecretRef:
+        name: {{ $deploymentName }}-creds
+      region: {{ $region }}
+  provisioning:
+    installConfigSecretRef:
+      name: {{ $deploymentName }}-install-config
+    sshPrivateKeySecretRef:
+      name: {{ $deploymentName }}-ssh-private-key
+    imageSetRef:
+      name: img{{ $cluster.openshiftVersion }}-multi-appsub
+  pullSecretRef:
+    name: {{ $deploymentName }}-pull-secret
+
+---
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata:
+  labels:
+    cluster.open-cluster-management.io/clusterset: {{ $group.name }}
+  {{- if (not $group.acmlabels) }}
+    clusterGroup: {{ $group.name }}
+  {{- else if eq (len $group.acmlabels) 0 }}
+    clusterGroup: {{ $group.name }}
+  {{- else }}
+    {{- range $group.acmlabels }}
+    {{ .name }}: {{ .value }}
+    {{- end }}
+  {{- end }}
+  name: {{ $deploymentName }}
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  hubAcceptsClient: true
+{{- end }}{{- /* range $group.clusterDeployments */}}
+{{- end }}{{- /* range .Values.clusterGroup.managedClusterGroups */}}

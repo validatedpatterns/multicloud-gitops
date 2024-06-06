@@ -72,6 +72,11 @@
     api_version: v1
     validate_certs: "{{ validate_certs_api_endpoint }}"
   register: remote_external_secrets_sa
+  # We are allowed to ignore errors here because a spoke might be down or unreachable
+  # if a spoke is not reachable then its ['token'] field will not be set which
+  # will leave the ['esoToken'] field empty in the dict which will make it so that
+  # the spoke gets skipped
+  ignore_errors: true
   when:
     - clusters_info[item.key]['bearerToken'] is defined
     - clusters_info[item.key]['server_api'] is defined

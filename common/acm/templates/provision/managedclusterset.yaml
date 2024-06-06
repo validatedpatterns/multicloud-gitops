@@ -1,0 +1,13 @@
+{{- range .Values.clusterGroup.managedClusterGroups }}
+{{- if or .clusterPools .clusterDeployments }}{{- /* We only create ManagedClusterSets if there are clusterPools or clusterDeployments defined */}}
+---
+apiVersion: cluster.open-cluster-management.io/v1beta2
+kind: ManagedClusterSet
+metadata:
+  annotations:
+    cluster.open-cluster-management.io/submariner-broker-ns: {{ .name }}-broker
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: {{ .name }}
+
+{{- end }}{{- /* if .clusterPools) */}}
+{{- end }}{{- /* range .Values.clusterGroup.managedClusterGroups */}}

@@ -22,6 +22,10 @@ In order to enable this chart in your patterns, please add and edit the followin
 
 Once the above is enabled in a pattern, a certain amount of time (~15/20 minutes or so) is needed for all the cluster operators to settle, all the HTTPS routes will have a wildcard certificate signed by letsencrypt. By default also the API endpoint will use a certificate signed by letsencrypt.
 
+## PRs
+
+Please send PRs [here](https://github.com/validatedpatterns/common)
+
 ## Limitations
 
 Please be aware of the following gotchas when using this chart:
