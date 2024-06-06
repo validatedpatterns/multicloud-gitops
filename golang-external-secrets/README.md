@@ -15,4 +15,4 @@ we just override the tag with the version + "-ubi"
 
 ## PRs
 
-Please send PRs to https://github.com/validatedpatterns/common
+Please send PRs [here](https://github.com/validatedpatterns/common)

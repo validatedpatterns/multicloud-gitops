@@ -2,7 +2,7 @@
 
 ## PRs
 
-Please send PRs to https://github.com/validatedpatterns/common
+Please send PRs [here](https://github.com/validatedpatterns/common)
 
 ## Updating the chart
 
