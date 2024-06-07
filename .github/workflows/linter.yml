@@ -36,7 +36,7 @@ jobs:
       - name: Setup helm
         uses: azure/setup-helm@v4
         with:
-          version: 'v3.13.2'
+          version: 'v3.14.0'
 
 
       ################################
