@@ -1,4 +1,3 @@
-{{- $hasInitContainerCapability := and (.Values.global.experimentalCapabilities) (has "initcontainers" (splitList "," .Values.global.experimentalCapabilities)) }}
 
 {{- if (eq .Values.enabled "all") }}
 {{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
@@ -70,7 +69,6 @@ spec:
   rbac:
     defaultPolicy: role:admin
   repo:
-{{- if $hasInitContainerCapability }}
     initContainers:
     - command:
       - bash
@@ -109,11 +107,6 @@ spec:
 {{- if len $.Values.clusterGroup.argoCD.initContainers }}
 {{ $.Values.clusterGroup.argoCD.initContainers | toPrettyJson }}
 {{- end }}
-{{- else }}
-{{- if len $.Values.clusterGroup.argoCD.initContainers }}
-    initContainers: {{ $.Values.clusterGroup.argoCD.initContainers | toPrettyJson }}
-{{- end }}
-{{- end }}{{/* if $hasInitContainerCapability */}}
 {{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
     sidecarContainers:
 {{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}
