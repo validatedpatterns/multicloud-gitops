@@ -77,6 +77,11 @@
   # will leave the ['esoToken'] field empty in the dict which will make it so that
   # the spoke gets skipped
   ignore_errors: true
+  # We add no_log: true here because in case of a remote failure secret bits might
+  # end up in the log. Unfortunately ansible is currently not easily able to control
+  # output in a loop (see
+  # https://serverfault.com/questions/1059530/how-to-not-print-items-in-an-ansible-loop-error-without-no-log)
+  no_log: true
   when:
     - clusters_info[item.key]['bearerToken'] is defined
     - clusters_info[item.key]['server_api'] is defined

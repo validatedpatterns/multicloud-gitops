@@ -578,6 +578,25 @@ spec:
           initContainers:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there            
+            - name: fetch-ca
+              image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
+              imagePullPolicy: Always
+              env:
+                - name: HOME
+                  value: /git/home
+              command:
+              - 'sh'
+              - '-c'
+              - >-
+                cat /var/run/kube-root-ca/ca.crt /var/run/trusted-ca/ca-bundle.crt > /tmp/ca-bundles/ca-bundle.crt || true;
+                ls -l /tmp/ca-bundles/
+              volumeMounts:
+              - mountPath: /var/run/kube-root-ca
+                name: kube-root-ca
+              - mountPath: /var/run/trusted-ca
+                name: trusted-ca-bundle
+              - mountPath: /tmp/ca-bundles
+                name: ca-bundles            
             - name: git-init
               image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
               imagePullPolicy: Always
@@ -587,6 +606,8 @@ spec:
               volumeMounts:
               - name: git
                 mountPath: "/git"
+              - name: ca-bundles
+                mountPath: /etc/pki/tls/certs
               command:
               - 'sh'
               - '-c'
@@ -638,6 +659,12 @@ spec:
                 - name: values-volume
                   mountPath: /values/values.yaml
                   subPath: values.yaml
+                - mountPath: /var/run/kube-root-ca
+                  name: kube-root-ca
+                - mountPath: /var/run/trusted-ca
+                  name: trusted-ca-bundle
+                - mountPath: /tmp/ca-bundles
+                  name: ca-bundles
           containers:            
             - name: "done"
               image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
@@ -654,6 +681,15 @@ spec:
             - name: values-volume
               configMap:
                 name: helm-values-configmap-datacenter
+            - configMap:
+                name: kube-root-ca.crt
+              name: kube-root-ca
+            - configMap:
+                name: trusted-ca-bundle
+                optional: true
+              name: trusted-ca-bundle
+            - name: ca-bundles
+              emptyDir: {}
           restartPolicy: Never
 ---
 # Source: clustergroup/templates/imperative/unsealjob.yaml
@@ -677,6 +713,25 @@ spec:
           initContainers:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there            
+            - name: fetch-ca
+              image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
+              imagePullPolicy: Always
+              env:
+                - name: HOME
+                  value: /git/home
+              command:
+              - 'sh'
+              - '-c'
+              - >-
+                cat /var/run/kube-root-ca/ca.crt /var/run/trusted-ca/ca-bundle.crt > /tmp/ca-bundles/ca-bundle.crt || true;
+                ls -l /tmp/ca-bundles/
+              volumeMounts:
+              - mountPath: /var/run/kube-root-ca
+                name: kube-root-ca
+              - mountPath: /var/run/trusted-ca
+                name: trusted-ca-bundle
+              - mountPath: /tmp/ca-bundles
+                name: ca-bundles            
             - name: git-init
               image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
               imagePullPolicy: Always
@@ -686,6 +741,8 @@ spec:
               volumeMounts:
               - name: git
                 mountPath: "/git"
+              - name: ca-bundles
+                mountPath: /etc/pki/tls/certs
               command:
               - 'sh'
               - '-c'
@@ -739,6 +796,12 @@ spec:
                 - name: values-volume
                   mountPath: /values/values.yaml
                   subPath: values.yaml
+                - mountPath: /var/run/kube-root-ca
+                  name: kube-root-ca
+                - mountPath: /var/run/trusted-ca
+                  name: trusted-ca-bundle
+                - mountPath: /tmp/ca-bundles
+                  name: ca-bundles
           containers:            
             - name: "done"
               image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
@@ -755,6 +818,15 @@ spec:
             - name: values-volume
               configMap:
                 name: helm-values-configmap-datacenter
+            - configMap:
+                name: kube-root-ca.crt
+              name: kube-root-ca
+            - configMap:
+                name: trusted-ca-bundle
+                optional: true
+              name: trusted-ca-bundle
+            - name: ca-bundles
+              emptyDir: {}
           restartPolicy: Never
 ---
 # Source: clustergroup/templates/core/subscriptions.yaml
@@ -1403,6 +1475,41 @@ spec:
   rbac:
     defaultPolicy: role:admin
   repo:
+    initContainers:
+    - command:
+      - bash
+      - -c
+      - cat /var/run/kube-root-ca/ca.crt /var/run/trusted-ca/ca-bundle.crt > /tmp/ca-bundles/ca-bundle.crt || true
+      image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
+      name: fetch-ca
+      resources: {}
+      volumeMounts:
+      - mountPath: /var/run/kube-root-ca
+        name: kube-root-ca
+      - mountPath: /var/run/trusted-ca
+        name: trusted-ca-bundle
+      - mountPath: /tmp/ca-bundles
+        name: ca-bundles
+    resources:
+      limits:
+        cpu: "1"
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    volumeMounts:
+    - mountPath: /etc/pki/tls/certs
+      name: ca-bundles
+    volumes:
+    - configMap:
+        name: kube-root-ca.crt
+      name: kube-root-ca
+    - configMap:
+        name: trusted-ca-bundle
+        optional: true
+      name: trusted-ca-bundle
+    - emptyDir: {}
+      name: ca-bundles
     sidecarContainers:
       - name: helm-with-kustomize
         command: [/var/run/argocd/argocd-cmp-server]

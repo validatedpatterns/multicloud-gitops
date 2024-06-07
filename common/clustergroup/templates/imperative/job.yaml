@@ -1,5 +1,3 @@
-{{- $hasInitContainerCapability := and (.Values.global.experimentalCapabilities) (has "initcontainers" (splitList "," .Values.global.experimentalCapabilities)) }}
-
 {{- if not (eq .Values.enabled "plumbing") }}
 {{/* Define this if needed (jobs defined */}}
 {{- if (and $.Values.clusterGroup.imperative (gt (len $.Values.clusterGroup.imperative.jobs) 0)) -}}
@@ -24,12 +22,8 @@ spec:
           initContainers:
             # git init happens in /git/repo so that we can set the folder to 0770 permissions
             # reason for that is ansible refuses to create temporary folders in there
-{{- if $hasInitContainerCapability }}
             {{- include  "imperative.initcontainers.fetch-ca" . | indent 12 }}
             {{- include  "imperative.initcontainers.gitinit-ca" . | indent 12 }}
-{{- else }}
-            {{- include  "imperative.initcontainers.gitinit" . | indent 12 }}
-{{- end }}
     {{- range $.Values.clusterGroup.imperative.jobs }}
       {{- if ne (.disabled | default "false" | toString | lower ) "true" }}
             - name: {{ .name }}
@@ -60,21 +54,13 @@ spec:
                 {{- end }}
                 - {{ .playbook }}
               volumeMounts:
-{{- if $hasInitContainerCapability }}
                 {{- include "imperative.volumemounts_ca" . | indent 16 }}
-{{- else }}
-                {{- include "imperative.volumemounts" . | indent 16 }}
-{{- end }}
       {{- end }}
     {{- end }}
           containers:
           {{- include "imperative.containers.done" . | indent 12 }}
           volumes:
-{{- if $hasInitContainerCapability }}
           {{- include "imperative.volumes_ca" . | indent 12 }}
-{{- else }}
-          {{- include "imperative.volumes" . | indent 12 }}
-{{- end }}
           restartPolicy: Never
 {{- end }}
 {{- end }}
