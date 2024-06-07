@@ -114,7 +114,8 @@ def test_validate_acm_self_registration_managed_clusters(openshift_dyn_client):
     logger.info("Check ACM self registration for edge site")
 
     kubefile = os.getenv("KUBECONFIG_EDGE")
-    with open(kubefile) as stream:
+    kubefile_exp = os.path.expandvars(kubefile)
+    with open(kubefile_exp) as stream:
         try:
             out = yaml.safe_load(stream)
             site_name = out["clusters"][0]["name"]
