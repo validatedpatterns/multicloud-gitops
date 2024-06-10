@@ -242,6 +242,12 @@ data:
                   --set clusterGroup.name=datacenter
                   --post-renderer ./kustomize"]
         initContainers: []
+        resourceExclusions: |
+          - apiGroups:
+            - tekton.dev
+            kinds:
+            - TaskRun
+            - PipelineRun
       imperative:
         activeDeadlineSeconds: 3600
         adminClusterRoleName: imperative-admin-cluster-role
@@ -1545,7 +1551,7 @@ spec:
       requests:
         cpu: 250m
         memory: 256Mi
-  resourceExclusions: |
+  resourceExclusions:  |
     - apiGroups:
       - tekton.dev
       kinds:
