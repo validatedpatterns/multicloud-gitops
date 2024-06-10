@@ -552,6 +552,13 @@
         "resourceExclusions": {
           "type": "string",
           "description": "ResourceExclusions is used to completely ignore entire classes of resource group/kinds."
+        },
+        "resourceHealthChecks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArgoCDResourceHealthChecks"
+          },
+          "description": "ResourceHealthChecks customizes resource health check behavior."
         }
       }
     },
@@ -584,6 +591,21 @@
         "name",
         "image"
       ]
+    },
+    "ArgoCDResourceHealthChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "check": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        }
+      }
     },
     "IndexImages": {
       "type": "object",
