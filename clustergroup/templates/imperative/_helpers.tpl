@@ -66,8 +66,9 @@
     if [ -n "${OUT}" ]; then export HTTPS_PROXY="${OUT}"; fi;
     OUT="$(oc get proxy.config.openshift.io/cluster -o jsonpath='{.spec.noProxy}' 2>/dev/null)";
     if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
+    if [ "{{ $.Values.global.targetRevision }}" = "HEAD" ]; then BRANCH=""; else BRANCH="--branch {{ $.Values.global.targetRevision }}"; fi;
     mkdir /git/{repo,home};
-    git clone --recurse-submodules --single-branch --branch {{ $.Values.global.targetRevision }} --depth 1 -- "${URL}" /git/repo;
+    git clone --recurse-submodules --single-branch "${BRANCH}" --depth 1 -- "${URL}" /git/repo;
     chmod 0770 /git/{repo,home};
 {{- end }}
 {{/* Final done container */}}
