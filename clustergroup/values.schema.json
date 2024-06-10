@@ -548,6 +548,10 @@
         "initContainers": {
           "type": "array",
           "description": "A list of initContainers to add to the repo-server if needed"
+        },
+        "resourceExclusions": {
+          "type": "string",
+          "description": "ResourceExclusions is used to completely ignore entire classes of resource group/kinds."
         }
       }
     },
