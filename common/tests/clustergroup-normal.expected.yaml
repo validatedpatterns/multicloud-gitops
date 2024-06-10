@@ -133,6 +133,32 @@ data:
       argoCD:
         configManagementPlugins: []
         initContainers: []
+        resourceExclusions: |
+          - apiGroups:
+            - tekton.dev
+            kinds:
+            - TaskRun
+            - PipelineRun
+        resourceHealthChecks:
+        - check: |
+            hs = {}
+            if obj.status ~= nil then
+              if obj.status.phase ~= nil then
+                if obj.status.phase == "Pending" then
+                  hs.status = "Healthy"
+                  hs.message = obj.status.phase
+                  return hs
+                elseif obj.status.phase == "Bound" then
+                  hs.status = "Healthy"
+                  hs.message = obj.status.phase
+                  return hs
+                end
+              end
+            end
+            hs.status = "Progressing"
+            hs.message = "Waiting for PVC"
+            return hs
+          kind: PersistentVolumeClaim
       imperative:
         activeDeadlineSeconds: 3600
         adminClusterRoleName: imperative-admin-cluster-role
@@ -544,7 +570,7 @@ spec:
                 if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
                 if [ "main" = "HEAD" ]; then BRANCH=""; else BRANCH="--branch main"; fi;
                 mkdir /git/{repo,home};
-                git clone --recurse-submodules --single-branch "${BRANCH}" --depth 1 -- "${URL}" /git/repo;
+                git clone --recurse-submodules --single-branch ${BRANCH} --depth 1 -- "${URL}" /git/repo;
                 chmod 0770 /git/{repo,home};
             - name: test
               image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
@@ -680,7 +706,7 @@ spec:
                 if [ -n "${OUT}" ]; then export NO_PROXY="${OUT}"; fi;
                 if [ "main" = "HEAD" ]; then BRANCH=""; else BRANCH="--branch main"; fi;
                 mkdir /git/{repo,home};
-                git clone --recurse-submodules --single-branch "${BRANCH}" --depth 1 -- "${URL}" /git/repo;
+                git clone --recurse-submodules --single-branch ${BRANCH} --depth 1 -- "${URL}" /git/repo;
                 chmod 0770 /git/{repo,home};
             - name: unseal-playbook
               image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:latest
@@ -1268,7 +1294,7 @@ spec:
       requests:
         cpu: 250m
         memory: 256Mi
-  resourceExclusions: |
+  resourceExclusions:  |
     - apiGroups:
       - tekton.dev
       kinds:

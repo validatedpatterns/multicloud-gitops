@@ -150,12 +150,9 @@ spec:
       requests:
         cpu: 250m
         memory: 256Mi
-  resourceExclusions: |
-    - apiGroups:
-      - tekton.dev
-      kinds:
-      - TaskRun
-      - PipelineRun
+{{- if $.Values.clusterGroup.argoCD.resourceExclusions }}
+  resourceExclusions: {{- $.Values.clusterGroup.argoCD.resourceExclusions | toYaml | indent 2 }}
+{{- end }}
 {{- if .Values.global.excludeESO }}
     - apiGroups:
       - external-secrets.io
