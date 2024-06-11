@@ -28,6 +28,8 @@ clusterGroup:
   argoCD:
     initContainers: []
     configManagementPlugins: []
+    # resource tracking can be set to annotation, label, or annotation+label
+    resourceTrackingMethod: label
     resourceHealthChecks:
       - kind: PersistentVolumeClaim
         check: |
