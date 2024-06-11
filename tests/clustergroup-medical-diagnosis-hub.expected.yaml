@@ -251,6 +251,7 @@ data:
             hs.message = "Waiting for PVC"
             return hs
           kind: PersistentVolumeClaim
+        resourceTrackingMethod: label
       imperative:
         activeDeadlineSeconds: 3600
         adminClusterRoleName: imperative-admin-cluster-role
@@ -1655,6 +1656,7 @@ spec:
       hs.message = "Waiting for PVC"
       return hs
 
+  resourceTrackingMethod: label
   applicationInstanceLabelKey: argocd.argoproj.io/instance
   applicationSet:
     resources:

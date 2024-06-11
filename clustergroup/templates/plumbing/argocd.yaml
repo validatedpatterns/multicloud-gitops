@@ -36,6 +36,7 @@ spec:
       hs.message = "Waiting for PVC"
       return hs
 
+  resourceTrackingMethod: {{ $.Values.clusterGroup.argoCD.resourceTrackingMethod}}
   applicationInstanceLabelKey: argocd.argoproj.io/instance
   applicationSet:
     resources:
