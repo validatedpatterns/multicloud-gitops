@@ -98,22 +98,6 @@
 - mountPath: /tmp/ca-bundles
   name: ca-bundles
 {{- end }}
-{{- define "imperative.volumemounts" }}
-- name: git
-  mountPath: "/git"
-- name: values-volume
-  mountPath: /values/values.yaml
-  subPath: values.yaml
-{{- end }}
-
-{{/* volumes for all containers */}}
-{{- define "imperative.volumes" }}
-- name: git
-  emptyDir: {}
-- name: values-volume
-  configMap:
-    name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}-{{ $.Values.clusterGroup.name }}
-{{- end }}
 
 {{- define "imperative.volumes_ca" }}
 - name: git
