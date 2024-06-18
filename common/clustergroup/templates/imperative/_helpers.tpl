@@ -16,13 +16,15 @@
   - 'sh'
   - '-c'
   - >-
-    cat /var/run/kube-root-ca/ca.crt /var/run/trusted-ca/ca-bundle.crt > /tmp/ca-bundles/ca-bundle.crt || true;
+    cat /var/run/kube-root-ca/ca.crt /var/run/trusted-ca/ca-bundle.crt /var/run/trusted-hub/hub-kube-root-ca.crt > /tmp/ca-bundles/ca-bundle.crt || true;
     ls -l /tmp/ca-bundles/
   volumeMounts:
   - mountPath: /var/run/kube-root-ca
     name: kube-root-ca
   - mountPath: /var/run/trusted-ca
     name: trusted-ca-bundle
+  - mountPath: /var/run/trusted-hub
+    name: trusted-hub-bundle
   - mountPath: /tmp/ca-bundles
     name: ca-bundles
 {{- end }}
@@ -95,24 +97,10 @@
   name: kube-root-ca
 - mountPath: /var/run/trusted-ca
   name: trusted-ca-bundle
+- mountPath: /var/run/trusted-hub
+  name: trusted-hub-bundle
 - mountPath: /tmp/ca-bundles
   name: ca-bundles
-{{- end }}
-{{- define "imperative.volumemounts" }}
-- name: git
-  mountPath: "/git"
-- name: values-volume
-  mountPath: /values/values.yaml
-  subPath: values.yaml
-{{- end }}
-
-{{/* volumes for all containers */}}
-{{- define "imperative.volumes" }}
-- name: git
-  emptyDir: {}
-- name: values-volume
-  configMap:
-    name: {{ $.Values.clusterGroup.imperative.valuesConfigMap }}-{{ $.Values.clusterGroup.name }}
 {{- end }}
 
 {{- define "imperative.volumes_ca" }}
@@ -128,6 +116,10 @@
     name: trusted-ca-bundle
     optional: true
   name: trusted-ca-bundle
+- configMap:
+    name: trusted-hub-bundle
+    optional: true
+  name: trusted-hub-bundle
 - name: ca-bundles
   emptyDir: {}
 {{- end }}
