@@ -38,6 +38,38 @@ subjects:
     kind: Policy
     apiGroup: policy.open-cluster-management.io
 ---
+# Source: acm/templates/policies/acm-hub-ca-policy.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: hub-argo-ca-openshift-gitops-policy-binding
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+placementRef:
+  name: hub-argo-ca-openshift-gitops-policy-placement
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: hub-argo-ca-openshift-gitops-policy
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+# Source: acm/templates/policies/acm-hub-ca-policy.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: hub-argo-ca-factory-placement-binding
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+placementRef:
+  name: hub-argo-ca-factory-placement
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: hub-argo-ca-factory-policy
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
 # Source: acm/templates/policies/application-policies.yaml
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -91,6 +123,42 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: acm-hub-ca-policy-placement
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: NotIn
+        values:
+          - 'true'
+---
+# Source: acm/templates/policies/acm-hub-ca-policy.yaml
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: hub-argo-ca-openshift-gitops-policy-placement
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  clusterConditions:
+    - status: 'True'
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: NotIn
+        values:
+          - 'true'
+---
+# Source: acm/templates/policies/acm-hub-ca-policy.yaml
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: hub-argo-ca-factory-placement
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
@@ -209,6 +277,92 @@ spec:
                 data:
                   hub-kube-root-ca.crt: '{{hub fromConfigMap "" "kube-root-ca.crt" "ca.crt" | base64enc hub}}'
                   hub-openshift-service-ca.crt: '{{hub fromConfigMap "" "openshift-service-ca.crt" "service-ca.crt" | base64enc hub}}'
+            - complianceType: mustonlyhave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: trusted-hub-bundle
+                  namespace: imperative
+                data:
+                  hub-kube-root-ca.crt: |
+                    {{hub fromConfigMap "" "kube-root-ca.crt" "ca.crt" | autoindent hub}}
+                  hub-openshift-service-ca.crt: |
+                    {{hub fromConfigMap "" "openshift-service-ca.crt" "service-ca.crt" | autoindent hub}}
+---
+# Source: acm/templates/policies/acm-hub-ca-policy.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: hub-argo-ca-openshift-gitops-policy
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: hub-argo-ca-openshift-gitops-config
+        spec:
+          remediationAction: enforce
+          severity: medium
+          namespaceSelector:
+            include:
+              - default
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: trusted-hub-bundle
+                  namespace: openshift-gitops
+                data:
+                  hub-kube-root-ca.crt: |
+                    {{hub fromConfigMap "" "kube-root-ca.crt" "ca.crt" | autoindent hub}}
+                  hub-openshift-service-ca.crt: |
+                    {{hub fromConfigMap "" "openshift-service-ca.crt" "service-ca.crt" | autoindent hub}}
+---
+# Source: acm/templates/policies/acm-hub-ca-policy.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: hub-argo-ca-factory-policy
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: hub-argo-ca-factory-config
+        spec:
+          remediationAction: enforce
+          severity: medium
+          namespaceSelector:
+            include:
+              - default
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: trusted-hub-bundle
+                  namespace: mypattern-factory
+                data:
+                  hub-kube-root-ca.crt: |
+                    {{hub fromConfigMap "" "kube-root-ca.crt" "ca.crt" | autoindent hub}}
+                  hub-openshift-service-ca.crt: |
+                    {{hub fromConfigMap "" "openshift-service-ca.crt" "service-ca.crt" | autoindent hub}}
 ---
 # Source: acm/templates/policies/application-policies.yaml
 # TODO: Also create a GitOpsCluster.apps.open-cluster-management.io
@@ -390,6 +544,11 @@ spec:
       kind: Policy
       name: openshift-gitops-policy
       namespace: open-cluster-management
+    - apiVersion: policy.open-cluster-management.io/v1
+      compliance: Compliant
+      kind: Policy
+      name: hub-argo-ca-openshift-gitops-policy
+      namespace: open-cluster-management
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
@@ -486,7 +645,7 @@ spec:
                     - command:
                       - bash
                       - -c
-                      - cat /var/run/kube-root-ca/ca.crt /var/run/trusted-ca/ca-bundle.crt > /tmp/ca-bundles/ca-bundle.crt
+                      - cat /var/run/kube-root-ca/ca.crt /var/run/trusted-ca/ca-bundle.crt /var/run/trusted-hub/hub-kube-root-ca.crt > /tmp/ca-bundles/ca-bundle.crt
                         || true
                       image: registry.redhat.io/ubi9/ubi-minimal:latest
                       name: fetch-ca
@@ -496,6 +655,8 @@ spec:
                         name: kube-root-ca
                       - mountPath: /var/run/trusted-ca
                         name: trusted-ca-bundle
+                      - mountPath: /var/run/trusted-hub
+                        name: trusted-hub-bundle
                       - mountPath: /tmp/ca-bundles
                         name: ca-bundles
                     resources:
@@ -516,6 +677,10 @@ spec:
                         name: trusted-ca-bundle
                         optional: true
                       name: trusted-ca-bundle
+                    - configMap:
+                        name: trusted-hub-bundle
+                        optional: true
+                      name: trusted-hub-bundle
                     - emptyDir: {}
                       name: ca-bundles
                   resourceExclusions: |-
