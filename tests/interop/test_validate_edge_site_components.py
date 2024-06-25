@@ -43,9 +43,14 @@ def test_validate_edge_site_reachable(kube_config, openshift_dyn_client):
     else:
         logger.info(f"EDGE api url : {edge_api_url}")
 
-    bearer_token = get_long_live_bearer_token(dyn_client=openshift_dyn_client)
+    bearer_token = get_long_live_bearer_token(
+        dyn_client=openshift_dyn_client,
+        namespace="openshift-gitops",
+        sub_string="argocd-dex-server-token",
+    )
+
     if not bearer_token:
-        assert False, "Bearer token is missing for hub site"
+        assert False, "Bearer token is missing for argocd-dex-server"
 
     edge_api_response = get_site_response(
         site_url=edge_api_url, bearer_token=bearer_token
@@ -125,10 +130,10 @@ def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
     bearer_token = get_long_live_bearer_token(
         dyn_client=openshift_dyn_client,
         namespace=namespace,
-        sub_string="openshift-gitops-argocd-server-token",
+        sub_string="argocd-dex-server-token",
     )
     if not bearer_token:
-        err_msg = f"Bearer token is missing for argocd-server in {namespace} namespace"
+        err_msg = f"Bearer token is missing for argocd-dex-server"
         logger.error(f"FAIL: {err_msg}")
         assert False, err_msg
     else:
