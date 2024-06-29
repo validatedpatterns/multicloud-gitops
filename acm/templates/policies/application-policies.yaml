@@ -43,6 +43,7 @@ spec:
                       ref: patternref
                     - repoURL: {{ $.Values.global.multiSourceRepoUrl }}
                       targetRevision: {{ $.Values.global.multiSourceTargetRevision }}
+                      chart: clustergroup
                       helm:
                         ignoreMissingValueFiles: true
                         values: |
