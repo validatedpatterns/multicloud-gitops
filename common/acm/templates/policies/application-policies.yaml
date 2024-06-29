@@ -51,12 +51,12 @@ spec:
                             {{ $k }}: {{ printf "%s" $v | quote }}
                           {{- end }}
                         valueFiles:
-                        {{- include "acm.app.policies.multisourcevaluefiles" . | nindent 26 }}
+                        {{- include "acm.app.policies.multisourcevaluefiles" . | nindent 24 }}
                         {{- range $valueFile := .extraValueFiles }}
                         - {{ $valueFile | quote }}
                         {{- end }}
                         parameters:
-                        {{- include "acm.app.policies.helmparameters" $ | nindent 26 }}
+                        {{- include "acm.app.policies.helmparameters" $ | nindent 24 }}
                         - name: clusterGroup.name
                           value: {{ $group.name }}
                         {{- range $k, $v := $.Values.extraParametersNested }}
