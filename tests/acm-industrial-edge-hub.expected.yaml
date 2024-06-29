@@ -438,10 +438,18 @@ spec:
                         value: '{{ (split "." (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain)._1 }}'
                       - name: global.clusterPlatform
                         value: aws
-                      - name: clusterGroup.name
-                        value: factory
+                      - name: global.multiSourceSupport
+                        value: 
+                      - name: global.multiSourceRepoUrl
+                        value: 
+                      - name: global.multiSourceTargetRevision
+                        value: 
+                      - name: global.privateRepo
+                        value: 
                       - name: global.experimentalCapabilities
                         value: 
+                      - name: clusterGroup.name
+                        value: factory
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
