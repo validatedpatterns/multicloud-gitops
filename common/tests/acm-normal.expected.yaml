@@ -1389,10 +1389,18 @@ spec:
                         value: '{{ (split "." (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain)._1 }}'
                       - name: global.clusterPlatform
                         value: aws
-                      - name: clusterGroup.name
-                        value: acm-edge
+                      - name: global.multiSourceSupport
+                        value: 
+                      - name: global.multiSourceRepoUrl
+                        value: 
+                      - name: global.multiSourceTargetRevision
+                        value: 
+                      - name: global.privateRepo
+                        value: 
                       - name: global.experimentalCapabilities
                         value: 
+                      - name: clusterGroup.name
+                        value: acm-edge
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
@@ -1487,10 +1495,18 @@ spec:
                         value: '{{ (split "." (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain)._1 }}'
                       - name: global.clusterPlatform
                         value: aws
-                      - name: clusterGroup.name
-                        value: acm-provision-edge
+                      - name: global.multiSourceSupport
+                        value: 
+                      - name: global.multiSourceRepoUrl
+                        value: 
+                      - name: global.multiSourceTargetRevision
+                        value: 
+                      - name: global.privateRepo
+                        value: 
                       - name: global.experimentalCapabilities
                         value: 
+                      - name: clusterGroup.name
+                        value: acm-provision-edge
                       - name: clusterGroup.isHubCluster
                         value: "false"
                   destination:
@@ -1585,10 +1601,18 @@ spec:
                         value: '{{ (split "." (lookup "config.openshift.io/v1" "Ingress" "" "cluster").spec.domain)._1 }}'
                       - name: global.clusterPlatform
                         value: aws
-                      - name: clusterGroup.name
-                        value: acm-provision-on-deploy
+                      - name: global.multiSourceSupport
+                        value: 
+                      - name: global.multiSourceRepoUrl
+                        value: 
+                      - name: global.multiSourceTargetRevision
+                        value: 
+                      - name: global.privateRepo
+                        value: 
                       - name: global.experimentalCapabilities
                         value: 
+                      - name: clusterGroup.name
+                        value: acm-provision-on-deploy
                   destination:
                     server: https://kubernetes.default.svc
                     namespace: mypattern-acm-provision-on-deploy

@@ -3,9 +3,9 @@ Default always defined top-level variables for helm charts
 */}}
 {{- define "clustergroup.app.globalvalues.helmparameters" -}}
 - name: global.repoURL
-  value: $ARGOCD_APP_SOURCE_REPO_URL
+  value: {{ $.Values.global.repoURL }}
 - name: global.targetRevision
-  value: $ARGOCD_APP_SOURCE_TARGET_REVISION
+  value: {{ $.Values.global.targetRevision }}
 - name: global.namespace
   value: $ARGOCD_APP_NAMESPACE
 - name: global.pattern
@@ -18,6 +18,12 @@ Default always defined top-level variables for helm charts
   value: "{{ $.Values.global.clusterPlatform }}"
 - name: global.hubClusterDomain
   value: {{ $.Values.global.hubClusterDomain }}
+- name: global.multiSourceSupport
+  value: {{ $.Values.global.multiSourceSupport | quote }}
+- name: global.multiSourceRepoUrl
+  value: {{ $.Values.global.multiSourceRepoUrl }}
+- name: global.multiSourceTargetRevision
+  value: {{ $.Values.global.multiSourceTargetRevision }}
 - name: global.localClusterDomain
   value: {{ coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain }}
 - name: global.privateRepo
