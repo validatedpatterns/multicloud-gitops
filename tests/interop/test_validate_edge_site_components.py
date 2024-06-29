@@ -133,7 +133,7 @@ def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
         sub_string="argocd-dex-server-token",
     )
     if not bearer_token:
-        err_msg = f"Bearer token is missing for argocd-dex-server"
+        err_msg = "Bearer token is missing for argocd-dex-server"
         logger.error(f"FAIL: {err_msg}")
         assert False, err_msg
     else:
