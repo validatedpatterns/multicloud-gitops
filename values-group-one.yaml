@@ -10,7 +10,8 @@ clusterGroup:
     - config-demo
     - hello-world
     - golang-external-secrets
-  subscriptions:
+  # The only subscription on spokes is gitops which gets managed by ACM
+  # subscriptions:
   projects:
     - eso
     - config-demo
