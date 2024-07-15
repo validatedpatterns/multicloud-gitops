@@ -6,7 +6,7 @@ metadata:
   name: hashicorp-vault
   namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.28.0
+    helm.sh/chart: vault-0.28.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -18,7 +18,7 @@ metadata:
   name: hashicorp-vault-config
   namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.28.0
+    helm.sh/chart: vault-0.28.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -43,7 +43,7 @@ kind: ClusterRoleBinding
 metadata:
   name: hashicorp-vault-server-binding
   labels:
-    helm.sh/chart: vault-0.28.0
+    helm.sh/chart: vault-0.28.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -64,7 +64,7 @@ metadata:
   name: hashicorp-vault-internal
   namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.28.0
+    helm.sh/chart: vault-0.28.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -96,7 +96,7 @@ metadata:
   name: hashicorp-vault
   namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.28.0
+    helm.sh/chart: vault-0.28.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -127,7 +127,7 @@ metadata:
   name: hashicorp-vault-ui
   namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.28.0
+    helm.sh/chart: vault-0.28.1
     app.kubernetes.io/name: vault-ui
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -168,7 +168,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: vault-0.28.0
+        helm.sh/chart: vault-0.28.1
         app.kubernetes.io/name: vault
         app.kubernetes.io/instance: hashicorp-vault
         component: server
@@ -206,7 +206,7 @@ spec:
       containers:
         - name: vault
           
-          image: registry.connect.redhat.com/hashicorp/vault:1.16.2-ubi
+          image: registry.connect.redhat.com/hashicorp/vault:1.17.2-ubi
           imagePullPolicy: IfNotPresent
           command:
           - "/bin/sh"
@@ -348,7 +348,7 @@ metadata:
   name: hashicorp-vault
   namespace: pattern-namespace
   labels:
-    helm.sh/chart: vault-0.28.0
+    helm.sh/chart: vault-0.28.1
     app.kubernetes.io/name: vault
     app.kubernetes.io/instance: hashicorp-vault
     app.kubernetes.io/managed-by: Helm
@@ -375,7 +375,7 @@ spec:
   
   containers:
     - name: hashicorp-vault-server-test
-      image: registry.connect.redhat.com/hashicorp/vault:1.16.2-ubi
+      image: registry.connect.redhat.com/hashicorp/vault:1.17.2-ubi
       imagePullPolicy: IfNotPresent
       env:
         - name: VAULT_ADDR
