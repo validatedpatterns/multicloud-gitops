@@ -1,0 +1,40 @@
+apiVersion: loki.grafana.com/v1
+kind: LokiStack
+metadata:
+  name: logging-loki 
+  namespace: openshift-logging
+spec:
+  limits:
+    global:
+      retention:
+        days: 30
+    tenants: 
+      application:
+        retention:
+          days: 7
+          streams:
+            - days: 1
+              selector: '{kubernetes_namespace_name=~".+"}' 
+      infrastructure:
+        retention:
+          days: 7
+          streams:
+            - days: 1
+              selector: '{kubernetes_namespace_name=~"openshift-cluster.+"}'
+  managementState: Managed
+  rules:
+    enabled: true
+  replicationFactor: 1
+  size: 1x.small 
+  storage:
+    schemas:
+      - effectiveDate: '2023-10-15'
+        version: v13
+    secret:
+      name: logging-loki-secret 
+      type: s3
+    tls:
+        caName: openshift-service-ca.crt
+  storageClassName: ocs-storagecluster-ceph-rbd  
+  tenants:
+    mode: openshift-logging

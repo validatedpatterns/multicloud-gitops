@@ -1,0 +1,6 @@
+apiVersion: v2
+name: loki
+description: A Helm chart for installing logging operator
+keywords:
+- pattern
+version: 0.0.1

@@ -7,16 +7,26 @@ clusterGroup:
     - golang-external-secrets
     - config-demo
     - hello-world
+    - openshift-logging
   subscriptions:
     acm:
       name: advanced-cluster-management
       namespace: open-cluster-management
       channel: release-2.10
       #csv: advanced-cluster-management.v2.6.1
+    cluster-logging:
+      name: cluster-logging
+      namespace: openshift-logging
+      channel: stable
+    loki-operator:
+      name: loki-operator
+      namespace: openshift-operators-redhat
+      channel: stable
   projects:
     - hub
     - config-demo
     - hello-world
+    - openshift-logging
   # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
   # We can use self-referential variables because the chart calls the tpl function with these variables defined
   sharedValueFiles:
@@ -68,6 +78,16 @@ clusterGroup:
       namespace: hello-world
       project: hello-world
       path: charts/all/hello-world
+    openshift-logging:
+      name: cluster-logging
+      namespace: openshift-logging
+      project: openshift-logging
+      path: charts/all/logging-operator
+    loki:
+      name: cluster-logging
+      namespace: openshift-logging
+      project: openshift-logging
+      path: charts/all/loki
   imperative:
     # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
     # The default schedule is every 10 minutes: imperative.schedule

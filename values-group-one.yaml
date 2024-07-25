@@ -10,12 +10,14 @@ clusterGroup:
     - config-demo
     - hello-world
     - golang-external-secrets
+    - openshift-logging
   # The only subscription on spokes is gitops which gets managed by ACM
   # subscriptions:
   projects:
     - eso
     - config-demo
     - hello-world
+    - openshift-logging
   applications:
     golang-external-secrets:
       name: golang-external-secrets
@@ -32,6 +34,16 @@ clusterGroup:
       namespace: hello-world
       project: hello-world
       path: charts/all/hello-world
+    openshift-logging:
+      name: cluster-logging
+      namespace: openshift-logging
+      project: openshift-logging
+      path: charts/all/logging-operator
+    loki:
+      name: cluster-logging
+      namespace: openshift-logging
+      project: openshift-logging
+      path: charts/all/loki
   imperative:
     # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
     # The default schedule is every 10 minutes: imperative.schedule
