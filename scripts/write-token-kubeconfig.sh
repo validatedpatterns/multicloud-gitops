@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -eu
 
+OUTPUTFILE=${1:-"~/.kube/config"}
+
 get_abs_filename() {
   # $1 : relative filename
   echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
@@ -14,6 +16,4 @@ ANSIBLEPATH="$(dirname ${SCRIPTPATH})/ansible"
 PLAYBOOKPATH="${ANSIBLEPATH}/playbooks"
 export ANSIBLE_CONFIG="${ANSIBLEPATH}/ansible.cfg"
 
-PATTERN_NAME=${1:-$(basename "`pwd`")}
-
-ansible-playbook -e pattern_name="${PATTERN_NAME}" -e pattern_dir="${PATTERNPATH}" "${PLAYBOOKPATH}/write-token-kubeconfig/write-token-kubeconfig.yml"
+ansible-playbook -e pattern_dir="${PATTERNPATH}" -e kubeconfig_file="${OUTPUTFILE}" "${PLAYBOOKPATH}/write-token-kubeconfig/write-token-kubeconfig.yml"
