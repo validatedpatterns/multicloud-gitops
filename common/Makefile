@@ -119,6 +119,9 @@ load-iib: ## CI target to install Index Image Bundles
 		exit 1; \
 	fi
 
+.PHONY: token-kubeconfig
+token-kubeconfig: ## Create a local ~/.kube/config with password (not usually needed)
+	common/scripts/write-token-kubeconfig.sh
 
 ##@ Validation Tasks
 
