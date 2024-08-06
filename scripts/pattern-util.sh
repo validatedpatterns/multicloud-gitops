@@ -49,13 +49,20 @@ if [ -n "$KUBECONFIG" ]; then
     fi
 fi
 
-# Use /etc/pki by default and try a couple of fallbacks if it does not exist
-if [ -d /etc/pki ]; then
-    PKI_HOST_MOUNT="/etc/pki"
-elif [ -d /etc/ssl ]; then
-    PKI_HOST_MOUNT="/etc/ssl"
+# Detect if we use podman machine. If we do not then we bind mount local host ssl folders
+# if we are using podman machine then we do not bind mount anything (for now!)
+REMOTE_PODMAN=$(podman system connection list -q | wc -l)
+if [ $REMOTE_PODMAN -eq 0 ]; then # If we are not using podman machine we check the hosts folders
+    # Use /etc/pki by default and try a couple of fallbacks if it does not exist
+    if [ -d /etc/pki ]; then
+        PKI_HOST_MOUNT_ARGS="-v /etc/pki:/etc/pki:ro"
+    elif [ -d /etc/ssl ]; then
+        PKI_HOST_MOUNT_ARGS="-v /etc/ssl:/etc/ssl:ro"
+    else
+        PKI_HOST_MOUNT_ARGS="-v /usr/share/ca-certificates:/usr/share/ca-certificates:ro"
+    fi
 else
-    PKI_HOST_MOUNT="/usr/share/ca-certificates"
+    PKI_HOST_MOUNT_ARGS=""
 fi
 
 # Copy Kubeconfig from current environment. The utilities will pick up ~/.kube/config if set so it's not mandatory
@@ -67,13 +74,7 @@ podman run -it --rm --pull=newer \
 	-e EXTRA_HELM_OPTS \
 	-e EXTRA_PLAYBOOK_OPTS \
 	-e KUBECONFIG \
-	-e K8S_AUTH_HOST \
-	-e K8S_AUTH_VERIFY_SSL \
-	-e K8S_AUTH_SSL_CA_CERT \
-	-e K8S_AUTH_USERNAME \
-	-e K8S_AUTH_PASSWORD \
-	-e K8S_AUTH_TOKEN \
-	-v "${PKI_HOST_MOUNT}":/etc/pki:ro \
+	${PKI_HOST_MOUNT_ARGS} \
 	-v "${HOME}":"${HOME}" \
 	-v "${HOME}":/pattern-home \
 	${PODMAN_ARGS} \
