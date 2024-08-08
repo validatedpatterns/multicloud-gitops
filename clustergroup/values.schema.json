@@ -81,6 +81,10 @@
             "revision"
           ],
           "properties": {
+            "repoUpstreamURL": {
+              "type": "string",
+              "description": "Upstream URL of the pattern's git repository. When set an in-cluster gitea instance gets spawned and repoURL is ignored"
+            },
             "repoURL": {
               "type": "string",
               "description": "URL of the pattern's git repository"
