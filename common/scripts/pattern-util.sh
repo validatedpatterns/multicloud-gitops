@@ -38,7 +38,8 @@ else
     MYNAME=$(id -n -u)
     MYUID=$(id -u)
     MYGID=$(id -g)
-    PODMAN_ARGS="--passwd-entry ${MYNAME}:x:${MYUID}:${MYGID}:/pattern-home:/bin/bash --user ${MYUID}:${MYGID} --userns keep-id:uid=${MYUID},gid=${MYGID}"
+    PODMAN_ARGS="--passwd-entry ${MYNAME}:x:${MYUID}:${MYGID}::/pattern-home:/bin/bash --user ${MYUID}:${MYGID} --userns keep-id:uid=${MYUID},gid=${MYGID}"
+
 fi
 
 if [ -n "$KUBECONFIG" ]; then

@@ -3,6 +3,11 @@ global:
 
 main:
   git:
+    # Uncommenting this will set the `originRepo` with the below value
+    # when `originRepo` is set, an in-cluster gitea will automatically be spawned.
+    # In this case `originRepo` will point to the upstream repository and `targetRepo`
+    # will point to the internal in-cluster gitea mirror
+    # repoUpstreamURL: https://github.com/validatedpatterns/multicloud-gitops
     repoURL: https://github.com/pattern-clone/mypattern
     revision: main
 

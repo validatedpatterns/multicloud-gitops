@@ -22,7 +22,7 @@ metadata:
   namespace: openshift-operators
 spec:
   clusterGroupName: default
-  gitSpec:
+  gitSpec: 
     targetRepo: https://github.com/pattern-clone/mypattern
     targetRevision: main 
   multiSourceConfig:
