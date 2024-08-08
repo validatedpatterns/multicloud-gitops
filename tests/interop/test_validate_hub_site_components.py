@@ -45,7 +45,7 @@ def test_validate_hub_site_reachable(kube_config, openshift_dyn_client):
     try:
         hub_api_url = application.get_site_api_url(kube_config)
         hub_api_response = application.get_site_api_response(
-            openshift_dyn_client, namespace, sub_string, hub_api_url
+            openshift_dyn_client, hub_api_url, namespace, sub_string
         )
     except AssertionError as e:
         logger.error(f"FAIL: {e}")
@@ -140,7 +140,7 @@ def test_validate_argocd_reachable_hub_site(openshift_dyn_client):
             openshift_dyn_client, namespace, name
         )
         argocd_route_response = application.get_site_api_response(
-            openshift_dyn_client, namespace, sub_string, argocd_route_url
+            openshift_dyn_client, argocd_route_url, namespace, sub_string
         )
     except StopIteration:
         err_msg = "Argocd url/route is missing in open-cluster-management namespace"
