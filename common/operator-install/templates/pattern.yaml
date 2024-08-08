@@ -6,6 +6,9 @@ metadata:
 spec:
   clusterGroupName: {{ .Values.main.clusterGroupName }}
   gitSpec:
+{{- if .Values.main.git.repoUpstreamURL }}
+    originRepo: {{ .Values.main.git.repoUpstreamURL }}
+{{- end }} {{/* if .Values.main.git.repoUpstreamURL */}}
     targetRepo: {{ .Values.main.git.repoURL }}
     targetRevision: {{ .Values.main.git.revision }}
 {{- if and .Values.main.tokenSecret .Values.main.tokenSecretNamespace }}
