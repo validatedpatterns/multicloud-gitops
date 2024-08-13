@@ -107,11 +107,15 @@
         },
         "multiSourceConfig": {
           "type": "object",
-          "additionalProperties": false,
+          "additionalProperties": true,
           "properties": {
             "enabled": {
               "type": "boolean",
-              "description": "Enable the experimental support for multi source"
+              "description": "Enable the experimental support for multi source for the clustergroup chart"
+            },
+            "helmRepoUrl": {
+              "type": "string",
+              "description": "The helm repo URL for the clustergroup chart"
             }
           }
         },
