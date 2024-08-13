@@ -75,6 +75,12 @@ podman run -it --rm --pull=newer \
 	-e EXTRA_HELM_OPTS \
 	-e EXTRA_PLAYBOOK_OPTS \
 	-e KUBECONFIG \
+	-e K8S_AUTH_HOST \
+	-e K8S_AUTH_VERIFY_SSL \
+	-e K8S_AUTH_SSL_CA_CERT \
+	-e K8S_AUTH_USERNAME \
+	-e K8S_AUTH_PASSWORD \
+	-e K8S_AUTH_TOKEN \
 	${PKI_HOST_MOUNT_ARGS} \
 	-v "${HOME}":"${HOME}" \
 	-v "${HOME}":/pattern-home \
