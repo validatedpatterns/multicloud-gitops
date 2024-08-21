@@ -17,6 +17,7 @@ main:
 
   multiSourceConfig:
     enabled: false
+    # helmRepoUrl: registry.internal.network/helm
 
   # String to enable certain experimental capabilities in the operator and the
   # framework. Not needed unless you know exactly what you're doing.
