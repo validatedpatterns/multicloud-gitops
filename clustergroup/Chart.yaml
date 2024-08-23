@@ -3,4 +3,4 @@ description: A Helm chart to create per-clustergroup ArgoCD applications and any
 keywords:
 - pattern
 name: clustergroup
-version: 0.8.10
+version: 0.8.11
