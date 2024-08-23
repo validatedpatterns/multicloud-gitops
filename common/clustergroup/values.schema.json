@@ -97,11 +97,29 @@
         },
         "gitops": {
           "type": "object",
-          "additionalProperties": false,
+          "additionalProperties": true,
           "properties": {
             "channel": {
               "type": "string",
               "description": "The channel from which to install the gitops operator"
+            },
+            "operatorSource": {
+              "type": "string",
+              "description": "The catalog source from which to install the gitops operator"
+            }
+          }
+        },
+        "patternsOperator": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "channel": {
+              "type": "string",
+              "description": "The channel from which to install the patterns operator"
+            },
+            "source": {
+              "type": "string",
+              "description": "The catalog source from which to install the patterns operator"
             }
           }
         },
