@@ -17,6 +17,9 @@ spec:
 {{- end }} {{/* if and .Values.main.tokenSecret .Values.main.tokenSecretNamespace */}}
   multiSourceConfig:
     enabled: {{ .Values.main.multiSourceConfig.enabled }}
+{{- if .Values.main.multiSourceConfig.helmRepoUrl }}
+    helmRepoUrl: {{ .Values.main.multiSourceConfig.helmRepoUrl }}
+{{- end }} {{/* if .Values.main.multiSourceConfig.helmRepoUrl */}}
 {{- if .Values.main.analyticsUUID }}
   analyticsUUID: {{ .Values.main.analyticsUUID }}
 {{- end }} {{/* if .Values.main.analyticsUUID */}}
