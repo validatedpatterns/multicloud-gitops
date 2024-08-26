@@ -1,0 +1,6 @@
+pytest
+kubernetes
+openshift
+openshift-python-wrapper
+junitparser
+git+https://github.com/validatedpatterns/vp-qe-test-common.git@development#egg=vp-qe-test-common
