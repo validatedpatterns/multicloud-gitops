@@ -238,15 +238,18 @@ super-linter: ## Runs super linter locally
 					-e VALIDATE_CHECKOV=false \
 					-e VALIDATE_DOCKERFILE_HADOLINT=false \
 					-e VALIDATE_JSCPD=false \
+					-e VALIDATE_JSON_PRETTIER=false \
+					-e VALIDATE_MARKDOWN_PRETTIER=false \
 					-e VALIDATE_KUBERNETES_KUBECONFORM=false \
 					-e VALIDATE_PYTHON_PYLINT=false \
 					-e VALIDATE_SHELL_SHFMT=false \
 					-e VALIDATE_TEKTON=false \
 					-e VALIDATE_YAML=false \
+					-e VALIDATE_YAML_PRETTIER=false \
 					$(DISABLE_LINTERS) \
 					-v $(PWD):/tmp/lint:rw,z \
 					-w /tmp/lint \
-					ghcr.io/super-linter/super-linter:slim-v6
+					ghcr.io/super-linter/super-linter:slim-v7
 
 .PHONY: ansible-lint
 ansible-lint: ## run ansible lint on ansible/ folder
