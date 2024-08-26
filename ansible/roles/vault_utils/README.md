@@ -55,7 +55,7 @@ By default, the first file that will looked up is
 The paths can be overridden by setting the environment variable `VALUES_SECRET` to the path of the
 secret file.
 
-The values secret yaml files can be encrypted with `ansible-vault`. If the role detects they are encrypted, the password to
+The values secret YAML files can be encrypted with `ansible-vault`. If the role detects they are encrypted, the password to
 decrypt them will be prompted when needed.
 
 ### Version 1.0
