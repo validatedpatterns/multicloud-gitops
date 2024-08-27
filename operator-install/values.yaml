@@ -12,7 +12,7 @@ main:
     revision: main
 
   gitops:
-    channel: "gitops-1.12"
+    channel: "gitops-1.13"
     operatorSource: redhat-operators
 
   multiSourceConfig:
