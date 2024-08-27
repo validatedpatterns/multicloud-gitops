@@ -206,7 +206,7 @@ spec:
       containers:
         - name: vault
           
-          image: registry.connect.redhat.com/hashicorp/vault:1.17.2-ubi
+          image: registry.connect.redhat.com/hashicorp/vault:1.17.3-ubi
           imagePullPolicy: IfNotPresent
           command:
           - "/bin/sh"
@@ -375,7 +375,7 @@ spec:
   
   containers:
     - name: hashicorp-vault-server-test
-      image: registry.connect.redhat.com/hashicorp/vault:1.17.2-ubi
+      image: registry.connect.redhat.com/hashicorp/vault:1.17.3-ubi
       imagePullPolicy: IfNotPresent
       env:
         - name: VAULT_ADDR
