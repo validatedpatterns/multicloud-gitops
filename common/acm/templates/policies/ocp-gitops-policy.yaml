@@ -35,7 +35,7 @@ spec:
                   labels:
                     operators.coreos.com/openshift-gitops-operator.openshift-operators: ''
                 spec:
-                  channel: {{ default "gitops-1.12" .Values.main.gitops.channel }}
+                  channel: {{ default "gitops-1.13" .Values.main.gitops.channel }}
                   installPlanApproval: Automatic
                   name: openshift-gitops-operator
                   source: {{ default "redhat-operators" .Values.main.gitops.operatorSource }}
