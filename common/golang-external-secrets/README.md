@@ -11,7 +11,7 @@ we just override the tag with the version + "-ubi"
 3. Run `./update-helm-dependency.sh`
 4. Tweak `values.yaml` with the new image versions
 5. Run `make test`
-6. Commit to git
+6. Commit to Git
 
 ## PRs
 

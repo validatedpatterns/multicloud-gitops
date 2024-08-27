@@ -1,6 +1,6 @@
 # IIB Utilities
 
-A set of ansible plays to fetch an IIB (Image Index Bundle, aka a container created by the operator sdk
+A set of ansible plays to fetch an IIB (Image Index Bundle, aka a container created by the operator SDK
 that contains a bunch of references to operators that can be installed in an OpenShift cluster)
 
 Run `ansible-playbook common/ansible/playbooks/iib-ci/lookup.yml` to see which IIBs are available (defaults to
