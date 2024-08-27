@@ -7,7 +7,7 @@ metadata:
   namespace: openshift-operators
 data:
   gitops.catalogSource: redhat-operators
-  gitops.channel: gitops-1.12
+  gitops.channel: gitops-1.13
 
   # gitops.sourceNamespace: GitOpsDefaultCatalogSourceNamespace
   # gitops.installApprovalPlan: GitOpsDefaultApprovalPlan
