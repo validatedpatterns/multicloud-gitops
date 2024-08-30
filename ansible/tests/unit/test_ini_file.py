@@ -29,6 +29,7 @@ import load_secrets_common  # noqa: E402
 
 
 class TestMyModule(unittest.TestCase):
+
     def setUp(self):
         self.testdir_v2 = os.path.join(os.path.dirname(os.path.abspath(__file__)), "v2")
 

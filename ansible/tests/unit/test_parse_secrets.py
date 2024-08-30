@@ -62,6 +62,7 @@ def set_module_args(args):
 
 
 class BytesEncoder(json.JSONEncoder):
+
     def default(self, o):
         if isinstance(o, bytes):
             return base64.b64encode(o).decode("ascii")
@@ -113,6 +114,7 @@ def fail_json(*args, **kwargs):
 
 @mock.patch("getpass.getpass")
 class TestMyModule(unittest.TestCase):
+
     def create_inifile(self):
         self.inifile = open("/tmp/awscredentials", "w")
         config = configparser.ConfigParser()
