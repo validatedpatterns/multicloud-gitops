@@ -74,6 +74,7 @@ def fail_json(*args, **kwargs):
 
 
 class TestMyModule(unittest.TestCase):
+
     def setUp(self):
         self.mock_module_helper = patch.multiple(
             basic.AnsibleModule, exit_json=exit_json, fail_json=fail_json

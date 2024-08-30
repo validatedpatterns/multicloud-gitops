@@ -79,5 +79,6 @@ def parse_acm_secrets(secrets):
 
 
 class FilterModule:
+
     def filters(self):
         return {"parse_acm_secrets": parse_acm_secrets}
