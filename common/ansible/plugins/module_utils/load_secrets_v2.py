@@ -40,6 +40,7 @@ default_vp_vault_policies = {
 
 
 class LoadSecretsV2:
+
     def __init__(self, module, syaml, namespace, pod):
         self.module = module
         self.namespace = namespace

@@ -26,6 +26,7 @@ from ansible.module_utils.load_secrets_common import flatten, get_version
 
 
 class LoadSecretsV1:
+
     def __init__(
         self,
         module,

@@ -77,6 +77,7 @@ def fail_json(*args, **kwargs):
 
 @mock.patch("getpass.getpass")
 class TestMyModule(unittest.TestCase):
+
     def create_inifile(self):
         self.inifile = open("/tmp/awscredentials", "w")
         config = configparser.ConfigParser()
