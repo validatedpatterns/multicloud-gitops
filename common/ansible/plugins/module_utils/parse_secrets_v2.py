@@ -42,6 +42,7 @@ secret_store_namespace = "validated-patterns-secrets"
 
 
 class ParseSecretsV2:
+
     def __init__(self, module, syaml, secrets_backing_store):
         self.module = module
         self.syaml = syaml

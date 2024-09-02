@@ -157,13 +157,41 @@
   loop_control:
     label: "{{ item.key }}"
 
-- name: Configure policy template
+- name: Configure spoke policy template
   kubernetes.core.k8s_exec:
     namespace: "{{ vault_ns }}"
     pod: "{{ vault_pod }}"
     command: >
       bash -e -c "echo \"path \\\"secret/data/{{ item.value['vault_path'] }}/*\\\" {
         capabilities = {{ vault_spoke_capabilities }} }\" > /tmp/policy-{{ item.value['vault_path'] }}.hcl"
+  loop: "{{ clusters_info | dict2items }}"
+  when:
+    - item.value['esoToken'] is defined
+    - item.key != "local-cluster"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Configure spoke pushsecrets policy template
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: >
+      bash -e -c "echo \"path \\\"secret/data/{{ vault_pushsecrets_policy }}/*\\\" {
+        capabilities = {{ vault_pushsecrets_capabilities }} }\" >> /tmp/policy-{{ item.value['vault_path'] }}.hcl"
+  loop: "{{ clusters_info | dict2items }}"
+  when:
+    - item.value['esoToken'] is defined
+    - item.key != "local-cluster"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Configure spoke pushsecrets metadata policy template
+  kubernetes.core.k8s_exec:
+    namespace: "{{ vault_ns }}"
+    pod: "{{ vault_pod }}"
+    command: >
+      bash -e -c "echo \"path \\\"secret/metadata/{{ vault_pushsecrets_policy }}/*\\\" {
+        capabilities = {{ vault_pushsecrets_capabilities }} }\" >> /tmp/policy-{{ item.value['vault_path'] }}.hcl"
   loop: "{{ clusters_info | dict2items }}"
   when:
     - item.value['esoToken'] is defined
@@ -191,7 +219,7 @@
       vault write auth/"{{ item.value['vault_path'] }}"/role/"{{ item.value['vault_path'] }}"-role
         bound_service_account_names="{{ external_secrets_sa }}"
         bound_service_account_namespaces="{{ external_secrets_ns }}"
-        policies="default,{{ vault_global_policy }}-secret,{{ item.value['vault_path'] }}-secret" ttl="{{ vault_spoke_ttl }}"
+        policies="default,{{ vault_global_policy }}-secret,{{ vault_pushsecrets_policy }}-secret,{{ item.value['vault_path'] }}-secret" ttl="{{ vault_spoke_ttl }}"
   loop: "{{ clusters_info | dict2items }}"
   when:
     - item.value['esoToken'] is defined

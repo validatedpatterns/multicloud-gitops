@@ -82,6 +82,7 @@ EXAMPLES = """
 
 
 class VaultSecretLoader:
+
     def __init__(
         self,
         module,

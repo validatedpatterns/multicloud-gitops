@@ -17,6 +17,8 @@ vault_spoke_capabilities: '[\\\"read\\\"]'
 vault_spoke_ttl: "15m"
 vault_global_policy: global
 vault_global_capabilities: '[\\\"read\\\"]'
+vault_pushsecrets_policy: pushsecrets
+vault_pushsecrets_capabilities: '[\\\"create\\\",\\\"read\\\",\\\"update\\\",\\\"delete\\\"]'
 external_secrets_ns: golang-external-secrets
 external_secrets_sa: golang-external-secrets
 external_secrets_secret: golang-external-secrets
