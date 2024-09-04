@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "datamesh.name" -}}
+{{- define "openmetadatas.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "datamesh.fullname" -}}
+{{- define "openmetadatas.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "datamesh.chart" -}}
+{{- define "openmetadatas.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "datamesh.labels" -}}
-helm.sh/chart: {{ include "datamesh.chart" . }}
-{{ include "datamesh.selectorLabels" . }}
+{{- define "openmetadatas.labels" -}}
+helm.sh/chart: {{ include "openmetadatas.chart" . }}
+{{ include "openmetadatas.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "datamesh.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "datamesh.name" . }}
+{{- define "openmetadatas.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "openmetadatas.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "datamesh.serviceAccountName" -}}
+{{- define "openmetadatas.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "datamesh.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "openmetadatas.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

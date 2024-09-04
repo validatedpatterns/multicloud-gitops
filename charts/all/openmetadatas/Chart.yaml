@@ -1,5 +1,5 @@
 apiVersion: v2
-name: datamesh
+name: openmetadatas
 description: A Helm chart for Kubernetes
 
 
