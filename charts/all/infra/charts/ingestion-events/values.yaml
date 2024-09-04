@@ -1,0 +1,117 @@
+replicaCount: 1
+
+image:
+  registry: quay.io
+  username: zagaos
+  name: infra-ingestion-pyiceberg
+  pullPolicy: IfNotPresent
+  tag: cb2da23
+  strategy: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+  # runAsGroup: 1000
+
+serviceAccount:
+  create: false
+  automount: false
+  annotations: {}
+  name: ""
+
+ports:
+  # - name: 8080-tcp
+  #   port: 8080
+  #   protocol: TCP
+  #   targetPort: 8080
+    # subdomainName: infra-query-insecure
+    # tls:
+    #   enabled: false
+      # termination: edge
+      # insecureEdgeTerminationPolicy: Redirect
+
+# routes:
+#   enabled: true
+
+# ingress:
+#   enabled: false
+#   domain: apps.zagaopenshift.zagaopensource.com
+#   annotations:
+#     cert-manager.io/cluster-issuer: zagaadmin-cluster-issuer
+
+service: {}
+  # - enabled: true
+  #   serviceType: ClusterIP
+  # - enabled: false
+  #   serviceType: LoadBalancer
+
+
+secretsEnv: {}
+
+configmapEnv:
+  - name: 
+    mount: ""
+    mountPath: ""
+    filePath: false
+    data:
+      KAFKA_TOPIC: k8sevents
+      TABLE_NAME: event
+      NAME_SPACE: infra_event
+      CONSUMER_GROUP_ID: event_ingestion
+      SCRIPT_TO_RUN: event
+      BUCKET_NAME: s3a://observability-infra-event/event
+      KAFKA_BOOTSTRAP_SERVER: 'telemetry-kafka-bootstrap.observability-kafka.svc.cluster.local:9092'
+      URI: 'thrift://hive-metastore.observability-datamesh.svc.cluster.local:9083'
+      S3_ENDPOINT: 'http://minio.observability-datamesh.svc.cluster.local:9000'
+      ACCESS_KEY: minioAdmin
+      SECRET_KEY: minio1234
+
+probes:
+  readiness:
+  liveness:
+
+volumes: {}
+  # - type: PersistentVolumeClaim
+  #   apiVersion: v1
+  #   accessModes: ReadWriteOnce
+  #   volumeName: ""
+  #   mountPath: /storage
+  #   storageSize: "80Gi"
+  # - type: EmptyDir
+  #   volumeName: ""
+  #   mountPath: /empty-dir
+
+resources: {}
+  # limits:
+  #   cpu: 600m
+  #   memory: 1128Mi
+  # requests:
+  #   cpu: 600m
+  #   memory: 1128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

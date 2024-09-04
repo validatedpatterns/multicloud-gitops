@@ -1,0 +1,6 @@
+nameOverride: ""
+
+subcharts:
+  postgresql: true
+  elasticsearch: true
+  openmetadata: true

@@ -1,0 +1,95 @@
+replicaCount: 1
+
+containerName: ""
+
+image:
+  registry: quay.io
+  username: zagaos
+  name: admin-backend-pyiceberg
+  pullPolicy: IfNotPresent
+  tag: v17
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+args: {}
+
+ports:
+  - name: 8000-tcp
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+    tls:
+      enabled: false
+
+service:
+  - enabled: true
+    serviceType: ClusterIP
+  - enabled: false
+    serviceType: LoadBalancer
+
+
+secretsEnv:
+  - name: ""
+    # mount: ""
+    # mountPath: ""
+    data:
+      POSTGRES_DB: "usersdb"
+      POSTGRES_HOST: "admin-postgresql-service.observability-zaga.svc.cluster.local"
+      POSTGRES_PASSWORD: "usersdb123"
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: "usermanager"
+
+configmapEnv: {}
+
+volumes: {}
+
+resources: 
+  resources:
+    limits:
+      cpu: 450m
+      memory: 1Gi
+    requests:
+      cpu: 400m
+      memory: 800Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+routes:
+  enabled: true
+
+ingress:
+  enabled: false
+  domain: apps.zagaopenshift.zagaopensource.com
+  annotations:
+    cert-manager.io/cluster-issuer: zagaadmin-cluster-issuer
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

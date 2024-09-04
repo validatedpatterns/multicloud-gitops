@@ -1,0 +1,193 @@
+replicaCount: 1
+
+image:
+  registry: quay.io
+  username: osclimate
+  name: openmetadata
+  pullPolicy: IfNotPresent
+  tag: 1.2.2
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+ports:
+  - name: 8585-tcp
+    port: 8585
+    protocol: TCP
+    targetPort: 8585
+
+  - name: 8586-tcp
+    port: 8586
+    protocol: TCP
+    targetPort: 8586
+
+service:
+  - enabled: true
+    serviceType: ClusterIP
+  - enabled: false
+    serviceType: LoadBalancer
+
+
+secretsEnv: {}
+      
+
+configmapEnv:
+  - name: ""
+    # mount: ""
+    # mountPath: ""
+    data:
+      EVENT_MONITOR_PATH_PATTERN: '[''/api/v1/tables/*'', ''/api/v1/health-check'']'
+      PIPELINE_SERVICE_CLIENT_SSL_CERT_PATH: ''
+      MASK_PASSWORDS_API: 'false'
+      OM_JWT_EXPIRY_TIME: '3600'
+      PIPELINE_SERVICE_IP_INFO_ENABLED: 'false'
+      DB_DRIVER_CLASS: 'org.postgresql.Driver'
+      AIRFLOW_PASSWORD: 'airflow'
+      WEB_CONF_PERMISSION_POLICY_OPTION: ''
+      PIPELINE_SERVICE_CLIENT_ENDPOINT: 'http://airflow:8080'
+      ELASTICSEARCH_TRUST_STORE_PASSWORD: ''
+      DB_PORT: '5432'
+      OM_MAX_FAILED_LOGIN_ATTEMPTS: '3'
+      OM_LOGIN_ACCESS_BLOCK_TIME: '600'
+      AUTHENTICATION_PUBLIC_KEYS: '[http://openmetadata:8585/api/v1/system/config/jwks]'
+      ELASTICSEARCH_PORT: '9200'
+      WEB_CONF_HSTS_PRELOAD: 'true'
+      WEB_CONF_REFERRER_POLICY_ENABLED: 'false'
+      DB_SCHEME: 'postgresql'
+      SMTP_SERVER_STRATEGY: 'SMTP_TLS'
+      DB_PARAMS: 'allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC'
+      AUTHENTICATION_JWT_PRINCIPAL_CLAIMS: '[email,preferred_username,sub]'
+      AIRFLOW_TRUST_STORE_PASSWORD: ''
+      OM_EMAIL_ENTITY: 'OpenMetadata'
+      ELASTICSEARCH_SCHEME: 'http'
+      WEB_CONF_URI_PATH: '/api'
+      AUTHENTICATION_CLIENT_ID: ''
+      AUTHORIZER_CLASS_NAME: 'org.openmetadata.service.security.DefaultAuthorizer'
+      AUTHORIZER_ENFORCE_PRINCIPAL_DOMAIN: 'false'
+      ELASTICSEARCH_BATCH_SIZE: '10'
+      SMTP_SERVER_ENDPOINT: ''
+      OM_SM_ACCESS_KEY: ''
+      WEB_CONF_FRAME_ORIGIN: ''
+      WEB_CONF_XSS_CSP_POLICY: "default-src 'self'"
+      DB_HOST: 'openmetadatadb'
+      SMTP_SERVER_USERNAME: ''
+      LOG_LEVEL: "INFO"
+      ELASTICSEARCH_HOST: "elasticsearch"
+      ELASTICSEARCH_SOCKET_TIMEOUT_SECS: '60'
+      FERNET_KEY: "jJ/9sz0g0OHxsfxOoSfdFdmk3ysNmPRnH3TUAbz3IHA="
+      SMTP_SERVER_PWD: ''
+      ELASTICSEARCH_KEEP_ALIVE_TIMEOUT_SECS: '600'
+      CUSTOM_OIDC_AUTHENTICATION_PROVIDER_NAME: ''
+      WEB_CONF_HSTS_INCLUDE_SUBDOMAINS: 'true'
+      AUTHORIZER_ADMIN_PRINCIPALS: '[admin]'
+      AUTHORIZER_PRINCIPAL_DOMAIN: "openmetadata.org"
+      OM_URI: 'http://openmetadata:8585'
+      WEB_CONF_XSS_CSP_ENABLED: 'false'
+      ELASTICSEARCH_TRUST_STORE_PATH: ''
+      DB_USER: "openmetadatadb"
+      RSA_PRIVATE_KEY_FILE_PATH: "/opt/openmetadata/conf/private_key.der"
+      OM_CUSTOM_MONOGRAM_URL_PATH: ''
+      SERVER_ADMIN_PORT: '8586'
+      ELASTICSEARCH_USER: ''
+      PIPELINE_SERVICE_CLIENT_SECRETS_MANAGER_LOADER: "noop"
+      ELASTICSEARCH_INDEX_MAPPING_LANG: "EN"
+      DB_USER_PASSWORD: "redhat123$"
+      WEB_CONF_XSS_PROTECTION_ON: 'true'
+      SERVER_HOST_API_URL: 'http://openmetadata:8585/api'
+      EVENT_MONITOR_BATCH_SIZE: '10'
+      WEB_CONF_XSS_CSP_REPORT_ONLY_POLICY: ''
+      WEB_CONF_CONTENT_TYPE_OPTIONS_ENABLED: 'false'
+      RSA_PUBLIC_KEY_FILE_PATH: "/opt/openmetadata/conf/public_key.der"
+      JWT_ISSUER: "open-metadata.org"
+      AIRFLOW_TRUST_STORE_PATH: ''
+      SEARCH_TYPE: "elasticsearch"
+      PIPELINE_SERVICE_CLIENT_HOST_IP: ''
+      WEB_CONF_REFERRER_POLICY_OPTION: "SAME_ORIGIN"
+      OM_SM_ACCESS_KEY_ID: ''
+      PIPELINE_SERVICE_CLIENT_HEALTH_CHECK_INTERVAL: '300'
+      WEB_CONF_XSS_PROTECTION_ENABLED: 'false'
+      DB_USE_SSL: 'false'
+      JWT_KEY_ID: "Gb389a-9f76-gdjs-a92j-0242bk94356"
+      PIPELINE_SERVICE_CLIENT_VERIFY_SSL: "no-ssl"
+      WEB_CONF_PERMISSION_POLICY_ENABLED: 'false'
+      EVENT_MONITOR_LATENCY: '[]'
+      SMTP_SERVER_PORT: ''
+      AUTHORIZER_ENABLE_SECURE_SOCKET: 'false'
+      EVENT_MONITOR: "prometheus"
+      OM_EXTENSIONS: '[]'
+      OPENMETADATA_CLUSTER_NAME: "openmetadata"
+      AUTHENTICATION_ENABLE_SELF_SIGNUP: 'true'
+      AUTHORIZER_INGESTION_PRINCIPALS: '[ingestion-bot]'
+      WEB_CONF_FRAME_OPTION: "SAMEORIGIN"
+      OM_SM_REGION: ''
+      MIGRATION_LIMIT_PARAM: '1200'
+      AUTHENTICATION_PROVIDER: "basic"
+      OPENMETADATA_SERVER_URL: ''
+      WEB_CONF_FRAME_OPTION_ENABLED: 'false'
+      AIRFLOW_TIMEOUT: '10'
+      OM_CUSTOM_LOGO_URL_PATH: ''
+      AUTHENTICATION_CALLBACK_URL: ''
+      WEB_CONF_HSTS_ENABLED: 'false'
+      AUTHORIZER_ENABLE_SMTP: 'false'
+      AUTHENTICATION_AUTHORITY: 'https://accounts.google.com'
+      OM_DATABASE: "openmetadatadb"
+      AUTHORIZER_ALLOWED_REGISTRATION_DOMAIN: '[all]'
+      OM_RESOURCE_PACKAGES: '[]'
+      AIRFLOW_USERNAME: "airflow"
+      SERVER_PORT: '8585'
+      ELASTICSEARCH_PASSWORD: ''
+      AUTHORIZER_REQUEST_FILTER: "org.openmetadata.service.security.JwtFilter"
+      SECRET_MANAGER: "noop"
+      OPENMETADATA_SMTP_SENDER_MAIL: ''
+      WEB_CONF_XSS_PROTECTION_BLOCK: 'true'
+      OM_SUPPORT_URL: 'https://slack.open-metadata.org'
+      ELASTICSEARCH_CONNECTION_TIMEOUT_SECS: '5'
+      WEB_CONF_HSTS_MAX_AGE: "365 days"
+      PIPELINE_SERVICE_CLIENT_CLASS_NAME: "org.openmetadata.service.clients.pipeline.airflow.AirflowRESTClient"
+    
+
+volumes: 
+  - type: EmptyDir
+    volumeName: data-logs
+    mountPath: /opt/openmetadata/logs
+
+
+resources: 
+  limits:
+    cpu: '1'
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,0 +1,42 @@
+apiVersion: v2
+name: apm
+description: A Helm chart for Kubernetes
+
+version: 1.0.0
+
+dependencies:
+
+  - name: query
+    version: "1.0.0"
+    repository: "file://charts/query"
+    condition: subcharts.query
+    tags:
+      - query
+
+  - name: dashboard
+    version: "1.0.0"
+    repository: "file://charts/dashboard"
+    condition: subcharts.dashboard
+    tags:
+      - dashboard
+
+  - name: ingestion-log
+    version: "1.0.0"
+    repository: "file://charts/ingestion-log"
+    condition: subcharts.ingestion-log
+    tags:
+      - ingestion-log
+
+  - name: ingestion-metrics
+    version: "1.0.0"
+    repository: "file://charts/ingestion-metrics"
+    condition: subcharts.ingestion-metrics
+    tags:
+      - ingestion-metics
+
+  - name: ingestion-trace
+    version: "1.0.0"
+    repository: "file://charts/ingestion-trace"
+    condition: subcharts.ingestion-trace
+    tags:
+      - ingestion-trace

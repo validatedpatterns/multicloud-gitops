@@ -1,0 +1,27 @@
+apiVersion: v2
+name: admin
+description: A Helm chart for Kubernetes
+
+
+version: 1.0.0
+
+dependencies:
+  - name: backend
+    version: "1.0.0"
+    repository: "file://charts/backend"
+    condition: subcharts.backend
+    tags:
+      - backend
+  - name: dashboard
+    version: "1.0.0"
+    repository: "file://charts/dashboard"
+    condition: subcharts.dashboard
+    tags:
+      - dashboard
+  - name: admin-postgresql
+    version: "1.0.0"
+    repository: "file://charts/admin-postgresql"
+    condition: subcharts.admin-postgresql
+    tags:
+      - admin-postgresql
+

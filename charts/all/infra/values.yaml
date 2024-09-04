@@ -1,0 +1,8 @@
+nameOverride: ""
+
+subcharts:
+  ingestion-node: true
+  ingestion-pod: true
+  ingestion-events: true
+  query: true
+  dashboard: true

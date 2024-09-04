@@ -1,0 +1,24 @@
+{{- range .Values.service }}
+{{- if .enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "elasticsearch.fullname" $ }}-{{ .serviceType | lower }}
+  labels:
+    {{- include "elasticsearch.labels" $ | nindent 4 }}
+spec:
+  type: {{ .serviceType }}
+  ports:
+    {{- range $.Values.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      protocol: {{ .protocol }}
+      targetPort: {{ .targetPort }}
+    {{- end }}
+  selector:
+    {{- include "elasticsearch.selectorLabels" $ | nindent 4 }}
+
+---
+
+{{- end }}
+{{- end }}

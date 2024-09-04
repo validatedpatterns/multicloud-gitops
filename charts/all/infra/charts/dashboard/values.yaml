@@ -1,0 +1,91 @@
+replicaCount: 1
+
+image:
+  registry: quay.io
+  username: zagaos
+  name: infra-dashboard-pyiceberg
+  pullPolicy: IfNotPresent
+  tag: v1
+  strategy: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+  # runAsGroup: 1000
+
+serviceAccount:
+  create: false
+  automount: false
+  annotations: {}
+  name: ""
+
+ports:
+  - name: 8080-tcp
+    subdomainName: infra-dashboard
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+    tls:
+      enabled: false
+      # termination: edge
+      # insecureEdgeTerminationPolicy: Redirect
+
+service:
+  - enabled: true
+    serviceType: ClusterIP
+  - enabled: false
+    serviceType: LoadBalancer
+
+
+secretsEnv: {}
+  # - name: trino-coordinator-secret
+  #   mount: ""
+  #   mountPath: ""
+  #   data:
+
+
+
+configmapEnv: {}
+
+probes:
+  readiness:
+  liveness:
+
+volumes: {}
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+routes:
+  enabled: true
+
+ingress:
+  enabled: false
+  domain: apps.zagaopenshift.zagaopensource.com
+  annotations:
+    cert-manager.io/cluster-issuer: zagaadmin-cluster-issuer
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

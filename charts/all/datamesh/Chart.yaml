@@ -1,0 +1,29 @@
+apiVersion: v2
+name: datamesh
+description: A Helm chart for Kubernetes
+
+
+version: 0.1.0
+
+
+dependencies:
+  - name: postgresql
+    version: "1.0.0"
+    repository: "file://charts/postgresql"
+    condition: subcharts.postgresql
+    tags:
+      - postgresql
+
+  - name: elasticsearch
+    version: "1.0.0"
+    repository: "file://charts/elasticsearch"
+    condition: elasticsearch
+    tags:
+      - elasticsearch
+
+  - name: openmetadata
+    version: "1.0.0"
+    repository: "file://charts/openmetadata"
+    condition: subcharts.openmetadata
+    tags:
+      - openmetadata

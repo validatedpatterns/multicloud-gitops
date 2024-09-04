@@ -1,0 +1,12 @@
+{{- range .Values.configmapEnv }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ if .name }}{{ .name }}{{ else }}{{ include "elasticsearch.fullname" $ }}-configmap{{ end }}
+  labels:
+    {{- include "elasticsearch.labels" $ | nindent 4 }}
+data:
+  {{- range $key, $value := .data }}
+  {{ $key }}: "{{ $value }}"
+  {{- end }}
+{{- end }}

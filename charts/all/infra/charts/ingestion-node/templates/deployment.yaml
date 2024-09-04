@@ -1,0 +1,156 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ingestion-node.fullname" . }}
+  labels:
+    {{- include "ingestion-node.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "ingestion-node.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: {{ default "RollingUpdate" .Values.image.strategy }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ingestion-node.selectorLabels" . | nindent 8 }}
+    spec:
+      volumes:
+        {{- range .Values.secretsEnv }}
+        {{- if .mount }}
+        - name: {{ if .name }}{{ .name }}{{ else }}{{ include "ingestion-node.fullname" $ }}-secret{{ end }}
+          secret:
+            secretName: {{ if .name }}{{ .name }}{{ else }}{{ include "ingestion-node.fullname" $ }}-secret{{ end }}
+            {{- if .filePath }}
+            items:
+              {{- range $item := .data }}
+              - key: {{ $item.name }}
+                path: {{ $item.name }}
+              {{- end }}
+            {{- else }}
+            items:
+              {{- range $key, $value := .data }}
+              - key: {{ $key }}
+                path: {{ $key }}
+              {{- end }}
+            {{- end }}
+        {{- end }}
+        {{- end }}
+        {{- range .Values.configmapEnv }}
+        {{- if .mount }}
+        - name: {{ if .name }}{{ .name }}{{ else }}{{ include "ingestion-node.fullname" $ }}-configmap{{ end }}
+          configMap:
+            name: {{ if .name }}{{ .name }}{{ else }}{{ include "ingestion-node.fullname" $ }}-configmap{{ end }}
+        {{- end }}
+        {{- end }}
+        {{- range .Values.volumes }}
+        {{- if eq .type "EmptyDir" }}
+        - name: {{ if .volumeName }}{{ .volumeName }}{{ else }}{{ include "ingestion-node.fullname" $ }}-emptydir{{ end }}
+          emptyDir: {}
+        {{- else if eq .type "PersistentVolumeClaim" }}
+        - name: {{ if .volumeName }}{{ .volumeName }}{{ else }}{{ include "ingestion-node.fullname" $ }}-persistent{{ end }}
+          persistentVolumeClaim:
+            claimName: {{ if .volumeName }}{{ .volumeName }}{{ else }}{{ include "ingestion-node.fullname" $ }}-persistent{{ end }}
+        {{- end }}
+        {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ingestion-node.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.registry }}/{{ .Values.image.username }}/{{ .Values.image.name }}:{{ .Values.image.tag | default "latest" }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.probes.readiness }}
+          readinessProbe:
+            {{- toYaml .Values.probes.readiness | nindent 12 }}
+          {{- end }}
+          {{- if .Values.probes.liveness }}
+          livenessProbe:
+            {{- toYaml .Values.probes.liveness | nindent 12 }}
+          {{- end }}
+          ports:
+            {{- range $index, $port := .Values.ports }}
+            - name: {{ $port.name | default (printf "port-%d" $index) }}
+              containerPort: {{ $port.port }}
+              protocol: {{ $port.protocol | default "TCP" }}
+            {{- end }}
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+         {{- range .Values.secretsEnv }}
+          {{- $config := . }}
+          {{- if not $config.filePath }}
+            # Handle key-value data only
+            {{- range $key, $value := $config.data }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ if $config.name }}{{ $config.name }}{{ else }}{{ include "ingestion-node.fullname" $ }}-secret{{ end }}
+                  key: {{ $key }}
+            {{- end }}
+          {{- end }}
+         {{- end }}
+         {{- range .Values.configmapEnv }}
+          {{- $config := . }}
+          {{- if not $config.filePath }}
+            # Handle key-value data only
+            {{- range $key, $value := $config.data }}
+            - name: {{ $key }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ if $config.name }}{{ $config.name }}{{ else }}{{ include "ingestion-node.fullname" $ }}-configmap{{ end }}
+                  key: {{ $key }}
+            {{- end }}
+          {{- end }}
+         {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- range .Values.secretsEnv }}
+            {{- if .mount }}
+            - name: {{ if .name }}{{ .name }}{{ else }}{{ include "ingestion-node.fullname" $ }}-secret{{ end }}
+              mountPath: {{ .mountPath | default "/" }}
+            {{- end }}
+            {{- end }}
+            {{- range .Values.configmapEnv }}
+            {{- if .mount }}
+            - name: {{ if .name }}{{ .name }}{{ else }}{{ include "ingestion-node.fullname" $ }}-configmap{{ end }}
+              mountPath: {{ .mountPath | default "/" }}
+            {{- end }}
+            {{- end }}
+            {{- range .Values.volumes }}
+            {{- if eq .type "EmptyDir" }}
+            - name: {{ if .volumeName }}{{ .volumeName }}{{ else }}{{ include "ingestion-node.fullname" $ }}-emptydir{{ end }}
+              mountPath: {{ .mountPath | default "/" }}
+            {{- else if eq .type "PersistentVolumeClaim" }}
+            - name: {{ if .volumeName }}{{ .volumeName }}{{ else }}{{ include "ingestion-node.fullname" $ }}-persistent{{ end }}
+              mountPath: {{ .mountPath | default "/" }}
+            {{- end }}
+            {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

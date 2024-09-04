@@ -1,0 +1,6 @@
+nameOverride: ""
+
+subcharts:
+  backend: true
+  dashboard: true
+  postgresql: true

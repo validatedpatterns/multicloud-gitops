@@ -1,0 +1,8 @@
+nameOverride: ""
+
+subcharts:
+  query: true
+  dashboard: true
+  ingestion-log: true
+  ingestion-metrics: true
+  ingestion-trace: true

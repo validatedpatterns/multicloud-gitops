@@ -1,0 +1,37 @@
+apiVersion: v2
+name: infra
+description: A Helm chart for Kubernetes
+
+version: 1.0.0
+
+dependencies:
+  - name: ingestion-node
+    version: "1.0.0"
+    repository: "file://charts/01-ingestion-node"
+    condition: subcharts.ingestion-node
+    tags:
+      - ingestion-node
+  - name: ingestion-pod
+    version: "1.0.0"
+    repository: "file://charts/01-ingestion-pod"
+    condition: subcharts.ingestion-pod
+    tags:
+      - ingestion-pod
+  - name: ingestion-events
+    version: "1.0.0"
+    repository: "file://charts/01-ingestion-events"
+    condition: subcharts.ingestion-events
+    tags:
+      - ingestion-events
+  - name: query
+    version: "1.0.0"
+    repository: "file://charts/02-query"
+    condition: subcharts.query
+    tags:
+      - query
+  - name: dashboard
+    version: "1.0.0"
+    repository: "file://charts/03-dashboard"
+    condition: subcharts.dashboard
+    tags:
+      - dashboard

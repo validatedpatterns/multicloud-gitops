@@ -1,0 +1,9 @@
+apiVersion: v2
+name: ingestion-node
+description: A Helm chart for ingestion-node
+
+type: application
+
+version: 1.0.0
+
+appVersion: "1.0.0"

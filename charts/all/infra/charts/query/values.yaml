@@ -1,0 +1,106 @@
+replicaCount: 1
+
+image:
+  registry: quay.io
+  username: zagaos
+  name: infra-pyiceberg-query
+  pullPolicy: IfNotPresent
+  tag: v4
+  strategy: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+  # runAsGroup: 1000
+
+serviceAccount:
+  create: false
+  automount: false
+  annotations: {}
+  name: ""
+
+ports:
+  - name: 8000-tcp
+    subdomainName: infra-query-insecure
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+    tls:
+      enabled: false
+      # termination: edge
+      # insecureEdgeTerminationPolicy: Redirect
+
+service:
+  - enabled: true
+    serviceType: ClusterIP
+  - enabled: false
+    serviceType: LoadBalancer
+
+
+secretsEnv: {}
+  # - name: trino-coordinator-secret
+  #   mount: ""
+  #   mountPath: ""
+  #   data:
+
+
+
+configmapEnv:
+  - name: ""
+    mount: ""
+    mountPath: ""
+    data:
+      HIVE_THRIFT_URI: thrift://hive-metastore.observability-datamesh.svc.cluster.local:9083
+      MINIO_ACCSESS_KEY_ID: minioAdmin
+      MINIO_SECRET_ACCSESS_KEY: minio1234
+      PY_IO_IMPL: pyiceberg.io.pyarrow.PyArrowFileIO
+      MINIO_ENDPOINT: http://minio.observability-datamesh.svc.cluster.local:9000
+      NODE_TABLE_NAME: node
+      NODE_NAME_SPACE: infra_node
+      POD_TABLE_NAME: pod
+      POD_NAME_SPACE: infra_pod
+      EVENT_NAME_SPACE: infra_event
+      EVENT_TABLE_NAME: event
+
+probes:
+  readiness:
+  liveness:
+
+volumes: {}
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+routes:
+  enabled: true
+
+ingress:
+  enabled: false
+  domain: apps.zagaopenshift.zagaopensource.com
+  annotations:
+    cert-manager.io/cluster-issuer: zagaadmin-cluster-issuer
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: openmetadata
+description: A Helm chart for openmetadata
+
+type: application
+
+version: 1.0.0
+
+appVersion: "1.0.0"

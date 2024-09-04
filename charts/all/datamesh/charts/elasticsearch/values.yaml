@@ -1,0 +1,73 @@
+replicaCount: 1
+
+image:
+  registry: quay.io
+  username: osclimate
+  name: elasticsearch
+  pullPolicy: IfNotPresent
+  tag: 7.16.3
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+ports:
+  - name: 9200-tcp
+    port: 9200
+    protocol: TCP
+    targetPort: 9200
+
+  - name: 9300-tcp
+    port: 9300
+    protocol: TCP
+    targetPort: 9300
+
+service:
+  - enabled: true
+    serviceType: ClusterIP
+  - enabled: false
+    serviceType: LoadBalancer
+
+
+secretsEnv: {}
+
+
+configmapEnv: 
+  - name: ""
+    data:
+      discovery.type: "single-node"
+      ES_JAVA_OPTS: "-Xms1024m -Xmx1024m"
+
+volumes: {}
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

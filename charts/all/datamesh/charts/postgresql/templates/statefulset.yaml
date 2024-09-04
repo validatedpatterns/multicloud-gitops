@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "postgresql.fullname" . }}
+  labels:
+    {{- include "postgresql.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "postgresql.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "postgresql.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "postgresql.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.registry }}/{{ .Values.image.username }}/{{ .Values.image.name }}:{{ .Values.image.tag | default "latest" }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          ports:
+            {{- range .Values.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: {{ .protocol }}
+            {{- end }}
+          env:
+            # Secret environment variables
+            {{- range .Values.secretsEnv }}
+            {{- $secret := . }}
+            {{- range $key, $value := $secret.data }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgresql.fullname" $ }}-{{ $secret.name }}
+                  key: {{ $key }}
+            {{- end }}
+            {{- end }}
+            # ConfigMap environment variables
+            {{- range .Values.configmapEnv }}
+            {{- $config := . }}
+            {{- range $key, $value := $config.data }}
+            - name: {{ $key }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "postgresql.fullname" $ }}-{{ $config.name }}
+                  key: {{ $key }}
+            {{- end }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- range .Values.volumes }}
+            - name: {{ if .volumeName }}{{ .volumeName }}{{ else }}{{ include "postgresql.fullname" $ }}{{ end }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    {{- range .Values.volumes }}
+    - apiVersion: {{ .apiVersion }}
+      kind: {{ .kind }}
+      metadata: 
+        name: {{ if .volumeName }}{{ .volumeName }}{{ else }}{{ include "postgresql.fullname" $ }}{{ end }}
+        labels:
+          {{- include "postgresql.labels" $ | nindent 10 }}
+      spec:
+        accessModes:
+        - {{ .accessModes }}
+        resources:
+          requests:
+            storage: {{ .storageSize }}
+    {{- end }}

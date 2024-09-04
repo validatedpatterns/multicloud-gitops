@@ -1,0 +1,153 @@
+replicaCount: 1
+
+image:
+  registry: quay.io
+  username: zagaos
+  name: apm-dashboard-observai
+  pullPolicy: IfNotPresent
+  tag: 2675d6f
+  strategy: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+serviceAccount:
+  create: false
+  automount: true
+  annotations: {}
+  name: ""
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+
+ports:
+  - name: 8080-tcp
+    subdomainName: apm-dashboard
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+
+service:
+  - enabled: true
+    serviceType: ClusterIP
+  - enabled: false
+    serviceType: LoadBalancer
+
+
+routes:
+  enabled: true
+
+  tls:
+    enabled: false
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+ingress: {}
+secretsEnv: {}
+#   - name: trino-worker-config
+#     mount: ""
+#     mountPath: ""
+#     data:
+#       AWS_ACCESS_KEY_ID: minioAdmin
+#       AWS_SECRET_KEY_ID: admin1234
+#       INTER_COMM_SHARED_SECRET: kzs71nsYBRr8cysT62zb6P+VT8YsVi/eASfNKUJkvPDce6aof6FLyM/0EDA8qK46P8sD2jXBTTe7cKX0MEqTS2UNZ7YdYWHUUoSG2nLgEryZbqlEkguYWs2dSSYkzv9DIPMtRvGxmNdQ6HGGscrqsFkeK7kSCd6mn5YNskIv6Z665gquqq+SlqV5UylFDcXhB6Z7oWuZ2fq3WONVWtTIhYP73YO8iDORG2afkqPQhRKTw848YQVrcqKAIOX6sirMb5KE1BP0yXz533J71vFuMqkvTBrFV3lkvAq+/7W4iA9Xn9WDJ8TGgcwB7jFOLH9htKYrXtO2XgMsWxizi7XbFzXsPEreqndhZEX7i6U0/K22kCWRy7/lcH+JMQAzq3J+qxl1KqTLVTfu3iSIKUj093/wR0EPcH282a+HMzk/5E1aGk3uV40M/1wQwlEDzBRaGtLtW7tyFHX+sc29nLgkOFAPknwqnYoSR7FDEgO+CrB00zNeY1lS1Xx8OCEfGgg+y5zK7pSMm7cuq8PHjENXCsWOY3xNkJLKsf9mWiWLZhxE1G6EQMG8WPz2r+DhBskTaoHaRPCfcD3/2vaDEjvfK/9kek94g00JcjJB9HQQe3tINmEBxkA8SjIWZe40kcPU0hbKqeA8WFzUgwsB/2KxFvTcPpRvNKseozZZxL/2Dlk=
+
+configmapEnv: {}
+#   - name: trino-worker-configmap
+#     mount: ""
+#     mountPath: ""
+#     data:
+#       TRINO_COORDINATOR_HOSTNAME: http://trino-coordinator-dev.$(NAMESPACE).svc.cluster.local:8080
+
+#   - name: trino-worker-schemas
+#     mount: true
+#     mountPath: /etc/trino/schemas
+#     filePath: true
+#     data: 
+
+#   - name: trino-worker-configs
+#     mount: true
+#     mountPath: /etc/trino
+#     filePath: true
+#     data:
+#       - name: config.properties
+#         path: configs/trino-worker/config.properties
+#       - name: exchange-manager.properties
+#         path: configs/trino-worker/exchange-manager.properties
+#       - name: jvm.config
+#         path: configs/trino-worker/jvm.config
+#       - name: log.properties
+#         path: configs/trino-worker/log.properties
+#       - name: node.properties
+#         path: configs/trino-worker/node.properties
+
+#   - name: trino-worker-catalog
+#     mount: true
+#     mountPath: /etc/trino/catalog
+#     filePath: true
+#     data:
+#       - name: hive.properties
+#         path: configs/trino-catalog/hive.properties
+#       - name: iceberg.properties
+#         path: configs/trino-catalog/iceberg.properties
+#       - name: tpcds.properties
+#         path: configs/trino-catalog/tpcds.properties
+#       - name: tpch.properties
+#         path: configs/trino-catalog/tpch.properties
+
+probes:
+  readiness:
+      # httpGet:
+      #   path: /v1/info
+      #   port: http
+      #   scheme: HTTP
+      # initialDelaySeconds: 20
+      # timeoutSeconds: 5
+      # periodSeconds: 10
+      # successThreshold: 1
+      # failureThreshold: 6
+  liveness:
+      # httpGet:
+      #   path: /v1/info
+      #   port: http
+      #   scheme: HTTP
+      # initialDelaySeconds: 20
+      # timeoutSeconds: 5
+      # periodSeconds: 10
+      # successThreshold: 1
+      # failureThreshold: 6
+
+volumes: {}
+
+resources:
+  limits:
+    cpu: 350m
+    memory: 3Gi
+  requests:
+    cpu: 300m
+    memory: 2Gi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

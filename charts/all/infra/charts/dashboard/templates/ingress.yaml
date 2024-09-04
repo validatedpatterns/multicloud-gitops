@@ -1,0 +1,44 @@
+{{- if and (not .Values.routes.enabled) .Values.ingress.enabled }}
+{{- $clusterIPServiceFound := false }}
+{{- range .Values.service }}
+  {{- if eq .serviceType "ClusterIP" }}
+    {{- $clusterIPServiceFound = true }}
+  {{- end }}
+{{- end }}
+
+{{- if $clusterIPServiceFound }}
+{{- range .Values.ports }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "dashboard.fullname" $ }}-{{ .name }}  # Name based on the port name
+  labels:
+    {{- include "dashboard.labels" $ | nindent 4 }}
+  annotations:
+    {{- range $key, $value := $.Values.ingress.annotations }}
+    {{ $key }}: "{{ $value }}"
+    {{- end }}
+spec:
+  {{- if .tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .subdomainName }}.{{ $.Values.ingress.domain }}
+      secretName: {{ .subdomainName }}-ingress-cert
+  {{- end }}
+  rules:
+    - host: {{ .subdomainName }}.{{ $.Values.ingress.domain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "dashboard.fullname" $ }}-clusterip
+                port:
+                  number: {{ .port }}
+---
+{{- end }}
+
+{{- end }}
+
+{{- end }}

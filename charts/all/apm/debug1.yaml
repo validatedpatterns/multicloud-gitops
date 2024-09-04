@@ -1,0 +1,997 @@
+---
+# Source: trino/charts/hive-metastore/templates/serviceaccount.yaml
+apiVersion: v1
+
+kind: ServiceAccount
+
+metadata:
+  name: trino-hive-metastore
+
+  labels:
+    helm.sh/chart: hive-metastore-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: hive-metastore
+    app.kubernetes.io/name: trino-hive-metastore
+    app.kubernetes.io/instance: trino
+---
+# Source: trino/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: trino-sa
+  labels:
+    helm.sh/chart: trino-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: trino
+    app.kubernetes.io/name: trino
+    app.kubernetes.io/instance: trino
+---
+# Source: trino/charts/coordinator/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trino-coordinator-secret
+  labels:
+    helm.sh/chart: coordinator-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: coordinator
+    app.kubernetes.io/name: trino-coordinator
+    app.kubernetes.io/instance: trino
+type: Opaque
+data:
+  AWS_ACCESS_KEY_ID: bWluaW9BZG1pbg==
+  AWS_SECRET_KEY_ID: YWRtaW4xMjM0
+  INTER_COMM_SHARED_SECRET: a3pzNzFuc1lCUnI4Y3lzVDYyemI2UCtWVDhZc1ZpL2VBU2ZOS1VKa3ZQRGNlNmFvZjZGTHlNLzBFREE4cUs0NlA4c0QyalhCVFRlN2NLWDBNRXFUUzJVTlo3WWRZV0hVVW9TRzJuTGdFcnlaYnFsRWtndVlXczJkU1NZa3p2OURJUE10UnZHeG1OZFE2SEdHc2NycXNGa2VLN2tTQ2Q2bW41WU5za0l2Nlo2NjVncXVxcStTbHFWNVV5bEZEY1hoQjZaN29XdVoyZnEzV09OVld0VEloWVA3M1lPOGlET1JHMmFma3FQUWhSS1R3ODQ4WVFWcmNxS0FJT1g2c2lyTWI1S0UxQlAweVh6NTMzSjcxdkZ1TXFrdlRCckZWM2xrdkFxKy83VzRpQTlYbjlXREo4VEdnY3dCN2pGT0xIOWh0S1lyWHRPMlhnTXNXeGl6aTdYYkZ6WHNQRXJlcW5kaFpFWDdpNlUwL0syMmtDV1J5Ny9sY0grSk1RQXpxM0orcXhsMUtxVExWVGZ1M2lTSUtVajA5My93UjBFUGNIMjgyYStITXprLzVFMWFHazN1VjQwTS8xd1F3bEVEekJSYUd0THRXN3R5RkhYK3NjMjluTGdrT0ZBUGtud3FuWW9TUjdGREVnTytDckIwMHpOZVkxbFMxWHg4T0NFZkdnZyt5NXpLN3BTTW03Y3VxOFBIakVOWENzV09ZM3hOa0pMS3NmOW1XaVdMWmh4RTFHNkVRTUc4V1B6MnIrRGhCc2tUYW9IYVJQQ2ZjRDMvMnZhREVqdmZLLzlrZWs5NGcwMEpjakpCOUhRUWUzdElObUVCeGtBOFNqSVdaZTQwa2NQVTBoYktxZUE4V0Z6VWd3c0IvMkt4RnZUY1BwUnZOS3Nlb3paWnhMLzJEbGs9
+---
+# Source: trino/charts/coordinator/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trino-coordinator-keystore
+  labels:
+    helm.sh/chart: coordinator-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: coordinator
+    app.kubernetes.io/name: trino-coordinator
+    app.kubernetes.io/instance: trino
+type: Opaque
+data:
+  keystore.jks: |
+    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
+---
+# Source: trino/charts/coordinator/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trino-coordinator-keystore-p12
+  labels:
+    helm.sh/chart: coordinator-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: coordinator
+    app.kubernetes.io/name: trino-coordinator
+    app.kubernetes.io/instance: trino
+type: Opaque
+data:
+  trino.p12: |
+    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
+---
+# Source: trino/charts/hive-metastore/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trino-hive-metastore-secret
+  labels:
+    helm.sh/chart: hive-metastore-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: hive-metastore
+    app.kubernetes.io/name: trino-hive-metastore
+    app.kubernetes.io/instance: trino
+data:
+  AWS_ACCESS_KEY_ID: bWluaW9BZG1pbg==
+  AWS_SECRET_ACCESS_KEY: bWluaW8xMjM0
+  DATABASE_DB: aGl2ZW1ldGFkYg==
+  DATABASE_PASSWORD: aGl2ZW1ldGExMjMk
+  DATABASE_USER: aGl2ZQ==
+---
+# Source: trino/charts/worker/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trino-worker-config
+  labels:
+    helm.sh/chart: worker-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: worker
+    app.kubernetes.io/name: trino-worker
+    app.kubernetes.io/instance: trino
+data:
+  AWS_ACCESS_KEY_ID: "bWluaW9BZG1pbg=="
+  AWS_SECRET_KEY_ID: "YWRtaW4xMjM0"
+  INTER_COMM_SHARED_SECRET: "a3pzNzFuc1lCUnI4Y3lzVDYyemI2UCtWVDhZc1ZpL2VBU2ZOS1VKa3ZQRGNlNmFvZjZGTHlNLzBFREE4cUs0NlA4c0QyalhCVFRlN2NLWDBNRXFUUzJVTlo3WWRZV0hVVW9TRzJuTGdFcnlaYnFsRWtndVlXczJkU1NZa3p2OURJUE10UnZHeG1OZFE2SEdHc2NycXNGa2VLN2tTQ2Q2bW41WU5za0l2Nlo2NjVncXVxcStTbHFWNVV5bEZEY1hoQjZaN29XdVoyZnEzV09OVld0VEloWVA3M1lPOGlET1JHMmFma3FQUWhSS1R3ODQ4WVFWcmNxS0FJT1g2c2lyTWI1S0UxQlAweVh6NTMzSjcxdkZ1TXFrdlRCckZWM2xrdkFxKy83VzRpQTlYbjlXREo4VEdnY3dCN2pGT0xIOWh0S1lyWHRPMlhnTXNXeGl6aTdYYkZ6WHNQRXJlcW5kaFpFWDdpNlUwL0syMmtDV1J5Ny9sY0grSk1RQXpxM0orcXhsMUtxVExWVGZ1M2lTSUtVajA5My93UjBFUGNIMjgyYStITXprLzVFMWFHazN1VjQwTS8xd1F3bEVEekJSYUd0THRXN3R5RkhYK3NjMjluTGdrT0ZBUGtud3FuWW9TUjdGREVnTytDckIwMHpOZVkxbFMxWHg4T0NFZkdnZyt5NXpLN3BTTW03Y3VxOFBIakVOWENzV09ZM3hOa0pMS3NmOW1XaVdMWmh4RTFHNkVRTUc4V1B6MnIrRGhCc2tUYW9IYVJQQ2ZjRDMvMnZhREVqdmZLLzlrZWs5NGcwMEpjakpCOUhRUWUzdElObUVCeGtBOFNqSVdaZTQwa2NQVTBoYktxZUE4V0Z6VWd3c0IvMkt4RnZUY1BwUnZOS3Nlb3paWnhMLzJEbGs9"
+---
+# Source: trino/charts/coordinator/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-coordinator-configmap
+  labels:
+    helm.sh/chart: coordinator-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: coordinator
+    app.kubernetes.io/name: trino-coordinator
+    app.kubernetes.io/instance: trino
+data:
+  DATABASE_HOST: "trino-hive-postgresql"
+  DATABASE_PORT: "5432"
+  HIVE_DB_EXTERNAL: "true"
+  S3_BUCKET: "pcaf"
+  S3_ENDPOINT_URL: "http://minio-dev.$(NAMESPACE).svc.cluster.local:9000"
+  S3_PREFIX: "data"
+---
+# Source: trino/charts/coordinator/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-coordinator-schemas
+  labels:
+    helm.sh/chart: coordinator-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: coordinator
+    app.kubernetes.io/name: trino-coordinator
+    app.kubernetes.io/instance: trino
+data:
+---
+# Source: trino/charts/coordinator/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-coordinator-configs
+  labels:
+    helm.sh/chart: coordinator-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: coordinator
+    app.kubernetes.io/name: trino-coordinator
+    app.kubernetes.io/instance: trino
+data:
+  config.properties: |
+    coordinator=true
+    node-scheduler.include-coordinator=false 
+    discovery-server.enabled=true
+    discovery.uri=http://localhost:8080
+    http-server.http.port=8080
+    http-server.process-forwarded=true
+    http-server.https.enabled=true
+    http-server.https.port=8443
+    http-server.https.keystore.path=/etc/trino/keystore/keystore.jks
+    http-server.https.keystore.path=/etc/trino/keystore-p12/trino.p12
+    http-server.https.keystore.key=redhat2024
+    http-server.authentication.allow-insecure-over-http=true
+  exchange-manager.properties: |
+    exchange-manager.name=filesystem
+    exchange.base-directories=/tmp/trino-local-file-system-exchange-manager
+  group-mapping.properties: |
+    admins:admin,jpaulraj
+  group-provider.properties: |
+    group-provider.name=file
+    file.group-file=/etc/trino/group-mapping.properties
+  jvm.config: |
+    -server
+    
+    -agentpath:/usr/lib/trino/bin/libjvmkill.so
+    
+    -Xmx8G
+    
+    -XX:+UseG1GC
+    
+    -XX:G1HeapRegionSize=32M
+    
+    -XX:+ExplicitGCInvokesConcurrent
+    
+    -XX:+HeapDumpOnOutOfMemoryError
+    
+    -XX:+ExitOnOutOfMemoryError
+    
+    -XX:-OmitStackTraceInFastThrow
+    
+    -XX:ReservedCodeCacheSize=512M
+    
+    -XX:PerMethodRecompilationCutoff=10000
+    
+    -XX:PerBytecodeRecompilationCutoff=10000
+    
+    -Djdk.attach.allowAttachSelf=true
+    
+    -Djdk.nio.maxCachedBufferSize=2000000
+    
+    -XX:+UnlockDiagnosticVMOptions
+    
+    # Reduce starvation of threads by GClocker, recommend to set about the number of cpu cores (JDK-8192647)
+    
+    -XX:GCLockerRetryAllocationCount=32
+  log.properties: |
+    io.trino=INFO
+    io.trino.server.security.oauth2=DEBUG
+    io.trino.server.ui.OAuth2WebUiAuthenticationFilter=DEBUG
+  node.properties: |
+    node.environment=production
+    node.data-dir=/data/trino
+    plugin.dir=/usr/lib/trino/plugin
+  password-authenticator.properties: |
+        password-authenticator.name=file
+        file.password-file=/etc/trino/password.db
+  password.db: |
+    admin:$2y$10$rkcRpFHvkflOwkrp3ec65.NBvAOi6MNK4cFhSJfXt2l8KhGuWN0ru
+    jpaulraj:$2y$10$YNeVHgzsSe7pHHb6Md5crucOETlZWPW.CjCyt4TsQB7/Wm9ZXINIG
+---
+# Source: trino/charts/coordinator/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-coordinator-catalog
+  labels:
+    helm.sh/chart: coordinator-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: coordinator
+    app.kubernetes.io/name: trino-coordinator
+    app.kubernetes.io/instance: trino
+data:
+  hive.properties: |
+    connector.name=hive
+    hive.metastore.uri=thrift://hive-metastore:9083
+    hive.s3.endpoint=http://minio:9000
+    hive.s3.aws-access-key=minioAdmin
+    hive.s3.aws-secret-key=minio1234
+    hive.s3.path-style-access=true
+    hive.s3.ssl.enabled=false
+    hive.s3.max-connections=100
+    hive.non-managed-table-writes-enabled=true
+    # hive.allow-drop-table=true
+    hive.parquet.use-column-names=true
+    hive.recursive-directories=true
+    hive.metastore.authentication.type=NONE
+    hive.metastore-timeout=180s
+    hive.s3.connect-timeout=180s
+    hive.s3.socket-timeout=180s
+  iceberg.properties: |
+    connector.name=iceberg
+    hive.metastore.uri=thrift://hive-metastore:9083
+    hive.s3.endpoint=http://minio:9000
+    hive.s3.aws-access-key=minioAdmin
+    hive.s3.aws-secret-key=minio1234
+    hive.s3.path-style-access=true
+    hive.s3.ssl.enabled=false
+    hive.s3.max-connections=100
+    hive.metastore-timeout=180s
+    hive.s3.connect-timeout=180s
+    hive.s3.socket-timeout=180s
+  tpcds.properties: |
+    connector.name=tpcds
+    tpcds.splits-per-node=4
+  tpch.properties: |
+    connector.name=tpch
+    tpch.splits-per-node=4
+---
+# Source: trino/charts/hive-metastore/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-hive-metastore-configmap
+  labels:
+    helm.sh/chart: hive-metastore-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: hive-metastore
+    app.kubernetes.io/name: trino-hive-metastore
+    app.kubernetes.io/instance: trino
+data:
+  DATABASE_HOST: "trino-hive-postgresql-clusterip"
+  DATABASE_PORT: "5432"
+  S3_BUCKET: "pcaf"
+  S3_ENDPOINT_URL: "http://minio.$(NAMESPACE).svc.cluster.local:9000"
+  S3_PREFIX: "data"
+---
+# Source: trino/charts/hive-postgresql/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-hive-postgresql-configmap
+  labels:
+    helm.sh/chart: hive-postgresql-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: hive-postgresql
+    app.kubernetes.io/name: trino-hive-postgresql
+    app.kubernetes.io/instance: trino
+data:
+  POSTGRESQL_ADMIN_PASSWORD: "admin123$"
+  POSTGRESQL_DATABASE: "hivemetadb"
+  POSTGRESQL_PASSWORD: "hivemeta123$"
+  POSTGRESQL_USER: "hive"
+---
+# Source: trino/charts/worker/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-worker-configmap
+  labels:
+    helm.sh/chart: worker-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: worker
+    app.kubernetes.io/name: trino-worker
+    app.kubernetes.io/instance: trino
+data:
+  TRINO_COORDINATOR_HOSTNAME: "http://trino-coordinator-dev.$(NAMESPACE).svc.cluster.local:8080"
+---
+# Source: trino/charts/worker/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-worker-catalog
+  labels:
+    helm.sh/chart: worker-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: worker
+    app.kubernetes.io/name: trino-worker
+    app.kubernetes.io/instance: trino
+data:
+  config.properties: |
+    coordinator=false
+    http-server.http.port=8080
+    query.max-memory=4GB
+    query.max-memory-per-node=1GB
+    discovery.uri=http://trino-coordinator-dev:8080
+  exchange-manager.properties: |
+    exchange-manager.name=filesystem
+    exchange.base-directories=/tmp/trino-local-file-system-exchange-manager
+  jvm.config: |
+    -server
+    
+    -agentpath:/usr/lib/trino/bin/libjvmkill.so
+    
+    -Xmx8G
+    
+    -XX:+UseG1GC
+    
+    -XX:G1HeapRegionSize=32M
+    
+    -XX:+ExplicitGCInvokesConcurrent
+    
+    -XX:+HeapDumpOnOutOfMemoryError
+    
+    -XX:+ExitOnOutOfMemoryError
+    
+    -XX:-OmitStackTraceInFastThrow
+    
+    -XX:ReservedCodeCacheSize=512M
+    
+    -XX:PerMethodRecompilationCutoff=10000
+    
+    -XX:PerBytecodeRecompilationCutoff=10000
+    
+    -Djdk.attach.allowAttachSelf=true
+    
+    -Djdk.nio.maxCachedBufferSize=2000000
+    
+    -XX:+UnlockDiagnosticVMOptions
+    
+    # Reduce starvation of threads by GClocker, recommend to set about the number of cpu cores (JDK-8192647)
+    
+    -XX:GCLockerRetryAllocationCount=32
+  log.properties: |
+    io.trino=INFO
+  node.properties: |
+    node.environment=production
+    node.data-dir=/data/trino
+    plugin.dir=/usr/lib/trino/plugin
+---
+# Source: trino/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: trino-role
+  labels:
+    helm.sh/chart: trino-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: trino
+    app.kubernetes.io/name: trino
+    app.kubernetes.io/instance: trino
+rules:
+- apiGroups:
+  - security.openshift.io
+  resourceNames:
+  - trino-scc
+  resources:
+  - SecurityContextConstraints
+  verbs:
+  - use
+---
+# Source: trino/templates/role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: trino-rolebinding
+  labels:
+    helm.sh/chart: trino-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: trino
+    app.kubernetes.io/name: trino
+    app.kubernetes.io/instance: trino
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: trino-role
+subjects:
+- kind: ServiceAccount
+  name: trino-sa
+---
+# Source: trino/charts/coordinator/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trino-coordinator-clusterip
+  labels:
+    helm.sh/chart: coordinator-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: coordinator
+    app.kubernetes.io/name: trino-coordinator
+    app.kubernetes.io/instance: trino
+spec:
+  type: ClusterIP
+  ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+  selector:
+    app.kubernetes.io/name: trino-coordinator
+---
+# Source: trino/charts/hive-metastore/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trino-hive-metastore-clusterip
+  labels:
+    helm.sh/chart: hive-metastore-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: hive-metastore
+    app.kubernetes.io/name: trino-hive-metastore
+    app.kubernetes.io/instance: trino
+spec:
+  type: ClusterIP
+  ports:
+    - name: 9083-tcp
+      port: 9083
+      protocol: TCP
+      targetPort: 9083
+  selector:
+    app.kubernetes.io/name: trino-hive-metastore
+---
+# Source: trino/charts/hive-postgresql/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trino-hive-postgresql-clusterip
+  labels:
+    helm.sh/chart: hive-postgresql-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: hive-postgresql
+    app.kubernetes.io/name: trino-hive-postgresql
+    app.kubernetes.io/instance: trino
+spec:
+  type: ClusterIP
+  ports:
+    - name: 5432-tcp
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    app.kubernetes.io/name: trino-hive-postgresql
+---
+# Source: trino/charts/worker/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: trino-worker-clusterip
+  labels:
+    helm.sh/chart: worker-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: worker
+    app.kubernetes.io/name: trino-worker
+    app.kubernetes.io/instance: trino
+spec:
+  type: ClusterIP
+  ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: trino-worker
+---
+# Source: trino/charts/coordinator/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trino-coordinator
+  labels:
+    helm.sh/chart: coordinator-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: coordinator
+    app.kubernetes.io/name: trino-coordinator
+    app.kubernetes.io/instance: trino
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trino-coordinator
+
+  strategy:
+    type: Recreate
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: trino-coordinator
+
+    spec:
+      volumes:
+        - name: trino-coordinator-keystore
+          secret:
+            secretName: trino-coordinator-keystore
+            items:
+              - key: keystore.jks
+                path: keystore.jks
+        - name: trino-coordinator-keystore-p12
+          secret:
+            secretName: trino-coordinator-keystore-p12
+            items:
+              - key: trino.p12
+                path: trino.p12
+        - name: trino-coordinator-schemas
+          configMap:
+            name: trino-coordinator-schemas
+        - name: trino-coordinator-configs
+          configMap:
+            name: trino-coordinator-configs
+        - name: trino-coordinator-catalog
+          configMap:
+            name: trino-coordinator-catalog
+
+      serviceAccountName: trino-sa
+
+      securityContext:
+        {}
+
+      containers:
+        - name: coordinator
+          image: quay.io/osclimate/trino:latest
+          imagePullPolicy: IfNotPresent
+
+          securityContext:
+            runAsGroup: 1000
+            runAsUser: 1000
+          
+
+          ports:
+            - name: 8080-tcp
+              containerPort: 8080
+              protocol: TCP
+            - name: 8443-tcp
+              containerPort: 8443
+              protocol: TCP
+
+          
+          env:
+
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # Handle key-value data only
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trino-coordinator-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trino-coordinator-secret
+                  key: AWS_SECRET_KEY_ID
+            - name: INTER_COMM_SHARED_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: trino-coordinator-secret
+                  key: INTER_COMM_SHARED_SECRET
+            # Handle key-value data only
+            - name: DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-coordinator-configmap
+                  key: DATABASE_HOST
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-coordinator-configmap
+                  key: DATABASE_PORT
+            - name: HIVE_DB_EXTERNAL
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-coordinator-configmap
+                  key: HIVE_DB_EXTERNAL
+            - name: S3_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-coordinator-configmap
+                  key: S3_BUCKET
+            - name: S3_ENDPOINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-coordinator-configmap
+                  key: S3_ENDPOINT_URL
+            - name: S3_PREFIX
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-coordinator-configmap
+                  key: S3_PREFIX
+        
+          resources:
+            {}
+
+          volumeMounts:
+            - name: trino-coordinator-keystore
+              mountPath: /etc/trino/keystore
+            - name: trino-coordinator-keystore-p12
+              mountPath: /etc/trino/trino-p12
+            - name: trino-coordinator-schemas
+              mountPath: /etc/trino/schemas
+            - name: trino-coordinator-configs
+              mountPath: /etc/trino
+            - name: trino-coordinator-catalog
+              mountPath: /etc/trino/catalog
+---
+# Source: trino/charts/hive-metastore/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trino-hive-metastore
+  labels:
+    helm.sh/chart: hive-metastore-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: hive-metastore
+    app.kubernetes.io/name: trino-hive-metastore
+    app.kubernetes.io/instance: trino
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trino-hive-metastore
+
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: trino-hive-metastore
+
+    spec:
+      volumes:
+        - name: hadoop-config
+          emptyDir: {}
+        - name: hive-config
+          emptyDir: {}
+
+      serviceAccountName: trino-hive-metastore
+
+      securityContext:
+        {}
+
+      containers:
+        - name: hive-metastore
+          image: quay.io/osclimate/hive-metastore:latest
+          imagePullPolicy: IfNotPresent
+
+          securityContext:
+            {}
+
+          ports:
+            - name: 9083-tcp
+              containerPort: 9083
+              protocol: TCP
+
+          
+          env:
+
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # Handle key-value data only
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trino-hive-metastore-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: trino-hive-metastore-secret
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: DATABASE_DB
+              valueFrom:
+                secretKeyRef:
+                  name: trino-hive-metastore-secret
+                  key: DATABASE_DB
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: trino-hive-metastore-secret
+                  key: DATABASE_PASSWORD
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: trino-hive-metastore-secret
+                  key: DATABASE_USER
+            # Handle key-value data only
+            - name: DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-hive-metastore-configmap
+                  key: DATABASE_HOST
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-hive-metastore-configmap
+                  key: DATABASE_PORT
+            - name: S3_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-hive-metastore-configmap
+                  key: S3_BUCKET
+            - name: S3_ENDPOINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-hive-metastore-configmap
+                  key: S3_ENDPOINT_URL
+            - name: S3_PREFIX
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-hive-metastore-configmap
+                  key: S3_PREFIX
+        
+          resources:
+            {}
+
+          volumeMounts:
+            - name: hadoop-config
+              mountPath: /opt/hadoop/etc/hadoop
+            - name: hive-config
+              mountPath: /opt/hive-metastore/conf
+---
+# Source: trino/charts/worker/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trino-worker
+  labels:
+    helm.sh/chart: worker-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: worker
+    app.kubernetes.io/name: trino-worker
+    app.kubernetes.io/instance: trino
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trino-worker
+
+  strategy:
+    type: Recreate
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: trino-worker
+
+    spec:
+      volumes:
+        - name: trino-worker-catalog
+          configMap:
+            name: trino-worker-catalog
+
+      serviceAccountName: trino-sa
+
+      securityContext:
+        {}
+
+      containers:
+        - name: worker
+          image: quay.io/osclimate/trino:latest
+          imagePullPolicy: IfNotPresent
+
+          securityContext:
+            runAsGroup: 1000
+            runAsUser: 1000
+
+          ports:
+            - name: 8080-tcp
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /v1/info
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          livenessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /v1/info
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          
+          env:
+
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # Handle key-value data only
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trino-worker-config
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: trino-worker-config
+                  key: AWS_SECRET_KEY_ID
+            - name: INTER_COMM_SHARED_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: trino-worker-config
+                  key: INTER_COMM_SHARED_SECRET
+            # Handle key-value data only
+            - name: TRINO_COORDINATOR_HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-worker-configmap
+                  key: TRINO_COORDINATOR_HOSTNAME
+        
+          resources:
+            {}
+
+          volumeMounts:
+            - name: trino-worker-catalog
+              mountPath: /etc/trino/catalog
+---
+# Source: trino/charts/hive-postgresql/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: trino-hive-postgresql
+  labels:
+    helm.sh/chart: hive-postgresql-1.0.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: hive-postgresql
+    app.kubernetes.io/name: trino-hive-postgresql
+    app.kubernetes.io/instance: trino
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trino-hive-postgresql
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: trino-hive-postgresql
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: hive-postgresql
+          image: quay.io/osclimate/postgresql-13:1-101
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            {}
+          ports:
+            - name: 5432-tcp
+              containerPort: 5432
+              protocol: TCP
+          env:
+            # Secret environment variables
+            # ConfigMap environment variables
+            - name: POSTGRESQL_ADMIN_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-hive-postgresql-configmap
+                  key: POSTGRESQL_ADMIN_PASSWORD
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-hive-postgresql-configmap
+                  key: POSTGRESQL_DATABASE
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-hive-postgresql-configmap
+                  key: POSTGRESQL_PASSWORD
+            - name: POSTGRESQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: trino-hive-postgresql-configmap
+                  key: POSTGRESQL_USER
+          resources:
+            {}
+          volumeMounts:
+            - name: trino-hive-postgresql
+              mountPath: /storage
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata: 
+        name: trino-hive-postgresql
+        labels:
+          helm.sh/chart: hive-postgresql-1.0.0
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/part-of: hive-postgresql
+          app.kubernetes.io/name: trino-hive-postgresql
+          app.kubernetes.io/instance: trino
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 4Gi
+---
+# Source: trino/templates/scc.yaml
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: trino-scc
+  annotations:
+    kubernetes.io/description: privileged allows access to trino
+allowHostDirVolumePlugin: true
+allowHostIPC: true
+allowHostNetwork: true
+allowHostPID: true
+allowHostPorts: true
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities:
+- '*'
+allowedUnsafeSysctls:
+- '*'
+defaultAddCapabilities: null
+fsGroup:
+  type: RunAsAny
+groups:
+- system:authenticated
+priority: null
+readOnlyRootFilesystem: false
+requiredDropCapabilities: null
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+seccompProfiles:
+- '*'
+supplementalGroups:
+  type: RunAsAny
+users: []
+volumes:
+- '*'
