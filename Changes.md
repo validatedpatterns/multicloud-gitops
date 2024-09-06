@@ -1,5 +1,9 @@
 # Changes
 
+## Sep 6, 2024
+
+* Most charts have been removed from the tree. To get the charts you now have to point to them
+
 ## Sep 25, 2023
 
 * Upgraded ESO to v0.9.5
