@@ -42,6 +42,8 @@ else
   HELM_OPTS=-f values-global.yaml --set main.tokenSecret=$(TOKEN_SECRET) --set main.tokenSecretNamespace=$(TOKEN_NAMESPACE) --set main.git.repoURL="$(TARGET_CLEAN_REPO)" --set main.git.revision=$(TARGET_BRANCH) $(TARGET_SITE_OPT) $(UUID_HELM_OPTS) $(EXTRA_HELM_OPTS)
 endif
 
+# Helm does the right thing and fetches all the tags and detects the newest one
+PATTERN_INSTALL_CHART ?= oci://quay.io/hybridcloudpatterns/pattern-install
 
 ##@ Pattern Common Tasks
 
@@ -54,7 +56,7 @@ help: ## This help message
 #  e.g. from industrial-edge: make -f common/Makefile show
 .PHONY: show
 show: ## show the starting template without installing it
-	helm template common/operator-install/ --name-template $(NAME) $(HELM_OPTS)
+	helm template $(PATTERN_INSTALL_CHART) --name-template $(NAME) $(HELM_OPTS)
 
 preview-all: ## (EXPERIMENTAL) Previews all applications on hub and managed clusters
 	@echo "NOTE: This is just a tentative approximation of rendering all hub and managed clusters templates"
@@ -69,7 +71,7 @@ operator-deploy operator-upgrade: validate-prereq validate-origin validate-clust
 	@set -e -o pipefail
 	# Retry five times because the CRD might not be fully installed yet
 	for i in {1..5}; do \
-		helm template --include-crds --name-template $(NAME) common/operator-install/ $(HELM_OPTS) | oc apply -f- && break || sleep 10; \
+		helm template --include-crds --name-template $(NAME) $(PATTERN_INSTALL_CHART) $(HELM_OPTS) | oc apply -f- && break || sleep 10; \
 	done
 
 .PHONY: uninstall
