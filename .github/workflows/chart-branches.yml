@@ -120,6 +120,7 @@ jobs:
       actions: write
       contents: write
     with:
-      chart_name: pattern-install
+      # The name here is really the folder to be used for the chart
+      chart_name: operator-install
       target_repository: validatedpatterns/pattern-install-chart
     secrets: inherit
