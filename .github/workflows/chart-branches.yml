@@ -15,6 +15,7 @@ on:
       - 'hashicorp-vault/**'
       - 'letsencrypt/**'
       - 'clustergroup/**'
+      - 'operator-install/**'
 
 jobs:
   changes:
@@ -28,6 +29,7 @@ jobs:
       hashicorp-vault: ${{ steps.filter.outputs.hashicorp-vault }}
       letsencrypt: ${{ steps.filter.outputs.letsencrypt }}
       clustergroup: ${{ steps.filter.outputs.clustergroup }}
+      operator-install: ${{ steps.filter.outputs.operator-install }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -46,6 +48,8 @@ jobs:
               - 'letsencrypt/**'
             clustergroup:
               - 'clustergroup/**'
+            operator-install:
+              - 'operator-install/**'
 
   acm:
     needs: changes
@@ -105,4 +109,17 @@ jobs:
     with:
       chart_name: clustergroup
       target_repository: validatedpatterns/clustergroup-chart
+    secrets: inherit
+
+  # The folder is named 'operator-install' but the chart is called 'pattern-install'
+  operator-install:
+    needs: changes
+    if: ${{ (needs.changes.outputs.operator-install == 'true') && (github.repository == 'validatedpatterns/common') }}
+    uses: validatedpatterns/common/.github/workflows/chart-split.yml@main
+    permissions:
+      actions: write
+      contents: write
+    with:
+      chart_name: pattern-install
+      target_repository: validatedpatterns/pattern-install-chart
     secrets: inherit
