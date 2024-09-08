@@ -32,7 +32,7 @@ metadata:
     cloud: {{ $cloud }}
     region: '{{ $region }}'
     vendor: OpenShift
-    cluster.open-cluster-management.io/clusterset: {{ .name }}
+    cluster.open-cluster-management.io/clusterset: {{ $group.name }}
 spec:
   {{- if .size }}
   size: {{ .size }}
