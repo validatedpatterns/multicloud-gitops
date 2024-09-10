@@ -165,7 +165,7 @@ metadata:
     cloud: aws
     region: 'ap-southeast-2'
     vendor: OpenShift
-    cluster.open-cluster-management.io/clusterset: aws-ap
+    cluster.open-cluster-management.io/clusterset: acm-provision-edge
 spec:
   size: 3
   runningCount: 0
@@ -195,7 +195,7 @@ metadata:
     cloud: azure
     region: 'eastus'
     vendor: OpenShift
-    cluster.open-cluster-management.io/clusterset: azure-us
+    cluster.open-cluster-management.io/clusterset: acm-provision-edge
 spec:
   size: 2
   runningCount: 2
