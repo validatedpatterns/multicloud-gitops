@@ -4,6 +4,8 @@ Default always defined top-level variables for helm charts
 {{- define "clustergroup.app.globalvalues.helmparameters" -}}
 - name: global.repoURL
   value: {{ $.Values.global.repoURL }}
+- name: global.originURL
+  value: {{ $.Values.global.originURL }}
 - name: global.targetRevision
   value: {{ $.Values.global.targetRevision }}
 - name: global.namespace
