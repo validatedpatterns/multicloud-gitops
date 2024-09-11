@@ -26,6 +26,8 @@ Default always defined valueFiles to be included when pushing the cluster wide a
 {{- define "acm.app.policies.helmparameters" -}}
 - name: global.repoURL
   value: {{ $.Values.global.repoURL }}
+- name: global.originURL
+  value: {{ $.Values.global.originURL }}
 - name: global.targetRevision
   value: {{ $.Values.global.targetRevision }}
 - name: global.namespace
