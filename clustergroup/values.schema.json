@@ -76,10 +76,6 @@
         "git": {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "repoURL",
-            "revision"
-          ],
           "properties": {
             "repoUpstreamURL": {
               "type": "string",
