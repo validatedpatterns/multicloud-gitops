@@ -1,6 +1,0 @@
-apiVersion: v2
-description: A Helm chart to build and deploy a Cloud Pattern via the patterns operator
-keywords:
-- pattern
-name: pattern-install
-version: 0.0.1

@@ -21,7 +21,7 @@ do it manually by doing the following:
 
 ```sh
 git remote add -f upstream-common https://github.com/validatedpatterns/common.git
-git merge -s subtree -Xtheirs -Xsubtree=common upstream-common/ha-vault
+git merge -s subtree -Xtheirs -Xsubtree=common upstream-common/main
 ```
 
 ## Secrets
