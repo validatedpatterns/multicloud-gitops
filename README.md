@@ -2,6 +2,13 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+## Note
+
+This is the `main` branch of common and it assumes that the pattern is fully
+multisource (meaning that any used charts from VP is actually referenced from
+either a helm chart repository or quay repository). I.e. there are no helm
+charts contained in this branch of common.
+
 ## Start Here
 
 This repository is never used as standalone. It is usually imported in each pattern as a subtree.
