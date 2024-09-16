@@ -169,7 +169,14 @@ validate-prereq: ## verify pre-requisites
 	  if ! ansible-galaxy collection list | grep kubernetes.core > /dev/null 2>&1; then echo "Not found"; exit 1; fi;\
 	  echo "OK";\
 	else\
-	  echo "Skipping prerequisites check as we're running inside a container";\
+		if [ -f values-global.yaml ]; then\
+			OUT=`yq -r '.main.multiSourceConfig.enabled // (.main.multiSourceConfig.enabled = "false")' values-global.yaml`;\
+			if [ "$${OUT,,}" = "false" ]; then\
+				echo "You must set \".main.multiSourceConfig.enabled: true\" in your 'values-global.yaml' file";\
+				echo "because your common subfolder is the slimmed down version with no helm charts in it";\
+				exit 1;\
+			fi;\
+		fi;\
 	fi
 
 .PHONY: argo-healthcheck

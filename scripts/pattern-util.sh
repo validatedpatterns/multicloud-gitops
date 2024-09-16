@@ -8,18 +8,6 @@ function version {
     echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'
 }
 
-function check_for_clustergroup_multisource {
-    if [ -f values-global.yaml ]; then
-        # Query .main.multiSourceConfig.enabled and assume it is false if not set
-        OUT=$(yq -r '.main.multiSourceConfig.enabled // (.main.multiSourceConfig.enabled = "false")')
-        if [ "${OUT,,}" = "false" ]; then
-            echo "You must set `.main.multiSourceConfig.enabled: true` in your 'values-global.yaml' file"
-            echo "because your common subfolder is the slimmed down version with no helm charts in it"
-            exit 1
-        fi
-    fi
-}
-
 if [ -z "$PATTERN_UTILITY_CONTAINER" ]; then
 	PATTERN_UTILITY_CONTAINER="quay.io/hybridcloudpatterns/utility-container"
 fi
@@ -77,10 +65,6 @@ if [ $REMOTE_PODMAN -eq 0 ]; then # If we are not using podman machine we check 
 else
     PKI_HOST_MOUNT_ARGS=""
 fi
-
-# In the slimmed down common branch we need to check that multisource is enabled for the clustergroup
-# chart
-check_for_clustergroup_multisource
 
 # Copy Kubeconfig from current environment. The utilities will pick up ~/.kube/config if set so it's not mandatory
 # $HOME is mounted as itself for any files that are referenced with absolute paths
