@@ -27,4 +27,4 @@ fi
 
 PATTERN_NAME=$(basename "`pwd`")
 
-ansible-playbook -e pattern_name="${PATTERN_NAME}" -e pattern_dir="${PATTERNPATH}" -e secrets_backing_store="${SECRETS_BACKING_STORE}" -e override_no_log=false "${PLAYBOOKPATH}/process_secrets/display_secrets_info.yml"
+ansible-playbook -e pattern_name="${PATTERN_NAME}" -e pattern_dir="${PATTERNPATH}" -e secrets_backing_store="${SECRETS_BACKING_STORE}" -e override_no_log=false "rhvp.cluster_utils.display_secrets_info"
