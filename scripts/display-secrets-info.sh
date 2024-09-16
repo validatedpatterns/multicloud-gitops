@@ -10,10 +10,6 @@ SCRIPT=$(get_abs_filename "$0")
 SCRIPTPATH=$(dirname "${SCRIPT}")
 COMMONPATH=$(dirname "${SCRIPTPATH}")
 PATTERNPATH=$(dirname "${COMMONPATH}")
-ANSIBLEPATH="$(dirname ${SCRIPTPATH})/ansible"
-PLAYBOOKPATH="${ANSIBLEPATH}/playbooks"
-
-export ANSIBLE_CONFIG="${ANSIBLEPATH}/ansible.cfg"
 
 if [ "$#" -ge 1 ]; then
     export VALUES_SECRET=$(get_abs_filename "${1}")
