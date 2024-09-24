@@ -1,5 +1,9 @@
 # Changes
 
+## Sep 24, 2024
+
+* Ansible has been moved out of the common code tree, you must use a clustergroup chart that is >= 0.9.1
+
 ## Sep 6, 2024
 
 * Most charts have been removed from the tree. To get the charts you now have to point to them
