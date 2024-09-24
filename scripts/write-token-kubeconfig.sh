@@ -12,8 +12,5 @@ SCRIPT=$(get_abs_filename "$0")
 SCRIPTPATH=$(dirname "${SCRIPT}")
 COMMONPATH=$(dirname "${SCRIPTPATH}")
 PATTERNPATH=$(dirname "${COMMONPATH}")
-ANSIBLEPATH="$(dirname ${SCRIPTPATH})/ansible"
-PLAYBOOKPATH="${ANSIBLEPATH}/playbooks"
-export ANSIBLE_CONFIG="${ANSIBLEPATH}/ansible.cfg"
 
-ansible-playbook -e pattern_dir="${PATTERNPATH}" -e kubeconfig_file="${OUTPUTFILE}" "${PLAYBOOKPATH}/write-token-kubeconfig/write-token-kubeconfig.yml"
+ansible-playbook -e pattern_dir="${PATTERNPATH}" -e kubeconfig_file="${OUTPUTFILE}" "rhvp.cluster_utils.write-token-kubeconfig"

@@ -115,7 +115,7 @@ secrets-backend-none: ## Edits values files to remove secrets manager + ESO
 .PHONY: load-iib
 load-iib: ## CI target to install Index Image Bundles
 	@set -e; if [ x$(INDEX_IMAGES) != x ]; then \
-		ansible-playbook common/ansible/playbooks/iib-ci/iib-ci.yaml; \
+		ansible-playbook rhvp.cluster_utils.iib-ci; \
 	else \
 		echo "No INDEX_IMAGES defined. Bailing out"; \
 		exit 1; \
@@ -218,7 +218,7 @@ TEST_OPTS= -f values-global.yaml \
 	--set global.clusterVersion="4.12" \
 	--set global.clusterPlatform=aws \
 	--set "clusterGroup.imperative.jobs[0].name"="test" \
-	--set "clusterGroup.imperative.jobs[0].playbook"="ansible/test.yml"
+	--set "clusterGroup.imperative.jobs[0].playbook"="rhvp.cluster_utils.test"
 PATTERN_OPTS=-f common/examples/values-example.yaml
 EXECUTABLES=git helm oc ansible
 
@@ -259,15 +259,6 @@ super-linter: ## Runs super linter locally
 					-v $(PWD):/tmp/lint:rw,z \
 					-w /tmp/lint \
 					ghcr.io/super-linter/super-linter:slim-v7
-
-.PHONY: ansible-lint
-ansible-lint: ## run ansible lint on ansible/ folder
-	podman run -it -v $(PWD):/workspace:rw,z --workdir /workspace --env ANSIBLE_CONFIG=./ansible/ansible.cfg \
-		--entrypoint "/usr/local/bin/ansible-lint" quay.io/ansible/creator-ee:latest  "-vvv" "ansible/"
-
-.PHONY: ansible-unittest
-ansible-unittest: ## run ansible unit tests
-	pytest -r a --fulltrace --color yes ansible/tests/unit/test_*.py
 
 .PHONY: deploy upgrade legacy-deploy legacy-upgrade
 deploy upgrade legacy-deploy legacy-upgrade:

@@ -1,8 +1,0 @@
-# This playbook invokes the iib_ci role
----
-- name: IIB CI playbook
-  hosts: localhost
-  connection: local
-  gather_facts: false
-  roles:
-    - iib_ci

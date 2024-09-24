@@ -1,8 +1,4 @@
 [whitelist]
 # As of v4, gitleaks only matches against filename, not path in the
 # files directive.  Leaving content for backwards compatibility.
-files = [
-  "ansible/plugins/modules/*.py",
-  "ansible/tests/unit/test_*.py",
-  "ansible/tests/unit/v1/*.yaml",
-]
+files = [ ]
