@@ -230,6 +230,14 @@ test: ## run helm tests
 helmlint: ## run helm lint
 	@for t in $(CHARTS); do common/scripts/lint.sh $$t $(TEST_OPTS); if [ $$? != 0 ]; then exit 1; fi; done
 
+.PHONY: qe-tests
+qe-tests: ## Runs the tests that QE runs
+	@set -e; if [ -f ./tests/interop/run_tests.sh ]; then \
+		./tests/interop/run_tests.sh; \
+	else \
+		echo "No ./tests/interop/run_tests.sh found skipping"; \
+	fi
+
 API_URL ?= https://raw.githubusercontent.com/hybrid-cloud-patterns/ocp-schemas/main/openshift/4.10/
 KUBECONFORM_SKIP ?= -skip 'CustomResourceDefinition,ClusterIssuer,CertManager,Certificate,ArgoCD'
 
