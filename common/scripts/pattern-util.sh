@@ -71,22 +71,26 @@ fi
 # $HOME is mounted to /root because the UID in the container is 0 and that's where SSH looks for credentials
 
 podman run -it --rm --pull=newer \
-	--security-opt label=disable \
-	-e EXTRA_HELM_OPTS \
-	-e EXTRA_PLAYBOOK_OPTS \
-	-e VALUES_SECRET \
-	-e KUBECONFIG \
-	-e K8S_AUTH_HOST \
-	-e K8S_AUTH_VERIFY_SSL \
-	-e K8S_AUTH_SSL_CA_CERT \
-	-e K8S_AUTH_USERNAME \
-	-e K8S_AUTH_PASSWORD \
-	-e K8S_AUTH_TOKEN \
-	${PKI_HOST_MOUNT_ARGS} \
-	-v "${HOME}":"${HOME}" \
-	-v "${HOME}":/pattern-home \
-	${PODMAN_ARGS} \
-	${EXTRA_ARGS} \
-	-w "$(pwd)" \
-	"$PATTERN_UTILITY_CONTAINER" \
-	$@
+    --security-opt label=disable \
+    -e EXTRA_HELM_OPTS \
+    -e EXTRA_PLAYBOOK_OPTS \
+    -e TARGET_ORIGIN \
+    -e NAME \
+    -e TOKEN_SECRET \
+    -e TOKEN_NAMESPACE \
+    -e VALUES_SECRET \
+    -e KUBECONFIG \
+    -e K8S_AUTH_HOST \
+    -e K8S_AUTH_VERIFY_SSL \
+    -e K8S_AUTH_SSL_CA_CERT \
+    -e K8S_AUTH_USERNAME \
+    -e K8S_AUTH_PASSWORD \
+    -e K8S_AUTH_TOKEN \
+    ${PKI_HOST_MOUNT_ARGS} \
+    -v "${HOME}":"${HOME}" \
+    -v "${HOME}":/pattern-home \
+    ${PODMAN_ARGS} \
+    ${EXTRA_ARGS} \
+    -w "$(pwd)" \
+    "$PATTERN_UTILITY_CONTAINER" \
+    $@
