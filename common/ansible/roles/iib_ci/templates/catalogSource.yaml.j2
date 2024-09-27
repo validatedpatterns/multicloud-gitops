@@ -1,9 +1,0 @@
-apiVersion: operators.coreos.com/v1alpha1
-kind: CatalogSource
-metadata:
-  name: iib-{{ item.value['iib'] }}
-  namespace: {{ internal_registry_ns }}
-spec:
-  image: {{ mirror_iib }}:{{ item.value['iib'] }}
-  sourceType: grpc
-  displayName: IIB {{ item.value['iib'] }}

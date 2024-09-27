@@ -1,3 +1,0 @@
----
-kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
-kubeconfig_backup: "{{ lookup('env', 'HOME') }}/.kube/config"

@@ -1,0 +1,4 @@
+---
+# Define Ansible collection requirements here
+collections:
+  - name: git+https://github.com/validatedpatterns/rhvp.cluster_utils.git,v1
