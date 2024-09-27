@@ -205,31 +205,6 @@ argo-healthcheck: ## Checks if all argo applications are synced
 
 ##@ Test and Linters Tasks
 
-CHARTS=$(shell find . -type f -iname 'Chart.yaml' -exec dirname "{}"  \; | grep -v examples | sed -e 's/.\///')
-# Section related to tests and linting
-TEST_OPTS= -f values-global.yaml \
-	--set global.repoURL="https://github.com/pattern-clone/mypattern" \
-	--set main.git.repoURL="https://github.com/pattern-clone/mypattern" \
-	--set main.git.revision=main --set global.pattern="mypattern" \
-	--set global.namespace="pattern-namespace" \
-	--set global.hubClusterDomain=apps.hub.example.com \
-	--set global.localClusterDomain=apps.region.example.com \
-	--set global.clusterDomain=region.example.com \
-	--set global.clusterVersion="4.12" \
-	--set global.clusterPlatform=aws \
-	--set "clusterGroup.imperative.jobs[0].name"="test" \
-	--set "clusterGroup.imperative.jobs[0].playbook"="rhvp.cluster_utils.test"
-PATTERN_OPTS=-f common/examples/values-example.yaml
-EXECUTABLES=git helm oc ansible
-
-.PHONY: test
-test: ## run helm tests
-	@for t in $(CHARTS); do common/scripts/test.sh $$t all "$(TEST_OPTS)"; if [ $$? != 0 ]; then exit 1; fi; done
-
-.PHONY: helmlint
-helmlint: ## run helm lint
-	@for t in $(CHARTS); do common/scripts/lint.sh $$t $(TEST_OPTS); if [ $$? != 0 ]; then exit 1; fi; done
-
 .PHONY: qe-tests
 qe-tests: ## Runs the tests that QE runs
 	@set -e; if [ -f ./tests/interop/run_tests.sh ]; then \
@@ -237,14 +212,6 @@ qe-tests: ## Runs the tests that QE runs
 	else \
 		echo "No ./tests/interop/run_tests.sh found skipping"; \
 	fi
-
-API_URL ?= https://raw.githubusercontent.com/hybrid-cloud-patterns/ocp-schemas/main/openshift/4.10/
-KUBECONFORM_SKIP ?= -skip 'CustomResourceDefinition,ClusterIssuer,CertManager,Certificate,ArgoCD'
-
-# We need to skip 'CustomResourceDefinition' as openapi2jsonschema seems to be unable to generate them ATM
-.PHONY: kubeconform
-kubeconform: ## run helm kubeconform
-	@for t in $(CHARTS); do helm template $(TEST_OPTS) $(PATTERN_OPTS) $$t | kubeconform -strict $(KUBECONFORM_SKIP) -verbose -schema-location $(API_URL); if [ $$? != 0 ]; then exit 1; fi; done
 
 .PHONY: super-linter
 super-linter: ## Runs super linter locally

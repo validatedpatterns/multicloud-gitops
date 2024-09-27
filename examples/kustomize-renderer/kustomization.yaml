@@ -1,5 +1,0 @@
-resources:
-  - environment.yaml
-
-patches:
-- helm.patch.yaml
