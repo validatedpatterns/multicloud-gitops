@@ -43,7 +43,7 @@ clusterGroup:
     jobs:
       - name: hello-world
         # ansible playbook to be run
-        playbook: common/ansible/playbooks/hello-world/hello-world.yaml
+        playbook: rhvp.cluster_utils.hello_world
         # per playbook timeout in seconds
         timeout: 234
         # verbosity: "-v"
