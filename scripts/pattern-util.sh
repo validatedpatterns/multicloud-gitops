@@ -80,6 +80,7 @@ podman run -it --rm --pull=newer \
     -e TOKEN_NAMESPACE \
     -e VALUES_SECRET \
     -e KUBECONFIG \
+    -e PATTERN_INSTALL_CHART \
     -e K8S_AUTH_HOST \
     -e K8S_AUTH_VERIFY_SSL \
     -e K8S_AUTH_SSL_CA_CERT \
