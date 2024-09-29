@@ -205,6 +205,14 @@ argo-healthcheck: ## Checks if all argo applications are synced
 
 ##@ Test and Linters Tasks
 
+.PHONY: qe-tests
+qe-tests: ## Runs the tests that QE runs
+	@set -e; if [ -f ./tests/interop/run_tests.sh ]; then \
+		./tests/interop/run_tests.sh; \
+	else \
+		echo "No ./tests/interop/run_tests.sh found skipping"; \
+	fi
+
 .PHONY: super-linter
 super-linter: ## Runs super linter locally
 	rm -rf .mypy_cache
