@@ -11,13 +11,17 @@ case "$APP" in
         APP_NAME="vault"
         NAMESPACE="vault"
         PROJECT="$MAIN_CLUSTERGROUP_PROJECT"
-        CHART_LOCATION="common/hashicorp-vault"
+        CHART_NAME="hashicorp-vault"
+        CHART_VERSION=0.1.*
+
     ;;
     "golang-external-secrets")
         APP_NAME="golang-external-secrets"
         NAMESPACE="golang-external-secrets"
         PROJECT="$MAIN_CLUSTERGROUP_PROJECT"
-        CHART_LOCATION="common/golang-external-secrets"
+        CHART_NAME="golang-external-secrets"
+        CHART_VERSION=0.1.*
+
     ;;
     *)
         echo "Error - cannot manage $APP can only manage vault and golang-external-secrets"
@@ -32,13 +36,13 @@ case "$STATE" in
         RES=$(yq ".clusterGroup.applications[] | select(.path == \"$CHART_LOCATION\")" "$MAIN_CLUSTERGROUP_FILE" 2>/dev/null)
         if [ -z "$RES" ]; then
             echo "Application with chart location $CHART_LOCATION not found, adding"
-            yq -i ".clusterGroup.applications.$APP_NAME = { \"name\": \"$APP_NAME\", \"namespace\": \"$NAMESPACE\", \"project\": \"$PROJECT\", \"path\": \"$CHART_LOCATION\" }" "$MAIN_CLUSTERGROUP_FILE"
+            yq -i ".clusterGroup.applications.$APP_NAME = { \"name\": \"$APP_NAME\", \"namespace\": \"$NAMESPACE\", \"project\": \"$PROJECT\", \"chart\": \"$CHART_NAME\",  \"chartVersion\": \"$CHART_VERSION\"}" "$MAIN_CLUSTERGROUP_FILE"
         fi
     ;;
     "absent")
         common/scripts/manage-secret-namespace.sh "$NAMESPACE" "$STATE"
         echo "Removing application wth chart location $CHART_LOCATION"
-        yq -i "del(.clusterGroup.applications[] | select(.path == \"$CHART_LOCATION\"))" "$MAIN_CLUSTERGROUP_FILE"
+        yq -i "del(.clusterGroup.applications[] | select(.chart == \"$CHART_NAME\"))" "$MAIN_CLUSTERGROUP_FILE"
     ;;
     *)
         echo "$STATE not supported"

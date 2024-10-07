@@ -2,8 +2,7 @@
 
 # DISCLAIMER
 # 
-# - Parsing of applications needs to be more clever. Currently the code assumes that all 
-# targets will be local charts. This is not true, for example, in industrial-edge.
+# - Parsing of applications needs to be more clever.
 # - There is currently not a mechanism to actually preview against multiple clusters 
 # (i.e. a hub and a remote). All previews will be done against the current.
 # - Make output can be included in the YAML.
@@ -22,11 +21,22 @@ if [ "${APPNAME}" != "clustergroup" ]; then
   #   path: charts/all/foo
   # So we retrieve the actual index ("foobar") given the name attribute of the application
   APP=$(yq ".clusterGroup.applications | with_entries(select(.value.name == \"$APPNAME\")) | keys | .[0]" values-$SITE.yaml)
-  chart=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
+  isLocalHelmChart=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
+  if [ $isLocalHelmChart != "null" ]; then
+    chart=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
+  else
+    helmrepo=$(yq ".clusterGroup.applications.$APP.repoURL" values-$SITE.yaml)
+    helmrepo="${helmrepo:+oci://quay.io/hybridcloudpatterns}"
+    chartversion=$(yq ".clusterGroup.applications.$APP.chartVersion" values-$SITE.yaml)
+    chartname=$(yq ".clusterGroup.applications.$APP.chart" values-$SITE.yaml)
+    chart="${helmrepo}/${chartname} --version ${chartversion}"
+  fi
   namespace=$(yq ".clusterGroup.applications.$APP.namespace" values-$SITE.yaml)
 else
   APP=$APPNAME
-  chart="common/clustergroup"
+  clusterGroupChartVersion=$(yq ".main.multiSourceConfig.clusterGroupChartVersion" values-global.yaml)
+  helmrepo="oci://quay.io/hybridcloudpatterns"
+  chart="${helmrepo}/clustergroup --version ${clusterGroupChartVersion}"
   namespace="openshift-operators"
 fi
 pattern=$(yq ".global.pattern" values-global.yaml)
