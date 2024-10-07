@@ -11,6 +11,16 @@ function version {
 if [ -z "$PATTERN_UTILITY_CONTAINER" ]; then
 	PATTERN_UTILITY_CONTAINER="quay.io/hybridcloudpatterns/utility-container"
 fi
+# If PATTERN_DISCONNECTED_HOME is set it will be used to populate both PATTERN_UTILITY_CONTAINER
+# and PATTERN_INSTALL_CHART automatically
+if [ -n "${PATTERN_DISCONNECTED_HOME}" ]; then
+    PATTERN_UTILITY_CONTAINER="${PATTERN_DISCONNECTED_HOME}/utility-container"
+    PATTERN_INSTALL_CHART="oci://${PATTERN_DISCONNECTED_HOME}/pattern-install"
+    echo "PATTERN_DISCONNECTED_HOME is set to ${PATTERN_DISCONNECTED_HOME}"
+    echo "Setting the following variables:"
+    echo "  PATTERN_UTILITY_CONTAINER: ${PATTERN_UTILITY_CONTAINER}"
+    echo "  PATTERN_INSTALL_CHART: ${PATTERN_INSTALL_CHART}"
+fi
 
 readonly commands=(podman)
 for cmd in ${commands[@]}; do is_available "$cmd"; done
@@ -81,6 +91,7 @@ podman run -it --rm --pull=newer \
     -e VALUES_SECRET \
     -e KUBECONFIG \
     -e PATTERN_INSTALL_CHART \
+    -e PATTERN_DISCONNECTED_HOME \
     -e K8S_AUTH_HOST \
     -e K8S_AUTH_VERIFY_SSL \
     -e K8S_AUTH_SSL_CA_CERT \
