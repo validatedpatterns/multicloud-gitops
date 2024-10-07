@@ -143,7 +143,7 @@ validate-cluster: ## Do some cluster validations before installing
 	@oc cluster-info >/dev/null && echo "OK" || (echo "Error"; exit 1)
 	@echo -n "  storageclass: "
 	@if [ `oc get storageclass -o go-template='{{printf "%d\n" (len .items)}}'` -eq 0 ]; then\
-		echo "None Found"; exit 1;\
+		echo "WARNING: No storageclass found";\
 	else\
 		echo "OK";\
 	fi
