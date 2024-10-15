@@ -31,4 +31,6 @@ pytest -lv --disable-warnings test_validate_hub_site_components.py --kubeconfig 
 
 pytest -lv --disable-warnings test_validate_edge_site_components.py --kubeconfig $KUBECONFIG_EDGE --junit-xml $WORKSPACE/test_validate_edge_site_components.xml
 
+pytest -lv --disable-warnings test_modify_web_content.py --kubeconfig $KUBECONFIG --junit-xml $WORKSPACE/test_modify_web_content.xml
+
 python3 create_ci_badge.py
