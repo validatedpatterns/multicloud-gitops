@@ -68,11 +68,7 @@ preview-%:
 
 .PHONY: operator-deploy
 operator-deploy operator-upgrade: validate-prereq validate-origin validate-cluster ## runs helm install
-	@set -e -o pipefail
-	# Retry five times because the CRD might not be fully installed yet
-	for i in {1..5}; do \
-		helm template --include-crds --name-template $(NAME) $(PATTERN_INSTALL_CHART) $(HELM_OPTS) | oc apply -f- && break || sleep 10; \
-	done
+	@common/scripts/deploy-pattern.sh $(NAME) $(PATTERN_INSTALL_CHART) $(HELM_OPTS)
 
 .PHONY: uninstall
 uninstall: ## runs helm uninstall
