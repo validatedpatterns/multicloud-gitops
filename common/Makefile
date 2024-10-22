@@ -68,11 +68,7 @@ preview-%:
 
 .PHONY: operator-deploy
 operator-deploy operator-upgrade: validate-prereq validate-origin validate-cluster ## runs helm install
-	@set -e -o pipefail
-	# Retry five times because the CRD might not be fully installed yet
-	for i in {1..5}; do \
-		helm template --include-crds --name-template $(NAME) $(PATTERN_INSTALL_CHART) $(HELM_OPTS) | oc apply -f- && break || sleep 10; \
-	done
+	@common/scripts/deploy-pattern.sh $(NAME) $(PATTERN_INSTALL_CHART) $(HELM_OPTS)
 
 .PHONY: uninstall
 uninstall: ## runs helm uninstall
@@ -129,12 +125,22 @@ token-kubeconfig: ## Create a local ~/.kube/config with password (not usually ne
 
 # We only check the remote ssh git branch's existance if we're not running inside a container
 # as getting ssh auth working inside a container seems a bit brittle
+# If the main repoUpstreamURL field is set, then we need to check against
+# that and not target_repo
 .PHONY: validate-origin
 validate-origin: ## verify the git origin is available
 	@echo "Checking repository:"
-	@echo -n "  $(TARGET_REPO) - branch '$(TARGET_BRANCH)': "
-	@git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null &&\
-		echo "OK" || (echo "NOT FOUND"; exit 1)
+	$(eval UPSTREAMURL := $(shell yq -r '.main.git.repoUpstreamURL // (.main.git.repoUpstreamURL = "")' values-global.yaml))
+	@if [ -z "$(UPSTREAMURL)" ]; then\
+		echo -n "  $(TARGET_REPO) - branch '$(TARGET_BRANCH)': ";\
+		git ls-remote --exit-code --heads $(TARGET_REPO) $(TARGET_BRANCH) >/dev/null &&\
+			echo "OK" || (echo "NOT FOUND"; exit 1);\
+	else\
+		echo "Upstream URL set to: $(UPSTREAMURL)";\
+		echo -n "  $(UPSTREAMURL) - branch '$(TARGET_BRANCH)': ";\
+		git ls-remote --exit-code --heads $(UPSTREAMURL) $(TARGET_BRANCH) >/dev/null &&\
+			echo "OK" || (echo "NOT FOUND"; exit 1);\
+	fi
 
 .PHONY: validate-cluster
 validate-cluster: ## Do some cluster validations before installing
