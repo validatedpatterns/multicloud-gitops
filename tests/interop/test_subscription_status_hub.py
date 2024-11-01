@@ -17,7 +17,7 @@ def test_subscription_status_hub(openshift_dyn_client):
         "multicluster-engine": ["multicluster-engine"],
     }
 
-    err_msg = subscription.subscription_status(openshift_dyn_client, expected_subs)
+    err_msg = subscription.subscription_status(openshift_dyn_client, expected_subs, diff=True)
     if err_msg:
         logger.error(f"FAIL: {err_msg}")
         assert False, err_msg
