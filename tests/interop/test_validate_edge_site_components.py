@@ -30,24 +30,6 @@ def test_validate_edge_site_reachable(kube_config, openshift_dyn_client):
         logger.info("PASS: Edge site is reachable")
 
 
-@pytest.mark.check_pod_status_edge
-def test_check_pod_status(openshift_dyn_client):
-    logger.info("Checking pod status")
-    projects = [
-        "openshift-operators",
-        "open-cluster-management-agent",
-        "open-cluster-management-agent-addon",
-        "openshift-gitops",
-    ]
-
-    err_msg = components.check_pod_status(openshift_dyn_client, projects)
-    if err_msg:
-        logger.error(f"FAIL: {err_msg}")
-        assert False, err_msg
-    else:
-        logger.info("PASS: Pod status check succeeded.")
-
-
 @pytest.mark.validate_argocd_reachable_edge_site
 def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
     logger.info("Check if argocd route/url on edge site is reachable")
@@ -57,6 +39,23 @@ def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
         assert False, err_msg
     else:
         logger.info("PASS: Argocd is reachable")
+
+
+@pytest.mark.check_pod_status_edge
+def test_check_pod_status(openshift_dyn_client):
+    logger.info("Checking pod status")
+    projects = [
+        "openshift-operators",
+        "open-cluster-management-agent",
+        "open-cluster-management-agent-addon",
+        "openshift-gitops",
+    ]
+    err_msg = components.check_pod_status(openshift_dyn_client, projects)
+    if err_msg:
+        logger.error(f"FAIL: {err_msg}")
+        assert False, err_msg
+    else:
+        logger.info("PASS: Pod status check succeeded.")
 
 
 @pytest.mark.validate_argocd_applications_health_edge_site
