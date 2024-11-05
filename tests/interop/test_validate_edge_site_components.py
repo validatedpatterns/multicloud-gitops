@@ -64,8 +64,8 @@ def test_validate_argocd_applications_health_edge_site(openshift_dyn_client):
     logger.info("Get all applications deployed by argocd on edge site")
     projects = ["openshift-gitops"]
     unhealthy_apps = application.get_argocd_application_status(
-            openshift_dyn_client, projects
-        )
+        openshift_dyn_client, projects
+    )
     if unhealthy_apps:
         err_msg = "Some or all applications deployed on edge site are unhealthy"
         logger.error(f"FAIL: {err_msg}:\n{unhealthy_apps}")

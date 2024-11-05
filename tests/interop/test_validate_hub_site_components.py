@@ -60,7 +60,9 @@ def test_check_pod_status(openshift_dyn_client):
 def test_validate_acm_self_registration_managed_clusters(openshift_dyn_client):
     logger.info("Check ACM self registration for edge site")
     kubefiles = [os.getenv("KUBECONFIG_EDGE")]
-    err_msg = components.validate_acm_self_registration_managed_clusters(openshift_dyn_client, kubefiles)
+    err_msg = components.validate_acm_self_registration_managed_clusters(
+        openshift_dyn_client, kubefiles
+    )
     if err_msg:
         logger.error(f"FAIL: {err_msg}")
         assert False, err_msg
@@ -84,8 +86,8 @@ def test_validate_argocd_applications_health_hub_site(openshift_dyn_client):
     logger.info("Get all applications deployed by argocd on hub site")
     projects = ["openshift-gitops", "multicloud-gitops-hub"]
     unhealthy_apps = application.get_argocd_application_status(
-            openshift_dyn_client, projects
-        )
+        openshift_dyn_client, projects
+    )
     if unhealthy_apps:
         err_msg = "Some or all applications deployed on hub site are unhealthy"
         logger.error(f"FAIL: {err_msg}:\n{unhealthy_apps}")
