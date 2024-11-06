@@ -2,7 +2,6 @@ import logging
 import os
 
 import pytest
-from ocp_resources.route import Route
 from validatedpatterns_tests.interop import application, components
 
 from . import __loggername__
