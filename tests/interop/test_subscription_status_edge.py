@@ -15,22 +15,10 @@ def test_subscription_status_edge(openshift_dyn_client):
         "openshift-gitops-operator": ["openshift-operators"],
     }
 
-    (
-        operator_versions,
-        missing_subs,
-        unhealthy_subs,
-        missing_installplans,
-        upgrades_pending,
-    ) = subscription.subscription_status(openshift_dyn_client, expected_subs)
-
-    for line in operator_versions:
-        logger.info(line)
-
-    cluster_version = subscription.openshift_version(openshift_dyn_client)
-    logger.info(f"Openshift version:\n{cluster_version.instance.status.history}")
-
-    if missing_subs or unhealthy_subs or missing_installplans or upgrades_pending:
-        err_msg = "Subscription status check failed"
+    err_msg = subscription.subscription_status(
+        openshift_dyn_client, expected_subs, diff=False
+    )
+    if err_msg:
         logger.error(f"FAIL: {err_msg}")
         assert False, err_msg
     else:
