@@ -214,7 +214,7 @@ argo-healthcheck: ## Checks if all argo applications are synced
 .PHONY: qe-tests
 qe-tests: ## Runs the tests that QE runs
 	@set -e; if [ -f ./tests/interop/run_tests.sh ]; then \
-		./tests/interop/run_tests.sh; \
+		pushd ./tests/interop; ./run_tests.sh; popd; \
 	else \
 		echo "No ./tests/interop/run_tests.sh found skipping"; \
 	fi
