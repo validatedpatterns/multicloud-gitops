@@ -173,8 +173,6 @@ validate-prereq: ## verify pre-requisites
 	fi
 	@if [ ! -f /run/.containerenv ]; then\
 	  echo "Checking prerequisites:";\
-	  for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done;\
-	  echo "  Check for '$(EXECUTABLES)': OK";\
 	  echo -n "  Check for python-kubernetes: ";\
 	  if ! ansible -m ansible.builtin.command -a "{{ ansible_python_interpreter }} -c 'import kubernetes'" localhost > /dev/null 2>&1; then echo "Not found"; exit 1; fi;\
 	  echo "OK";\
