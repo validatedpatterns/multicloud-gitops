@@ -164,6 +164,13 @@ validate-schema: ## validates values files against schema in common/clustergroup
 
 .PHONY: validate-prereq
 validate-prereq: ## verify pre-requisites
+	$(eval GLOBAL_PATTERN := $(shell yq -r .global.pattern values-global.yaml))
+	@if [ $(NAME) != $(GLOBAL_PATTERN) ]; then\
+		echo "";\
+		echo "WARNING: folder directory is \"$(NAME)\" and global.pattern is set to \"$(GLOBAL_PATTERN)\"";\
+		echo "this can create problems. Please make sure they are the same!";\
+		echo "";\
+	fi
 	@if [ ! -f /run/.containerenv ]; then\
 	  echo "Checking prerequisites:";\
 	  for t in $(EXECUTABLES); do if ! which $$t > /dev/null 2>&1; then echo "No $$t in PATH"; exit 1; fi; done;\
