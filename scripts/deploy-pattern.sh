@@ -1,7 +1,8 @@
 #!/bin/bash
 set -o pipefail
 
-RUNS=5
+RUNS=10
+WAIT=15
 # Retry five times because the CRD might not be fully installed yet
 echo -n "Installing pattern: "
 for i in $(seq 1 ${RUNS}); do \
@@ -13,7 +14,7 @@ for i in $(seq 1 ${RUNS}); do \
         break;
     else
         echo -n "."
-        sleep 10
+        sleep "${WAIT}"
     fi
 done
 
