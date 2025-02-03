@@ -2,7 +2,6 @@ clusterGroup:
   name: standalone
   isHubCluster: true
   namespaces:
-    - open-cluster-management
     - vault
     - golang-external-secrets
     - config-demo
