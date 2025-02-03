@@ -1,5 +1,5 @@
 clusterGroup:
-  name: hub
+  name: standalone
   isHubCluster: true
   namespaces:
     - open-cluster-management
