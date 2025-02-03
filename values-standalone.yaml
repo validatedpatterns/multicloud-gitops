@@ -1,6 +1,6 @@
 clusterGroup:
   name: standalone
-  isHubCluster: true
+  isHubCluster: false
   namespaces:
     - vault
     - golang-external-secrets
