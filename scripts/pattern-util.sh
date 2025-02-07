@@ -64,8 +64,10 @@ fi
 # if we are using podman machine then we do not bind mount anything (for now!)
 REMOTE_PODMAN=$(podman system connection list -q | wc -l)
 if [ $REMOTE_PODMAN -eq 0 ]; then # If we are not using podman machine we check the hosts folders
-    # Use /etc/pki by default and try a couple of fallbacks if it does not exist
-    if [ -d /etc/pki ]; then
+    # We check /etc/pki/tls because on ubuntu /etc/pki/fwupd sometimes
+    # exists but not /etc/pki/tls and we do not want to bind mount in such a case
+    # as it would find no certificates at all.
+    if [ -d /etc/pki/tls ]; then
         PKI_HOST_MOUNT_ARGS="-v /etc/pki:/etc/pki:ro"
     elif [ -d /etc/ssl ]; then
         PKI_HOST_MOUNT_ARGS="-v /etc/ssl:/etc/ssl:ro"
