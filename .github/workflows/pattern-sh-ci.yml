@@ -2,9 +2,15 @@ name: Run Bash Script on Multiple Distributions
 
 on:
   push:
+    paths:
+      - "scripts/**"
+      - "Makefile"
     branches:
       - main
   pull_request:
+    paths:
+      - "scripts/**"
+      - "Makefile"
 
 jobs:
   run-script:
