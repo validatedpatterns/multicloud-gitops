@@ -38,4 +38,5 @@ jobs:
 
       - name: Run pattern.sh script
         run: |
+          export TARGET_BRANCH=main
           ./scripts/pattern-util.sh make validate-origin

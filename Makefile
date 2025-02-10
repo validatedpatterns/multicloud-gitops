@@ -18,7 +18,7 @@ TARGET_ORIGIN ?= origin
 # This is because we expect to use tokens for repo authentication as opposed to SSH keys
 TARGET_REPO=$(shell git ls-remote --get-url --symref $(TARGET_ORIGIN) | sed -e 's/.*URL:[[:space:]]*//' -e 's%^git@%%' -e 's%^https://%%' -e 's%:%/%' -e 's%^%https://%')
 # git branch --show-current is also available as of git 2.22, but we will use this for compatibility
-TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+TARGET_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 
 UUID_FILE ?= ~/.config/validated-patterns/pattern-uuid
 UUID_HELM_OPTS ?=
