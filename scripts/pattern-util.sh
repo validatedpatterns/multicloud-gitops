@@ -88,6 +88,7 @@ podman run -it --rm --pull=newer \
     -e EXTRA_PLAYBOOK_OPTS \
     -e TARGET_ORIGIN \
     -e TARGET_SITE \
+    -e TARGET_BRANCH \
     -e NAME \
     -e TOKEN_SECRET \
     -e TOKEN_NAMESPACE \
