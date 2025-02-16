@@ -1,0 +1,16 @@
+{{- if .Values.dashboard.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-configmap
+  labels:
+    app: {{ .Chart.Name }}
+data:
+  config.json: |
+    {
+      "metricURL": "https://apm-query.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/metrics",
+      "traceURL": "https://apm-query.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/traces",
+      "logURL": "https://apm-query.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/logs",
+      "websocketURL": "wss://otel-kafka-websocket-python.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/metrics"
+    }
+{{- end }}

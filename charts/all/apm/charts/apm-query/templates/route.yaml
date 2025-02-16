@@ -1,0 +1,19 @@
+{{- if .Values.query.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  subdomain: {{ .Values.route.subdomainName }}
+  to:
+    kind: Service
+    name: {{ .Chart.Name }}
+  port:
+    targetPort: 8000
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
+  wildcardPolicy: None
+{{- end }}

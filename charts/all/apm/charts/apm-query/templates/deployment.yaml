@@ -1,0 +1,28 @@
+{{- if .Values.query.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+      - name: {{ .Values.image.query.name  }}
+        image: "{{ .Values.image.query.repository }}:{{ .Values.image.query.tag }}"
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: {{ .Chart.Name }}-configmap
+
+     
+{{- end }}

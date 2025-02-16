@@ -1,0 +1,34 @@
+{{- if .Values.dashboard.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-dm
+  labels:
+    app: {{ .Chart.Name }}
+    app2: {{ .Values.app2 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - mountPath: /usr/share/nginx/html/config
+            name: apm-cm
+      volumes:
+        - name: apm-cm
+          configMap:
+            defaultMode: 420
+            name: {{ .Chart.Name }}-configmap
+            optional: true
+
+{{- end }}

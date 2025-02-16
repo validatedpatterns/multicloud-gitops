@@ -1,0 +1,9 @@
+apiVersion: v2
+name: apm-ingestion-logs
+description: A Helm chart for apm query api
+
+type: application
+
+version: 1.0.0
+
+appVersion: "1.0.0"

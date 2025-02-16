@@ -1,0 +1,14 @@
+{{- if .Values.query.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: {{ .Chart.Name }}
+{{- end }}

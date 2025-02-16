@@ -1,0 +1,33 @@
+replicaCount: 1
+
+image:
+  query:
+    name: query-api
+    repository: quay.io/zagaos/zagaobserve-apm-query
+    tag: v2
+    pullPolicy: IfNotPresent
+  redis:
+    name: redis
+    repository: quay.io/zagaos/redis-stack-sidecar
+    tag: 1.2
+    pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8000
+
+route:
+  enabled: true
+  subdomainName: apm-query
+  redis:
+    name: redis
+    subdomainName: apm-query-redis
+
+configmapEnv:
+  data:
+    LOGS_TABLE_NAME: apm_logs.logs
+    METRICS_TABLE_NAME: apm_metrics.metrics
+    TRACES_TABLE_NAME: apm_traces.traces
+    TRINO_HOST: admin@trino-coordinator.observability-datamesh.svc.cluster.local
+query:
+  enabled: true

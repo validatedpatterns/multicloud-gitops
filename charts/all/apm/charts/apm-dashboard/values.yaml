@@ -1,0 +1,17 @@
+replicaCount: 1
+image:
+  repository: quay.io/zagaos/zagaobserve-apm-dashboard
+  tag: "v7"
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 8080
+route:
+  subdomain: apm-dashboard
+  
+backend:
+  enabled: true
+
+dashboard:
+  enabled: true
+  

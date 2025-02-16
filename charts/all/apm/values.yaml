@@ -1,0 +1,129 @@
+apm-dashboard:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: "quay.io/zagaos/zagaobserve-apm-dashboard"
+    tag: "v11"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  route:
+    enabled: true
+    subdomainName: apm-dashboard
+
+apm-ingestion-logs:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: "quay.io/zagaos/apm-ingestion-pyiceberg"
+    tag: v25
+    pullPolicy: IfNotPresent
+  configmapEnv:
+    data:
+      BUCKET_NAME: "s3a://observability-apm-logs/logs"
+      SSL: "False"
+      MINIO_BUCKET: observability-apm-logs
+      CONSUMER_GROUP_ID: apmlogs
+      KAFKA_TOPIC: apmlogs
+      NAME_SPACE: apm_logs
+      SCRIPT_TO_RUN: logs
+      TABLE_NAME: logs
+      KAFKA_BOOTSTRAP_SERVER: "telemetry-kafka-bootstrap.observability-kafka.svc.cluster.local:9092"
+      URI: "thrift://hive-metastore.observability-datamesh.svc.cluster.local:9083"
+      S3_ENDPOINT: "http://minio.observability-datamesh.svc.cluster.local:9000"
+      ACCESS_KEY: minioAdmin
+      SECRET_KEY: minio1234
+      REDIS_HOST: redis-service.observability-datamesh.svc.cluster.local
+      REDIS_PORT: 6379
+      CASE_URL: "http://casemanage-backend.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/api/v1/case/"
+apm-ingestion-metrics:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: "quay.io/zagaos/apm-ingestion-pyiceberg"
+    tag: v25
+    pullPolicy: IfNotPresent
+  configmapEnv:
+    data:
+      BUCKET_NAME: "s3a://observability-apm-metrics/metrics"
+      SSL: "False"
+      MINIO_BUCKET: observability-apm-metrics
+      CONSUMER_GROUP_ID: apm_metric
+      KAFKA_TOPIC: apmmetrics
+      NAME_SPACE: apm_metrics
+      SCRIPT_TO_RUN: metrics
+      TABLE_NAME: metrics
+      KAFKA_BOOTSTRAP_SERVER: "telemetry-kafka-bootstrap.observability-kafka.svc.cluster.local:9092"
+      URI: "thrift://hive-metastore.observability-datamesh.svc.cluster.local:9083"
+      S3_ENDPOINT: "http://minio.observability-datamesh.svc.cluster.local:9000"
+      ACCESS_KEY: minioAdmin
+      SECRET_KEY: minio1234
+      REDIS_HOST: redis-service.observability-datamesh.svc.cluster.local
+      REDIS_PORT: 6379
+      CASE_URL: "http://casemanage-backend.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/api/v1/case/"
+apm-ingestion-traces:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: "quay.io/zagaos/apm-ingestion-pyiceberg"
+    tag: v25
+    pullPolicy: IfNotPresent
+  configmapEnv:
+    data:
+      BUCKET_NAME: "s3a://observability-apm-traces/traces"
+      SSL: "False"
+      MINIO_BUCKET: observability-apm-traces
+      CONSUMER_GROUP_ID: apm_traces
+      KAFKA_TOPIC: apmtraces
+      NAME_SPACE: apm_traces
+      SCRIPT_TO_RUN: traces
+      TABLE_NAME: traces
+      KAFKA_BOOTSTRAP_SERVER: "telemetry-kafka-bootstrap.observability-kafka.svc.cluster.local:9092"
+      URI: "thrift://hive-metastore.observability-datamesh.svc.cluster.local:9083"
+      S3_ENDPOINT: "http://minio.observability-datamesh.svc.cluster.local:9000"
+      ACCESS_KEY: minioAdmin
+      SECRET_KEY: minio1234
+      REDIS_HOST: redis-service.observability-datamesh.svc.cluster.local
+      REDIS_PORT: 6379
+      CASE_URL: "http://casemanage-backend.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/api/v1/case/"
+apm-query:
+  enabled: false
+  replicaCount: 1
+
+  image:
+    repository: "quay.io/zagaos/zagaobserve-apm-query"
+    tag: v3
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  route:
+    enabled: true
+    subdomainName: apm-query
+
+  configmapEnv:
+    data:
+      LOGS_TABLE_NAME: apm_logs.logs
+      METRICS_TABLE_NAME: apm_metrics.metrics
+      TRACES_TABLE_NAME: apm_traces.traces
+      TRINO_HOST: admin@trino-coordinator.observability-datamesh.svc.cluster.local
+
+dashboard:
+  enabled: true
+
+query:
+  enabled: true
+
+ingestiontraces:
+  enabled: true
+
+ingestionmetrics:
+  enabled: true
+
+ingestionlogs:
+  enabled: true

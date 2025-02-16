@@ -7,16 +7,35 @@ clusterGroup:
     - golang-external-secrets
     - config-demo
     - hello-world
+    - observability-edge 
+    - observability-otel
   subscriptions:
     acm:
       name: advanced-cluster-management
       namespace: open-cluster-management
       channel: release-2.11
       #csv: advanced-cluster-management.v2.6.1
+    opentelemetry:
+      name: opentelemetry-product
+      namespace: openshift-opentelemetry-operator
+      channel: stable
+      #csv: advanced-cluster-management.v2.6.1
+    kepler:
+      name: power-monitoring-operator
+      namespace: openshift-operators
+      channel: stable
+      #csv: advanced-cluster-management.v2.6.1
+    kafka:
+      name: amq-streams
+      namespace: openshift-operators
+      channel: stable
+      #csv: advanced-cluster-management.v2.6.1
   projects:
     - hub
     - config-demo
     - hello-world
+    - observability-otel
+    - observability-edge
   # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
   # We can use self-referential variables because the chart calls the tpl function with these variables defined
   sharedValueFiles:

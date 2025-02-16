@@ -1,0 +1,12 @@
+{{- if .Values.query.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-configmap
+  labels:
+    app: {{ .Chart.Name }}
+data:
+{{- range $key, $value := .Values.configmapEnv.data }}
+  {{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- end }}

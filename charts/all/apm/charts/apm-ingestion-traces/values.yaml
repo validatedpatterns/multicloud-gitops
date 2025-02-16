@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/zagaos/apm-ingestion-pyiceberg
+  tag: 109fc4e
+  pullPolicy: IfNotPresent
+
+
+
+
+configmapEnv:
+  data:
+    BUCKET_NAME: 's3a://observability-apm-traces/traces'
+    SSL: "False"
+    MINIO_BUCKET: observability-apm-traces
+    CONSUMER_GROUP_ID: apm_traces
+    KAFKA_TOPIC: apmtraces
+    NAME_SPACE: apm_traces
+    SCRIPT_TO_RUN: traces
+    TABLE_NAME: traces
+    KAFKA_BOOTSTRAP_SERVER: 'telemetry-kafka-bootstrap.observability-kafka.svc.cluster.local:9092'
+    URI: 'thrift://hive-metastore.observability-datamesh.svc.cluster.local:9083'
+    S3_ENDPOINT: 'http://minio.observability-datamesh.svc.cluster.local:9000'
+    ACCESS_KEY: minioAdmin
+    SECRET_KEY: minio1234
+    REDIS_HOST: redis-service.observability-datamesh.svc.cluster.local
+    REDIS_PORT: 6379
+    CASE_URL: "http://casemanage-backend.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/api/v1/case/"
+    
+ingestiontraces:
+  enabled: true 
+
