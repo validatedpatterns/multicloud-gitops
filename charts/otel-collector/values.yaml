@@ -1,0 +1,56 @@
+#apm collector
+apm-collector:
+  replicas: 1
+  image: 'ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.107.0'
+  namespace: "observability-otel"
+  # defined for spec
+
+  mode: deployment
+  metrics:
+    enabled: true
+
+  # reciver config
+
+  receiver:
+    grpcEndpoint: 0.0.0.0:4317
+    httpEndpoint: 0.0.0.0:4318
+
+  processors: {}
+
+  # exporter config
+  exporters:
+    kafka:
+      enabled: true
+      logTopic: apmlogs
+      metricTopic: apmmetrics
+      traceTopic: apmtraces
+      brokers: telemetry-kafka-bootstrap.observability-kafka.svc.cluster.local:9092
+      encoding: otlp_json
+      version: 3.7.0
+
+
+  service:
+    receiver: otlp
+    exporters:
+      log: kafka/logs
+      metrics: kafka/metrics
+      traces: kafka/traces
+
+  logExporter:
+    enabled: true
+
+  metricsExporter:
+    enabled: true
+
+  tracesExporter:
+    enabled: true
+
+##################################################################
+
+
+
+
+
+
+
+

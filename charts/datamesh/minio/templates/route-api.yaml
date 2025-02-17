@@ -1,0 +1,30 @@
+{{- if .Values.minio.enabled }}
+
+apiVersion: route.openshift.io/v1
+kind: Route
+
+metadata:
+
+  name: {{ .Chart.Name }}-api
+
+  labels:
+    app: {{ .Chart.Name }}
+
+spec:
+
+  subdomain: {{ .Values.route.subdomain }}-api
+  path: /
+  to:
+    kind: Service
+    name: {{ .Chart.Name }}
+    weight: 100
+  port:
+    targetPort: api
+
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+  wildcardPolicy: None
+
+{{- end }}

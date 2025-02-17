@@ -1,0 +1,26 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/osclimate/hive-metastore
+  tag: latest
+  pullPolicy: IfNotPresent
+
+s3Connection:
+  S3_PREFIX: data
+  S3_BUCKET: zaga
+  S3_HOST: minio
+  S3_PORT: "9000"
+
+secretEnv:
+  data:
+    AWS_ACCESS_KEY_ID: minioAdmin
+    AWS_SECRET_ACCESS_KEY: minio1234
+    DATABASE_DB: hivemetadb
+    DATABASE_PASSWORD: hivemeta123$
+    DATABASE_USER: hive
+    DATABASE_HOST: hive-metastore-db
+    DATABASE_PORT: "5432"
+  type: Opaque
+
+hivemetastore:
+  enabled: true

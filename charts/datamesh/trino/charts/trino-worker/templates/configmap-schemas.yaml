@@ -1,0 +1,15 @@
+{{- if .Values.worker.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-schemas
+  labels:
+    app: {{ .Chart.Name }}
+data:
+  {{- range .Values.schemas.data }}
+    {{- if and .name .path }}
+    {{ .name }}: |
+      {{ $.Files.Get .path | nindent 8 | trimSuffix "\n" }}
+    {{- end }}
+  {{- end }}
+{{- end }}

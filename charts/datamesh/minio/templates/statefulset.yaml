@@ -1,0 +1,79 @@
+{{- if .Values.minio.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+
+spec:
+
+
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  
+  {{- if .strategy }}
+  strategy:
+    type: {{ .Values.strategy.type }}
+  {{- end }} 
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+
+    spec:
+      volumes:
+        - name: {{ .Chart.Name }}-pvc
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-pvc
+            
+      containers:
+        - name: {{ .Chart.Name }}
+          
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          
+          ports:
+            - name: api
+              containerPort: 9000
+              protocol: TCP
+
+            - name: web
+              containerPort: 33933
+              protocol: TCP
+
+          args:
+            - server
+            - /storage
+            - '--console-address=:33933'
+
+          {{- if .Values.probes.readiness }}
+          readinessProbe:
+            {{- toYaml .Values.probes.readiness | nindent 12 }}
+          {{- end }}
+
+          {{- if .Values.probes.liveness }}
+          livenessProbe:
+            {{- toYaml .Values.probes.liveness | nindent 12 }}
+          {{- end }}
+
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+
+          envFrom:
+            - secretRef:
+                name: {{ .Chart.Name }}-secret
+            - configMapRef:
+                name: {{ .Chart.Name }}-configmap
+
+          volumeMounts:
+            - name: {{ .Chart.Name }}-pvc
+              mountPath: /storage
+
+  
+
+{{- end }}

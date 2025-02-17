@@ -1,0 +1,6 @@
+apiVersion: v2
+name: edge-dashboard
+description: A Helm chart for edge dashboard
+type: application
+
+version: 1.0.0

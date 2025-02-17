@@ -1,0 +1,73 @@
+{{- if .Values.hivemetastore.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+
+spec:
+
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  
+  {{- if .strategy }}
+  strategy:
+    type: {{ .Values.strategy.type }}
+  {{- end }} 
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+
+    spec:
+
+      volumes:
+        - name: hadoop-config
+          emptyDir: {}
+        - name: hive-config
+          emptyDir: {}
+
+      containers:
+      - name: {{ .Chart.Name }}
+        
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        
+        ports:
+          - name: thrift
+            containerPort: 9083
+            protocol: TCP
+
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+          
+        env:
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+
+          - name: S3_ENDPOINT_URL
+            value: http://{{ .Values.s3ConnectionEnv.S3_HOST }}.$(NAMESPACE).svc.cluster.local:{{ .Values.s3ConnectionEnv.S3_PORT }}        
+          - name: S3_PREFIX
+            value: {{ .Values.s3ConnectionEnv.S3_PREFIX }}
+          - name: S3_BUCKET
+            value: {{ .Values.s3ConnectionEnv.S3_BUCKET }}
+
+        envFrom:
+          - secretRef:
+              name: {{ .Chart.Name }}-secret
+
+        volumeMounts:
+            - name: hadoop-config
+              mountPath: /opt/hadoop/etc/hadoop
+            - name: hive-config
+              mountPath: /opt/hive-metastore/conf
+
+{{- end }}

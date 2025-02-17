@@ -5,10 +5,11 @@ clusterGroup:
     - open-cluster-management
     - vault
     - golang-external-secrets
-    - config-demo
-    - hello-world
+    #- config-demo
+    #- hello-world
     - observability-edge 
-    - observability-otel
+    - observability-apm
+    - observability-datamesh
   subscriptions:
     acm:
       name: advanced-cluster-management
@@ -20,11 +21,6 @@ clusterGroup:
       namespace: openshift-opentelemetry-operator
       channel: stable
       #csv: advanced-cluster-management.v2.6.1
-    kepler:
-      name: power-monitoring-operator
-      namespace: openshift-operators
-      channel: stable
-      #csv: advanced-cluster-management.v2.6.1
     kafka:
       name: amq-streams
       namespace: openshift-operators
@@ -32,10 +28,12 @@ clusterGroup:
       #csv: advanced-cluster-management.v2.6.1
   projects:
     - hub
-    - config-demo
-    - hello-world
-    - observability-otel
-    - observability-edge
+    #- config-demo
+    #- hello-world
+    - observability-edge 
+    - observability-apm
+    - observability-datamesh
+    
   # Explicitly mention the cluster-state based overrides we plan to use for this pattern.
   # We can use self-referential variables because the chart calls the tpl function with these variables defined
   sharedValueFiles:
@@ -80,16 +78,56 @@ clusterGroup:
       project: hub
       chart: golang-external-secrets
       chartVersion: 0.1.*
-    config-demo:
-      name: config-demo
-      namespace: config-demo
-      project: config-demo
-      path: charts/all/config-demo
-    hello-world:
-      name: hello-world
-      namespace: hello-world
-      project: hello-world
-      path: charts/all/hello-world
+    #config-demo:
+      #name: config-demo
+      #namespace: config-demo
+      #project: config-demo
+      #path: charts/all/config-demo
+    #hello-world:
+      #name: hello-world
+      #namespace: hello-world
+      #project: hello-world
+      #path: charts/all/hello-world
+    apm:
+      name: apm
+      namespace: observability-apm
+      project: observability-apm
+      path: charts\apm
+    otel-collector:
+      name: otel-collector
+      namespace: observability-otel
+      project: observability-otel
+      path: charts\otel-collector
+    kafka:
+      name: kafka
+      namespace: observability-kafka
+      project: observability-kafka
+      path: charts\kafka
+    hive-metastore:
+      name: hive-metastore
+      namespace: observability-datamesh
+      project: observability-datamesh
+      path: charts/datamesh/hive-metastore
+    minio:
+      name: minio
+      namespace: observability-datamesh
+      project: observability-datamesh
+      path: charts\datamesh\minio
+    trino:
+      name: trino
+      namespace: observability-datamesh
+      project: observability-datamesh
+      path: charts\datamesh\trino
+    edge:
+      name: edge
+      namespace: observability-edge
+      project: observability-edge
+      path: charts\edge
+
+
+    
+
+    
   imperative:
     # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
     # The default schedule is every 10 minutes: imperative.schedule

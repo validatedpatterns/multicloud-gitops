@@ -1,0 +1,67 @@
+nameOverride: ""
+
+hivemetastore:
+  enabled: true
+
+hivemetastoredb:
+  enabled: true
+
+############################
+
+hive-metastore-db: 
+
+  replicaCount: 1
+
+  image:
+    repository: "quay.io/osclimate/postgresql-13"
+    tag: "1-101"
+
+  strategy:
+    type: {}
+
+  service:
+    type: ClusterIP
+
+  securityContext: {}
+
+  secretEnv:
+    data:
+      POSTGRESQL_ADMIN_PASSWORD: admin123$
+      POSTGRESQL_DATABASE: hivemetadb
+      POSTGRESQL_PASSWORD: hivemeta123$
+      POSTGRESQL_USER: hive
+    type: Opaque
+
+  volumes:
+    storageSize: 2Gi
+    accessModes:
+      - ReadWriteOnce
+
+
+####################################
+
+hive-metastore:
+
+  replicaCount: 1
+
+  image:
+    repository: quay.io/osclimate/hive-metastore
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  s3ConnectionEnv:
+    S3_PREFIX: data
+    S3_BUCKET: zaga
+    S3_HOST: minio
+    S3_PORT: "9000"
+
+  secretEnv:
+    data:
+      AWS_ACCESS_KEY_ID: minioAdmin
+      AWS_SECRET_ACCESS_KEY: minio1234
+      DATABASE_DB: hivemetadb
+      DATABASE_PASSWORD: hivemeta123$
+      DATABASE_USER: hive
+      DATABASE_HOST: hive-metastore-db
+      DATABASE_PORT: "5432"
+    type: Opaque

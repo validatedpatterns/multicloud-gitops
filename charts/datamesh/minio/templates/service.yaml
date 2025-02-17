@@ -1,0 +1,25 @@
+{{- if .Values.minio.enabled }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  ports:
+
+  - name: api
+    protocol: TCP
+    port: 9000
+    targetPort: 9000
+
+  - name: web
+    protocol: TCP
+    port: 33933
+    targetPort: 33933
+
+  selector:
+    app: {{ .Chart.Name }}
+
+{{- end }}

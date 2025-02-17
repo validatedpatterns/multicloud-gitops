@@ -1,0 +1,18 @@
+{{- if .Values.dashboard.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-configmap
+  labels:
+    app: {{ .Chart.Name }}
+data:
+  config.json: |
+    {
+        "clusterUrl": "https://infra-query.apps.rosa-8grhg.ssnp.p1.openshiftapps.com",
+        "adminBackendURL": "https://admin-backend.apps.rosa-8grhg.ssnp.p1.openshiftapps.com",
+        "nodeMetricUrl": "https://infra-query.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/node",
+        "podMetricUrl": "https://infra-query.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/pod",
+        "eventUrl": "https://infra-query.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/event",
+        "sustainURL": "https://sustain-query.apps.rosa-8grhg.ssnp.p1.openshiftapps.com/sustain"
+    }
+{{- end }}

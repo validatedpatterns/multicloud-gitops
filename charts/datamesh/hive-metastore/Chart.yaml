@@ -1,0 +1,20 @@
+apiVersion: v2
+name: hive-metastore
+description: A Helm chart for hive metastore
+
+version: 1.0.0
+
+dependencies:
+  - name: hive-metastore-db
+    version: "1.0.0"
+    repository: "file://charts/hive-metastore-db"
+    condition: subcharts.hive-metastore-db
+    tags:
+      - hive-metastore-db
+
+  - name: hive-metastore
+    version: "1.0.0"
+    repository: "file://charts/hive-metastore"
+    condition: subcharts.hive-metastore
+    tags:
+      - hive-metastore

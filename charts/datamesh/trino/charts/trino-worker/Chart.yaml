@@ -1,0 +1,9 @@
+apiVersion: v2
+name: trino-worker
+description: A Helm chart for Trino worker
+
+type: application
+
+version: 1.0.0
+
+appVersion: "1.0.0"

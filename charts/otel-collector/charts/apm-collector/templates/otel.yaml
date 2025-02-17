@@ -1,0 +1,85 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: {{ .Chart.Name  }}
+  namespace: {{ .Values.namespace }}
+spec:
+  mode: {{ .Values.mode }}
+  replicas: {{ .Values.replicas }}
+  image: {{ .Values.image }}
+  observability:
+    metrics:
+      enableMetrics: {{ .Values.metrics.enabled }}
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "{{ .Values.receiver.grpcEndpoint }}"
+          http:
+            endpoint: "{{ .Values.receiver.httpEndpoint }}"
+
+    processors:
+      batch: {{ .Values.processors | default "null" }}
+
+    exporters:
+      kafka/logs:
+        topic: {{ .Values.exporters.kafka.logTopic }}
+        brokers:
+          - {{ .Values.exporters.kafka.brokers }}
+        encoding: {{ .Values.exporters.kafka.encoding }}
+        protocol_version: {{ .Values.exporters.kafka.version }}
+
+      kafka/metrics:
+        topic: {{ .Values.exporters.kafka.metricTopic }}
+        brokers:
+          - {{ .Values.exporters.kafka.brokers }}
+        encoding: {{ .Values.exporters.kafka.encoding }}
+        protocol_version: {{ .Values.exporters.kafka.version }}
+
+      kafka/traces:
+        topic: {{ .Values.exporters.kafka.traceTopic }}
+        brokers:
+          - {{ .Values.exporters.kafka.brokers }}
+        encoding: {{ .Values.exporters.kafka.encoding }}
+        protocol_version: {{ .Values.exporters.kafka.version }}
+
+    service:
+      pipelines:
+        logs:
+          receivers:
+            - {{ .Values.service.receiver }}
+          processors:
+            - batch
+          exporters:
+          {{- if .Values.logExporter.enabled }}
+            - kafka/logs
+          {{- else }}
+            - kafka/logs
+            - debug
+          {{- end }}
+
+        traces:
+          receivers:
+            - {{ .Values.service.receiver }}
+          processors:
+            - batch
+          exporters:
+          {{- if .Values.tracesExporter.enabled }}
+            - kafka/traces
+          {{- else }}
+            - kafka/traces
+            - debug
+          {{- end }}
+        metrics:
+          receivers:
+            - {{ .Values.service.receiver }}
+          processors:
+            - batch
+          exporters:
+          {{- if .Values.metricsExporter.enabled }}
+            - kafka/metrics
+          {{- else }}
+            - kafka/metrics
+            - debug
+          {{- end }}

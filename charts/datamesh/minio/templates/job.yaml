@@ -1,0 +1,86 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Chart.Name }}-create-buckets
+
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+
+  labels:
+    app: {{ .Chart.Name }}
+
+spec:
+
+  ttlSecondsAfterFinished: 60 
+
+  template:
+    spec:
+
+      restartPolicy: Never
+
+      volumes:
+        - name: mc-config
+          emptyDir: {}
+
+      containers:
+
+        - name: wait-container
+
+          image: curlimages/curl:latest
+
+          command: ["sh", "-c"]
+
+          args:
+            - |
+              echo "Waiting for MinIO on host $S3_ENDPOINT_URL to be ready...";
+              while ! curl -s $S3_ENDPOINT_URL > /dev/null; do
+                echo "MinIO is not ready, retrying in 5 seconds...";
+                sleep 5;
+              done;
+              echo "MinIO is ready!";
+
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: S3_ENDPOINT_URL
+              value: http://{{ .Values.s3ConnectionEnv.S3_HOST }}.$(NAMESPACE).svc.cluster.local:{{ .Values.s3ConnectionEnv.S3_PORT }}
+              
+        - name: mc-job
+         
+          image: minio/mc
+          
+          command: ["sh", "-c"]
+          
+          args:
+            - |
+              echo "Setting up MinIO client...";
+              echo "Creating buckets on host $S3_ENDPOINT_URL";
+              mc alias set myminio $S3_ENDPOINT_URL $MINIO_ACCESS_KEY $MINIO_SECRET_KEY || exit 1;
+              mc mb myminio/$S3_BUCKET || exit 1;
+          
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: S3_ENDPOINT_URL
+              value: http://{{ .Values.s3ConnectionEnv.S3_HOST }}.$(NAMESPACE).svc.cluster.local:{{ .Values.s3ConnectionEnv.S3_PORT }}
+            - name: S3_BUCKET
+              value: {{ .Values.s3ConnectionEnv.S3_BUCKET }}
+            - name: MINIO_ACCESS_KEY
+              value: {{ .Values.s3ConnectionEnv.MINIO_ACCESS_KEY }}
+            - name: MINIO_SECRET_KEY
+              value: {{ .Values.s3ConnectionEnv.MINIO_SECRET_KEY }}
+            - name: MC_CONFIG_DIR
+              value: /tmp/.mc
+          
+          volumeMounts:
+            - name: mc-config
+              mountPath: /tmp/.mc
+  
+  backoffLimit: 4

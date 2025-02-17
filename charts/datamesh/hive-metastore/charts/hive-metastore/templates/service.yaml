@@ -1,0 +1,21 @@
+{{- if .Values.hivemetastore.enabled }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+
+spec:
+  ports:
+
+  - name: thrift
+    protocol: TCP
+    port: 9083
+    targetPort: 9083
+
+  selector:
+    app: {{ .Chart.Name }}
+
+{{- end }}

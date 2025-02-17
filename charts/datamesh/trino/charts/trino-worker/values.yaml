@@ -1,0 +1,69 @@
+replicaCount: 2
+
+image:
+  repository: "quay.io/osclimate/trino"
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+strategy: 
+  type: Recreate
+
+service:
+  type: ClusterIP
+
+dashboard:
+  enabled: true
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+
+configmapEnv:
+  data:
+    TRINO_COORDINATOR_HOSTNAME: http://trino-coordinator.$(NAMESPACE).svc.cluster.local:8080
+
+secretEnv:
+  data:
+    AWS_ACCESS_KEY_ID: minioAdmin
+    AWS_SECRET_KEY_ID: admin1234
+    INTER_COMM_SHARED_SECRET: kzs71nsYBRr8cysT62zb6P+VT8YsVi/eASfNKUJkvPDce6aof6FLyM/0EDA8qK46P8sD2jXBTTe7cKX0MEqTS2UNZ7YdYWHUUoSG2nLgEryZbqlEkguYWs2dSSYkzv9DIPMtRvGxmNdQ6HGGscrqsFkeK7kSCd6mn5YNskIv6Z665gquqq+SlqV5UylFDcXhB6Z7oWuZ2fq3WONVWtTIhYP73YO8iDORG2afkqPQhRKTw848YQVrcqKAIOX6sirMb5KE1BP0yXz533J71vFuMqkvTBrFV3lkvAq+/7W4iA9Xn9WDJ8TGgcwB7jFOLH9htKYrXtO2XgMsWxizi7XbFzXsPEreqndhZEX7i6U0/K22kCWRy7/lcH+JMQAzq3J+qxl1KqTLVTfu3iSIKUj093/wR0EPcH282a+HMzk/5E1aGk3uV40M/1wQwlEDzBRaGtLtW7tyFHX+sc29nLgkOFAPknwqnYoSR7FDEgO+CrB00zNeY1lS1Xx8OCEfGgg+y5zK7pSMm7cuq8PHjENXCsWOY3xNkJLKsf9mWiWLZhxE1G6EQMG8WPz2r+DhBskTaoHaRPCfcD3/2vaDEjvfK/9kek94g00JcjJB9HQQe3tINmEBxkA8SjIWZe40kcPU0hbKqeA8WFzUgwsB/2KxFvTcPpRvNKseozZZxL/2Dlk=
+  type: Opaque
+
+
+catalogs:
+  data:
+    - name: hive.properties
+      path: configs/trino-catalog/hive.properties
+    - name: iceberg.properties
+      path: configs/trino-catalog/iceberg.properties
+    - name: tpcds.properties
+      path: configs/trino-catalog/tpcds.properties
+    - name: tpch.properties
+      path: configs/trino-catalog/tpch.properties
+
+configs:
+  data:
+    - name: config.properties
+      path: configs/trino-worker/config.properties
+    - name: exchange-manager.properties
+      path: configs/trino-worker/exchange-manager.properties
+    - name: jvm.config
+      path: configs/trino-worker/jvm.config
+    - name: log.properties
+      path: configs/trino-worker/log.properties
+    - name: node.properties
+      path: configs/trino-worker/node.properties
+
+schemas:
+  data:
+
+env:
+  - name: NAMESPACE
+    valueFrom:
+      fieldRef:
+        apiVersion: v1
+        fieldPath: metadata.namespace
+
+worker:
+  enabled: true
+

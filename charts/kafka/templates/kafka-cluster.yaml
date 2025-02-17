@@ -1,0 +1,47 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ .Values.kafka.name }}
+  labels:
+    app: telemetry
+    kafka-cluster: telemetry
+spec:
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+  kafka:
+    config:
+      {{- range $key, $value := .Values.kafka.config }}
+      {{ $key }}: {{ $value }}
+      {{- end }}
+    listeners:
+      {{- range .Values.kafka.listeners }}
+      - name: {{ .name }}
+        port: {{ .port }}
+        tls: {{ .tls }}
+        type: {{ .type }}
+      {{- end }}
+    replicas: {{ .Values.kafka.replicas }}
+    resources:
+      limits:
+        cpu: {{ .Values.kafka.resources.limits.cpu }}
+        memory: {{ .Values.kafka.resources.limits.memory }}
+      requests:
+        cpu: {{ .Values.kafka.resources.requests.cpu }}
+        memory: {{ .Values.kafka.resources.requests.memory }}
+    storage:
+      size: {{ .Values.kafka.storage.size }}
+      type: {{ .Values.kafka.storage.type }}
+
+  zookeeper:
+    replicas: 3
+    resources:
+      limits:
+        cpu: 550m
+        memory: 850Mi
+      requests:
+        cpu: 500m
+        memory: 800Mi
+    storage:
+      size: 5Gi
+      type: persistent-claim

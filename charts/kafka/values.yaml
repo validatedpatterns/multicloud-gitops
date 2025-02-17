@@ -1,0 +1,47 @@
+kafkaTopics:
+  - name: apmmetrics
+  - name: apmtraces
+  - name: apmlogs
+kafka:
+  name: telemetry
+  replicas: 5
+  resources:
+    limits:
+      cpu: 850m
+      memory: 1280Mi
+    requests:
+      cpu: 800m
+      memory: 1200Mi
+  storage:
+    size: 50Gi
+    type: persistent-claim
+  listeners:
+    - name: plain
+      port: 9092
+      tls: false
+      type: internal
+    - name: external
+      port: 9093
+      tls: true
+      type: route
+  config:
+    default.replication.factor: 5
+    min.insync.replicas: 4
+    offsets.topic.replication.factor: 5
+    transaction.state.log.min.isr: 4
+    transaction.state.log.replication.factor: 5
+    auto.create.topics.enable: false
+    delete.topic.enable: false
+
+zookeeper:
+  replicas: 3
+  resources:
+    limits:
+      cpu: 550m
+      memory: 850Mi
+    requests:
+      cpu: 500m
+      memory: 800Mi
+  storage:
+    size: 5Gi
+    type: persistent-claim

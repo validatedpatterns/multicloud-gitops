@@ -1,0 +1,18 @@
+edge-dashboard:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: "quay.io/zagaos/zagaobserve-edge-dashboard"
+    tag: "v3"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  route:
+    subdomain: edge-dashboard
+    enabled: true
+
+ 
+
+  dashboard:
+    enabled: true

@@ -1,0 +1,14 @@
+apiVersion: v2
+name: edge
+description: A Helm chart for Kubernetes
+
+version: 1.0.0
+
+dependencies:
+
+- name: edge-dashboard
+  version: "1.0.0"
+  repository: "file://charts/edge-dashboard"
+  condition: subcharts.edge-dashboard
+  tags:
+  - edge-dashboard

@@ -1,0 +1,78 @@
+{{- if .Values.worker.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+
+  strategy:
+    type: {{ .Values.strategy.type }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+
+      volumes:
+
+        - name: {{ .Chart.Name }}-schemas
+          configMap:
+            name: {{ .Chart.Name }}-schemas
+            defaultMode: 420
+
+        - name: {{ .Chart.Name }}-configs
+          configMap:
+            name: {{ .Chart.Name }}-configs
+            defaultMode: 420
+        
+        - name: {{ .Chart.Name }}-catalogs
+          configMap:
+            name: {{ .Chart.Name }}-catalogs
+            defaultMode: 420
+
+      containers:
+      - name: {{ .Chart.Name }}
+        
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+          - name: https
+            containerPort: 8443
+            protocol: TCP
+
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+          
+        env:
+          {{- if .env }}
+            {{ toYaml .env | nindent 12 }}
+          {{- end }}
+
+        envFrom:
+          - configMapRef:
+              name: {{ .Chart.Name }}-configmap
+          - secretRef:
+              name: {{ .Chart.Name }}-secret
+
+        volumeMounts:
+          
+          - name: {{ .Chart.Name }}-schemas
+            mountPath: /etc/trino/schemas
+          
+          - name: {{ .Chart.Name }}-configs
+            mountPath: /etc/trino
+          
+          - name: {{ .Chart.Name }}-catalogs
+            mountPath: /etc/trino/catalog
+          
+{{- end }}

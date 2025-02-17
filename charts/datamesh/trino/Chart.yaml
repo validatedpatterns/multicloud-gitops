@@ -1,0 +1,21 @@
+apiVersion: v2
+name: trino
+description: A Helm chart for trino
+
+version: 1.0.0
+
+dependencies:
+
+- name: trino-coordinator
+  version: "1.0.0"
+  repository: "file://charts/trino-coordinator"
+  condition: subcharts.trino-coordinator
+  tags:
+  - trino-coordinator
+
+- name: trino-worker
+  version: "1.0.0"
+  repository: "file://charts/trino-worker"
+  condition: subcharts.trino-worker
+  tags:
+  - trino-worker
