@@ -13,4 +13,6 @@ SCRIPTPATH=$(dirname "${SCRIPT}")
 COMMONPATH=$(dirname "${SCRIPTPATH}")
 PATTERNPATH=$(dirname "${COMMONPATH}")
 
-ansible-playbook -e pattern_dir="${PATTERNPATH}" -e kubeconfig_file="${OUTPUTFILE}" "rhvp.cluster_utils.write-token-kubeconfig"
+EXTRA_PLAYBOOK_OPTS="${EXTRA_PLAYBOOK_OPTS:-}"
+
+ansible-playbook -e pattern_dir="${PATTERNPATH}" -e kubeconfig_file="${OUTPUTFILE}" ${EXTRA_PLAYBOOK_OPTS} "rhvp.cluster_utils.write-token-kubeconfig"
