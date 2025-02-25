@@ -8,6 +8,10 @@ endif
 # the command line. I.e. we can set things without having to tweak values files
 EXTRA_HELM_OPTS ?=
 
+# This variable can be set in order to pass additional ansible-playbook arguments from the
+# the command line. I.e. we can set -vvv for more verbose logging
+EXTRA_PLAYBOOK_OPTS ?=
+
 # INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:394248
 # or
 # INDEX_IMAGES=registry-proxy.engineering.redhat.com/rh-osbs/iib:394248,registry-proxy.engineering.redhat.com/rh-osbs/iib:394249
@@ -18,7 +22,7 @@ TARGET_ORIGIN ?= origin
 # This is because we expect to use tokens for repo authentication as opposed to SSH keys
 TARGET_REPO=$(shell git ls-remote --get-url --symref $(TARGET_ORIGIN) | sed -e 's/.*URL:[[:space:]]*//' -e 's%^git@%%' -e 's%^https://%%' -e 's%:%/%' -e 's%^%https://%')
 # git branch --show-current is also available as of git 2.22, but we will use this for compatibility
-TARGET_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+TARGET_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
 
 UUID_FILE ?= ~/.config/validated-patterns/pattern-uuid
 UUID_HELM_OPTS ?=
@@ -111,7 +115,7 @@ secrets-backend-none: ## Edits values files to remove secrets manager + ESO
 .PHONY: load-iib
 load-iib: ## CI target to install Index Image Bundles
 	@set -e; if [ x$(INDEX_IMAGES) != x ]; then \
-		ansible-playbook rhvp.cluster_utils.iib_ci; \
+		ansible-playbook $(EXTRA_PLAYBOOK_OPTS) rhvp.cluster_utils.iib_ci; \
 	else \
 		echo "No INDEX_IMAGES defined. Bailing out"; \
 		exit 1; \

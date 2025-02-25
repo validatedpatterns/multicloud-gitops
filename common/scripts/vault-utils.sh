@@ -25,4 +25,6 @@ if [ -z ${TASK} ]; then
 	exit 1
 fi
 
-ansible-playbook -t "${TASK}" -e pattern_name="${PATTERN_NAME}" -e pattern_dir="${PATTERNPATH}" "rhvp.cluster_utils.vault"
+EXTRA_PLAYBOOK_OPTS="${EXTRA_PLAYBOOK_OPTS:-}"
+
+ansible-playbook -t "${TASK}" -e pattern_name="${PATTERN_NAME}" -e pattern_dir="${PATTERNPATH}" ${EXTRA_PLAYBOOK_OPTS} "rhvp.cluster_utils.vault"
