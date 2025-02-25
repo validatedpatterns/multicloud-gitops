@@ -13,4 +13,6 @@ PATTERNPATH=$(dirname "${COMMONPATH}")
 
 PATTERN_NAME=${1:-$(basename "`pwd`")}
 
-ansible-playbook -e pattern_name="${PATTERN_NAME}" -e pattern_dir="${PATTERNPATH}" "rhvp.cluster_utils.k8s_secrets"
+EXTRA_PLAYBOOK_OPTS="${EXTRA_PLAYBOOK_OPTS:-}"
+
+ansible-playbook -e pattern_name="${PATTERN_NAME}" -e pattern_dir="${PATTERNPATH}" ${EXTRA_PLAYBOOK_OPTS} "rhvp.cluster_utils.k8s_secrets"
