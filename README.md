@@ -34,16 +34,16 @@ main:
 ## Start Here
 
 This repository is never used as standalone. It is usually imported in each pattern as a subtree.
-In order to import the common/ the very first time you can use
-`https://github.com/validatedpatterns/multicloud-gitops/blob/main/common/scripts/make_common_subtree.sh`
+In order to import the common subtree the very first time you can use the script
+[make_common_subtree.sh](scripts/make-common-subtree.sh).
 
 In order to update your common subtree inside your pattern repository you can either use
 `https://github.com/validatedpatterns/utilities/blob/main/scripts/update-common-everywhere.sh` or
-do it manually by doing the following:
+do it manually with the following commands:
 
 ```sh
-git remote add -f upstream-common https://github.com/validatedpatterns/common.git
-git merge -s subtree -Xtheirs -Xsubtree=common upstream-common/main
+git remote add -f common-upstream https://github.com/validatedpatterns/common.git
+git merge -s subtree -Xtheirs -Xsubtree=common common-upstream/main
 ```
 
 ## Secrets
