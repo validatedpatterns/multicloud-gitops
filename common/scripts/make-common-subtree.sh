@@ -7,7 +7,7 @@ if [ "$1" = "-h" ]; then
 	echo "$0 <subtree_repo> <subtree_branch> <subtree_remote_name>"
 	echo
 	echo "Run without arguments, the script would run as if these arguments had been passed:"
-	echo "$0 https://github.com/hybrid-cloud-patterns/common.git main common-subtree"
+	echo "$0 https://github.com/validatedpatterns/common.git main common-upstream"
 	echo
 	echo "Please ensure the git subtree command is available. On RHEL/Fedora, the git subtree command"
 	echo "is in a separate package called git-subtree"
@@ -41,7 +41,7 @@ fi
 if [ "$1" ]; then
 	subtree_repo=$1
 else
-	subtree_repo=https://github.com/hybrid-cloud-patterns/common.git
+	subtree_repo=https://github.com/validatedpatterns/common.git
 fi
 
 if [ "$2" ]; then
@@ -53,7 +53,7 @@ fi
 if [ "$3" ]; then
 	subtree_remote=$3
 else
-	subtree_remote=common-subtree
+	subtree_remote=common-upstream
 fi
 
 git diff --quiet || (echo "This script must be run on a clean working tree" && exit 1)
