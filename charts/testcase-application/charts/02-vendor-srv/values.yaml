@@ -1,0 +1,25 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/zagaos/order-vendor-sample
+  tag: vendor-test-2
+  pullPolicy: IfNotPresent
+
+
+service:
+  type: ClusterIP
+  port: 8080
+
+route:
+  enabled: true
+  subdomainName: vendor-srv-2
+
+configmapEnv:
+  data:
+    data:
+      POSTGRES_URL: jdbc:postgresql://testcase-postgres.office-management.svc.cluster.local:5432/zagadb
+      POSTGRES_USER: zaga
+      POSTGRES_PASSWORD: zaga123$
+      APP_APIURL: http://order-srv-2.office-management.svc.cluster.local/orders/getOrders
+vendor-srv:
+  enabled: true

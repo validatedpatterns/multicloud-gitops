@@ -1,0 +1,27 @@
+apiVersion: v2
+name: case-management
+description: A Helm chart for Kubernetes
+
+version: 1.0.0
+
+dependencies:
+
+- name: casemgt-backend-api
+  version: "1.0.0"
+  repository: "file://charts/backend"
+  condition: subcharts.casemgt-backend-api
+  tags:
+  - casemgt-backend-api
+- name: casemgt-dashboard
+  version: "1.0.0"
+  repository: "file://charts/dashboard"
+  condition: subcharts.casemgt-dashboard
+  tags:
+  - casemgt-dashboard
+
+- name: casemanage-db
+  version: "1.0.0"
+  repository: "file://charts/"
+  condition: subcharts.casemanage-db
+  tags:
+  - casemgt-postgres

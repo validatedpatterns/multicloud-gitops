@@ -1,0 +1,29 @@
+replicaCount: 1
+
+image:
+  repository: "quay.io/osclimate/postgresql-13"
+  tag: "1-101"
+
+strategy:
+  type: {}
+
+service:
+  type: ClusterIP
+
+securityContext: {}
+
+secretEnv:
+  data:
+    POSTGRESQL_USER: zaga
+    POSTGRESQL_PASSWORD: zaga123$
+    POSTGRESQL_DATABASE: zagadb
+    POSTGRESQL_ADMIN_PASSWORD: zaga123$
+  type: Opaque
+
+volumes:
+  storageSize: 2Gi
+  accessModes:
+    - ReadWriteOnce
+
+postgres:
+  enabled: true

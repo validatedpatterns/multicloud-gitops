@@ -1,0 +1,23 @@
+{{- if .Values.postgres.enabled }}
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+
+  name: {{ .Chart.Name }}-pvc
+
+  labels:
+    app: {{ .Chart.Name }}
+
+spec:
+  
+  accessModes:
+    {{- toYaml .Values.volumes.accessModes | nindent 4 }}
+
+  resources:
+    requests:
+      storage: {{ .Values.volumes.storageSize }}
+
+  volumeMode: Filesystem
+
+{{- end }}

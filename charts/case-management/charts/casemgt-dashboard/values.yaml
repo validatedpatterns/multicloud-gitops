@@ -1,0 +1,15 @@
+replicaCount: 1
+image:
+  repository: quay.io/zagaos/zagaobserve-casemanage-dashboard
+  tag: "v7"
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 8080
+route:
+  subdomain: casemanage-dashboard
+backend:
+  enabled: false
+
+dashboard:
+  enabled: true

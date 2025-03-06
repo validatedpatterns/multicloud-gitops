@@ -1,0 +1,19 @@
+{{- if .Values.dashboard.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Chart.Name }}-rt
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  subdomain: {{ .Values.route.subdomain }}
+  to:
+    kind: Service
+    name: {{ .Chart.Name }}-sv
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
+  wildcardPolicy: None
+{{- end }}

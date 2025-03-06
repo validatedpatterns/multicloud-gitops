@@ -1,0 +1,78 @@
+casemgt-backend-api:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: "quay.io/zagaos/zagaobserve-casemanage-backend"
+    tag: "v5"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  route:
+    subdomain: casemanage-backend
+    enabled: true
+
+  configmapEnv:
+    data:
+      POSTGRES_HOST: casemanage-db.observability-edge.svc.cluster.local
+      POSTGRES_USER: casemanage
+      POSTGRES_PASSWORD: casemanage123$
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: casemanagedb
+      MINIO_ENDPOINT: minio.observability-datamesh.svc.cluster.local:9000
+      MINIO_ACCESS_KEY: minioAdmin
+      MINIO_SECRET_KEY: minio1234
+      MINIO_BUCKET_NAME: attachments
+
+
+casemgt-dashboard:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: "quay.io/zagaos/zagaobserve-casemanage-dashboard"
+    tag: "v12"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  route:
+    enabled: true
+    subdomain: casemanage-dashboard
+  
+casemgt-postgres:
+  replicaCount: 1
+
+  image:
+    repository: "quay.io/osclimate/postgresql-13"
+    tag: "1-101"
+
+  strategy:
+    type: {}
+
+  service:
+    type: ClusterIP
+
+  securityContext: {}
+
+  secretEnv:
+    data:
+      POSTGRESQL_ADMIN_PASSWORD: admin
+      POSTGRESQL_DATABASE: casemanagedb
+      POSTGRESQL_PASSWORD: casemanage123$
+      POSTGRESQL_USER: casemanage
+    type: Opaque
+
+  volumes:
+    storageSize: 2Gi
+    accessModes:
+      - ReadWriteOnce
+
+casemanagedb:
+  enabled: true
+
+
+backend:
+  enabled: false
+
+dashboard:
+  enabled: true

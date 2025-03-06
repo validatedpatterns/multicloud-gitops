@@ -1,0 +1,55 @@
+{{- if .Values.casemanagedb.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+
+spec:
+
+
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  
+  {{- if .strategy }}
+  strategy:
+    type: {{ .Values.strategy.type }}
+  {{- end }} 
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+
+    spec:
+      volumes:
+        - name: {{ .Chart.Name }}-pvc
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-pvc
+      containers:
+        - name: {{ .Chart.Name }}
+          
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          
+          ports:
+            - name: https
+              containerPort: 5432
+              protocol: TCP
+
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+
+          envFrom:
+            - secretRef:
+                name: {{ .Chart.Name }}-secret
+
+          volumeMounts:
+            - name: {{ .Chart.Name }}-pvc
+              mountPath: /var/lib/pgsql/data
+
+{{- end }}

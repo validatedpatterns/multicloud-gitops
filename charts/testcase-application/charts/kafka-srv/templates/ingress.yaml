@@ -1,0 +1,85 @@
+{{- if and (not .Values.routes.enabled) .Values.ingress.enabled }}
+  {{- $clusterIPServiceFound := false }}
+  {{- $serviceTypeMap := dict }}  # To store service types by service names
+
+  {{- range .Values.service }}
+    {{- if and .enabled (eq .serviceType "ClusterIP") }}
+      {{- $clusterIPServiceFound = true }}
+      {{- $serviceName := include "kafka-srv-5.fullname" $ }}
+      {{- $serviceType := .serviceType | lower }}
+      {{- $serviceTypeMap = merge $serviceTypeMap (dict $serviceName $serviceType) }}
+    {{- end }}
+  {{- end }}
+
+  {{- if $clusterIPServiceFound }}
+    {{- $ingressRules := dict }}
+    {{- $uniqueHosts := dict }}
+
+    {{- range .Values.ports }}
+      {{- $port := .port }}
+      {{- $portName := .name | default "default" }}
+
+      {{- if .ingressRules }}
+        {{- range .ingressRules }}
+          {{- $host := .host }}
+          {{- $path := .path }}
+          {{- $pathType := .pathType }}
+
+          {{- if not (hasKey $ingressRules (printf "%s-%s" $host $path)) }}
+            {{- $ingressRules = merge $ingressRules (dict (printf "%s-%s" $host $path) (list)) }}
+          {{- end }}
+
+          {{- $serviceName := printf "%s-%s" (include "kafka-srv-5.fullname" $) (index $serviceTypeMap (include "kafka-srv-5.fullname" $)) }}
+          {{- $newRule := dict "host" $host "path" $path "pathType" $pathType "port" $port "serviceName" $serviceName "portName" $portName }}
+          {{- $existingRules := index $ingressRules (printf "%s-%s" $host $path) }}
+          {{- $updatedRules := append $existingRules $newRule }}
+          {{- $ingressRules = merge $ingressRules (dict (printf "%s-%s" $host $path) $updatedRules) }}
+
+          {{- if not (hasKey $uniqueHosts $host) }}
+            {{- $uniqueHosts = merge $uniqueHosts (dict $host true) }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+
+    {{- if (len $ingressRules) }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{- range $rules := $ingressRules }} {{- $firstRule := index $rules 0 }} {{- if $firstRule.portName }} {{ printf "%s-%s-ingress" (include "kafka-srv-5.fullname" $) $firstRule.portName }} {{- else }} {{ printf "%s-ingress" (include "kafka-srv-5.fullname" $) }} {{- end }} {{- break }} {{- end }}
+  labels:
+    {{- include "kafka-srv-5.labels" $ | nindent 6 }}
+  annotations:
+    {{- range $key, $value := $.Values.ingress.annotations }}
+    {{ $key }}: "{{ $value }}"
+    {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  rules:
+    {{- range $key, $rules := $ingressRules }}
+    {{- range $rules }}
+    - host: {{ .host }}
+      http:
+        paths:
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ .serviceName }}
+                port:
+                  number: {{ .port }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    - hosts:
+        {{- range $host, $val := $uniqueHosts }}
+        - {{ $host }}
+        {{- end }}
+      secretName: {{- range $rules := $ingressRules }} {{- $firstRule := index $rules 0 }} {{- if $firstRule.portName }} {{ printf "%s-%s-ingress-cert" (include "kafka-srv-5.fullname" $) $firstRule.portName }} {{- else }} {{ printf "%s-ingress-cert" (include "kafka-srv-5.fullname" $) }} {{- end }} {{- break }} {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}

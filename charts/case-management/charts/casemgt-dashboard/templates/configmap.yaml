@@ -1,0 +1,13 @@
+{{- if .Values.dashboard.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-configmap
+  labels:
+    app: {{ .Chart.Name }}
+data:
+  config.json: |
+    {
+        "caseURL" : "https://casemanage-backend.apps.rosa-8grhg.ssnp.p1.openshiftapps.com"
+    }
+{{- end }}

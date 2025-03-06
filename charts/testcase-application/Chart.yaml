@@ -1,0 +1,62 @@
+apiVersion: v2
+name: testcasess
+description: A Helm chart for Kubernetes
+
+version: 1.0.0
+
+dependencies:
+- name: order-srv-1
+  version: "1.0.0"
+  repository: "file://charts/01-order-srv"
+  condition: subcharts.order-srv-1
+  tags:
+  - order-srv-1
+
+  
+  
+- name: order-srv-2
+  version: "1.0.0"
+  repository: "file://charts/02-order-srv"
+  condition: subcharts.order-srv-2
+  tags:
+  - order-srv-2
+- name: order-srv-3
+  version: "1.0.0"
+  repository: "file://charts/03-order-srv"
+  condition: subcharts.order-srv-3
+  tags:
+  - order-srv-3
+- name: vendor-srv-1
+  version: "1.0.0"
+  repository: "file://charts/01-vendor-srv"
+  condition: subcharts.vendor-srv-1
+  tags:
+  - vendor-srv-1
+
+- name: vendor-srv-2
+  version: "1.0.0"
+  repository: "file://charts/02-vendor-srv"
+  condition: subcharts.vendor-srv-2
+  tags:
+  - vendor-srv-2
+- name: vendor-srv-3
+  version: "1.0.0"
+  repository: "file://charts/03-vendor-srv"
+  condition: subcharts.vendor-srv-3
+  tags:
+  - vendor-srv-3
+
+
+- name: testcase-postgres
+  version: "1.0.0"
+  repository: "file://charts/testcase-postgres"
+  condition: subcharts.testcase-postgres
+  tags:
+  - testcase-postgres
+
+- name: kafka-srv
+  version: "1.0.0"
+  repository: "file://charts/kafka-srv"
+  condition: subcharts.kafka-srv
+  tags:
+  - kafka-srv

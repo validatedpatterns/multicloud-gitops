@@ -1,0 +1,47 @@
+{{- if and .Values.routes.enabled .Values.ingress.enabled }}
+{{- fail "Both 'routes.enabled' and 'ingress.enabled' cannot be true at the same time. Please set only one of them to true." }}
+{{- end }}
+
+{{- $serviceTypeMap := dict }}
+{{- $serviceNameMap := dict }}
+
+{{- $clusterIPServiceFound := false }}
+{{- range .Values.service }}
+  {{- if eq .serviceType "ClusterIP" }}
+    {{- $clusterIPServiceFound = true }}
+      {{- $serviceName := .name | default (printf "%s-%s" (include "kafka-srv-5.fullname" $) (.serviceType | lower)) }}
+      {{- $serviceType := .serviceType | lower }}
+      {{- $serviceTypeMap = merge $serviceTypeMap (dict $serviceName $serviceType) }}
+      {{- $serviceNameMap = merge $serviceNameMap (dict $serviceType $serviceName) }}
+  {{- end }}
+{{- end }}
+
+{{- if and $clusterIPServiceFound .Values.routes.enabled }}
+  {{- range .Values.ports }}
+  {{- $serviceName := index $serviceNameMap "clusterip" }}
+  {{- $fullServiceName := $serviceName | default (printf "%s-%s" (include "kafka-srv-5.fullname" $) "clusterip") }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ printf "%s-%s" (include "kafka-srv-5.fullname" $) (default "default" .name) }}
+  labels:
+    {{- include "kafka-srv-5.labels" $ | nindent 4 }}
+  annotations:
+    {{- range $key, $value := $.Values.routes.annotations }}
+    {{ $key }}: "{{ $value }}"
+    {{- end }}
+spec:
+  subdomain: {{ .subdomainName | default (printf "%s-%s" (include "kafka-srv-5.fullname" $) (default "default" .name)) }}
+  to:
+    kind: Service
+    name: {{ $fullServiceName }}
+  port:
+    targetPort: {{ .name }}
+  {{- if $.Values.routes.tls }}
+  tls:
+    termination: {{ .routePolicy.termination }}
+    insecureEdgeTerminationPolicy: {{ .routePolicy.insecureEdgeTerminationPolicy }}
+  {{- end }}
+---
+  {{- end }}
+{{- end }}

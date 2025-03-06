@@ -1,0 +1,29 @@
+replicaCount: 1
+
+image:
+  repository: "quay.io/osclimate/postgresql-13"
+  tag: "1-101"
+
+strategy:
+  type: {}
+
+service:
+  type: ClusterIP
+
+securityContext: {}
+
+secretEnv:
+  data:
+    POSTGRESQL_ADMIN_PASSWORD: admin
+    POSTGRESQL_DATABASE: casemanagedb
+    POSTGRESQL_PASSWORD: casemanage123$
+    POSTGRESQL_USER: casemanage
+  type: Opaque
+
+volumes:
+  storageSize: 2Gi
+  accessModes:
+    - ReadWriteOnce
+
+casemanagedb:
+  enabled: true

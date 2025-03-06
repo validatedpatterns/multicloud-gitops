@@ -1,0 +1,6 @@
+apiVersion: v2
+name: casemgt-dashboard
+description: A Helm chart for casemgt dashboard
+type: application
+
+version: 1.0.0

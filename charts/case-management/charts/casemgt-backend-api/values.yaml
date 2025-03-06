@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/zagaos/zagaobserve-casemanage-backend
+  tag: "v3"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+
+route:
+  enabled: true
+  subdomain: casemanage-backend
+  # host: my-app.example.com
+
+configmapEnv:
+  data:
+    POSTGRES_HOST: casemanage-db.observability-edge.svc.cluster.local
+    POSTGRES_USER: casemanage
+    POSTGRES_PASSWORD: casemanage123$
+    POSTGRES_PORT: 5432
+    POSTGRES_DB: casemanagedb
+    MINIO_ENDPOINT: minio.observability-datamesh.svc.cluster.local:9000
+    MINIO_ACCESS_KEY: minioAdmin
+    MINIO_SECRET_KEY: minio1234
+    MINIO_BUCKET_NAME: attachments
+backend:
+  enabled: true # Set to false if you don't want to deploy casemgt-backend-api
+
+dashboard:
+  enabled: true # Set to false if you don't want to deploy casemgt-dashboard
