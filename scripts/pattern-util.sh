@@ -96,6 +96,7 @@ podman run -it --rm --pull=newer \
     -e KUBECONFIG \
     -e PATTERN_INSTALL_CHART \
     -e PATTERN_DISCONNECTED_HOME \
+    -e DISABLE_VALIDATE_ORIGIN \
     -e K8S_AUTH_HOST \
     -e K8S_AUTH_VERIFY_SSL \
     -e K8S_AUTH_SSL_CA_CERT \
