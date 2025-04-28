@@ -4,6 +4,14 @@ ifneq ($(origin TARGET_SITE), undefined)
   TARGET_SITE_OPT=--set main.clusterGroupName=$(TARGET_SITE)
 endif
 
+# Set this to true if you want to skip any origin validation
+DISABLE_VALIDATE_ORIGIN ?= false
+ifeq ($(DISABLE_VALIDATE_ORIGIN),true)
+  VALIDATE_ORIGIN := 
+else
+  VALIDATE_ORIGIN := validate-origin
+endif
+
 # This variable can be set in order to pass additional helm arguments from the
 # the command line. I.e. we can set things without having to tweak values files
 EXTRA_HELM_OPTS ?=
@@ -71,7 +79,7 @@ preview-%:
 	@common/scripts/preview.sh $(CLUSTERGROUP) $* $(TARGET_REPO) $(TARGET_BRANCH)
 
 .PHONY: operator-deploy
-operator-deploy operator-upgrade: validate-prereq validate-origin validate-cluster ## runs helm install
+operator-deploy operator-upgrade: validate-prereq $(VALIDATE_ORIGIN) validate-cluster ## runs helm install
 	@common/scripts/deploy-pattern.sh $(NAME) $(PATTERN_INSTALL_CHART) $(HELM_OPTS)
 
 .PHONY: uninstall
