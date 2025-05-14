@@ -30,5 +30,5 @@ for NAMESPACE in ${NAMESPACES[@]}; do
       echo "Login to Argo CD ${SERVER_URL} failed. Exiting."
       exit 1
     fi
-    argocd context switch "$SERVER_URL"
+    
 done 
