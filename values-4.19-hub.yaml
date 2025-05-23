@@ -1,0 +1,6 @@
+clusterGroup:
+  subscriptions:
+    acm:
+      name: advanced-cluster-management
+      namespace: open-cluster-management
+      channel: release-2.12
