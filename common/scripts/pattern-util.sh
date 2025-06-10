@@ -9,7 +9,7 @@ function version {
 }
 
 if [ -z "$PATTERN_UTILITY_CONTAINER" ]; then
-	PATTERN_UTILITY_CONTAINER="quay.io/hybridcloudpatterns/utility-container"
+	PATTERN_UTILITY_CONTAINER="quay.io/hybridcloudpatterns/utility-container:main"
 fi
 
 readonly commands=(podman)
