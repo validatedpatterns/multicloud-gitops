@@ -3,12 +3,13 @@
 # validatedpatterns/docs/.github/workflows/metadata-docs.yml@main
 ---
 name: Update docs pattern metadata
-
 on:
   push:
     paths:
       - "pattern-metadata.yaml"
       - ".github/workflows/update-metadata.yml"
+    branches:
+      - main
 
 jobs:
   update-metadata:
