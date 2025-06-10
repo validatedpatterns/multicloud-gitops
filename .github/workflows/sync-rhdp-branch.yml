@@ -1,0 +1,29 @@
+# This is a job to be run in the validatedpatterns organization only.
+# It tries to keep the rhdp-deploy branch uptodate by creating a PR from main
+---
+name: Sync main to rhdp-deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-branches:
+    if: |
+      github.repository_owner == 'validatedpatterns'
+    runs-on: ubuntu-latest
+    name: Git Sync branch
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Opening pull request
+        id: pull
+        uses: mbaldessari/git-sync-branch@v0.2.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FROM_BRANCH: "main"
+          TO_BRANCH: "rhdp-deploy"
