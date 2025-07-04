@@ -12,7 +12,7 @@ clusterGroup:
       name: advanced-cluster-management
       namespace: open-cluster-management
       channel: release-2.11
-      #csv: advanced-cluster-management.v2.6.1
+      # csv: advanced-cluster-management.v2.6.1
   projects:
     - hub
     - config-demo
@@ -21,6 +21,7 @@ clusterGroup:
   # We can use self-referential variables because the chart calls the tpl function with these variables defined
   sharedValueFiles:
     - '/overrides/values-{{ $.Values.global.clusterPlatform }}.yaml'
+    - '/overrides/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml'
   # sharedValueFiles is a flexible mechanism that will add the listed valuefiles to every app defined in the
   # applications section. We intend this to supplement and possibly even replace previous "magic" mechanisms, though
   # we do not at present have a target date for removal.
@@ -98,7 +99,7 @@ clusterGroup:
           #   credentials and OCP pull secrets are defined in Vault.
           #   See values-secret.yaml.template
           #
-          #clusterPools:
+          # clusterPools:
           #  exampleAWSPool:
           #    name: aws-ap
           #    openshiftVersion: 4.10.18
