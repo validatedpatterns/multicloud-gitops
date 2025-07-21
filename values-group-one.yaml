@@ -1,6 +1,6 @@
 global:
   options:
-    useCSV: False
+    useCSV: false
     syncPolicy: Automatic
     installPlanApproval: Automatic
 clusterGroup:
