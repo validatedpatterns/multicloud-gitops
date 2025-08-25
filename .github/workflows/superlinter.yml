@@ -21,7 +21,7 @@ jobs:
       # Run Linter against code base #
       ################################
       - name: Lint Code Base
-        uses: super-linter/super-linter/slim@v7
+        uses: super-linter/super-linter/slim@ffde3b2b33b745cb612d787f669ef9442b1339a6 # v8.1.0
         env:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
@@ -33,7 +33,6 @@ jobs:
           VALIDATE_JSCPD: false
           VALIDATE_JSON_PRETTIER: false
           VALIDATE_MARKDOWN_PRETTIER: false
-          VALIDATE_KUBERNETES_KUBECONFORM: false
           VALIDATE_PYTHON_PYLINT: false
           VALIDATE_SHELL_SHFMT: false
           VALIDATE_YAML: false
