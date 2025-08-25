@@ -7,7 +7,7 @@
 This is the `main` branch of common and it assumes that the pattern is fully
 multisource (meaning that any used charts from VP is actually referenced from
 either a helm chart repository or quay repository). I.e. there are no helm
-charts contained in this branch of common and there is no ansible code neither.
+charts contained in this branch of common and there is no Ansible code neither.
 
 The helm charts now live in separate repositories under the VP
 [organization](https://github.com/validatedpatterns) on GitHub. The repositories are:
@@ -19,10 +19,10 @@ The helm charts now live in separate repositories under the VP
 - acm-chart
 - letsencrypt-chart
 
-The ansible bits live in this [repository](https://github.com/validatedpatterns/rhvp.cluster_utils)
+The Ansible bits live in this [repository](https://github.com/validatedpatterns/rhvp.cluster_utils)
 
 In order to be able to use this "slimmed-down" main branch of common you *must*
-use a 0.9.* clustergroup-chart that. Add the following to your `values-global.yaml`:
+use a 0.9.\* clustergroup-chart that. Add the following to your `values-global.yaml`:
 
 ```yaml
 main:
@@ -48,4 +48,4 @@ git merge -s subtree -Xtheirs -Xsubtree=common common-upstream/main
 
 ## Secrets
 
-There are two different secret formats parsed by the ansible bits. Both are documented [here](https://github.com/validatedpatterns/common/tree/main/ansible/roles/vault_utils/README.md)
+There are two different secret formats parsed by the Ansible bits. Both are documented [in the vault role](https://github.com/validatedpatterns/rhvp.cluster_utils/blob/main/roles/vault_utils/README.md)
