@@ -256,16 +256,14 @@ super-linter: ## Runs super linter locally
 					-e VALIDATE_JSCPD=false \
 					-e VALIDATE_JSON_PRETTIER=false \
 					-e VALIDATE_MARKDOWN_PRETTIER=false \
-					-e VALIDATE_KUBERNETES_KUBECONFORM=false \
 					-e VALIDATE_PYTHON_PYLINT=false \
 					-e VALIDATE_SHELL_SHFMT=false \
-					-e VALIDATE_TEKTON=false \
 					-e VALIDATE_YAML=false \
 					-e VALIDATE_YAML_PRETTIER=false \
 					$(DISABLE_LINTERS) \
 					-v $(PWD):/tmp/lint:rw,z \
 					-w /tmp/lint \
-					ghcr.io/super-linter/super-linter:slim-v7
+					ghcr.io/super-linter/super-linter@sha256:6c71bd17ab38ceb7acb5b93ef72f5c2288b5456a5c82693ded3ee8bb501bba7f # slim-v8.1.0
 
 .PHONY: deploy upgrade legacy-deploy legacy-upgrade
 deploy upgrade legacy-deploy legacy-upgrade:
