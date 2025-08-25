@@ -10,10 +10,14 @@ jobs:
       matrix:
         python-version: [3.11]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -26,7 +30,7 @@ jobs:
           pip install check-jsonschema
 
       - name: Install yq
-        uses: chrisdickinson/setup-yq@latest
+        uses: chrisdickinson/setup-yq@69aa9efdf7a9240129b103a65373c05cbc375679 # v1.0.0
         with:
           yq-version: v4.30.7
 
