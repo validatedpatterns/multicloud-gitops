@@ -256,10 +256,8 @@ super-linter: ## Runs super linter locally
 					-e VALIDATE_JSCPD=false \
 					-e VALIDATE_JSON_PRETTIER=false \
 					-e VALIDATE_MARKDOWN_PRETTIER=false \
-					-e VALIDATE_KUBERNETES_KUBECONFORM=false \
 					-e VALIDATE_PYTHON_PYLINT=false \
 					-e VALIDATE_SHELL_SHFMT=false \
-					-e VALIDATE_TEKTON=false \
 					-e VALIDATE_YAML=false \
 					-e VALIDATE_YAML_PRETTIER=false \
 					$(DISABLE_LINTERS) \
