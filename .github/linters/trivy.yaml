@@ -1,3 +1,4 @@
+# Ignores are in .trivyignore
 scan:
   scanners:
     - vuln
@@ -7,7 +8,3 @@ scan:
     - MEDIUM
     - CRITICAL
     - HIGH
-ignore:
-  # List of check IDs or vulnerability IDs to skip
-  # deployment in default namespace should set metadata.namespace to a non-default namespace. This is silly in argo
-  - AVD-KSV-0110 

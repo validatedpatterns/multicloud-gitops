@@ -1,0 +1,7 @@
+AVD-KSV-0110 # Missing namespace is not needed with ArgoCD
+AVD-KSV-0020 # Container 'apache' of Deployment 'hello-world' should set 'securityContext.runAsUser' > 10000. Not needed on OCP
+AVD-KSV-0021 # Container 'apache' of Deployment 'hello-world' should set 'securityContext.runAsGroup' > 10000. Not needed on OCP
+AVD-KSV-0014 # Readonly root filesystem does not work with httpd ubi images
+AVD-KSV-0125 # Container apache in deployment hello-world (namespace: default) uses an image from an untrusted registry. registry.access.redhat.com is trusted
+
+
