@@ -20,10 +20,14 @@ jobs:
         # Fedora is not an option yet
         os: [ubuntu-latest, ubuntu-22.04]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - name: Install Podman on Ubuntu
         if: contains(matrix.os, 'ubuntu')
