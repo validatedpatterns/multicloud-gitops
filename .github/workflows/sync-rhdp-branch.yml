@@ -13,16 +13,21 @@ jobs:
       github.repository_owner == 'validatedpatterns'
     runs-on: ubuntu-latest
     name: Git Sync branch
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: Opening pull request
         id: pull
-        uses: mbaldessari/git-sync-branch@v0.2.0
+        uses: mbaldessari/git-sync-branch@dd2adf0ca96e52c64716d83cabe85fac33201e12 # v0.2.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FROM_BRANCH: "main"

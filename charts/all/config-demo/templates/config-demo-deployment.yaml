@@ -18,9 +18,13 @@ spec:
         deploymentconfig: config-demo
       name: config-demo
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: apache
-        image: registry.access.redhat.com/ubi8/httpd-24:1-226
+        image: registry.access.redhat.com/ubi10/httpd-24:10.0-1755779646
         #imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -32,7 +36,28 @@ spec:
         - mountPath: /var/www/html/secret
           readOnly: true
           name: config-demo-secret
-        resources: {}
+        - mountPath: /tmp
+          name: tmp-volume
+        - mountPath: /var/cache/httpd
+          name: cache-volume
+        - mountPath: /var/run/httpd
+          name: run-volume
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         livenessProbe:
@@ -63,3 +88,9 @@ spec:
       - name: config-demo-secret
         secret:
           secretName: config-demo-secret
+      - name: tmp-volume
+        emptyDir: {}
+      - name: cache-volume
+        emptyDir: {}
+      - name: run-volume
+        emptyDir: {}
