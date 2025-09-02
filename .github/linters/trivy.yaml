@@ -1,0 +1,10 @@
+# Ignores are in .trivyignore
+scan:
+  scanners:
+    - vuln
+    - secret
+    - config
+  severities:
+    - MEDIUM
+    - CRITICAL
+    - HIGH
