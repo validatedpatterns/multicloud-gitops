@@ -45,11 +45,6 @@ clusterGroup:
       project: hub
       chart: acm
       chartVersion: 0.1.*
-      ignoreDifferences:
-        - group: internal.open-cluster-management.io
-          kind: ManagedClusterInfo
-          jsonPointers:
-            - /spec/loggingCA
     vault:
       name: vault
       namespace: vault
