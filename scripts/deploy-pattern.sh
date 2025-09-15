@@ -1,7 +1,7 @@
 #!/bin/bash
 set -o pipefail
 
-RUNS=10
+RUNS=20
 WAIT=15
 # Retry five times because the CRD might not be fully installed yet
 echo -n "Installing pattern: "
