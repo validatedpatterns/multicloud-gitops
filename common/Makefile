@@ -46,7 +46,7 @@ endif
 # Set the secret name *and* its namespace when deploying from private repositories
 # The format of said secret is documented here: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories
 TOKEN_SECRET ?=
-TOKEN_NAMESPACE ?=
+TOKEN_NAMESPACE ?= openshift-operators
 
 ifeq ($(TOKEN_SECRET),)
   # SSH agents are not created for public repos (repos with no secret token) by the patterns operator so we convert to HTTPS
