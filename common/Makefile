@@ -4,14 +4,6 @@ ifneq ($(origin TARGET_SITE), undefined)
   TARGET_SITE_OPT=--set main.clusterGroupName=$(TARGET_SITE)
 endif
 
-# Set this to true if you want to skip any origin validation
-DISABLE_VALIDATE_ORIGIN ?= false
-ifeq ($(DISABLE_VALIDATE_ORIGIN),true)
-  VALIDATE_ORIGIN :=
-else
-  VALIDATE_ORIGIN := validate-origin
-endif
-
 # This variable can be set in order to pass additional helm arguments from the
 # the command line. I.e. we can set things without having to tweak values files
 EXTRA_HELM_OPTS ?=
@@ -47,6 +39,18 @@ endif
 # The format of said secret is documented here: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories
 TOKEN_SECRET ?=
 TOKEN_NAMESPACE ?= openshift-operators
+
+# Set this to true if you want to skip any origin validation
+# if TOKEN_SECRET is set to something then we skip the validation as well
+DISABLE_VALIDATE_ORIGIN ?= false
+ifeq ($(DISABLE_VALIDATE_ORIGIN),true)
+  VALIDATE_ORIGIN :=
+else ifneq ($(TOKEN_SECRET),)
+  VALIDATE_ORIGIN :=
+else
+  VALIDATE_ORIGIN := validate-origin
+endif
+
 
 ifeq ($(TOKEN_SECRET),)
   # SSH agents are not created for public repos (repos with no secret token) by the patterns operator so we convert to HTTPS
