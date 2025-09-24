@@ -12,3 +12,6 @@ spec:
     name: hello-world
     weight: 100
   wildcardPolicy: None
+  tls:
+    insecureEdgeTerminationPolicy: Allow
+    termination: edge
