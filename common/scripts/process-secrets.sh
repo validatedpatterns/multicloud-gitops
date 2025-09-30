@@ -12,7 +12,7 @@ COMMONPATH=$(dirname "${SCRIPTPATH}")
 PATTERNPATH=$(dirname "${COMMONPATH}")
 
 PATTERN_NAME=${1:-$(basename "`pwd`")}
-SECRETS_BACKING_STORE="$($SCRIPTPATH/determine-secretstore-backend.sh)"
+SECRETS_BACKING_STORE="$("$SCRIPTPATH/determine-secretstore-backend.sh")"
 
 EXTRA_PLAYBOOK_OPTS="${EXTRA_PLAYBOOK_OPTS:-}"
 
