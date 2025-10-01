@@ -104,10 +104,11 @@ podman run -it --rm --pull=newer \
     -e K8S_AUTH_PASSWORD \
     -e K8S_AUTH_TOKEN \
     ${PKI_HOST_MOUNT_ARGS} \
+    -v "$(pwd -P)":"$(pwd -P)" \
     -v "${HOME}":"${HOME}" \
     -v "${HOME}":/pattern-home \
     ${PODMAN_ARGS} \
     ${EXTRA_ARGS} \
-    -w "$(pwd)" \
+    -w "$(pwd -P)" \
     "$PATTERN_UTILITY_CONTAINER" \
     $@
