@@ -62,7 +62,7 @@ fi
 
 # Detect if we use podman machine. If we do not then we bind mount local host ssl folders
 # if we are using podman machine then we do not bind mount anything (for now!)
-REMOTE_PODMAN=$(podman system connection list -q | wc -l)
+REMOTE_PODMAN=$(podman system connection list | tail -n +2 | wc -l)
 if [ $REMOTE_PODMAN -eq 0 ]; then # If we are not using podman machine we check the hosts folders
     # We check /etc/pki/tls because on ubuntu /etc/pki/fwupd sometimes
     # exists but not /etc/pki/tls and we do not want to bind mount in such a case
