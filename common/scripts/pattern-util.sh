@@ -9,7 +9,7 @@ function version {
 }
 
 if [ -z "$PATTERN_UTILITY_CONTAINER" ]; then
-	PATTERN_UTILITY_CONTAINER="quay.io/hybridcloudpatterns/utility-container"
+	PATTERN_UTILITY_CONTAINER="quay.io/validatedpatterns/utility-container"
 fi
 # If PATTERN_DISCONNECTED_HOME is set it will be used to populate both PATTERN_UTILITY_CONTAINER
 # and PATTERN_INSTALL_CHART automatically
@@ -89,7 +89,7 @@ podman run -it --rm --pull=newer \
     -e TARGET_ORIGIN \
     -e TARGET_SITE \
     -e TARGET_BRANCH \
-    -e NAME \
+    -e PATTERN_NAME \
     -e TOKEN_SECRET \
     -e TOKEN_NAMESPACE \
     -e VALUES_SECRET \
