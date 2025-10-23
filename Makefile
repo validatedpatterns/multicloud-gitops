@@ -1,9 +1,9 @@
-NAME ?= $(shell yq .global.pattern values-global.yaml)
+PATTERN_NAME ?= $(shell yq .global.pattern values-global.yaml)
 
-ifeq ($(NAME),)
+ifeq ($(PATTERN_NAME),)
 $(error Pattern name MUST be set in values-global.yaml with the value .global.pattern)
 endif
-ifeq ($(NAME),null)
+ifeq ($(PATTERN_NAME),null)
 $(error Pattern name MUST be set in values-global.yaml with the value .global.pattern)
 endif
 
@@ -83,14 +83,14 @@ PATTERN_INSTALL_CHART ?= oci://quay.io/hybridcloudpatterns/pattern-install
 
 .PHONY: help
 help: ## This help message
-	@echo "Pattern: $(NAME)"
+	@echo "Pattern: $(PATTERN_NAME)"
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^(\s|[a-zA-Z_0-9-])+:.*?##/ { printf "  \033[36m%-35s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 #  Makefiles in the individual patterns should call these targets explicitly
 #  e.g. from industrial-edge: make -f common/Makefile show
 .PHONY: show
 show: ## show the starting template without installing it
-	helm template $(PATTERN_INSTALL_CHART) --name-template $(NAME) $(HELM_OPTS)
+	helm template $(PATTERN_INSTALL_CHART) --name-template $(PATTERN_NAME) $(HELM_OPTS)
 
 preview-all: ## (EXPERIMENTAL) Previews all applications on hub and managed clusters
 	@echo "NOTE: This is just a tentative approximation of rendering all hub and managed clusters templates"
@@ -102,21 +102,21 @@ preview-%:
 
 .PHONY: operator-deploy
 operator-deploy operator-upgrade: validate-prereq $(VALIDATE_ORIGIN) validate-cluster ## runs helm install
-	@common/scripts/deploy-pattern.sh $(NAME) $(PATTERN_INSTALL_CHART) $(HELM_OPTS)
+	@common/scripts/deploy-pattern.sh $(PATTERN_NAME) $(PATTERN_INSTALL_CHART) $(HELM_OPTS)
 
 .PHONY: uninstall
 uninstall: ## runs helm uninstall
 	$(eval CSV := $(shell oc get subscriptions -n openshift-operators openshift-gitops-operator -ojsonpath={.status.currentCSV}))
-	helm uninstall $(NAME)
+	helm uninstall $(PATTERN_NAME)
 	@oc delete csv -n openshift-operators $(CSV)
 
 .PHONY: load-secrets
 load-secrets: ## loads the secrets into the backend determined by values-global setting
-	common/scripts/process-secrets.sh $(NAME)
+	common/scripts/process-secrets.sh $(PATTERN_NAME)
 
 .PHONY: legacy-load-secrets
 legacy-load-secrets: ## loads the secrets into vault (only)
-	common/scripts/vault-utils.sh push_secrets $(NAME)
+	common/scripts/vault-utils.sh push_secrets $(PATTERN_NAME)
 
 .PHONY: secrets-backend-vault
 secrets-backend-vault: ## Edits values files to use default Vault+ESO secrets config
