@@ -42,7 +42,7 @@ jobs:
 
       - name: Clone MCG and update common
         run: |
-          git clone --depth 1 https://github.com/hybrid-cloud-patterns/multicloud-gitops mcg
+          git clone --depth 1 https://github.com/validatedpatterns/multicloud-gitops mcg
           cp -r scripts/ mcg/common/scripts
           cp Makefile mcg/common
 
