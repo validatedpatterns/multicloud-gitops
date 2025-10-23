@@ -89,7 +89,7 @@ podman run -it --rm --pull=newer \
     -e TARGET_ORIGIN \
     -e TARGET_SITE \
     -e TARGET_BRANCH \
-    -e NAME \
+    -e PATTERN_NAME \
     -e TOKEN_SECRET \
     -e TOKEN_NAMESPACE \
     -e VALUES_SECRET \
