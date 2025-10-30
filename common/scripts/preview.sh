@@ -26,7 +26,7 @@ if [ "${APPNAME}" != "clustergroup" ]; then
     chart=$(yq ".clusterGroup.applications.$APP.path" values-$SITE.yaml)
   else
     helmrepo=$(yq ".clusterGroup.applications.$APP.repoURL" values-$SITE.yaml)
-    helmrepo="${helmrepo:+oci://quay.io/hybridcloudpatterns}"
+    helmrepo="${helmrepo:+oci://quay.io/validatedpatterns}"
     chartversion=$(yq ".clusterGroup.applications.$APP.chartVersion" values-$SITE.yaml)
     chartname=$(yq ".clusterGroup.applications.$APP.chart" values-$SITE.yaml)
     chart="${helmrepo}/${chartname} --version ${chartversion}"
@@ -35,7 +35,7 @@ if [ "${APPNAME}" != "clustergroup" ]; then
 else
   APP=$APPNAME
   clusterGroupChartVersion=$(yq ".main.multiSourceConfig.clusterGroupChartVersion" values-global.yaml)
-  helmrepo="oci://quay.io/hybridcloudpatterns"
+  helmrepo="oci://quay.io/validatedpatterns"
   chart="${helmrepo}/clustergroup --version ${clusterGroupChartVersion}"
   namespace="openshift-operators"
 fi
