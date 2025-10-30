@@ -77,7 +77,7 @@ HELM_OPTS := -f values-global.yaml \
              $(EXTRA_HELM_OPTS)
 
 # Helm does the right thing and fetches all the tags and detects the newest one
-PATTERN_INSTALL_CHART ?= oci://quay.io/hybridcloudpatterns/pattern-install
+PATTERN_INSTALL_CHART ?= oci://quay.io/validatedpatterns/pattern-install
 
 ##@ Pattern Common Tasks
 
@@ -191,7 +191,7 @@ validate-cluster: ## Do some cluster validations before installing
 validate-schema: ## validates values files against schema in common/clustergroup
 	$(eval VAL_PARAMS := $(shell for i in ./values-*.yaml; do echo -n "$${i} "; done))
 	@echo -n "Validating clustergroup schema of: "
-	@set -e; for i in $(VAL_PARAMS); do echo -n " $$i"; helm template oci://quay.io/hybridcloudpatterns/clustergroup $(HELM_OPTS) -f "$${i}" >/dev/null; done
+	@set -e; for i in $(VAL_PARAMS); do echo -n " $$i"; helm template oci://quay.io/validatedpatterns/clustergroup $(HELM_OPTS) -f "$${i}" >/dev/null; done
 	@echo
 
 .PHONY: validate-prereq
