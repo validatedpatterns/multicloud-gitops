@@ -3,6 +3,7 @@ secretStore:
   name: vault-backend
   kind: ClusterSecretStore
 
+esoversion: "external-secrets.io/v1beta1"
 configdemosecret:
   key: secret/data/global/config-demo
 
