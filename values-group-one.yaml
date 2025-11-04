@@ -1,10 +1,11 @@
 clusterGroup:
   name: group-one
   isHubCluster: false
+  # Namespace is a dictionary for easier overriding (lists are supported as well)
   namespaces:
-    - config-demo
-    - hello-world
-    - golang-external-secrets
+    config-demo:
+    hello-world:
+    golang-external-secrets:
   # The only subscription on spokes is gitops which gets managed by ACM
   # subscriptions:
   argoProjects:
