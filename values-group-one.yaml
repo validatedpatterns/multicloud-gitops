@@ -1,8 +1,3 @@
-global:
-  options:
-    useCSV: false
-    syncPolicy: Automatic
-    installPlanApproval: Automatic
 clusterGroup:
   name: group-one
   isHubCluster: false
