@@ -1,12 +1,13 @@
 clusterGroup:
   name: hub
   isHubCluster: true
+  # Namespace is a dictionary for easier overriding (lists are supported as well)
   namespaces:
-    - open-cluster-management
-    - vault
-    - golang-external-secrets
-    - config-demo
-    - hello-world
+    open-cluster-management:
+    vault:
+    golang-external-secrets:
+    config-demo:
+    hello-world:
   subscriptions:
     acm:
       name: advanced-cluster-management
