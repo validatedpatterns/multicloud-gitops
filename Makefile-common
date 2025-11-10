@@ -1,0 +1,54 @@
+MAKEFLAGS += --no-print-directory
+ANSIBLE_STDOUT_CALLBACK ?= null # null silences all ansible output. Override this with default, minimal, oneline, etc. when debugging.
+ANSIBLE_RUN := ANSIBLE_STDOUT_CALLBACK=$(ANSIBLE_STDOUT_CALLBACK) ansible-playbook $(EXTRA_PLAYBOOK_OPTS)
+DOCS_URL := https://validatedpatterns.io/blog/2025-08-29-new-common-makefile-structure/
+
+.PHONY: help
+help: ## Print this help message
+	@echo "For a complete guide to these targets and the available overrides, please visit $(DOCS_URL)"
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^(\s|[a-zA-Z_0-9-])+:.*?##/ { printf "  \033[36m%-35s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+
+##@ Pattern Install Tasks
+.PHONY: show
+show: ## Shows the template that would be applied by the `make install` target
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.show
+
+.PHONY: operator-deploy
+operator-deploy operator-upgrade: ## Installs/updates the pattern on a cluster (DOES NOT load secrets)
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.operator_deploy
+
+.PHONY: install
+install: pattern-install ## Installs the pattern onto a cluster (Loads secrets as well if configured)
+
+.PHONY: uninstall ## Prints a notice that patterns cannot currently be uninstalled
+uninstall:
+	@echo "Uninstall is not possible at the moment so this target is empty. We are working to implement it as well as we can."
+
+.PHONY: pattern-install
+pattern-install:
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.install
+
+.PHONY: load-secrets
+load-secrets: ## Loads secrets onto the cluster (unless explicitly disabled in values-global.yaml)
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.load_secrets
+
+##@ Validation Tasks
+.PHONY: validate-prereq
+validate-prereq: ## verify pre-requisites
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.validate_prereq
+
+.PHONY: validate-origin
+validate-origin: ## verify the git origin is available
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.validate_origin
+
+.PHONY: validate-cluster
+validate-cluster: ## Do some cluster validations before installing
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.validate_cluster
+
+.PHONY: validate-schema
+validate-schema: ## validates values files against schema in common/clustergroup
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.validate_schema
+
+.PHONY: argo-healthcheck
+argo-healthcheck: ## Checks if all argo applications are synced
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.argo_healthcheck
