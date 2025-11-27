@@ -2,7 +2,7 @@
 # to enable letsencrypt certificates on API endpoint and default
 # ingress of the cluster
 # It is currently very experimental and unsupported.
-# PLEASE read https://github.com/hybrid-cloud-patterns/common/tree/main/letsencrypt#readme
+# PLEASE read https://github.com/validatedpatterns/common/tree/main/letsencrypt#readme
 # for all the limitations around it
 
 
