@@ -51,7 +51,7 @@ spec:
             memory: 256Mi
         securityContext:
           allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: false
+          readOnlyRootFilesystem: true
           runAsNonRoot: true
           capabilities:
             drop:
