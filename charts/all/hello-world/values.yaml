@@ -2,3 +2,8 @@
 global:
   hubClusterDomain: hub.example.com
   localClusterDomain: local.example.com
+
+image:
+  repository: registry.access.redhat.com/ubi10/httpd-24
+  tag: "10.0-1755779646"
+  pullPolicy: IfNotPresent

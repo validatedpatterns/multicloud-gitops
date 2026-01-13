@@ -23,8 +23,8 @@ spec:
           type: RuntimeDefault
       containers:
       - name: apache
-        image: registry.access.redhat.com/ubi10/httpd-24:10.0-1755779646
-        #imagePullPolicy: Always
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: 8080
           name: http
