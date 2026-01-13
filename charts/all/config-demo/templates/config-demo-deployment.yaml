@@ -12,7 +12,6 @@ spec:
       deploymentconfig: config-demo
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: config-demo
         deploymentconfig: config-demo
