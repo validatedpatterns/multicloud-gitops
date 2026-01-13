@@ -18,6 +18,12 @@ logger = logging.getLogger(__loggername__)
 CONTENT_UPDATE_TIMEOUT_MINUTES = int(os.environ.get("CONTENT_UPDATE_TIMEOUT_MINUTES", "10"))
 CONTENT_UPDATE_POLL_SECONDS = int(os.environ.get("CONTENT_UPDATE_POLL_SECONDS", "30"))
 
+# Configurable repository path (can be overridden via environment)
+PATTERNS_REPO_PATH = os.environ.get(
+    "PATTERNS_REPO_PATH",
+    os.path.join(os.environ.get("HOME", ""), "validated_patterns/multicloud-gitops")
+)
+
 
 @pytest.mark.modify_web_content
 def test_modify_web_content(openshift_dyn_client):
@@ -45,10 +51,9 @@ def test_modify_web_content(openshift_dyn_client):
     logger.info(f"Current page content: {response.content}")
 
     if os.getenv("EXTERNAL_TEST") != "true":
-        chart = (
-            f"{os.environ['HOME']}"
-            + "/validated_patterns/multicloud-gitops/charts/"
-            + "all/hello-world/templates/hello-world-cm.yaml"
+        chart = os.path.join(
+            PATTERNS_REPO_PATH,
+            "charts/all/hello-world/templates/hello-world-cm.yaml"
         )
     else:
         chart = "../../charts/all/hello-world/templates/hello-world-cm.yaml"
@@ -61,7 +66,7 @@ def test_modify_web_content(openshift_dyn_client):
     )
 
     logger.info("Merge the change")
-    patterns_repo = f"{os.environ['HOME']}/validated_patterns/multicloud-gitops"
+    patterns_repo = PATTERNS_REPO_PATH
     if os.getenv("EXTERNAL_TEST") != "true":
         git_add = subprocess.run(["git", "add", chart], cwd=patterns_repo, capture_output=True, text=True)
         if git_add.returncode != 0:
