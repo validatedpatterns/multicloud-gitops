@@ -35,9 +35,7 @@ def get_openshift_version():
     """
     try:
         version_ret = subprocess.run(
-            [oc, "version", "-o", "json"],
-            capture_output=True,
-            check=False
+            [oc, "version", "-o", "json"], capture_output=True, check=False
         )
         if version_ret.returncode != 0:
             print(f"Error running oc version: {version_ret.stderr.decode('utf-8')}")
