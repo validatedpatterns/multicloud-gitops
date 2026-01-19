@@ -1,6 +1,5 @@
 clusterGroup:
   name: hub
-  isHubCluster: true
   # Namespace is a dictionary for easier overriding (lists are supported as well)
   namespaces:
     open-cluster-management:
@@ -88,9 +87,9 @@ clusterGroup:
       acmlabels:
         - name: clusterGroup
           value: group-one
-      helmOverrides:
-        - name: clusterGroup.isHubCluster
-          value: false
+      # helmOverrides:
+      #   - name: foo
+      #     value: bar
           # Before enabling cluster provisioning, ensure AWS and/or Azure
           #   credentials and OCP pull secrets are defined in Vault.
           #   See values-secret.yaml.template
@@ -158,8 +157,8 @@ clusterGroup:
 #      targetRevision: main
 #      path: applications/factory
 #      helmOverrides:
-#      - name: site.isHubCluster
-#        value: false
+#      - name: foo
+#        value: bar
 #      clusterSelector:
 #        matchExpressions:
 #        - key: vendor

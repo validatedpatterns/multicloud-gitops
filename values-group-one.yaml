@@ -1,6 +1,5 @@
 clusterGroup:
   name: group-one
-  isHubCluster: false
   # Namespace is a dictionary for easier overriding (lists are supported as well)
   namespaces:
     config-demo:
@@ -94,8 +93,8 @@ clusterGroup:
 #      targetRevision: main
 #      path: applications/factory
 #      helmOverrides:
-#      - name: site.isHubCluster
-#        value: false
+#      - name: foo
+#        value: bar
 #      clusterSelector:
 #        matchExpressions:
 #        - key: vendor
