@@ -13,5 +13,5 @@ spec:
     weight: 100
   wildcardPolicy: None
   tls:
-    insecureEdgeTerminationPolicy: Allow
+    insecureEdgeTerminationPolicy: Redirect
     termination: edge
