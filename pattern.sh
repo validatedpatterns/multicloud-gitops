@@ -1,19 +1,20 @@
 #!/bin/bash
+set -euo pipefail
 
 function is_available {
-  command -v $1 >/dev/null 2>&1 || { echo >&2 "$1 is required but it's not installed. Aborting."; exit 1; }
+  command -v "$1" >/dev/null 2>&1 || { echo >&2 "$1 is required but it's not installed. Aborting."; exit 1; }
 }
 
 function version {
-    echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'
+    echo "$1" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'
 }
 
-if [ -z "$PATTERN_UTILITY_CONTAINER" ]; then
+if [ -z "${PATTERN_UTILITY_CONTAINER:-}" ]; then
 	PATTERN_UTILITY_CONTAINER="quay.io/validatedpatterns/utility-container"
 fi
 # If PATTERN_DISCONNECTED_HOME is set it will be used to populate both PATTERN_UTILITY_CONTAINER
 # and PATTERN_INSTALL_CHART automatically
-if [ -n "${PATTERN_DISCONNECTED_HOME}" ]; then
+if [ -n "${PATTERN_DISCONNECTED_HOME:-}" ]; then
     PATTERN_UTILITY_CONTAINER="${PATTERN_DISCONNECTED_HOME}/utility-container"
     PATTERN_INSTALL_CHART="oci://${PATTERN_DISCONNECTED_HOME}/pattern-install"
     echo "PATTERN_DISCONNECTED_HOME is set to ${PATTERN_DISCONNECTED_HOME}"
@@ -23,10 +24,10 @@ if [ -n "${PATTERN_DISCONNECTED_HOME}" ]; then
 fi
 
 readonly commands=(podman)
-for cmd in ${commands[@]}; do is_available "$cmd"; done
+for cmd in "${commands[@]}"; do is_available "$cmd"; done
 
 UNSUPPORTED_PODMAN_VERSIONS="1.6 1.5"
-PODMAN_VERSION_STR=$(podman --version)
+PODMAN_VERSION_STR=$(podman --version) || { echo "Failed to get podman version"; exit 1; }
 for i in ${UNSUPPORTED_PODMAN_VERSIONS}; do
 	# We add a space
 	if echo "${PODMAN_VERSION_STR}" | grep -q -E "\b${i}"; then
@@ -41,19 +42,20 @@ done
 PODMAN_VERSION=$(echo "${PODMAN_VERSION_STR}" | awk '{ print $NF }')
 
 # podman < 4.3.0 do not support keep-id:uid=...
-if [ $(version "${PODMAN_VERSION}") -lt $(version "4.3.0") ]; then
-    PODMAN_ARGS="-v ${HOME}:/root"
+PODMAN_ARGS=()
+if [ "$(version "${PODMAN_VERSION}")" -lt "$(version "4.3.0")" ]; then
+    PODMAN_ARGS=(-v "${HOME}:/root")
 else
     # We do not rely on bash's $UID and $GID because on MacOSX $GID is not set
     MYNAME=$(id -n -u)
     MYUID=$(id -u)
     MYGID=$(id -g)
-    PODMAN_ARGS="--passwd-entry ${MYNAME}:x:${MYUID}:${MYGID}::/pattern-home:/bin/bash --user ${MYUID}:${MYGID} --userns keep-id:uid=${MYUID},gid=${MYGID}"
-
+    PODMAN_ARGS=(--passwd-entry "${MYNAME}:x:${MYUID}:${MYGID}::/pattern-home:/bin/bash" --user "${MYUID}:${MYGID}" --userns "keep-id:uid=${MYUID},gid=${MYGID}")
 fi
 
-if [ -n "$KUBECONFIG" ]; then
-    if [[ ! "${KUBECONFIG}" =~ ^$HOME* ]]; then
+if [ -n "${KUBECONFIG:-}" ]; then
+    # Check if KUBECONFIG path starts with HOME directory
+    if [[ ! "${KUBECONFIG}" =~ ^"${HOME}" ]]; then
         echo "${KUBECONFIG} is pointing outside of the HOME folder, this will make it unavailable from the container."
         echo "Please move it somewhere inside your $HOME folder, as that is what gets bind-mounted inside the container"
         exit 1
@@ -62,20 +64,26 @@ fi
 
 # Detect if we use podman machine. If we do not then we bind mount local host ssl folders
 # if we are using podman machine then we do not bind mount anything (for now!)
-REMOTE_PODMAN=$(podman system connection list | tail -n +2 | wc -l)
-if [ $REMOTE_PODMAN -eq 0 ]; then # If we are not using podman machine we check the hosts folders
+REMOTE_PODMAN=$(podman system connection list | tail -n +2 | wc -l) || REMOTE_PODMAN=0
+PKI_HOST_MOUNT_ARGS=()
+if [ "${REMOTE_PODMAN}" -eq 0 ]; then # If we are not using podman machine we check the hosts folders
     # We check /etc/pki/tls because on ubuntu /etc/pki/fwupd sometimes
     # exists but not /etc/pki/tls and we do not want to bind mount in such a case
     # as it would find no certificates at all.
     if [ -d /etc/pki/tls ]; then
-        PKI_HOST_MOUNT_ARGS="-v /etc/pki:/etc/pki:ro"
+        PKI_HOST_MOUNT_ARGS=(-v /etc/pki:/etc/pki:ro)
     elif [ -d /etc/ssl ]; then
-        PKI_HOST_MOUNT_ARGS="-v /etc/ssl:/etc/ssl:ro"
+        PKI_HOST_MOUNT_ARGS=(-v /etc/ssl:/etc/ssl:ro)
     else
-        PKI_HOST_MOUNT_ARGS="-v /usr/share/ca-certificates:/usr/share/ca-certificates:ro"
+        PKI_HOST_MOUNT_ARGS=(-v /usr/share/ca-certificates:/usr/share/ca-certificates:ro)
     fi
-else
-    PKI_HOST_MOUNT_ARGS=""
+fi
+
+# Parse EXTRA_ARGS into an array if set
+EXTRA_ARGS_ARRAY=()
+if [ -n "${EXTRA_ARGS:-}" ]; then
+    # shellcheck disable=SC2206
+    EXTRA_ARGS_ARRAY=(${EXTRA_ARGS})
 fi
 
 # Copy Kubeconfig from current environment. The utilities will pick up ~/.kube/config if set so it's not mandatory
@@ -106,12 +114,12 @@ podman run -it --rm --pull=newer \
     -e TOKEN_SECRET \
     -e UUID_FILE \
     -e VALUES_SECRET \
-    ${PKI_HOST_MOUNT_ARGS} \
+    "${PKI_HOST_MOUNT_ARGS[@]}" \
     -v "$(pwd -P)":"$(pwd -P)" \
     -v "${HOME}":"${HOME}" \
     -v "${HOME}":/pattern-home \
-    ${PODMAN_ARGS} \
-    ${EXTRA_ARGS} \
+    "${PODMAN_ARGS[@]}" \
+    "${EXTRA_ARGS_ARRAY[@]}" \
     -w "$(pwd -P)" \
     "$PATTERN_UTILITY_CONTAINER" \
-    $@
+    "$@"
