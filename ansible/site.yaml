@@ -3,15 +3,31 @@
   hosts: localhost
   connection: local
   tasks:
+    - name: Verify pattern.sh exists
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/../pattern.sh"
+      register: pattern_script
+
+    - name: Fail if pattern.sh does not exist
+      ansible.builtin.fail:
+        msg: "pattern.sh not found at {{ playbook_dir }}/../pattern.sh"
+      when: not pattern_script.stat.exists
+
     # We cannot use .package or .dnf modules because python3 that is used comes
     # from a virtualenv
     - name: Launch the installation
       ansible.builtin.command: ./pattern.sh make install
       args:
-        chdir: "{{ lookup('env', 'PWD') }}"
+        chdir: "{{ playbook_dir }}/.."
       register: output
-      changed_when: false
+      changed_when: output.rc == 0
+      failed_when: output.rc != 0
 
     - name: Print output of installation
       ansible.builtin.debug:
-        msg: "{{ output }}"
+        msg: "{{ output.stdout_lines }}"
+
+    - name: Print errors if any
+      ansible.builtin.debug:
+        msg: "{{ output.stderr_lines }}"
+      when: output.stderr_lines | length > 0

@@ -1,13 +1,12 @@
 clusterGroup:
   name: standalone
-  isHubCluster: false
   namespaces:
     - vault
     - golang-external-secrets
     - config-demo
     - hello-world
   subscriptions: {}
-  projects:
+  argoProjects:
     - hub
     - config-demo
     - hello-world
@@ -26,24 +25,24 @@ clusterGroup:
     vault:
       name: vault
       namespace: vault
-      project: hub
+      argoProject: hub
       chart: hashicorp-vault
       chartVersion: 0.1.*
     golang-external-secrets:
       name: golang-external-secrets
       namespace: golang-external-secrets
-      project: hub
+      argoProject: hub
       chart: golang-external-secrets
       chartVersion: 0.1.*
     config-demo:
       name: config-demo
       namespace: config-demo
-      project: config-demo
+      argoProject: config-demo
       path: charts/all/config-demo
     hello-world:
       name: hello-world
       namespace: hello-world
-      project: hello-world
+      argoProject: hello-world
       path: charts/all/hello-world
   imperative:
     # NOTE: We *must* use lists and not hashes. As hashes lose ordering once parsed by helm
@@ -51,7 +50,7 @@ clusterGroup:
     # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
     # imagePullPolicy is set to always: imperative.imagePullPolicy
     # For additional overrides that apply to the jobs, please refer to
-    # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
+    # https://validatedpatterns.io/patterns/multicloud-gitops/mcg-imperative-actions/
     jobs:
       - name: hello-world
         # ansible playbook to be run

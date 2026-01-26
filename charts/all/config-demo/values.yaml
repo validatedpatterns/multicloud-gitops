@@ -13,3 +13,8 @@ global:
 
 clusterGroup:
   isHubCluster: true
+
+image:
+  repository: registry.access.redhat.com/ubi10/httpd-24
+  tag: "10.0-1755779646"
+  pullPolicy: IfNotPresent

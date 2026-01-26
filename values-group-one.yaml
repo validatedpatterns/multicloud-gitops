@@ -1,6 +1,5 @@
 clusterGroup:
   name: group-one
-  isHubCluster: false
   # Namespace is a dictionary for easier overriding (lists are supported as well)
   namespaces:
     config-demo:
@@ -35,7 +34,7 @@ clusterGroup:
     # Total timeout of all jobs is 1h: imperative.activeDeadlineSeconds
     # imagePullPolicy is set to always: imperative.imagePullPolicy
     # For additional overrides that apply to the jobs, please refer to
-    # https://hybrid-cloud-patterns.io/imperative-actions/#additional-job-customizations
+    # https://validatedpatterns.io/patterns/multicloud-gitops/mcg-imperative-actions/
     jobs:
       - name: hello-world
         # ansible playbook to be run
@@ -94,8 +93,8 @@ clusterGroup:
 #      targetRevision: main
 #      path: applications/factory
 #      helmOverrides:
-#      - name: site.isHubCluster
-#        value: false
+#      - name: foo
+#        value: bar
 #      clusterSelector:
 #        matchExpressions:
 #        - key: vendor
