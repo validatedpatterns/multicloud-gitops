@@ -6,6 +6,7 @@ secretStore:
 esoversion: "external-secrets.io/v1beta1"
 configdemosecret:
   key: secret/data/global/config-demo
+  refreshInterval: 5m
 
 global:
   hubClusterDomain: hub.example.com
