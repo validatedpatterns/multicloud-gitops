@@ -1,0 +1,24 @@
+esoversion: "external-secrets.io/v1"
+
+clusterGroup:
+  namespaces:
+    golang-external-secrets:
+      disabled: true
+    external-secrets-operator:
+      operatorGroup: true
+      targetNamespaces: []
+    external-secrets:
+  subscriptions:
+    eso:
+      name: openshift-external-secrets-operator
+      namespace: external-secrets-operator
+      channel: stable-v1
+  applications:
+    golang-external-secrets:
+      disabled: true
+    openshift-external-secrets:
+      name: openshift-external-secrets
+      namespace: external-secrets
+      argoProject: eso
+      chart: openshift-external-secrets
+      chartVersion: 0.0.*
