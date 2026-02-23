@@ -56,7 +56,7 @@ clusterGroup:
       namespace: golang-external-secrets
       argoProject: hub
       chart: golang-external-secrets
-      chartVersion: 0.1.*
+      chartVersion: 0.2.*
     config-demo:
       name: config-demo
       namespace: config-demo
