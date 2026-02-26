@@ -13,10 +13,6 @@ clusterGroup:
       name: openshift-external-secrets-operator
       namespace: external-secrets-operator
       channel: stable-v1
-    acm:
-      name: advanced-cluster-management
-      namespace: open-cluster-management
-      channel: release-2.15
   applications:
     golang-external-secrets:
       disabled: true
