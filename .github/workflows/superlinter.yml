@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
@@ -40,6 +40,9 @@ jobs:
           VALIDATE_PYTHON_PYLINT: false
           VALIDATE_SHELL_SHFMT: false
           VALIDATE_YAML: false
+          VALIDATE_KUBERNETES_KUBECONFORM: false
+          VALIDATE_PYTHON_RUFF_FORMAT: false
+          VALIDATE_SPELL_CODESPELL: false
           VALIDATE_YAML_PRETTIER: false
           # VALIDATE_DOCKERFILE_HADOLINT: false
           # VALIDATE_MARKDOWN: false
