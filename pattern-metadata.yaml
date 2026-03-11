@@ -2,6 +2,7 @@
 # documentation and qe
 metadata_version: "1.0"
 name: multicloud-gitops
+description: A multi-cloud pattern which uses GitOps, Hashicorp Vault and ACM to manage applications and secrets across clusters
 pattern_version: "1.0"
 display_name: Multicloud Gitops
 repo_url: https://github.com/validatedpatterns/multicloud-gitops
