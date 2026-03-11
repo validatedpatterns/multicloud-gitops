@@ -7,5 +7,4 @@ updates:
     schedule:
       interval: "weekly"
     cooldown:
-      default-days-until-reopen: 7
-
+      default-days: 7
