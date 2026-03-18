@@ -12,7 +12,7 @@ logger = logging.getLogger(__loggername__)
 def test_subscription_status_hub(openshift_dyn_client):
     # These are the operator subscriptions and their associated namespaces
     expected_subs = {
-        "openshift-gitops-operator": ["openshift-operators"],
+        "openshift-gitops-operator": ["openshift-gitops-operator"],
         "advanced-cluster-management": ["open-cluster-management"],
         "multicluster-engine": ["multicluster-engine"],
     }
