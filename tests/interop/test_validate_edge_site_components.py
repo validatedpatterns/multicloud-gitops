@@ -44,7 +44,7 @@ def test_validate_argocd_reachable_edge_site(openshift_dyn_client):
 def test_check_pod_status(openshift_dyn_client):
     logger.info("Checking pod status")
     projects = [
-        "openshift-operators",
+        "patterns-operator",
         "open-cluster-management-agent",
         "open-cluster-management-agent-addon",
         "openshift-gitops",
