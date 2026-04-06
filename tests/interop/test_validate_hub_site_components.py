@@ -57,6 +57,8 @@ def test_check_pod_status(openshift_dyn_client):
 
 @pytest.mark.validate_acm_self_registration_managed_clusters
 def test_validate_acm_self_registration_managed_clusters(openshift_dyn_client):
+    if os.getenv("VPSTANDALONE") == "true":
+        pytest.skip("Standalone config - skipping...")
     logger.info("Check ACM self registration for edge site")
     kubefiles = [os.getenv("KUBECONFIG_EDGE")]
     err_msg = components.validate_acm_self_registration_managed_clusters(
