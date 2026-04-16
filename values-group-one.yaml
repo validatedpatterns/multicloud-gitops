@@ -4,20 +4,27 @@ clusterGroup:
   namespaces:
     config-demo:
     hello-world:
-    golang-external-secrets:
-  # The only subscription on spokes is gitops which gets managed by ACM
-  # subscriptions:
+    external-secrets-operator:
+      operatorGroup: true
+      targetNamespaces: []
+    external-secrets:
+  # The gitops subscription on spokes gets managed by ACM
+  subscriptions:
+    eso:
+      name: openshift-external-secrets-operator
+      namespace: external-secrets-operator
+      channel: stable-v1
   argoProjects:
     - eso
     - config-demo
     - hello-world
   applications:
-    golang-external-secrets:
-      name: golang-external-secrets
-      namespace: golang-external-secrets
+    openshift-external-secrets:
+      name: openshift-external-secrets
+      namespace: external-secrets
       argoProject: eso
-      chart: golang-external-secrets
-      chartVersion: 0.2.*
+      chart: openshift-external-secrets
+      chartVersion: 0.0.*
     config-demo:
       name: config-demo
       namespace: config-demo

@@ -1,10 +1,12 @@
 clusterGroup:
   name: standalone
   namespaces:
-    - vault
-    - golang-external-secrets
-    - config-demo
-    - hello-world
+    vault:
+    external-secrets-operator:
+      operatorGroup: true
+      targetNamespaces: []
+    config-demo:
+    hello-world:
   subscriptions: {}
   argoProjects:
     - hub
@@ -28,12 +30,12 @@ clusterGroup:
       argoProject: hub
       chart: hashicorp-vault
       chartVersion: 0.1.*
-    golang-external-secrets:
-      name: golang-external-secrets
-      namespace: golang-external-secrets
+    openshift-external-secrets:
+      name: openshift-external-secrets
+      namespace: external-secrets
       argoProject: hub
-      chart: golang-external-secrets
-      chartVersion: 0.1.*
+      chart: openshift-external-secrets
+      chartVersion: 0.0.*
     config-demo:
       name: config-demo
       namespace: config-demo
