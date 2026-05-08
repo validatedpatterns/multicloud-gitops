@@ -5,7 +5,7 @@ secretStore:
 
 configdemosecret:
   key: secret/data/global/config-demo
-  refreshInterval: 5m0s
+  refreshInterval: 2m0s
 
 global:
   hubClusterDomain: hub.example.com

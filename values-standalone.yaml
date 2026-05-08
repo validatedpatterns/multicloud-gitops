@@ -5,9 +5,14 @@ clusterGroup:
     external-secrets-operator:
       operatorGroup: true
       targetNamespaces: []
+    external-secrets:
     config-demo:
     hello-world:
-  subscriptions: {}
+  subscriptions:
+    eso:
+      name: openshift-external-secrets-operator
+      namespace: external-secrets-operator
+      channel: stable-v1
   argoProjects:
     - hub
     - config-demo
