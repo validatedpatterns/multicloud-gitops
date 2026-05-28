@@ -10,6 +10,7 @@ docs_repo_url: https://github.com/validatedpatterns/docs
 issues_url: https://github.com/validatedpatterns/multicloud-gitops/issues
 docs_url: https://validatedpatterns.io/patterns/multicloud-gitops/
 ci_url: https://validatedpatterns.io/ci/?pattern=mcgitops
+logo: https://validatedpatterns.io/images/logos/multicloud-gitops.png
 # can be sandbox, tested or maintained
 tier: maintained
 owners: mbaldessari, darkdoc
