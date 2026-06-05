@@ -34,6 +34,10 @@ pytest -lv --disable-warnings test_validate_hub_site_components.py --kubeconfig 
 
 pytest -lv --disable-warnings test_validate_edge_site_components.py --kubeconfig "$KUBECONFIG_EDGE" --junit-xml "$WORKSPACE/test_validate_edge_site_components.xml"
 
-pytest -lv --disable-warnings test_modify_web_content.py --kubeconfig "$KUBECONFIG" --junit-xml "$WORKSPACE/test_modify_web_content.xml"
+if [ "${SKIP_GIT_CHANGES:-}" != "true" ]; then
+    pytest -lv --disable-warnings test_modify_web_content.py --kubeconfig "$KUBECONFIG" --junit-xml "$WORKSPACE/test_modify_web_content.xml"
+fi
 
-python3 create_ci_badge.py
+if [ "${SKIP_CI_BADGE:-}" != "true" ]; then
+    python3 create_ci_badge.py
+fi
