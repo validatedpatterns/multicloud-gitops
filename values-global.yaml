@@ -1,6 +1,7 @@
 ---
 global:
   pattern: multicloud-gitops
+  singleArgoCD: true
   options:
     useCSV: false
     syncPolicy: Automatic

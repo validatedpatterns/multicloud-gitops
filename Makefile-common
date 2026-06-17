@@ -1,6 +1,6 @@
 MAKEFLAGS += --no-print-directory
-ANSIBLE_STDOUT_CALLBACK ?= null # null silences all ansible output. Override this with default, minimal, oneline, etc. when debugging.
-ANSIBLE_RUN := ANSIBLE_STDOUT_CALLBACK=$(ANSIBLE_STDOUT_CALLBACK) ansible-playbook $(EXTRA_PLAYBOOK_OPTS)
+ANSIBLE_STDOUT_CALLBACK ?= rhvp.cluster_utils.readable
+ANSIBLE_RUN ?= ANSIBLE_STDOUT_CALLBACK=$(ANSIBLE_STDOUT_CALLBACK) ansible-playbook $(EXTRA_PLAYBOOK_OPTS)
 DOCS_URL := https://validatedpatterns.io/blog/2025-08-29-new-common-makefile-structure/
 
 .PHONY: help
@@ -20,9 +20,9 @@ operator-deploy operator-upgrade: ## Installs/updates the pattern on a cluster (
 .PHONY: install
 install: pattern-install ## Installs the pattern onto a cluster (Loads secrets as well if configured)
 
-.PHONY: uninstall ## Prints a notice that patterns cannot currently be uninstalled
-uninstall:
-	@echo "Uninstall is not possible at the moment so this target is empty. We are working to implement it as well as we can."
+.PHONY: uninstall
+uninstall: ## (EXPERIMENTAL) See https://validatedpatterns.io/blog/2026-02-16-pattern-uninstall/.
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.uninstall
 
 .PHONY: pattern-install
 pattern-install:
