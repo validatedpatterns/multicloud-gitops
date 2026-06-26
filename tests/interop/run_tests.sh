@@ -1,5 +1,4 @@
 #!/usr/bin/bash
-set -euo pipefail
 
 export EXTERNAL_TEST="true"
 export PATTERN_NAME="MultiCloudGitops"
