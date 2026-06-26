@@ -70,3 +70,9 @@ extra_features:
 
 external_requirements:
 # external quay, s3 bucket, agof tokens to access paywalled material, manifests, rag-llm hw (only selected regions)
+variants:
+  - name: hub
+    default: true
+    description: Default multicluster hub/spoke Multicloud Gitops variant
+  - name: standalone
+    description: Single cluster Multicloud Gitops (no ACM) variant
