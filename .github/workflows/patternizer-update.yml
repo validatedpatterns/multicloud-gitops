@@ -1,0 +1,69 @@
+---
+name: Weekly Patternizer Update Check
+
+on:
+  schedule:
+    # Run every Sunday at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  patternizer-update:
+    name: Check for patternizer changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run patternizer update
+        run: |
+          podman run --pull=newer -v "$PWD:$PWD:z" -w "$PWD" quay.io/validatedpatterns/patternizer:latest update
+
+      - name: Create or update PR if changes detected
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth setup-git
+          BRANCH="automated/patternizer-update"
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes detected after patternizer update"
+            exit 0
+          fi
+
+          echo "Changes detected after patternizer update:"
+          git diff --cached --name-only
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create or reset the branch to current HEAD (main) and switch to it.
+          # -B handles both cases: creates if missing, resets if it exists.
+          # Staged changes are preserved since the target commit is the same.
+          git checkout -B "$BRANCH"
+
+          git commit -m "chore: update patternizer-managed files"
+          git push --force-with-lease origin "$BRANCH"
+
+          # Create PR if one doesn't already exist
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          if [ -z "$EXISTING_PR" ]; then
+            gh pr create \
+              --title "chore: automated patternizer update" \
+              --body "This PR was automatically created by the weekly patternizer update workflow.
+
+          It contains updates to patternizer-managed files. Please review the changes and merge if appropriate." \
+              --base main \
+              --head "$BRANCH"
+            echo "PR created"
+          else
+            echo "Existing PR #${EXISTING_PR} updated"
+          fi
