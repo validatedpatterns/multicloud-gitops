@@ -109,6 +109,7 @@ podman run -it --rm --pull=newer \
     -e PATTERN_NAME \
     -e TARGET_BRANCH \
     -e TARGET_CLUSTERGROUP \
+    -e TARGET_VARIANT \
     -e TARGET_ORIGIN \
     -e TOKEN_NAMESPACE \
     -e TOKEN_SECRET \
