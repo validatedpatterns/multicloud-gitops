@@ -52,3 +52,7 @@ validate-schema: ## validates values files against schema in common/clustergroup
 .PHONY: argo-healthcheck
 argo-healthcheck: ## Checks if all argo applications are synced
 	@$(ANSIBLE_RUN) rhvp.cluster_utils.argo_healthcheck
+
+.PHONY: run-ci-tests
+run-ci-tests: ## To run ci-tests, set any needed env vars
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.run_ci_tests

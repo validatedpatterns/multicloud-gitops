@@ -1,0 +1,15 @@
+ansible-core==2.18.*
+ansible-runner
+awxkit
+kubernetes
+openshift
+boto3>=1.21
+botocore>=1.24
+awscli>=1.22
+azure-cli>=2.34
+gcloud
+humanize
+pytz
+pytest
+junitparser
+vp-qe-test-common @ git+https://github.com/validatedpatterns/vp-qe-test-common.git@v1

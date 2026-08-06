@@ -7,7 +7,7 @@ global:
     syncPolicy: Automatic
     installPlanApproval: Automatic
 main:
-  clusterGroupName: hub
+  variant: hub
   multiSourceConfig:
     enabled: true
     clusterGroupChartVersion: "0.9.*"

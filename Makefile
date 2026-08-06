@@ -3,3 +3,8 @@
 # You can add custom targets above or below the include line
 
 include Makefile-common
+
+CLUSTERGROUP_LABEL ?= group-one
+.PHONY: import-default-spoke
+import-default-spoke: ## Import the default spoke cluster for this pattern, set VP_SPOKECONFIG and VP_HUBCONFIG env vars
+	@$(ANSIBLE_RUN) -e clustergroup_label=$(CLUSTERGROUP_LABEL) rhvp.cluster_utils.import_spoke_cluster
