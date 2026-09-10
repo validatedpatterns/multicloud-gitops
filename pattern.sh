@@ -139,13 +139,13 @@ if [ -n "${EXTRA_ARGS:-}" ]; then
     EXTRA_ARGS_ARRAY=(${EXTRA_ARGS})
 fi
 
-# Copy Kubeconfig from current environment. The utilities will pick up ~/.kube/config if set so it's not mandatory
-# $HOME is mounted as itself for any files that are referenced with absolute paths
-# $HOME is mounted to /root because the UID in the container is 0 and that's where SSH looks for credentials
-
 if [ "${VP_VERIFY_IMAGE:-true}" != "false" ]; then
     verify_image "$PATTERN_UTILITY_CONTAINER"
 fi
+
+# Copy Kubeconfig from current environment. The utilities will pick up ~/.kube/config if set so it's not mandatory
+# $HOME is mounted as itself for any files that are referenced with absolute paths
+# $HOME is mounted to /root because the UID in the container is 0 and that's where SSH looks for credentials
 
 podman run -it --rm --pull=newer \
     --security-opt label=disable \
