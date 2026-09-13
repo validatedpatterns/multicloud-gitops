@@ -32,6 +32,11 @@ pattern-install:
 load-secrets: ## Loads secrets onto the cluster (unless explicitly disabled in values-global.yaml)
 	@$(ANSIBLE_RUN) rhvp.cluster_utils.load_secrets
 
+##@ Debug Tasks
+.PHONY: display-secrets-info
+display-secrets-info: ## Display your secret material on terminal or show secret loading error. Use with caution!
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.display_secrets_info
+
 ##@ Validation Tasks
 .PHONY: validate-prereq
 validate-prereq: ## verify pre-requisites
@@ -53,6 +58,7 @@ validate-schema: ## validates values files against schema in common/clustergroup
 argo-healthcheck: ## Checks if all argo applications are synced
 	@$(ANSIBLE_RUN) rhvp.cluster_utils.argo_healthcheck
 
+##@ Testing (CI) Tasks
 .PHONY: run-ci-tests
 run-ci-tests: ## To run ci-tests, set any needed env vars
 	@$(ANSIBLE_RUN) rhvp.cluster_utils.run_ci_tests
