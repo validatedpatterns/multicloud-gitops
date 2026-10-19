@@ -37,6 +37,7 @@ jobs:
           VALIDATE_JSCPD: false
           VALIDATE_JSON_PRETTIER: false
           VALIDATE_MARKDOWN_PRETTIER: false
+          VALIDATE_PYTHON_ISORT: false
           VALIDATE_PYTHON_PYLINT: false
           VALIDATE_SHELL_SHFMT: false
           VALIDATE_YAML: false
