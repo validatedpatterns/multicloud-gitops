@@ -70,7 +70,11 @@ def test_modify_web_content(openshift_dyn_client):
     patterns_repo = PATTERNS_REPO_PATH
     if os.getenv("EXTERNAL_TEST") != "true":
         git_add = subprocess.run(
-            ["git", "add", chart], cwd=patterns_repo, capture_output=True, text=True
+            ["git", "add", chart],
+            cwd=patterns_repo,
+            capture_output=True,
+            text=True,
+            check=False,
         )
         if git_add.returncode != 0:
             logger.error(f"git add failed: {git_add.stderr}")
@@ -80,15 +84,25 @@ def test_modify_web_content(openshift_dyn_client):
             cwd=patterns_repo,
             capture_output=True,
             text=True,
+            check=False,
         )
         if git_commit.returncode != 0:
             logger.warning(f"git commit returned non-zero: {git_commit.stderr}")
 
         push = subprocess.run(
-            ["git", "push"], cwd=patterns_repo, capture_output=True, text=True
+            ["git", "push"],
+            cwd=patterns_repo,
+            capture_output=True,
+            text=True,
+            check=False,
         )
     else:
-        git_add = subprocess.run(["git", "add", chart], capture_output=True, text=True)
+        git_add = subprocess.run(
+            ["git", "add", chart],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
         if git_add.returncode != 0:
             logger.error(f"git add failed: {git_add.stderr}")
 
@@ -96,11 +110,14 @@ def test_modify_web_content(openshift_dyn_client):
             ["git", "commit", "-m", "Updating 'hello-world'"],
             capture_output=True,
             text=True,
+            check=False,
         )
         if git_commit.returncode != 0:
             logger.warning(f"git commit returned non-zero: {git_commit.stderr}")
 
-        push = subprocess.run(["git", "push"], capture_output=True, text=True)
+        push = subprocess.run(
+            ["git", "push"], capture_output=True, text=True, check=False
+        )
 
     if push.returncode != 0:
         logger.error(f"git push failed with return code {push.returncode}")
