@@ -18,7 +18,8 @@ operator-deploy operator-upgrade: ## Installs/updates the pattern on a cluster (
 	@$(ANSIBLE_RUN) rhvp.cluster_utils.operator_deploy
 
 .PHONY: install
-install: pattern-install ## Installs the pattern onto a cluster (Loads secrets as well if configured)
+install: ## Installs the pattern onto a cluster (Loads secrets as well if configured)
+	@$(ANSIBLE_RUN) rhvp.cluster_utils.install
 
 .PHONY: uninstall
 uninstall: ## (EXPERIMENTAL) See https://validatedpatterns.io/blog/2026-02-16-pattern-uninstall/.
