@@ -79,7 +79,7 @@ global:
   secretLoader:
     disabled: false
 main:
-  clusterGroupName: prod
+  variant: prod
   multiSourceConfig:
     enabled: true
     clusterGroupChartVersion: 0.9.*
@@ -93,7 +93,7 @@ main:
 
 `global.secretLoader.disabled` — When `true`, skip loading secrets. Useful for Patterns that don't use the secrets framework.
 
-`main.clusterGroupName` — The name of the primary clustergroup. Determines which `values-<name>.yaml` file defines the main cluster. If you change this value, the next `pattern init` run creates the corresponding values file (you would need to manually delete the old unused one).
+`main.variant` — The name of the primary clustergroup. Determines which `values-<variant>.yaml` file defines the main cluster, located at `variants/<variant>/values-<variant>.yaml` (see [Variants folder structure](#variants-folder-structure)). If you change this value, the next `pattern init` run creates the corresponding values file (you would need to manually delete the old unused one). This replaces the deprecated `main.clusterGroupName` field (deprecated by the Validated Patterns operator in version 0.0.78); patternizer automatically migrates `main.clusterGroupName` to `main.variant` on `init`.
 
 `main.multiSourceConfig.enabled` — Enable ArgoCD multi-source applications. Should always be `true` for modern Patterns.
 
@@ -110,6 +110,27 @@ There are also some global options that can be set in `values-global.yaml` but a
 ### values-prod.yaml
 
 `values-prod.yaml` is the values file that defines the main clustergroup of the Pattern. In hub/spoke Patterns (see [Spoke clusters](#spoke-clusters)) this would be the hub cluster. In single cluster Patterns this defines the solitary cluster. If there is one file to look at which defines the Pattern, it is this one. Its contents are explored in [The clustergroup values](#the-clustergroup-values) section.
+
+With the [variants folder structure](#variants-folder-structure) (the layout patternizer now generates), this file lives at `variants/<variant>/values-<variant>.yaml` (e.g. `variants/prod/values-prod.yaml`) rather than at the repository root.
+
+### Variants folder structure
+
+Per-cluster (per-variant) values files live under a top-level `variants/` directory, with one subfolder per variant named after the variant:
+
+```console
+.
+├── values-global.yaml
+├── charts/
+└── variants/
+    ├── prod/
+    │   └── values-prod.yaml
+    └── standalone/
+        └── values-standalone.yaml
+```
+
+The Validated Patterns operator auto-detects a top-level `variants/` directory and, when `main.variant` is set, looks for per-cluster values files under `variants/<variant>/` instead of the repository root. This keeps the root uncluttered as you add more variants. This structure was introduced in operator version 0.0.78; see the [variants folder structure blog post](https://validatedpatterns.io/blog/2026-08-04-variants-folder-structure/) for details.
+
+`patternizer init` creates and uses this structure automatically, migrating a legacy root-level `values-<variant>.yaml` into `variants/<variant>/` when present. The flat (root-level) layout is still supported by the operator; `patternizer upgrade` does not move files but prints a deprecation warning when the variant's file is missing from the variants folder.
 
 ### The Pattern CR
 
@@ -152,6 +173,8 @@ The following values files are automatically included for each application, in t
 
 ArgoCD is configured with `ignoreMissingValueFiles: true`, so it silently skips any of these files that do not exist. Only create the files you actually need.
 
+When the [variants folder structure](#variants-folder-structure) is in use, the variant-specific files above (those named after the clustergroup/variant, such as `values-<variant>.yaml`) are resolved from `variants/<variant>/` instead of the repository root.
+
 In multi-source mode (the default), values files from the Pattern repository are prefixed with `$patternref/` to tell ArgoCD which source they come from. This is handled automatically by the clustergroup chart.
 
 Some of these values files are cross-clustergroup. For example, `values-AWS.yaml` would apply to both hub and spoke clustergroups running on AWS.
@@ -184,7 +207,7 @@ global:
   pattern: ai-quickstart-rag
   device: cpu # one of 'cpu' (no GPU) or 'gpu' (NVIDIA GPU)
 main:
-  clusterGroupName: prod
+  variant: prod
   multiSourceConfig:
     enabled: true
     clusterGroupChartVersion: 0.9.*
