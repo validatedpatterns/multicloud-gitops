@@ -26,7 +26,7 @@ When creating a new Pattern:
 
 1. **Initialize** — Determine the Pattern name and whether secrets are needed. Run `pattern init` or `pattern init --with-secrets` in the Pattern directory.
 2. **Identify requirements** — What operators, applications, and custom helm charts does this Pattern need?
-3. **Define namespaces** — Add all required namespaces to the clustergroup values file (`values-<clusterGroupName>.yaml`). Include OperatorGroup configuration for operator namespaces.
+3. **Define namespaces** — Add all required namespaces to the clustergroup values file (`variants/<variant>/values-<variant>.yaml`). Include OperatorGroup configuration for operator namespaces.
 4. **Define subscriptions** — Add operator subscriptions with at minimum the operator `name`. Set `namespace`, `channel`, and `source` as needed.
 5. **Define applications** — Wire in helm charts as applications:
    - Local charts: set `path` to the chart location in the repository
@@ -234,7 +234,7 @@ Define a custom global variable and use `sharedValueFiles`:
 global:
   device: gpu
 
-# values-<clustergroup>.yaml
+# variants/<variant>/values-<variant>.yaml
 clusterGroup:
   sharedValueFiles:
     - /overrides/values-{{ $.Values.global.device }}.yaml

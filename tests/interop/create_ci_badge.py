@@ -2,7 +2,7 @@ import json
 import os
 import subprocess
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 
 from junitparser import JUnitXml
 
@@ -20,7 +20,7 @@ ci_badge = {
     "patternName": os.environ.get("PATTERN_NAME"),
     "patternRepo": "",
     "patternBranch": "",
-    "date": datetime.today().strftime("%Y-%m-%d"),
+    "date": datetime.now(UTC).strftime("%Y-%m-%d"),
     "testSource": "Community",
     "debugInfo": None,
 }
@@ -58,10 +58,16 @@ if __name__ == "__main__":
     ci_badge["openshiftVersion"] = versions[0]
 
     pattern_repo = subprocess.run(
-        ["git", "config", "--get", "remote.origin.url"], capture_output=True, text=True
+        ["git", "config", "--get", "remote.origin.url"],
+        capture_output=True,
+        text=True,
+        check=False,
     )
     pattern_branch = subprocess.run(
-        ["git", "branch", "--show-current"], capture_output=True, text=True
+        ["git", "branch", "--show-current"],
+        capture_output=True,
+        text=True,
+        check=False,
     )
 
     ci_badge["patternRepo"] = pattern_repo.stdout.strip()
