@@ -50,8 +50,19 @@ clusterGroup:
       name: acm
       namespace: open-cluster-management
       argoProject: hub
-      chart: acm
-      chartVersion: 0.2.*
+      # Test BYOC import against the fork instead of charts.validatedpatterns.io
+      repoURL: https://github.com/OAharoni-RedHat/acm-chart.git
+      path: .
+      chartVersion: main
+      # ACM mutates ManagedCluster labels/spec after import (cloud/vendor discovery,
+      # addon feature labels, clusterset, managedClusterClientConfigs). Ignore those
+      # so the ACM app stays Synced while still owning clusterGroup via the chart.
+      ignoreDifferences:
+        - group: cluster.open-cluster-management.io
+          kind: ManagedCluster
+          jqPathExpressions:
+            - .metadata.labels | with_entries(select(.key != "clusterGroup"))
+            - .spec.managedClusterClientConfigs
     vault:
       name: vault
       namespace: vault
@@ -123,6 +134,19 @@ clusterGroup:
           #    clusters:
           #    - Two
           #    - Three
+
+# Optional: auto-import existing (BYOC) clusters into ACM. Requires matching
+# kubeconfig secrets in values-secret (vaultPrefixes: hub; name must end with
+# _cluster_kubeconfig — see values-secret.yaml.template). Cluster name is
+# secretName with that suffix removed. clusterGroup must match a
+# managedClusterGroups Placement label above (e.g. group-one) so policies attach.
+acm:
+ importedClusters:
+   - secretName: mcg-primary_cluster_kubeconfig
+     clusterGroup: group-one
+#    - secretName: mcg-secondary_cluster_kubeconfig
+#      clusterGroup: group-one
+
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
 #    pipelines:
