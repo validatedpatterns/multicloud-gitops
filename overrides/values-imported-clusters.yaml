@@ -1,0 +1,15 @@
+# Auto-import existing (BYOC) clusters into ACM via the ACM chart.
+# Requires matching kubeconfig secrets in values-secret (vaultPrefixes: hub;
+# name must end with _cluster_kubeconfig — see values-secret.yaml.template).
+# Cluster name is secretName with that suffix removed.
+# clusterGroup must match a managedClusterGroups Placement label
+# (e.g. group-one in variants/hub/values-hub.yaml) so policies attach.
+#
+# This file is included by the ACM application via extraValueFiles.
+# To enable its usage, uncomment the following lines.
+# acm:
+#   importedClusters:
+#     - secretName: mcg-primary_cluster_kubeconfig
+#       clusterGroup: group-one
+    # - secretName: mcg-secondary_cluster_kubeconfig
+    #   clusterGroup: group-one
