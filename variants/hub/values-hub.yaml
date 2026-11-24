@@ -52,6 +52,18 @@ clusterGroup:
       argoProject: hub
       chart: acm
       chartVersion: 0.2.*
+      # BYOC importedClusters list lives here (not in values-hub body)
+      extraValueFiles:
+        - '/overrides/values-imported-clusters.yaml'
+      # ACM mutates ManagedCluster labels/spec after import (cloud/vendor discovery,
+      # addon feature labels, clusterset, managedClusterClientConfigs). Ignore those
+      # so the ACM app stays Synced while still owning clusterGroup via the chart.
+      ignoreDifferences:
+        - group: cluster.open-cluster-management.io
+          kind: ManagedCluster
+          jqPathExpressions:
+            - .metadata.labels | with_entries(select(.key != "clusterGroup"))
+            - .spec.managedClusterClientConfigs
     vault:
       name: vault
       namespace: vault
@@ -123,6 +135,7 @@ clusterGroup:
           #    clusters:
           #    - Two
           #    - Three
+
 #  To have apps in multiple flavors, use namespaces and use helm overrides as appropriate
 #
 #    pipelines:
